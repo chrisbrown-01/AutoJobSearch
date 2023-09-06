@@ -14,8 +14,11 @@ namespace AutoJobSearchConsoleApp
         static async Task Main(string[] args)
         {
             //await SeleniumTesting.Execute();
-            await LocalFileTesting.SingleFileTest();     
-            //await LocalFileTesting.MultiFileTest();
+
+            //await LocalFileTesting.CreateJsonFiles();
+
+            //LocalFileTesting.LoadFromJsonFileTests();
+            LocalFileTesting.ScoringTest();
         }
 
         /*
