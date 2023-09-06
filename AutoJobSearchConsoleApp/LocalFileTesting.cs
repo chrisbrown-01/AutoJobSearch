@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using static AutoJobSearchConsoleApp.LocalFileTesting;
 
 namespace AutoJobSearchConsoleApp
 {
@@ -100,6 +101,27 @@ namespace AutoJobSearchConsoleApp
             "client"
         };
 
+        public static void CheckForDuplicatesTest()
+        {
+            var jobList = LoadFromJsonFile(Paths.MULTI_PAGE_JSON_FILE_PATH);
+
+            var links = jobList.SelectMany(x => x.Links).ToList();
+
+            var distinctLinks = links.Distinct().ToList();
+
+            var nonUniqueInnerTexts = jobList
+                                      .GroupBy(jp => jp.InnerText)
+                                      .Where(g => g.Count() > 1)
+                                      .Select(g => g.Key)
+                                      .ToList();
+
+            var nonUniqueJobPostings = jobList
+                                       .Where(jp => nonUniqueInnerTexts.Contains(jp.InnerText))
+                                       .ToList();
+
+            Console.WriteLine();
+        }
+
         public static void ScoringTest()
         {
             var jobList = LoadFromJsonFile(Paths.MULTI_PAGE_JSON_FILE_PATH);
@@ -152,13 +174,14 @@ namespace AutoJobSearchConsoleApp
         {
             var doc = new HtmlDocument();
             var jobListings = new List<JobPosting>();
+            var existingLinks = new List<string>();
 
             for (int i = 1; i < 12; i++)
             {
                 var textFile = await File.ReadAllTextAsync($"..\\..\\..\\DataFiles\\DotNetTennessee{i}of11.txt");
                 doc.LoadHtml(textFile);
 
-                jobListings.AddRange(ExtractJobs(doc));
+                jobListings.AddRange(ExtractJobs(doc, existingLinks));
             }
 
             await File.WriteAllTextAsync(Paths.MULTI_PAGE_JSON_FILE_PATH, JsonSerializer.Serialize(jobListings));
@@ -170,12 +193,12 @@ namespace AutoJobSearchConsoleApp
             var doc = new HtmlDocument();
             doc.LoadHtml(textFile);
 
-            var jobListings = ExtractJobs(doc);
+            var jobListings = ExtractJobs(doc, new List<string>());
 
             await File.WriteAllTextAsync(Paths.SINGLE_PAGE_JSON_FILE_PATH, JsonSerializer.Serialize(jobListings));
         }
 
-        private static List<JobPosting> ExtractJobs(HtmlDocument htmlDocument)
+        private static List<JobPosting> ExtractJobs(HtmlDocument htmlDocument, List<string> existingLinks)
         {
             var jobList = new List<JobPosting>();
 
@@ -183,10 +206,34 @@ namespace AutoJobSearchConsoleApp
 
             foreach (var li in liElements)
             {
+                var listing = new JobPosting();
+                bool isDuplicate = false;
+
                 var links = li.Descendants("a")
                     .Where(a => a.InnerText.Contains("apply", StringComparison.OrdinalIgnoreCase));
 
-                var listing = new JobPosting();
+                foreach (var link in links)
+                {
+                    listing.LinksOuterHtml.Add(link.OuterHtml);
+
+                    MatchCollection matches = Regex.Matches(link.OuterHtml, REGEX_URL_PATTERN);
+
+                    foreach (Match match in matches)
+                    {
+                        // TODO: better checks or importing methods for existing links
+                        if(existingLinks.Contains(match.Value))
+                        {
+                            isDuplicate = true;
+                            break;
+                        }
+
+                        // listing.Links.Add(match.Value.Replace('"', ' ').Trim()); 
+                        listing.Links.Add(match.Value);
+                        existingLinks.Add(match.Value);
+                    }
+                }
+
+                if (isDuplicate) continue;
 
                 listing.InnerText = li.InnerText; // TODO: html decode (ie. convert &amp; to regular &)
 
@@ -209,19 +256,6 @@ namespace AutoJobSearchConsoleApp
                 else
                 {
                     listing.InnerTextCleaned = listing.InnerText;
-                }
-
-                foreach (var link in links)
-                {
-                    listing.LinksOuterHtml.Add(link.OuterHtml);
-
-                    MatchCollection matches = Regex.Matches(link.OuterHtml, REGEX_URL_PATTERN);
-
-                    foreach (Match match in matches)
-                    {
-                        // listing.Links.Add(match.Value.Replace('"', ' ').Trim()); 
-                        listing.Links.Add(match.Value);
-                    }
                 }
 
                 jobList.Add(listing);
