@@ -8,11 +8,14 @@ namespace AutoJobSearchConsoleApp
 {
     internal class Program
     {
-        // TODO: start: final index of "Job Description"  --> end: index of "Show full description" or "Report this listing"
+        // TODO: sql database
+        // TODO: email service and email formatter
+        // TODO: simple UI/GUI
         static async Task Main(string[] args)
         {
-            await SeleniumTesting.Execute();
-            //await LocalFileTesting.Execute();     
+            //await SeleniumTesting.Execute();
+            await LocalFileTesting.SingleFileTest();     
+            //await LocalFileTesting.MultiFileTest();
         }
 
         /*

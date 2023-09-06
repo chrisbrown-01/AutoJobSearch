@@ -27,6 +27,7 @@ namespace AutoJobSearchConsoleApp
             doc.LoadHtml(driver.PageSource);
 
             // TODO: run once then save as json file for reuse later.
+            // TODO: experiment with detecting the end of the Google list
             for (int i = 0; i < 101; i += 10)
             {
                 driver.Navigate().GoToUrl($"https://www.google.com/search?q=.net+jobs+tennessee&ibp=htl;jobs&start={i}");
