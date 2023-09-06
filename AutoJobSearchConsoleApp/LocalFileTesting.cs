@@ -44,7 +44,7 @@ namespace AutoJobSearchConsoleApp
             {
                 // TODO: check for if there are multiple results, experiment with using LastIndexOf
                 var startingIndex = listing.InnerText.IndexOf(STARTING_INDEX_KEY);
-                var endingIndex = listing.InnerText.IndexOf(ENDING_INDEX_KEY); // if not found, value is -1. Therefore do logic statements where if either are -1, don't modify the current InnerText property.
+                var endingIndex = listing.InnerText.IndexOf(ENDING_INDEX_KEY);
 
                 if (startingIndex == -1 || endingIndex == -1) continue;
 
@@ -64,6 +64,7 @@ namespace AutoJobSearchConsoleApp
             await Task.CompletedTask;
         }
 
+        // TODO: move to seperate class file
         public class JobListing
         {
             public string InnerText { get; set; } = string.Empty;
