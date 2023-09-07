@@ -14,12 +14,12 @@ namespace AutoJobSearchConsoleApp
         static async Task Main(string[] args)
         {
             //await SeleniumTesting.Execute();
-
             //await LocalFileTesting.CreateJsonFiles();
-
             //LocalFileTesting.LoadFromJsonFileTests();
-            LocalFileTesting.ScoringTest();
+            //LocalFileTesting.ScoringTest(); 
             //LocalFileTesting.CheckForDuplicatesTest();
+
+            FuzzyStringTesting.Test1();
         }
 
         /*

@@ -19,6 +19,7 @@ namespace AutoJobSearchConsoleApp
         //private const string REGEX_URL_PATTERN = @"https?://\S+";
         private const string REGEX_URL_PATTERN = @"https?://[^\s""]+";
 
+        // TODO: remove and consolidate
         private static List<string> Positives = new()
         {
             "1-",
@@ -43,7 +44,6 @@ namespace AutoJobSearchConsoleApp
             "not required",
             "sponsorship"
         };
-
         private static List<string> Negatives = new()
         {
             "US Citizen",
