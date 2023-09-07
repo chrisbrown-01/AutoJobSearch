@@ -17,8 +17,8 @@ namespace AutoJobSearchConsoleApp
 
             //await LocalFileTesting.CreateJsonFiles();
 
-            LocalFileTesting.LoadFromJsonFileTests();
-            //LocalFileTesting.ScoringTest();
+            //LocalFileTesting.LoadFromJsonFileTests();
+            LocalFileTesting.ScoringTest();
             //LocalFileTesting.CheckForDuplicatesTest();
         }
 

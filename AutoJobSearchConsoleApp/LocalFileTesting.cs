@@ -40,11 +40,20 @@ namespace AutoJobSearchConsoleApp
             "new graduate",
             "recent graduate",
             "recently graduated",
-            "not required"
+            "not required",
+            "sponsorship"
         };
 
         private static List<string> Negatives = new()
         {
+            "US Citizen",
+            "US Citizens",
+            "must be US Citizens",
+            "must live in",
+            "without sponsorship",
+            "internship",
+            " intern ",
+            "legally authorized",
             "authorized to work",
             "Sr.",
             "Sr",
@@ -174,17 +183,48 @@ namespace AutoJobSearchConsoleApp
         {
             var doc = new HtmlDocument();
             var jobListings = new List<JobPosting>();
-            var existingLinks = new List<string>();
 
             for (int i = 1; i < 12; i++)
             {
                 var textFile = await File.ReadAllTextAsync($"..\\..\\..\\DataFiles\\DotNetTennessee{i}of11.txt");
                 doc.LoadHtml(textFile);
 
-                jobListings.AddRange(ExtractJobs(doc, existingLinks));
+                jobListings.AddRange(ExtractJobs(doc));
             }
 
-            await File.WriteAllTextAsync(Paths.MULTI_PAGE_JSON_FILE_PATH, JsonSerializer.Serialize(jobListings));
+            var jobListingsScrubbed = RemoveDuplicates(jobListings); // TODO: better variable naming
+
+            await File.WriteAllTextAsync(Paths.MULTI_PAGE_JSON_FILE_PATH, JsonSerializer.Serialize(jobListingsScrubbed));
+        }
+
+        private static List<JobPosting> RemoveDuplicates(List<JobPosting> listWithPossibleDuplicates)
+        {
+            var uniqueLinks = new List<string>(); // TODO: uniqueLinks will need to first be populated with existing items from database
+            var uniqueJobPostings = new List<JobPosting>();
+
+            foreach (var jobPosting in listWithPossibleDuplicates)
+            {
+                bool isDuplicate = false;
+                foreach (string link in jobPosting.Links)
+                {
+                    if (uniqueLinks.Contains(link))
+                    {
+                        isDuplicate = true;
+                        break;
+                    }
+                }
+
+                if (isDuplicate) continue;
+                
+                uniqueJobPostings.Add(jobPosting);
+
+                foreach (string link in jobPosting.Links)
+                {
+                    uniqueLinks.Add(link);
+                }
+            }
+
+            return uniqueJobPostings;
         }
 
         private static async Task GenerateJobListingJsonFileFromSingleTextFile()
@@ -193,12 +233,14 @@ namespace AutoJobSearchConsoleApp
             var doc = new HtmlDocument();
             doc.LoadHtml(textFile);
 
-            var jobListings = ExtractJobs(doc, new List<string>());
+            var jobListings = ExtractJobs(doc);
 
-            await File.WriteAllTextAsync(Paths.SINGLE_PAGE_JSON_FILE_PATH, JsonSerializer.Serialize(jobListings));
+            var jobListingsScrubbed = RemoveDuplicates(jobListings); // TODO: better variable naming
+
+            await File.WriteAllTextAsync(Paths.SINGLE_PAGE_JSON_FILE_PATH, JsonSerializer.Serialize(jobListingsScrubbed));
         }
 
-        private static List<JobPosting> ExtractJobs(HtmlDocument htmlDocument, List<string> existingLinks)
+        private static List<JobPosting> ExtractJobs(HtmlDocument htmlDocument)
         {
             var jobList = new List<JobPosting>();
 
@@ -207,7 +249,6 @@ namespace AutoJobSearchConsoleApp
             foreach (var li in liElements)
             {
                 var listing = new JobPosting();
-                bool isDuplicate = false;
 
                 var links = li.Descendants("a")
                     .Where(a => a.InnerText.Contains("apply", StringComparison.OrdinalIgnoreCase));
@@ -220,20 +261,11 @@ namespace AutoJobSearchConsoleApp
 
                     foreach (Match match in matches)
                     {
-                        // TODO: better checks or importing methods for existing links
-                        if(existingLinks.Contains(match.Value))
-                        {
-                            isDuplicate = true;
-                            break;
-                        }
 
                         // listing.Links.Add(match.Value.Replace('"', ' ').Trim()); 
                         listing.Links.Add(match.Value);
-                        existingLinks.Add(match.Value);
                     }
                 }
-
-                if (isDuplicate) continue;
 
                 listing.InnerText = li.InnerText; // TODO: html decode (ie. convert &amp; to regular &)
 
