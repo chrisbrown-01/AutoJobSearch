@@ -19,22 +19,31 @@ namespace AutoJobSearchConsoleApp
         private const string ENDING_INDEX_KEY = "Show full description"; // "Show full description" or if none found, "Report this job"
         private const string REGEX_URL_PATTERN = @"https?://[^\s""]+";
 
+        private static string StringFormattingHeuristic(string input)
+        {
+            string pattern = @"([a-z]|[.])([A-Z])";
+            string replacement = "$1\n$2";
+            string result = Regex.Replace(input, pattern, replacement);
+
+            return result;
+        }
+
         public static void CheckForDuplicatesTest()
         {
             var jobList = LoadFromJsonFile(Paths.MULTI_PAGE_JSON_FILE_PATH);
 
-            var links = jobList.SelectMany(x => x.Links).ToList();
+            var links = jobList.SelectMany(x => x.ApplicationLinks).ToList();
 
             var distinctLinks = links.Distinct().ToList();
 
             var nonUniqueInnerTexts = jobList
-                                      .GroupBy(jp => jp.InnerText)
+                                      .GroupBy(jp => jp.Description_Raw)
                                       .Where(g => g.Count() > 1)
                                       .Select(g => g.Key)
                                       .ToList();
 
             var nonUniqueJobPostings = jobList
-                                       .Where(jp => nonUniqueInnerTexts.Contains(jp.InnerText))
+                                       .Where(jp => nonUniqueInnerTexts.Contains(jp.Description_Raw))
                                        .ToList();
 
             Console.WriteLine();
@@ -43,14 +52,20 @@ namespace AutoJobSearchConsoleApp
         public static void ScoringTest()
         {
             var jobList = LoadFromJsonFile(Paths.MULTI_PAGE_JSON_FILE_PATH);
+            ApplyScorings(jobList);
 
-            foreach(var job in jobList)
+            jobList = jobList.OrderByDescending(x => x.Score).ToList();
+            Console.WriteLine();
+        }
+
+        // TODO: make method follow functional programming
+        private static List<JobListing> ApplyScorings(List<JobListing> jobList) // TODO: make everything async
+        {
+            foreach (var job in jobList)
             {
-                var description = job.InnerTextCleaned;
-
-                foreach(var keyword in DataHelpers.KEYWORDS_POSITIVE)
+                foreach (var keyword in DataHelpers.KEYWORDS_POSITIVE)
                 {
-                    if (description.Contains(keyword, StringComparison.OrdinalIgnoreCase))
+                    if (job.Description.Contains(keyword, StringComparison.OrdinalIgnoreCase))
                     {
                         job.Score++;
                     }
@@ -58,7 +73,7 @@ namespace AutoJobSearchConsoleApp
 
                 foreach (var item in DataHelpers.KEYWORDS_NEGATIVE)
                 {
-                    if (description.Contains(item, StringComparison.OrdinalIgnoreCase))
+                    if (job.Description.Contains(item, StringComparison.OrdinalIgnoreCase))
                     {
                         job.Score--;
                     }
@@ -67,8 +82,8 @@ namespace AutoJobSearchConsoleApp
                 // TODO: more robust ensuring that arguments are made lower case
                 foreach (var sentiment in DataHelpers.SENTIMENTS_POSITIVE)
                 {
-                    if(Fuzz.WeightedRatio(sentiment.ToLower(), description.ToLower()) >= 50 &&
-                       Fuzz.PartialRatio(sentiment.ToLower(), description.ToLower()) >= 50)
+                    if (Fuzz.WeightedRatio(sentiment.ToLower(), job.Description.ToLower()) >= 50 &&
+                       Fuzz.PartialRatio(sentiment.ToLower(), job.Description.ToLower()) >= 50)
                     {
                         job.Score++;
                     }
@@ -76,21 +91,20 @@ namespace AutoJobSearchConsoleApp
 
                 foreach (var sentiment in DataHelpers.SENTIMENTS_NEGATIVE)
                 {
-                    if (Fuzz.WeightedRatio(sentiment.ToLower(), description.ToLower()) >= 50 &&
-                       Fuzz.PartialRatio(sentiment.ToLower(), description.ToLower()) >= 50)
+                    if (Fuzz.WeightedRatio(sentiment.ToLower(), job.Description.ToLower()) >= 50 &&
+                       Fuzz.PartialRatio(sentiment.ToLower(), job.Description.ToLower()) >= 50)
                     {
                         job.Score--;
                     }
                 }
             }
 
-            jobList = jobList.OrderByDescending(x => x.Score).ToList();
-            Console.WriteLine();
+            return jobList;
         }
 
         public static async Task CreateJsonFiles()
         {
-            await GenerateJobListingJsonFileFromSingleTextFile();     
+            await GenerateJobListingJsonFileFromSingleTextFile();
             await GenerateJobListingJsonFileFromMultipleTextFiles();
         }
 
@@ -107,7 +121,7 @@ namespace AutoJobSearchConsoleApp
             return JsonSerializer.Deserialize<List<JobListing>>(File.ReadAllText(path))!; // TODO: exception handling
         }
 
-        private static async Task GenerateJobListingJsonFileFromMultipleTextFiles()
+        public static async Task<List<JobListing>> GetJobListingsFromFiles()
         {
             var doc = new HtmlDocument();
             var jobListings = new List<JobListing>();
@@ -122,6 +136,15 @@ namespace AutoJobSearchConsoleApp
 
             var jobListingsScrubbed = RemoveDuplicates(jobListings); // TODO: better variable naming
 
+            ApplyScorings(jobListingsScrubbed);
+
+            return jobListingsScrubbed;
+        }
+
+        private static async Task GenerateJobListingJsonFileFromMultipleTextFiles()
+        {
+            var jobListingsScrubbed = await GetJobListingsFromFiles(); // TODO: better variable naming
+
             await File.WriteAllTextAsync(Paths.MULTI_PAGE_JSON_FILE_PATH, JsonSerializer.Serialize(jobListingsScrubbed));
         }
 
@@ -133,20 +156,20 @@ namespace AutoJobSearchConsoleApp
             foreach (var jobPosting in listWithPossibleDuplicates)
             {
                 bool isDuplicate = false;
-                foreach (string link in jobPosting.Links)
+                foreach (string link in jobPosting.ApplicationLinks)
                 {
                     if (uniqueLinks.Contains(link))
                     {
                         isDuplicate = true;
                         break;
                     }
+
+                    if (isDuplicate) continue;
+
+                    uniqueJobPostings.Add(jobPosting);
                 }
 
-                if (isDuplicate) continue;
-                
-                uniqueJobPostings.Add(jobPosting);
-
-                foreach (string link in jobPosting.Links)
+                foreach (string link in jobPosting.ApplicationLinks)
                 {
                     uniqueLinks.Add(link);
                 }
@@ -172,7 +195,7 @@ namespace AutoJobSearchConsoleApp
         {
             var jobList = new List<JobListing>();
 
-            var liElements = htmlDocument.DocumentNode.SelectNodes("//li").ToList();            
+            var liElements = htmlDocument.DocumentNode.SelectNodes("//li").ToList();
 
             foreach (var li in liElements)
             {
@@ -184,7 +207,7 @@ namespace AutoJobSearchConsoleApp
 
                 foreach (var link in links)
                 {
-                    listing.LinksOuterHtml.Add(link.OuterHtml);
+                    listing.ApplicationLinks_Raw.Add(link.OuterHtml);
 
                     MatchCollection matches = Regex.Matches(link.OuterHtml, REGEX_URL_PATTERN);
 
@@ -192,47 +215,38 @@ namespace AutoJobSearchConsoleApp
                     {
 
                         // listing.Links.Add(match.Value.Replace('"', ' ').Trim()); // TODO: remove
-                        listing.Links.Add(match.Value);
+                        listing.ApplicationLinks.Add(match.Value);
                     }
                 }
 
-                //listing.InnerText = li.InnerText; // TODO: remove non-html decoding
-                listing.InnerText = WebUtility.HtmlDecode(li.InnerText); 
+                //listing.Description_Raw = li.Description_Raw; // TODO: remove non-html decoding
+                listing.Description_Raw = WebUtility.HtmlDecode(li.InnerText);
 
                 // TODO: extract to method
-                var startingIndex = listing.InnerText.IndexOf(STARTING_INDEX_KEY);
-                var endingIndex = listing.InnerText.IndexOf(ENDING_INDEX_KEY);
+                var startingIndex = listing.Description_Raw.IndexOf(STARTING_INDEX_KEY);
+                var endingIndex = listing.Description_Raw.IndexOf(ENDING_INDEX_KEY);
 
                 if (startingIndex != -1 && endingIndex != -1)
                 {
                     try
                     {
-                        listing.InnerTextCleaned = listing.InnerText.Substring(startingIndex + STARTING_INDEX_KEY.Length, endingIndex - (startingIndex + STARTING_INDEX_KEY.Length));
+                        listing.Description = listing.Description_Raw.Substring(startingIndex + STARTING_INDEX_KEY.Length, endingIndex - (startingIndex + STARTING_INDEX_KEY.Length));
                     }
                     catch
                     {
                         Console.WriteLine("Substring error"); // TODO: implement logger and replace
-                        listing.InnerTextCleaned = StringFormattingHeuristic(listing.InnerText);
+                        listing.Description = StringFormattingHeuristic(listing.Description_Raw);
                     }
                 }
                 else
                 {
-                    listing.InnerTextCleaned = StringFormattingHeuristic(listing.InnerText);
+                    listing.Description = StringFormattingHeuristic(listing.Description_Raw);
                 }
 
                 jobList.Add(listing);
             }
 
             return jobList;
-        }
-
-        private static string StringFormattingHeuristic(string input)
-        {
-            string pattern = @"([a-z]|[.])([A-Z])";
-            string replacement = "$1\n$2";
-            string result = Regex.Replace(input, pattern, replacement);
-
-            return result;
         }
     }
 }

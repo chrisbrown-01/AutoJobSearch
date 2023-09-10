@@ -8,6 +8,7 @@ namespace AutoJobSearchConsoleApp
 {
     internal class Program
     {
+        // TODO: format (codemaid?)
         // TODO: email service and email formatter
         // TODO: simple UI/GUI
         // TODO: keep track of what job search query the listing was found in
@@ -21,6 +22,10 @@ namespace AutoJobSearchConsoleApp
 
             //FuzzyStringTesting.Test1();
             //FuzzyStringTesting.TestStringContains();
+
+            //SQLiteTesting.CreateDb();
+            //var test = await LocalFileTesting.GetJobListingsFromFiles();
+            await SQLiteTesting.PopulateDb(await LocalFileTesting.GetJobListingsFromFiles());
         }
 
         /*

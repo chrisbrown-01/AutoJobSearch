@@ -57,6 +57,7 @@
 
         public static readonly List<string> KEYWORDS_NEGATIVE = new()
         {
+            "GPA",
             "End Date",
             "contract",
             "intern",

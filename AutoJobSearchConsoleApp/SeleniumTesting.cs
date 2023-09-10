@@ -37,7 +37,7 @@ namespace AutoJobSearchConsoleApp
                 //var liElements = doc.DocumentNode.SelectNodes("//li").ToList();
                 //foreach (var item in liElements)
                 //{
-                //    innerTexts.Add(item.InnerText);
+                //    innerTexts.Add(item.Description_Raw);
                 //}
 
                 await Task.Delay(Random.Shared.Next(1000, 2500));

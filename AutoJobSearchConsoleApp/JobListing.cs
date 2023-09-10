@@ -9,17 +9,17 @@ namespace AutoJobSearchConsoleApp
     public class JobListing
     {
         public int Id { get; set; }
-        public string SearchTerm { get; set; } = "FOUND BY SEARCH TERM: ___";
+        public string SearchTerm { get; set; } = "FOUND BY SEARCH TERM: ___"; // TODO: update
 
         public DateTime CreatedAt { get; private set; } = DateTime.Now;
 
-        public string InnerText { get; set; } = string.Empty;
+        public string Description_Raw { get; set; } = string.Empty;
 
-        public string InnerTextCleaned { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
 
-        public List<string> LinksOuterHtml { get; set; } = new();
+        public List<string> ApplicationLinks_Raw { get; set; } = new();
 
-        public List<string> Links { get; set; } = new();
+        public List<string> ApplicationLinks { get; set; } = new();
 
         public int Score { get; set; } = 0;
 
@@ -28,5 +28,7 @@ namespace AutoJobSearchConsoleApp
         public bool IsInterviewing { get; set; } = false;
 
         public bool IsRejected { get; set; } = false;
+
+        public string Notes { get; set; } = string.Empty;  
     }
 }
