@@ -10,7 +10,6 @@ namespace AutoJobSearchConsoleApp
     internal class FuzzyStringTesting
     {
         // TODO: case sensitivity matters so convert listing to upper/lower before running fuzzy methods
-        // TODO: probably just continue simple scoring for short key words, then do a fuzzy logic algorithm based on longer sentences. short terms are not reliable for fuzzy
         public static void Test1()
         {
             var goodJobs = DataHelpers.GOOD_LISTINGS;
@@ -21,29 +20,34 @@ namespace AutoJobSearchConsoleApp
             var badJob = badJobs[4];
             var okJob = okJobs[0];
 
-            TestGoodJob(goodJob);
+            TestGoodJob(goodJobs);
             //TestBadJob(badJob);
 
             Console.WriteLine();
         }
 
-        private static void TestGoodJob(string goodJob)
+        private static void TestGoodJob(List<string> goodJob)
         {
-            Console.WriteLine("--- Good job ---");
-            //Console.WriteLine(goodJob);
-            Console.WriteLine();
-
-            foreach (var positive in DataHelpers.Positives)
+            foreach(var listing in goodJob)
             {
-                var key = positive.ToLower();
-                var job = goodJob.ToLower();
-
+                Console.WriteLine("--- Good job ---");
+                Console.WriteLine(goodJob);
                 Console.WriteLine();
-                Console.WriteLine($"Positive term: {key}");
-                Console.WriteLine($"Description contains term? {job.Contains(key, StringComparison.OrdinalIgnoreCase)}");
-                Console.WriteLine($"Ratio: {Fuzz.Ratio(key, job)}");
-                Console.WriteLine($"Weighted Ratio: {Fuzz.WeightedRatio(key, job)}");
-                Console.WriteLine($"Partial ratio: {Fuzz.PartialRatio(key, job)}");
+
+                foreach (var positive in DataHelpers.SENTIMENTS_POSITIVE)
+                {
+                    var key = positive.ToLower();
+                    var job = listing.ToLower();
+
+                    Console.WriteLine();
+                    Console.WriteLine($"Positive term: {key}");
+                    Console.WriteLine($"Description contains term? {job.Contains(key, StringComparison.OrdinalIgnoreCase)}");
+                    Console.WriteLine($"Ratio: {Fuzz.Ratio(key, job)}");
+                    Console.WriteLine($"Weighted Ratio: {Fuzz.WeightedRatio(key, job)}");
+                    Console.WriteLine($"Partial ratio: {Fuzz.PartialRatio(key, job)}");
+                    Console.WriteLine($"Reversed Weighted Ratio: {Fuzz.WeightedRatio(job, key)}");
+                    Console.WriteLine($"Reversed Partial ratio: {Fuzz.PartialRatio(job, key)}");
+                }
             }
         }
 
@@ -53,7 +57,7 @@ namespace AutoJobSearchConsoleApp
             //Console.WriteLine(badJob);
             Console.WriteLine();
 
-            foreach (var negative in DataHelpers.Negatives)
+            foreach (var negative in DataHelpers.SENTIMENTS_NEGATIVE)
             {
                 var key = negative.ToLower();
                 var job = badJob.ToLower();
@@ -65,6 +69,20 @@ namespace AutoJobSearchConsoleApp
                 Console.WriteLine($"Weighted Ratio: {Fuzz.WeightedRatio(key, job)}");
                 Console.WriteLine($"Partial ratio: {Fuzz.PartialRatio(key, job)}");
             }
+        }
+
+        public static void TestStringContains()
+        {
+            string description = "new graduate junior developer freshly graduated no experience required 1-2 years experience entry-level will be reporting to the senior";
+
+            var test1 = description.Contains("new grad");
+            var test2 = description.Contains("junior");
+            var test3 = description.Contains("1-");
+            var test4 = description.Contains("entry");
+            var test5 = description.Contains("no experience");
+            var test6 = description.Contains("report");
+
+            Console.WriteLine();
         }
     }
 }

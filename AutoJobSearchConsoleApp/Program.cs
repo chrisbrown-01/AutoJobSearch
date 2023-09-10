@@ -8,9 +8,9 @@ namespace AutoJobSearchConsoleApp
 {
     internal class Program
     {
-        // TODO: sql database
         // TODO: email service and email formatter
         // TODO: simple UI/GUI
+        // TODO: keep track of what job search query the listing was found in
         static async Task Main(string[] args)
         {
             //await SeleniumTesting.Execute();
@@ -19,7 +19,8 @@ namespace AutoJobSearchConsoleApp
             //LocalFileTesting.ScoringTest(); 
             //LocalFileTesting.CheckForDuplicatesTest();
 
-            FuzzyStringTesting.Test1();
+            //FuzzyStringTesting.Test1();
+            //FuzzyStringTesting.TestStringContains();
         }
 
         /*
