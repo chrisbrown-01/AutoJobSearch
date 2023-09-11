@@ -1,10 +1,12 @@
-﻿using Dapper;
+﻿using AutoJobSearchConsoleApp.Models;
+using Dapper;
 using Microsoft.Data.Sqlite;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace AutoJobSearchConsoleApp
 {
@@ -12,6 +14,7 @@ namespace AutoJobSearchConsoleApp
     {
         private const string CONNECTION_STRING = "Data Source=..\\..\\..\\AutoJobSearch.db";
 
+        // TODO: improve readability, run checks to ensure database does/does not exist for automated install
         public static void CreateDb()
         {
             using (var connection = new SqliteConnection(CONNECTION_STRING))
@@ -20,19 +23,28 @@ namespace AutoJobSearchConsoleApp
 
                 var sql = @"
                 CREATE TABLE IF NOT EXISTS JobListings (
-                Id INTEGER PRIMARY KEY,
+                Id INTEGER PRIMARY KEY AUTOINCREMENT,
                 SearchTerm TEXT,
                 CreatedAt TEXT,
                 Description_Raw TEXT,
                 Description TEXT,
-                ApplicationLinks_Raw TEXT,
-                ApplicationLinks TEXT,
                 Score INTEGER,
                 IsAppliedTo INTEGER,
                 IsInterviewing INTEGER,
                 IsRejected INTEGER,
                 Notes TEXT
-            );";
+                );";
+
+                connection.Execute(sql);
+
+                sql = @"
+                     CREATE TABLE IF NOT EXISTS ApplicationLinks(
+                     Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                     JobListingId INTEGER,
+                     Link TEXT,
+                     Link_RawHTML TEXT,
+                     FOREIGN KEY(JobListingId) REFERENCES JobListings(Id)
+                     );";
 
                 connection.Execute(sql);
             }
@@ -44,29 +56,12 @@ namespace AutoJobSearchConsoleApp
             {
                 await connection.OpenAsync();
 
-                //var job = new
-                //{
-                //    SearchTerm = "Software Engineer",
-                //    CreatedAt = DateTime.Now.ToString(),
-                //    Description_Raw = "This is a raw description",
-                //    Description = "This is a description",
-                //    ApplicationLinks_Raw = "www.example.com",
-                //    ApplicationLinks = "www.example.com",
-                //    Score = 100,
-                //    IsAppliedTo = 0,
-                //    IsInterviewing = 0,
-                //    IsRejected = 0,
-                //    Notes = "These are some notes"
-                //};
-
-                var sql = @"
+                var insertJobListingSQL = @"
                 INSERT INTO JobListings (
                 SearchTerm, 
                 CreatedAt, 
                 Description_Raw, 
                 Description, 
-                ApplicationLinks_Raw, 
-                ApplicationLinks, 
                 Score, 
                 IsAppliedTo, 
                 IsInterviewing, 
@@ -77,8 +72,6 @@ namespace AutoJobSearchConsoleApp
                 @CreatedAt, 
                 @Description_Raw, 
                 @Description, 
-                @ApplicationLinks_Raw_Serialized, 
-                @ApplicationLinks_Serialized,
                 @Score, 
                 @IsAppliedTo, 
                 @IsInterviewing, 
@@ -86,9 +79,22 @@ namespace AutoJobSearchConsoleApp
                 @Notes
                 );";
 
-                foreach(var job in jobListings)
+                var getLastInsertIdSQL = "SELECT last_insert_rowid();";
+
+                var insertApplicationLinksSQL = "INSERT INTO ApplicationLinks (JobListingId, Link, Link_RawHTML) Values (@JobListingId, @Link, @Link_RawHTML)";
+
+                foreach (var job in jobListings)
                 {
-                    await connection.ExecuteAsync(sql, job);
+                    await connection.ExecuteAsync(insertJobListingSQL, job);
+                    var jobListingId = await connection.QuerySingleAsync<int>(getLastInsertIdSQL);
+
+                    foreach (var link in job.ApplicationLinks)
+                    {
+                        await connection.ExecuteAsync(insertApplicationLinksSQL, new ApplicationLink() { 
+                            JobListingId = jobListingId, 
+                            Link = link.Link, 
+                            Link_RawHTML = link.Link_RawHTML });
+                    }
                 }           
             }
         }

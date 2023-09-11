@@ -5,7 +5,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace AutoJobSearchConsoleApp
+namespace AutoJobSearchConsoleApp.Models
 {
     public class JobListing
     {
@@ -18,13 +18,7 @@ namespace AutoJobSearchConsoleApp
 
         public string Description { get; set; } = string.Empty;
 
-        public List<string> ApplicationLinks_Raw { get; set; } = new();
-
-        public List<string> ApplicationLinks { get; set; } = new();
-
-        public string ApplicationLinks_Serialized => JsonSerializer.Serialize(ApplicationLinks);
-
-        public string ApplicationLinks_Raw_Serialized => JsonSerializer.Serialize(ApplicationLinks_Raw);
+        public List<ApplicationLink> ApplicationLinks { get; set; } = new();
 
         public int Score { get; set; } = 0;
 
@@ -34,6 +28,6 @@ namespace AutoJobSearchConsoleApp
 
         public bool IsRejected { get; set; } = false;
 
-        public string Notes { get; set; } = string.Empty;  
+        public string Notes { get; set; } = string.Empty;
     }
 }

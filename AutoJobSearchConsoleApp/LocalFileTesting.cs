@@ -1,4 +1,5 @@
-﻿using FuzzySharp;
+﻿using AutoJobSearchConsoleApp.Models;
+using FuzzySharp;
 using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
@@ -157,9 +158,9 @@ namespace AutoJobSearchConsoleApp
             {
                 bool isDuplicate = false;
 
-                foreach (string link in jobPosting.ApplicationLinks)
+                foreach (var link in jobPosting.ApplicationLinks)
                 {
-                    if (uniqueLinks.Contains(link))
+                    if (uniqueLinks.Contains(link.Link))
                     {
                         isDuplicate = true;
                         break;
@@ -170,9 +171,9 @@ namespace AutoJobSearchConsoleApp
 
                 uniqueJobPostings.Add(jobPosting);
 
-                foreach (string link in jobPosting.ApplicationLinks)
+                foreach (var link in jobPosting.ApplicationLinks)
                 {
-                    uniqueLinks.Add(link);
+                    uniqueLinks.Add(link.Link);
                 }
             }
 
@@ -208,19 +209,22 @@ namespace AutoJobSearchConsoleApp
 
                 foreach (var link in links)
                 {
-                    listing.ApplicationLinks_Raw.Add(link.OuterHtml);
+                    var applicationLink = new ApplicationLink();
+
+                    applicationLink.Link_RawHTML = link.OuterHtml;
+
+                    //listing.ApplicationLinks.Add(link.OuterHtml);
 
                     MatchCollection matches = Regex.Matches(link.OuterHtml, REGEX_URL_PATTERN);
 
-                    foreach (Match match in matches)
+                    if(matches.FirstOrDefault() != null) // TODO: exception handling?
                     {
-
-                        // listing.Links.Add(match.Value.Replace('"', ' ').Trim()); // TODO: remove
-                        listing.ApplicationLinks.Add(match.Value);
+                        applicationLink.Link = matches.First().Value;
                     }
+
+                    listing.ApplicationLinks.Add(applicationLink);
                 }
 
-                //listing.Description_Raw = li.Description_Raw; // TODO: remove non-html decoding
                 listing.Description_Raw = WebUtility.HtmlDecode(li.InnerText);
 
                 // TODO: extract to method
