@@ -81,7 +81,7 @@ namespace AutoJobSearchConsoleApp
 
                 var getLastInsertIdSQL = "SELECT last_insert_rowid();";
 
-                var insertApplicationLinksSQL = "INSERT INTO ApplicationLinks (JobListingId, Link, Link_RawHTML) Values (@JobListingId, @Link, @Link_RawHTML)";
+                var insertApplicationLinksSQL = "INSERT INTO ApplicationLinks (JobListingId, Link, Link_RawHTML) Values (@JobListingId, @Link, @Link_RawHTML)"; // TODO: make const/static
 
                 foreach (var job in jobListings)
                 {
@@ -90,10 +90,9 @@ namespace AutoJobSearchConsoleApp
 
                     foreach (var link in job.ApplicationLinks)
                     {
-                        await connection.ExecuteAsync(insertApplicationLinksSQL, new ApplicationLink() { 
-                            JobListingId = jobListingId, 
-                            Link = link.Link, 
-                            Link_RawHTML = link.Link_RawHTML });
+                        link.JobListingId = jobListingId;
+
+                        await connection.ExecuteAsync(insertApplicationLinksSQL, link);
                     }
                 }           
             }
@@ -113,5 +112,45 @@ namespace AutoJobSearchConsoleApp
                 Console.WriteLine();
             }
         }
+
+        public static async Task UpdateJobListing()
+        {
+            var test = new JobListing();
+
+            using (var connection = new SqliteConnection(CONNECTION_STRING))
+            {
+                await connection.OpenAsync();
+
+                int id = 50;
+                var sqlQuery = "SELECT * FROM JobListings WHERE Id = @Id;";
+
+                var jobListing = await connection.QuerySingleAsync<JobListing>(sqlQuery, new { Id = id });
+
+                if (jobListing == null) return;
+
+                var applicationLinksQuery = "SELECT Id, JobListingId, Link FROM ApplicationLinks Where JobListingId = @Id;";
+                var applicationLinks = await connection.QueryAsync<ApplicationLink>(applicationLinksQuery, new { Id = id });
+
+                foreach(var applicationLink in applicationLinks)
+                {
+                    jobListing.ApplicationLinks.Add(applicationLink);
+                }
+
+                jobListing.IsInterviewing = false;
+                jobListing.IsRejected = true;
+                jobListing.Notes = $"Updated via SQL at time {DateTime.Now.ToString()}";
+
+                var sqlUpdate = @"UPDATE JobListings SET 
+                                Score = @Score,
+                                IsAppliedTo = @IsAppliedTo,
+                                IsInterviewing = @IsInterviewing,
+                                IsRejected = @IsRejected,
+                                Notes = @Notes 
+                                WHERE Id = @Id;";
+
+                await connection.ExecuteAsync(sqlUpdate, jobListing);
+            }
+        }
+
     }
 }

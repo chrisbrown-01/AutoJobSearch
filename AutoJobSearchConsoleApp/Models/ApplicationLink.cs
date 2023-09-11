@@ -8,9 +8,9 @@ namespace AutoJobSearchConsoleApp.Models
 {
     public class ApplicationLink
     {
-        public int Id { get; set; }
+        public int Id { get; }
         
-        public int JobListingId { get; set; } // Foreign Key
+        public int JobListingId { get; set; }
         
         public string Link { get; set; } = string.Empty;
 
