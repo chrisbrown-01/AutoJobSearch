@@ -24,7 +24,8 @@ namespace AutoJobSearchConsoleApp
             //FuzzyStringTesting.TestStringContains();
 
             //SQLiteTesting.CreateDb();
-            await SQLiteTesting.PopulateDb(LocalFileTesting.LoadFromJsonFile(Paths.MULTI_PAGE_JSON_FILE_PATH));
+            //await SQLiteTesting.PopulateDb(LocalFileTesting.LoadFromJsonFile(Paths.MULTI_PAGE_JSON_FILE_PATH));
+            await SQLiteTesting.GetAllLinks();
         }
 
         /*

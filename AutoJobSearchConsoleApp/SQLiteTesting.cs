@@ -15,11 +15,11 @@ namespace AutoJobSearchConsoleApp
         private const string CONNECTION_STRING = "Data Source=..\\..\\..\\AutoJobSearch.db";
 
         // TODO: improve readability, run checks to ensure database does/does not exist for automated install
-        public static void CreateDb()
+        public static async Task CreateDb()
         {
             using (var connection = new SqliteConnection(CONNECTION_STRING))
             {
-                connection.Open();
+                await connection.OpenAsync();
 
                 var sql = @"
                 CREATE TABLE IF NOT EXISTS JobListings (
@@ -35,7 +35,7 @@ namespace AutoJobSearchConsoleApp
                 Notes TEXT
                 );";
 
-                connection.Execute(sql);
+                await connection.ExecuteAsync(sql);
 
                 sql = @"
                      CREATE TABLE IF NOT EXISTS ApplicationLinks(
@@ -46,7 +46,7 @@ namespace AutoJobSearchConsoleApp
                      FOREIGN KEY(JobListingId) REFERENCES JobListings(Id)
                      );";
 
-                connection.Execute(sql);
+                await connection.ExecuteAsync(sql);
             }
         }
 
@@ -96,6 +96,21 @@ namespace AutoJobSearchConsoleApp
                             Link_RawHTML = link.Link_RawHTML });
                     }
                 }           
+            }
+        }
+
+        public static async Task GetAllLinks()
+        {
+            using (var connection = new SqliteConnection(CONNECTION_STRING))
+            {
+                await connection.OpenAsync();
+
+                var sql = "SELECT * FROM ApplicationLinks;";
+                //var sql = "SELECT * FROM ApplicationLinks WHERE JobListingId = your_specific_id;";
+
+                var applicationLinks = await connection.QueryAsync<ApplicationLink>(sql);
+
+                Console.WriteLine();
             }
         }
     }
