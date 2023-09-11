@@ -19,7 +19,7 @@ namespace AutoJobSearchConsoleApp
                 connection.Open();
 
                 var sql = @"
-            CREATE TABLE IF NOT EXISTS JobListings (
+                CREATE TABLE IF NOT EXISTS JobListings (
                 Id INTEGER PRIMARY KEY,
                 SearchTerm TEXT,
                 CreatedAt TEXT,
@@ -60,7 +60,7 @@ namespace AutoJobSearchConsoleApp
                 //};
 
                 var sql = @"
-            INSERT INTO JobListings (
+                INSERT INTO JobListings (
                 SearchTerm, 
                 CreatedAt, 
                 Description_Raw, 
@@ -72,23 +72,22 @@ namespace AutoJobSearchConsoleApp
                 IsInterviewing, 
                 IsRejected, 
                 Notes
-            ) VALUES (
+                ) VALUES (
                 @SearchTerm, 
                 @CreatedAt, 
                 @Description_Raw, 
                 @Description, 
-                @ApplicationLinks_Raw, 
-                @ApplicationLinks, 
+                @ApplicationLinks_Raw_Serialized, 
+                @ApplicationLinks_Serialized,
                 @Score, 
                 @IsAppliedTo, 
                 @IsInterviewing, 
                 @IsRejected, 
                 @Notes
-            );";
+                );";
 
                 foreach(var job in jobListings)
                 {
-                    // TODO: serialization of List<string> into single string variable done here.
                     await connection.ExecuteAsync(sql, job);
                 }           
             }

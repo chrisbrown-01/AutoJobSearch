@@ -156,6 +156,7 @@ namespace AutoJobSearchConsoleApp
             foreach (var jobPosting in listWithPossibleDuplicates)
             {
                 bool isDuplicate = false;
+
                 foreach (string link in jobPosting.ApplicationLinks)
                 {
                     if (uniqueLinks.Contains(link))
@@ -163,11 +164,11 @@ namespace AutoJobSearchConsoleApp
                         isDuplicate = true;
                         break;
                     }
-
-                    if (isDuplicate) continue;
-
-                    uniqueJobPostings.Add(jobPosting);
                 }
+
+                if (isDuplicate) continue;
+
+                uniqueJobPostings.Add(jobPosting);
 
                 foreach (string link in jobPosting.ApplicationLinks)
                 {
