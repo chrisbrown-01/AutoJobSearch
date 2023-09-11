@@ -1,6 +1,4 @@
-﻿using AngleSharp;
-using AngleSharp.Dom;
-using HtmlAgilityPack;
+﻿using HtmlAgilityPack;
 using OpenQA.Selenium.Chrome;
 using System.Net.Http.Headers;
 
@@ -14,7 +12,7 @@ namespace AutoJobSearchConsoleApp
         // TODO: keep track of what job search query the listing was found in
         static async Task Main(string[] args)
         {
-            //await SeleniumTesting.Execute();
+            await SeleniumTesting.Execute();
             //await LocalFileTesting.CreateJsonFiles();
             //LocalFileTesting.LoadFromJsonFileTests();
             //LocalFileTesting.ScoringTest(); 
@@ -26,7 +24,7 @@ namespace AutoJobSearchConsoleApp
             //SQLiteTesting.CreateDb();
             //await SQLiteTesting.PopulateDb(LocalFileTesting.LoadFromJsonFile(Paths.MULTI_PAGE_JSON_FILE_PATH));
             //await SQLiteTesting.GetAllLinks();
-            await SQLiteTesting.UpdateJobListing();
+            //await SQLiteTesting.UpdateJobListing();
         }
 
         /*
