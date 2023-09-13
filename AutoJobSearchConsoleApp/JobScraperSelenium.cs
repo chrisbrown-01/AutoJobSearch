@@ -51,7 +51,7 @@ namespace AutoJobSearchConsoleApp
 
                 return jobListings;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }

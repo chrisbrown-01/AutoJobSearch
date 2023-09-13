@@ -81,7 +81,7 @@ namespace AutoJobSearchConsoleApp
 
                 var getLastInsertIdSQL = "SELECT last_insert_rowid();";
 
-                var insertApplicationLinksSQL = "INSERT INTO ApplicationLinks (JobListingId, Link, Link_RawHTML) Values (@JobListingId, @Link, @Link_RawHTML)"; // TODO: make const/static
+                var insertApplicationLinksSQL = "INSERT INTO ApplicationLinks (JobListingId, Link, Link_RawHTML) Values (@JobListingId, @Link, @Link_RawHTML)"; // TODO: make const/static, try to complete in batches
 
                 foreach (var job in jobListings)
                 {
