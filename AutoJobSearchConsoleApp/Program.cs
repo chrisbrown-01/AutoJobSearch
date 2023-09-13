@@ -12,7 +12,7 @@ namespace AutoJobSearchConsoleApp
         // TODO: keep track of what job search query the listing was found in
         static async Task Main(string[] args)
         {
-            await SeleniumTesting.Execute();
+            //await SeleniumTesting.Execute();
             //await LocalFileTesting.CreateJsonFiles();
             //LocalFileTesting.LoadFromJsonFileTests();
             //LocalFileTesting.ScoringTest(); 
@@ -22,37 +22,9 @@ namespace AutoJobSearchConsoleApp
             //FuzzyStringTesting.TestStringContains();
 
             //SQLiteTesting.CreateDb();
-            //await SQLiteTesting.PopulateDb(LocalFileTesting.LoadFromJsonFile(Paths.MULTI_PAGE_JSON_FILE_PATH));
+            await SQLiteTesting.PopulateDb(LocalFileTesting.LoadFromJsonFile(Paths.MULTI_PAGE_JSON_FILE_PATH));
             //await SQLiteTesting.GetAllLinks();
             //await SQLiteTesting.UpdateJobListing();
         }
-
-        /*
-        HttpClient _httpClient = new();
-        var request = new HttpRequestMessage(HttpMethod.Get, JOBS_URL);
-        var userAgentString = new ProductInfoHeaderValue("Chrome", "116.0.0.0");
-        //var productValue = new ProductInfoHeaderValue("TestService", "1.0");
-        //var commentValue = new ProductInfoHeaderValue("(+https://www.google.com)");
-        request.Headers.UserAgent.Add(userAgentString);
-        //request.Headers.UserAgent.Add(productValue);
-        //request.Headers.UserAgent.Add(commentValue);
-        var response = await _httpClient.SendAsync(request);
-        var result = await response.Content.ReadAsStringAsync();
-        _httpClient.Dispose();
-        */
-
-        /*
-        HttpClient _httpClient = new();
-        var result = await _httpClient.GetAsync(JOBS_URL);
-        var test = await result.Content.ReadAsStringAsync();
-        _httpClient.Dispose();
-        */
-
-        /* AngleSharp
-        var config = Configuration.Default.WithDefaultLoader();
-        var context = BrowsingContext.New(config);
-        var document = await context.OpenAsync(JOBS_URL);
-        var test = document.Prettify();
-        */
     }
 }

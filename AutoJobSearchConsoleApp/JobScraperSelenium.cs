@@ -21,42 +21,55 @@ namespace AutoJobSearchConsoleApp
         private const int MAX_START_PAGE = 100; 
 
         // TODO: surround in try-catch so that results are still saved even if captcha kills selenium
-        public static async Task ScrapeJobs(IEnumerable<string> searchTerms)
+        public static async Task<IList<JobListing>> ScrapeJobs(IEnumerable<string> searchTerms) // TODO: extract interface
         {
             var jobListings = new List<JobListing>();
 
             var doc = new HtmlDocument();
             var driver = new ChromeDriver();
 
-            foreach (var searchTerm in searchTerms)
+            try
             {
-                for (int i = 0; i < MAX_START_PAGE + 1; i += 10)
+                foreach (var searchTerm in searchTerms)
                 {
-                    driver.Navigate().GoToUrl($"https://www.google.com/search?q={WebUtility.UrlEncode(searchTerm)}&ibp=htl;jobs&start={i}");
+                    for (int i = 0; i < MAX_START_PAGE + 1; i += 10)
+                    {
+                        driver.Navigate().GoToUrl($"https://www.google.com/search?q={WebUtility.UrlEncode(searchTerm)}&ibp=htl;jobs&start={i}");
 
-                    doc.LoadHtml(driver.PageSource);
-                    var liElements = doc.DocumentNode?.SelectNodes("//li")?.ToList();
+                        var newUrl = driver.Url; // TODO: experiment with selenium URLs
 
-                    if (liElements == null) break;
+                        doc.LoadHtml(driver.PageSource);
+                        var liElements = doc.DocumentNode?.SelectNodes("//li")?.ToList();
 
-                    jobListings.AddRange(ExtractJobListingsFromLiElements(liElements));
+                        if (liElements == null) break;
 
-                    await Task.Delay(Random.Shared.Next(3000, 6000)); // TODO: make delay values part of config file
+                        jobListings.AddRange(ExtractJobListingsFromLiElements(liElements, searchTerm));
+
+                        await Task.Delay(Random.Shared.Next(3000, 6000)); // TODO: make delay values part of config file
+                    }
                 }
-            }
 
-            driver.Close();
-            driver.Quit();
+                return jobListings;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+            finally
+            {
+                driver.Close();
+                driver.Quit();
+            }
         }
 
-        private static List<JobListing> ExtractJobListingsFromLiElements(IEnumerable<HtmlNode> liElements)
+        private static IList<JobListing> ExtractJobListingsFromLiElements(IEnumerable<HtmlNode> liElements, string searchTerm)
         {
             var jobList = new List<JobListing>();
 
             foreach (var li in liElements)
             {
-                // TODO: update SearchTerm property
                 var listing = new JobListing();
+                listing.SearchTerm = searchTerm;
 
                 var links = li.Descendants("a")
                     .Where(a => a.InnerText.Contains("apply", StringComparison.OrdinalIgnoreCase));
@@ -93,12 +106,12 @@ namespace AutoJobSearchConsoleApp
                     catch
                     {
                         Console.WriteLine("Substring error"); // TODO: implement logger and replace
-                        listing.Description = StringUtility.StringFormattingHeuristic(listing.Description_Raw);
+                        listing.Description = StringUtility.AddNewLinesToMisformedString(listing.Description_Raw);
                     }
                 }
                 else
                 {
-                    listing.Description = StringUtility.StringFormattingHeuristic(listing.Description_Raw);
+                    listing.Description = StringUtility.AddNewLinesToMisformedString(listing.Description_Raw);
                 }
 
                 jobList.Add(listing);

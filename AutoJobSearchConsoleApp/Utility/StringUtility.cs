@@ -9,7 +9,7 @@ namespace AutoJobSearchConsoleApp.Utility
 {
     public class StringUtility
     {
-        public static string StringFormattingHeuristic(string input)
+        public static string AddNewLinesToMisformedString(string input)
         {
             string pattern = @"([a-z]|[.])([A-Z])";
             string replacement = "$1\n$2";
