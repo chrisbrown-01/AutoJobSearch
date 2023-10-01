@@ -10,7 +10,7 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace AutoJobSearchConsoleApp
 {
-    internal class SQLiteTesting
+    public class SQLiteTesting
     {
         private const string CONNECTION_STRING = "Data Source=..\\..\\..\\AutoJobSearch.db";
 
@@ -151,6 +151,5 @@ namespace AutoJobSearchConsoleApp
                 await connection.ExecuteAsync(sqlUpdate, jobListing);
             }
         }
-
     }
 }

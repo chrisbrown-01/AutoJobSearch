@@ -17,7 +17,7 @@ namespace AutoJobSearchConsoleApp
 
 
 
-    internal class SeleniumTesting
+    public class SeleniumTesting
     {
         private const string JOBS_URL = "https://www.google.com/search?q=.net+jobs+tennessee&oq=.net+j&aqs=edge.1.69i57j69i59l2j69i60l2j69i61j69i65l2.2826j0j1&sourceid=chrome&ie=UTF-8&ibp=htl;jobs&start=100#htivrt=jobs&htidocid=uW2IE3St57iokg2KAAAAAA%3D%3D&fpstate=tldetail";
         private const int MAX_START_PAGE = 100;
