@@ -8,11 +8,24 @@
         x:Class="AutoJobSearchGUI.MainWindow"
         Title="AutoJobSearchGUI"
 		MinWidth="500" MinHeight="500">
-	<StackPanel>
+	<DockPanel>
+		<Menu DockPanel.Dock="Top">
+			<MenuItem Header="_File">
+				<MenuItem Header="_Open..."/>
+				<Separator/>
+				<MenuItem Header="_Exit"/>
+			</MenuItem>
+			<MenuItem Header="_Edit">
+				<MenuItem Header="Copy"/>
+				<MenuItem Header="Paste"/>
+			</MenuItem>
+			<MenuItem Header="_Job Search"/>
+		</Menu>
 		<DataGrid Name="dataGrid1"
 				  CanUserResizeColumns="True"
 				  ColumnWidth="*"
-				  Height="400"
+				  MinHeight="400"
+				  MaxHeight="1000"
 				  x:DataType="viewModels:JobListingMVVM">
 			<DataGrid.Columns>
 				<DataGridTextColumn Header="Id" Binding="{Binding Id}" />
@@ -25,7 +38,7 @@
 				<DataGridCheckBoxColumn Header="IsRejected" Binding="{Binding IsRejected}" />
 			</DataGrid.Columns>
 		</DataGrid>
-	</StackPanel>
+	</DockPanel>
 	<!--
 	<StackPanel>
 	<TextBlock>Welcome to Avalonia!</TextBlock>

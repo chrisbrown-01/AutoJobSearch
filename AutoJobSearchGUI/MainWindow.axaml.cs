@@ -19,7 +19,7 @@ namespace AutoJobSearchGUI
         {
             InitializeComponent();
 
-            var JobListings = SQLiteDb.GetAllJobListings().Result.Take(10);
+            var JobListings = SQLiteDb.GetAllJobListings().Result.Take(25);
 
             foreach (var job in JobListings)
             {
