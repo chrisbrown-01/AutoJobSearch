@@ -14,7 +14,17 @@ namespace AutoJobSearchShared
             {
                 await connection.OpenAsync();
 
-                var sqlQuery = "SELECT * FROM JobListings";
+                // var sqlQuery = "SELECT * FROM JobListings";
+                var sqlQuery = @"SELECT 
+                                 Id, 
+                                 SearchTerm, 
+                                 CreatedAt, 
+                                 Description, 
+                                 Score, 
+                                 IsAppliedTo,
+                                 IsInterviewing,
+                                 IsRejected
+                                 FROM JobListings";
 
                 var jobListingsQuery = await connection.QueryAsync<JobListing>(sqlQuery);
                 jobListings = jobListingsQuery.ToList(); // TODO: improve, perform null checking?

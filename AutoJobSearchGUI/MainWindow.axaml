@@ -2,22 +2,45 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="300"
+        mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="500"
         x:Class="AutoJobSearchGUI.MainWindow"
-        Title="AutoJobSearchGUI">
+        Title="AutoJobSearchGUI"
+		MinWidth="500" MinHeight="500">
 	<StackPanel>
-		<TextBlock>Welcome to Avalonia!</TextBlock>
 		<Button Name="btn1" Click="ButtonClicked">Button 1</Button>
-		<TextBlock Name="txt1"></TextBlock>
-		<ListBox Name="listBox1"></ListBox>
-		<ScrollViewer>
+		<DataGrid Name="dataGrid1"
+		  AutoGenerateColumns="True"
+		  CanUserResizeColumns="True"
+		  FontSize="6"
+		  ColumnWidth="*"
+		  Height="400">
+		</DataGrid>
+		<!--
+		<ScrollViewer HorizontalScrollBarVisibility="Disabled" Height="400">
 			<DataGrid Name="dataGrid1"
 					  AutoGenerateColumns="True"
 					  CanUserResizeColumns="True"
-					  ColumnWidth="10"
 					  FontSize="6"
-					  Height="200">
+					  ColumnWidth="*"
+					  Height="400">
 			</DataGrid>
 		</ScrollViewer>
+		-->
 	</StackPanel>
+	<!--
+	<StackPanel>
+	<TextBlock>Welcome to Avalonia!</TextBlock>
+	<Button Name="btn1" Click="ButtonClicked">Button 1</Button>
+	<TextBlock Name="txt1"></TextBlock>	
+	<ListBox Name="listBox1"></ListBox>
+	<ScrollViewer>
+		<DataGrid Name="dataGrid1"
+				  AutoGenerateColumns="True"
+				  CanUserResizeColumns="True"
+				  FontSize="6"
+				  Height="200">
+		</DataGrid>
+	</ScrollViewer>
+	</StackPanel>	
+	-->
 </Window>

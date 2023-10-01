@@ -44,15 +44,15 @@ namespace AutoJobSearchGUI
         public void ButtonClicked(object source, RoutedEventArgs args)
         {
             Debug.WriteLine("Click!");
-            txt1.Text = "Clicked";
-            listBox1.ItemsSource = new List<string>
-            {
-                "test1",
-                "test2",
-                "test3"
-            };
+            //txt1.Text = "Clicked";
+            //listBox1.ItemsSource = new List<string>
+            //{
+            //    "test1",
+            //    "test2",
+            //    "test3"
+            //};
 
-            dataGrid1.ItemsSource = SQLiteDb.GetAllJobListings().Result.Take(100);
+            dataGrid1.ItemsSource = SQLiteDb.GetAllJobListings().Result.Take(50);
 
             // TODO: remove raw columns, experiment with view heights/widths as hardcoded or percentages,
             // SQLite concurrency disabling?, database relative pathing best practices + keep all relative paths within shared folder?
