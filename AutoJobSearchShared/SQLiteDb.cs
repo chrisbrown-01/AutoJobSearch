@@ -10,7 +10,7 @@ namespace AutoJobSearchShared
         {
             var jobListings = new List<JobListing>();
 
-            using (var connection = new SqliteConnection(Constants.SQLITE_CONNECTION_STRING))
+            using (var connection = new SqliteConnection(Constants.SQLITE_CONNECTION_STRING)) // TODO: db connection pooling
             {
                 await connection.OpenAsync();
 
@@ -31,6 +31,16 @@ namespace AutoJobSearchShared
             }
 
             return jobListings;
+        }
+
+        public static async Task UpdateDatabaseBoolPropertyById(string columnName, bool value, int id) // TODO: better naming
+        {
+            using (var connection = new SqliteConnection(Constants.SQLITE_CONNECTION_STRING)) // TODO: db connection pooling
+            {
+                await connection.OpenAsync();
+                string sql = $"UPDATE JobListings SET {columnName} = @Value WHERE Id = @Id"; // TODO: change to stored procedure
+                await connection.ExecuteAsync(sql, new { Value = value, Id = id });
+            }
         }
 
     }

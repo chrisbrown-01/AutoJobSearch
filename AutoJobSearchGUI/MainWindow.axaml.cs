@@ -35,7 +35,7 @@ namespace AutoJobSearchGUI
                     IsRejected = job.IsRejected,
                 };
 
-                jobListingMVVM.PropertyChanged += JobListingMVVM_PropertyChanged!;
+                jobListingMVVM.PropertyChanged += JobListingMVVM_PropertyChanged;
 
                 JobListingsMVVM.Add(jobListingMVVM);
             }
@@ -46,9 +46,9 @@ namespace AutoJobSearchGUI
 
         public List<JobListingMVVM> JobListingsMVVM { get; set; } = new();
 
-        private void JobListingMVVM_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void JobListingMVVM_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
-            var jobListingMVVM = (JobListingMVVM)sender;
+            var jobListingMVVM = (JobListingMVVM)sender!;
             Debug.WriteLine($"Property {e.PropertyName} of job listing {jobListingMVVM.Id} has changed.");
         }
 
