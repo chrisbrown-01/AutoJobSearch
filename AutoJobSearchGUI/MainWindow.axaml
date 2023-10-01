@@ -2,30 +2,29 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="500"
+		xmlns:models="clr-namespace:AutoJobSearchConsoleApp.Models;assembly=AutoJobSearchConsoleApp"
+        mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="1000"
         x:Class="AutoJobSearchGUI.MainWindow"
         Title="AutoJobSearchGUI"
 		MinWidth="500" MinHeight="500">
 	<StackPanel>
 		<Button Name="btn1" Click="ButtonClicked">Button 1</Button>
 		<DataGrid Name="dataGrid1"
-		  AutoGenerateColumns="True"
-		  CanUserResizeColumns="True"
-		  FontSize="6"
-		  ColumnWidth="*"
-		  Height="400">
+          CanUserResizeColumns="True"
+          ColumnWidth="*"
+		  Height="400"
+          x:DataType="models:JobListing">
+			<DataGrid.Columns>
+				<DataGridTextColumn Header="Id" Binding="{Binding Id}" />
+				<DataGridTextColumn Header="SearchTerm" Binding="{Binding SearchTerm}" />
+				<DataGridTextColumn Header="CreatedAt" Binding="{Binding CreatedAt}" />
+				<DataGridTextColumn Header="Description" Binding="{Binding Description}" />
+				<DataGridTextColumn Header="Score" Binding="{Binding Score}" />
+				<DataGridTextColumn Header="IsAppliedTo" Binding="{Binding IsAppliedTo}" />
+				<DataGridTextColumn Header="IsInterviewing" Binding="{Binding IsInterviewing}" />
+				<DataGridTextColumn Header="IsRejected" Binding="{Binding IsRejected}" />
+			</DataGrid.Columns>
 		</DataGrid>
-		<!--
-		<ScrollViewer HorizontalScrollBarVisibility="Disabled" Height="400">
-			<DataGrid Name="dataGrid1"
-					  AutoGenerateColumns="True"
-					  CanUserResizeColumns="True"
-					  FontSize="6"
-					  ColumnWidth="*"
-					  Height="400">
-			</DataGrid>
-		</ScrollViewer>
-		-->
 	</StackPanel>
 	<!--
 	<StackPanel>
