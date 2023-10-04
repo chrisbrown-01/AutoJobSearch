@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 
 namespace AutoJobSearchGUI
 {
+    // TODO: follow avalonia tutorial and convert to multiple views
     public partial class MainWindow : Window
     {
         public MainWindow()
