@@ -5,9 +5,9 @@ VisualStudioVersion = 17.7.34024.191
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoJobSearchConsoleApp", "AutoJobSearchConsoleApp\AutoJobSearchConsoleApp.csproj", "{81D1CC79-2979-4F5E-A083-D43131883337}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoJobSearchGUI", "AutoJobSearchGUI\AutoJobSearchGUI.csproj", "{4ADC948C-9546-4042-AF0F-395B628AC7A6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoJobSearchGUI2", "AutoJobSearchGUI2\AutoJobSearchGUI2.csproj", "{4ADC948C-9546-4042-AF0F-395B628AC7A6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoJobSearchShared", "AutoJobSearchShared\AutoJobSearchShared.csproj", "{AE94969D-ADDE-4EE7-94F6-A3EFA763F893}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoJobSearchShared", "AutoJobSearchShared\AutoJobSearchShared.csproj", "{AE94969D-ADDE-4EE7-94F6-A3EFA763F893}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
