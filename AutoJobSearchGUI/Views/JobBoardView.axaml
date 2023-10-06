@@ -13,12 +13,12 @@
 		<vm:JobBoardViewModel/>
 	</Design.DataContext>
 
- 	<DataGrid Name="dataGrid1"
-	 			  CanUserResizeColumns="True"
-	 			  ColumnWidth="*"
-	 			  MinHeight="400"
-	 			  MaxHeight="1000"
-	 		      ItemsSource="{Binding JobListings}">
+ 	<DataGrid 
+	 	CanUserResizeColumns="True"
+	 	ColumnWidth="*"
+	 	MinHeight="400"
+	 	MaxHeight="1000"
+	 	ItemsSource="{Binding JobListings}">
 		<DataGrid.Columns>
 			<DataGridTextColumn Header="Id" Binding="{Binding Id}" />
 			<DataGridTextColumn Header="SearchTerm" Binding="{Binding SearchTerm}" />
@@ -28,6 +28,7 @@
 			<DataGridCheckBoxColumn Header="IsAppliedTo" Binding="{Binding IsAppliedTo}" />
 			<DataGridCheckBoxColumn Header="IsInterviewing" Binding="{Binding IsInterviewing}" />
 			<DataGridCheckBoxColumn Header="IsRejected" Binding="{Binding IsRejected}" />
+			<DataGridCheckBoxColumn Header="IsFavourite" Binding="{Binding IsFavourite}" />
 		</DataGrid.Columns>
 	</DataGrid>
 	

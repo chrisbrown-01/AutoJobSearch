@@ -30,6 +30,9 @@ namespace AutoJobSearchGUI.Models
         [ObservableProperty]
         private bool _isRejected;
 
+        [ObservableProperty]
+        private bool _isFavourite;
+
         partial void OnIsAppliedToChanged(bool value)
         {
             UpdateDatabase("IsAppliedTo", value, this.Id);
@@ -43,6 +46,11 @@ namespace AutoJobSearchGUI.Models
         partial void OnIsRejectedChanged(bool value)
         {
             UpdateDatabase("IsRejected", value, this.Id);
+        }
+
+        partial void OnIsFavouriteChanged(bool value)
+        {
+            UpdateDatabase("IsFavourite", value, this.Id);
         }
 
         private void UpdateDatabase(string columnName, bool value, int id) // TODO: async Task?

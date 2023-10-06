@@ -32,6 +32,7 @@ namespace AutoJobSearchGUI.ViewModels
                     IsAppliedTo = job.IsAppliedTo,
                     IsInterviewing = job.IsInterviewing,
                     IsRejected = job.IsRejected,
+                    IsFavourite = job.IsFavourite
                 };
 
                 jobListing.PropertyChanged += JobListingMVVM_PropertyChanged;
