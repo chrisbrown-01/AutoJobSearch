@@ -32,6 +32,7 @@ namespace AutoJobSearchConsoleApp
                 IsAppliedTo INTEGER,
                 IsInterviewing INTEGER,
                 IsRejected INTEGER,
+                IsFavourite INTEGER,
                 Notes TEXT
                 );";
 
@@ -66,6 +67,7 @@ namespace AutoJobSearchConsoleApp
                 IsAppliedTo, 
                 IsInterviewing, 
                 IsRejected, 
+                IsFavourite,
                 Notes
                 ) VALUES (
                 @SearchTerm, 
@@ -76,6 +78,7 @@ namespace AutoJobSearchConsoleApp
                 @IsAppliedTo, 
                 @IsInterviewing, 
                 @IsRejected, 
+                @IsFavourite, 
                 @Notes
                 );";
 

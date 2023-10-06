@@ -7,8 +7,9 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
   </PropertyGroup>
+
   <ItemGroup>
-    <None Remove="AutoJobSearch.db" />
+    <AvaloniaResource Include="Assets\**" />
   </ItemGroup>
 
 

@@ -23,7 +23,8 @@ namespace AutoJobSearchShared
                                  Score, 
                                  IsAppliedTo,
                                  IsInterviewing,
-                                 IsRejected
+                                 IsRejected,
+                                 IsFavourite
                                  FROM JobListings";
 
                 var jobListingsQuery = await connection.QueryAsync<JobListing>(sqlQuery);

@@ -28,6 +28,8 @@ namespace AutoJobSearchConsoleApp.Models
 
         public bool IsRejected { get; set; } = false;
 
+        public bool IsFavourite { get; set; } = false;
+
         public string Notes { get; set; } = string.Empty;
 
         // TODO: add "pinned/favourited" property
