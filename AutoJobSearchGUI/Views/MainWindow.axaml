@@ -3,11 +3,12 @@
         xmlns:vm="using:AutoJobSearchGUI.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="1000"
         x:Class="AutoJobSearchGUI.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
-        Title="AutoJobSearchGUI">
+        Title="AutoJobSearchGUI"
+		MinWidth="500" MinHeight="500">
 
 	<Design.DataContext>
 		<!-- This only sets the DataContext for the previewer in an IDE,

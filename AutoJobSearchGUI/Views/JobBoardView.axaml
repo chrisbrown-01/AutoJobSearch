@@ -13,6 +13,22 @@
 		<vm:JobBoardViewModel/>
 	</Design.DataContext>
 
-	<TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+	<DataGrid Name="dataGrid1"
+				  CanUserResizeColumns="True"
+				  ColumnWidth="*"
+				  MinHeight="400"
+				  MaxHeight="1000"
+			      ItemsSource="{Binding JobListings}">
+		<DataGrid.Columns>
+			<DataGridTextColumn Header="Id" Binding="{Binding Id}" />
+			<DataGridTextColumn Header="SearchTerm" Binding="{Binding SearchTerm}" />
+			<DataGridTextColumn Header="CreatedAt" Binding="{Binding CreatedAt}" />
+			<DataGridTextColumn Header="Description" Binding="{Binding Description}" />
+			<DataGridTextColumn Header="Score" Binding="{Binding Score}" />
+			<DataGridCheckBoxColumn Header="IsAppliedTo" Binding="{Binding IsAppliedTo}" />
+			<DataGridCheckBoxColumn Header="IsInterviewing" Binding="{Binding IsInterviewing}" />
+			<DataGridCheckBoxColumn Header="IsRejected" Binding="{Binding IsRejected}" />
+		</DataGrid.Columns>
+	</DataGrid>
 	
 </UserControl>
