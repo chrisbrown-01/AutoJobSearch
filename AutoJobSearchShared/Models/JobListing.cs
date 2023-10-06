@@ -1,13 +1,13 @@
-﻿using System;
+﻿using AutoJobSearchConsoleApp.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace AutoJobSearchConsoleApp.Models
+namespace AutoJobSearchShared.Models
 {
-    public class JobListing // TODO: remove and consolidate with Shared model
+    public class JobListing
     {
         public int Id { get; }
         public string SearchTerm { get; set; } = "FOUND BY SEARCH TERM: ___"; // TODO: update value

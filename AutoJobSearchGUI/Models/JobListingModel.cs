@@ -1,23 +1,24 @@
-﻿using AutoJobSearchShared;
+﻿using AutoJobSearchConsoleApp.Models;
+using AutoJobSearchGUI.Data;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace AutoJobSearchGUI.Models
 {
-    public partial class JobBoardDataGridItem : ObservableObject
+    public partial class JobListingModel : ObservableObject
     {
         public int Id { get; set; }
-
         public string SearchTerm { get; set; } = string.Empty;
 
-        public DateTime CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; } 
 
         public string Description { get; set; } = string.Empty;
+
+        public List<string> ApplicationLinks { get; set; } = new();
 
         public int Score { get; set; }
 
@@ -33,30 +34,27 @@ namespace AutoJobSearchGUI.Models
         [ObservableProperty]
         private bool _isFavourite;
 
+        [ObservableProperty]
+        private string _notes = string.Empty;
+
         partial void OnIsAppliedToChanged(bool value)
         {
-            UpdateDatabase("IsAppliedTo", value, this.Id);
+            DbContextSQLite.UpdateDatabase("IsAppliedTo", value, this.Id); // TODO: convert to use DI
         }
 
         partial void OnIsInterviewingChanged(bool value)
         {
-            UpdateDatabase("IsInterviewing", value, this.Id);
+            DbContextSQLite.UpdateDatabase("IsInterviewing", value, this.Id);
         }
 
         partial void OnIsRejectedChanged(bool value)
         {
-            UpdateDatabase("IsRejected", value, this.Id);
+            DbContextSQLite.UpdateDatabase("IsRejected", value, this.Id);
         }
 
         partial void OnIsFavouriteChanged(bool value)
         {
-            UpdateDatabase("IsFavourite", value, this.Id);
-        }
-
-        private void UpdateDatabase(string columnName, bool value, int id) // TODO: async Task?
-        {
-            Debug.WriteLine("Updating database"); // TODO: proper logging
-            SQLiteDb.UpdateDatabaseBoolPropertyById(columnName, value, id);
+            DbContextSQLite.UpdateDatabase("IsFavourite", value, this.Id);
         }
     }
 }

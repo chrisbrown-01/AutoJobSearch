@@ -13,7 +13,7 @@ namespace AutoJobSearchGUI.ViewModels
 {
     public partial class JobBoardViewModel : ViewModelBase
     {
-        public List<JobBoardDataGridItem> JobListings { get; }
+        public List<JobListingModel> JobListings { get; }
 
         public JobBoardViewModel()
         {
@@ -22,7 +22,7 @@ namespace AutoJobSearchGUI.ViewModels
 
             foreach (var job in jobs)
             {
-                var jobListing = new JobBoardDataGridItem
+                var jobListing = new JobListingModel
                 {
                     Id = job.Id,
                     SearchTerm = job.SearchTerm,
@@ -35,7 +35,7 @@ namespace AutoJobSearchGUI.ViewModels
                     IsFavourite = job.IsFavourite
                 };
 
-                jobListing.PropertyChanged += JobListingMVVM_PropertyChanged;
+                jobListing.PropertyChanged += JobListingMVVM_PropertyChanged; // TODO: unsubscibe somewhere or delete
 
                 JobListings.Add(jobListing);
             }
@@ -43,7 +43,7 @@ namespace AutoJobSearchGUI.ViewModels
 
         private void JobListingMVVM_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
-            var jobBoardDataGridItem = (JobBoardDataGridItem)sender!;
+            var jobBoardDataGridItem = (JobListingModel)sender!;
             Debug.WriteLine($"Property {e.PropertyName} of job listing {jobBoardDataGridItem.Id} has changed.");
         }
 
