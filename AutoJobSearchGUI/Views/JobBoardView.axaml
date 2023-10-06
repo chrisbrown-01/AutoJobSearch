@@ -13,12 +13,16 @@
 		<vm:JobBoardViewModel/>
 	</Design.DataContext>
 
-	<DataGrid Name="dataGrid1"
-				  CanUserResizeColumns="True"
-				  ColumnWidth="*"
-				  MinHeight="400"
-				  MaxHeight="1000"
-			      ItemsSource="{Binding JobListings}">
+	<!--
+	<TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+	-->
+
+ 	<DataGrid Name="dataGrid1"
+	 			  CanUserResizeColumns="True"
+	 			  ColumnWidth="*"
+	 			  MinHeight="400"
+	 			  MaxHeight="1000"
+	 		      ItemsSource="{Binding JobListings}">
 		<DataGrid.Columns>
 			<DataGridTextColumn Header="Id" Binding="{Binding Id}" />
 			<DataGridTextColumn Header="SearchTerm" Binding="{Binding SearchTerm}" />

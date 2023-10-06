@@ -4,14 +4,20 @@ namespace AutoJobSearchGUI.ViewModels
 {
     public partial class MainWindowViewModel : ViewModelBase
     {
+        //[ObservableProperty]
+        //private ViewModelBase _contentViewModel;
+
+        //[ObservableProperty]
+        //private JobBoardViewModel _jobBoardViewModel;
+
+        //[ObservableProperty]
+        //private JobSearchViewModel _jobSearchViewModel;
+
+        public JobBoardViewModel JobBoardViewModel { get; }
+        public JobSearchViewModel JobSearchViewModel { get; }
+
         [ObservableProperty]
         private ViewModelBase _contentViewModel;
-
-        [ObservableProperty]
-        private JobBoardViewModel _jobBoardViewModel;
-
-        [ObservableProperty]
-        private JobSearchViewModel _jobSearchViewModel;
 
         public MainWindowViewModel()
         {
@@ -20,12 +26,12 @@ namespace AutoJobSearchGUI.ViewModels
             ContentViewModel = JobBoardViewModel;
         }
 
-        private void ChangeViewToJobBoard()
+        public void ChangeViewToJobBoard()
         {
             ContentViewModel = JobBoardViewModel;
         }
 
-        private void ChangeViewToJobSearch()
+        public void ChangeViewToJobSearch()
         {
             ContentViewModel = JobSearchViewModel;
         }

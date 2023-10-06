@@ -13,9 +13,9 @@ namespace AutoJobSearchGUI.ViewModels
 {
     public partial class JobBoardViewModel : ViewModelBase
     {
-        // public string Greeting => "Job board";
+        public string Greeting => "Job board";
 
-        public List<JobBoardDataGridItem> JobListings { get; set; } 
+        public List<JobBoardDataGridItem> JobListings { get; set; }
 
         public JobBoardViewModel()
         {
@@ -50,22 +50,22 @@ namespace AutoJobSearchGUI.ViewModels
 
         //public void ButtonClicked(object source, RoutedEventArgs args)
         //{
-            //Debug.WriteLine("Click!");
-            //txt1.Text = "Clicked";
-            //listBox1.ItemsSource = new List<string>
-            //{
-            //    "test1",
-            //    "test2",
-            //    "test3"
-            //};
+        //Debug.WriteLine("Click!");
+        //txt1.Text = "Clicked";
+        //listBox1.ItemsSource = new List<string>
+        //{
+        //    "test1",
+        //    "test2",
+        //    "test3"
+        //};
 
-            // dataGrid1.ItemsSource = SQLiteDb.GetAllJobListings().Result.Take(10);
+        // dataGrid1.ItemsSource = SQLiteDb.GetAllJobListings().Result.Take(10);
 
-            // TODO:
-            // SQLite concurrency disabling?, database relative pathing best practices + keep all relative paths within shared folder?
-            // Menu or tab controls and seperate views for modifiying specific row item, save changes to db features
+        // TODO:
+        // SQLite concurrency disabling?, database relative pathing best practices + keep all relative paths within shared folder?
+        // Menu or tab controls and seperate views for modifiying specific row item, save changes to db features
 
-            // SeleniumTesting.Execute();
+        // SeleniumTesting.Execute();
         //}
     }
 }
