@@ -5,11 +5,9 @@ VisualStudioVersion = 17.7.34024.191
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoJobSearchConsoleApp", "AutoJobSearchConsoleApp\AutoJobSearchConsoleApp.csproj", "{81D1CC79-2979-4F5E-A083-D43131883337}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoJobSearchGUI2", "AutoJobSearchGUI2\AutoJobSearchGUI2.csproj", "{4ADC948C-9546-4042-AF0F-395B628AC7A6}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoJobSearchShared", "AutoJobSearchShared\AutoJobSearchShared.csproj", "{AE94969D-ADDE-4EE7-94F6-A3EFA763F893}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoJobSearchGUI", "AutoJobSearchGUI\AutoJobSearchGUI.csproj", "{1D65CD8B-1FC0-4533-90CF-B7E217B1082D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoJobSearchGUI", "AutoJobSearchGUI\AutoJobSearchGUI.csproj", "{1D65CD8B-1FC0-4533-90CF-B7E217B1082D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,10 +19,6 @@ Global
 		{81D1CC79-2979-4F5E-A083-D43131883337}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{81D1CC79-2979-4F5E-A083-D43131883337}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{81D1CC79-2979-4F5E-A083-D43131883337}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4ADC948C-9546-4042-AF0F-395B628AC7A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4ADC948C-9546-4042-AF0F-395B628AC7A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4ADC948C-9546-4042-AF0F-395B628AC7A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4ADC948C-9546-4042-AF0F-395B628AC7A6}.Release|Any CPU.Build.0 = Release|Any CPU
 		{AE94969D-ADDE-4EE7-94F6-A3EFA763F893}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{AE94969D-ADDE-4EE7-94F6-A3EFA763F893}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AE94969D-ADDE-4EE7-94F6-A3EFA763F893}.Release|Any CPU.ActiveCfg = Release|Any CPU
