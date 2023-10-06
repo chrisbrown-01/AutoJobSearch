@@ -59,9 +59,8 @@ namespace AutoJobSearchGUI.ViewModels
 
         // dataGrid1.ItemsSource = SQLiteDb.GetAllJobListings().Result.Take(10);
 
-        // TODO:
-        // SQLite concurrency disabling?, database relative pathing best practices + keep all relative paths within shared folder?
-        // Menu or tab controls and seperate views for modifiying specific row item, save changes to db features
+        // TODO: SQLite concurrency disabling?, database relative pathing best practices + keep all relative paths within shared folder?
+        // TODO: Menu or tab controls and seperate views for modifiying specific row item, save changes to db features
 
         // SeleniumTesting.Execute();
         //}
