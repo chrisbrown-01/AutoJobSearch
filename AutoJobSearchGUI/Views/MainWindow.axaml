@@ -9,12 +9,18 @@
         Icon="/Assets/avalonia-logo.ico"
         Title="AutoJobSearchGUI">
 
-    <Design.DataContext>
-        <!-- This only sets the DataContext for the previewer in an IDE,
+	<Design.DataContext>
+		<!-- This only sets the DataContext for the previewer in an IDE,
              to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
-        <vm:MainWindowViewModel/>
-    </Design.DataContext>
+		<vm:MainWindowViewModel/>
+	</Design.DataContext>
 
-    <TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+	<DockPanel>
+		<Menu DockPanel.Dock="Top">
+			<MenuItem Header="Job Board" Command="{Binding ChangeViewToJobBoard}"/>
+			<MenuItem Header="Job Search" Command="{Binding ChangeViewToJobSearch}"/>
+		</Menu>
+		<ContentControl Content="{Binding ContentViewModel}" />
+	</DockPanel>
 
 </Window>

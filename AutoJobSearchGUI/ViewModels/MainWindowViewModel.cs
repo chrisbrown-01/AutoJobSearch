@@ -1,7 +1,25 @@
-﻿namespace AutoJobSearchGUI.ViewModels
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+
+namespace AutoJobSearchGUI.ViewModels
 {
     public partial class MainWindowViewModel : ViewModelBase
     {
-        public string Greeting => "Welcome to Avalonia!";
+        [ObservableProperty]
+        private ViewModelBase _contentViewModel;
+
+        public MainWindowViewModel()
+        {
+            ContentViewModel = new JobBoardViewModel();
+        }
+
+        private void ChangeViewToJobBoard()
+        {
+            ContentViewModel = new JobBoardViewModel();
+        }
+
+        private void ChangeViewToJobSearch()
+        {
+            ContentViewModel = new JobSearchViewModel();
+        }
     }
 }
