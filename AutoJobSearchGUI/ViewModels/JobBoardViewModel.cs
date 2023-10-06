@@ -13,9 +13,7 @@ namespace AutoJobSearchGUI.ViewModels
 {
     public partial class JobBoardViewModel : ViewModelBase
     {
-        public string Greeting => "Job board";
-
-        public List<JobBoardDataGridItem> JobListings { get; set; }
+        public List<JobBoardDataGridItem> JobListings { get; }
 
         public JobBoardViewModel()
         {

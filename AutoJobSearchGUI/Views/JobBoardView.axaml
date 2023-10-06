@@ -13,10 +13,6 @@
 		<vm:JobBoardViewModel/>
 	</Design.DataContext>
 
-	<!--
-	<TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-	-->
-
  	<DataGrid Name="dataGrid1"
 	 			  CanUserResizeColumns="True"
 	 			  ColumnWidth="*"
