@@ -1,7 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace AutoJobSearchGUI.ViewModels;
-
-public class ViewModelBase : ObservableObject
+namespace AutoJobSearchGUI.ViewModels
 {
+    public class ViewModelBase : ObservableObject
+    {
+    }
 }
