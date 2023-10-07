@@ -26,6 +26,9 @@ namespace AutoJobSearchGUI.ViewModels
         public delegate void OpenJobListingViewHandler(JobListingModel job);
         public event OpenJobListingViewHandler? OpenJobListingViewRequest;
 
+        [ObservableProperty]
+        private JobBoardQueryModel _jobBoardQueryModel;
+
         private List<JobListingModel> JobListings { get; set; }
 
         [ObservableProperty]
@@ -57,11 +60,26 @@ namespace AutoJobSearchGUI.ViewModels
         {
             //TestClickCommand = new RelayCommand(TestClick);
 
+            JobBoardQueryModel = new();
+
             PageIndex = 0;
             PageSize = 25;
 
             JobListings = GetJobListings(PageIndex, PageSize).Result;
             JobListingsDisplayed = JobListings; // TODO: convert to void method call
+        }
+
+        public void ExecuteQuery()
+        {
+            var test = JobBoardQueryModel;
+
+            //var jobListingQueryValues = new AutoJobSearchShared.Models.JobListing()
+            //{
+
+            //};
+
+
+            //SQLiteDb.ExecuteJobBoardQuery
         }
 
         //public RelayCommand TestClickCommand { get; }
@@ -106,6 +124,7 @@ namespace AutoJobSearchGUI.ViewModels
                     IsInterviewing = job.IsInterviewing,
                     IsRejected = job.IsRejected,
                     IsFavourite = job.IsFavourite
+                    // TODO: skip IsHidden properties
                 };
 
                 jobListings.Add(jobListing);

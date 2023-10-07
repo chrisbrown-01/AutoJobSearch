@@ -10,6 +10,40 @@ namespace AutoJobSearchShared
 {
     public class SQLiteDb
     {
+        public static async Task<IEnumerable<Models.JobListing>> ExecuteJobBoardQuery(Models.JobListing jobListingQuery)
+        {
+            Debug.WriteLine($"Getting job listings per user job board query"); // TODO: proper logging
+
+            var jobListings = new List<Models.JobListing>();
+
+            using (var connection = new SqliteConnection(Constants.SQLITE_CONNECTION_STRING))
+            {
+                await connection.OpenAsync();
+
+                var sqlQuery = @"SELECT * FROM JobListings
+                        WHERE IsAppliedTo = @IsAppliedTo 
+                        AND IsInterviewing = @IsInterviewing
+                        AND IsRejected = @IsRejected
+                        AND IsFavourite = @IsFavourite
+                        AND IsHidden = @IsHidden;";
+
+                var jobListingsQuery = await connection.QueryAsync<Models.JobListing>(
+                    sqlQuery, 
+                    new 
+                    { 
+                        IsAppliedTo = jobListingQuery.IsAppliedTo,
+                        IsInterviewing = jobListingQuery.IsInterviewing,
+                        IsRejected = jobListingQuery.IsRejected,
+                        IsFavourite = jobListingQuery.IsFavourite,
+                        IsHidden = jobListingQuery.IsHidden
+                    });
+
+                jobListings = jobListingsQuery.ToList(); // TODO: improve, perform null checking?
+            }
+
+            return jobListings;
+        }
+
         public static async Task UpdateNotesById(int id, string notes)
         {
             Debug.WriteLine($"Updating notes for id {id}"); // TODO: proper logging
@@ -29,7 +63,7 @@ namespace AutoJobSearchShared
 
             var jobListings = new List<Models.JobListing>();
 
-            using (var connection = new SqliteConnection(Constants.SQLITE_CONNECTION_STRING)) // TODO: db connection pooling
+            using (var connection = new SqliteConnection(Constants.SQLITE_CONNECTION_STRING)) 
             {
                 await connection.OpenAsync();
 

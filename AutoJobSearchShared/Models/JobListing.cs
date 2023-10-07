@@ -30,6 +30,8 @@ namespace AutoJobSearchShared.Models
 
         public bool IsFavourite { get; set; } = false;
 
+        public bool IsHidden { get; set; } = false;
+
         public string Notes { get; set; } = string.Empty;
     }
 }

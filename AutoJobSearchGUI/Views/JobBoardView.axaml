@@ -19,9 +19,58 @@
 			<Button Command="{Binding GoToPreviousPage}" Content="Previous Page" />
 			<Button Command="{Binding GoToNextPage}" Content="Next Page" />
 			<Menu>
-				<MenuItem Header="Filters">
+				<MenuItem Header="Current Page Filters">
 					<CheckBox Content="Favourites" IsChecked="{Binding IsFavouritesFilterEnabled}" />
 					<CheckBox Content="Applied" />
+				</MenuItem>
+			</Menu>
+			<Menu>
+				<MenuItem Header="Advanced Query">
+					<MenuItem Header="Column Filters">
+						<CheckBox Content="Applied" IsChecked="{Binding JobBoardQueryModel.IsAppliedTo}" />
+						<CheckBox Content="Interviewing" IsChecked="{Binding JobBoardQueryModel.IsInterviewing}" />
+						<CheckBox Content="Rejected" IsChecked="{Binding JobBoardQueryModel.IsRejected}" />
+						<CheckBox Content="Favourite" IsChecked="{Binding JobBoardQueryModel.IsFavourite}" />
+						<CheckBox Content="Hidden" IsChecked="{Binding JobBoardQueryModel.IsHidden}" />
+					</MenuItem>
+					<MenuItem Header="Search Term Query String">
+						<TextBox Text="" IsReadOnly="False" />
+					</MenuItem>
+					<MenuItem Header="Job Description Query String">
+						<TextBox Text="" IsReadOnly="False" />
+					</MenuItem>
+					<MenuItem Header="Search Date">
+						<MenuItem Header="Searched On Date">
+							<DatePicker />
+						</MenuItem>
+						<MenuItem Header="Searched Between Dates">
+							<DatePicker />
+							<DatePicker />
+						</MenuItem>
+					</MenuItem>
+					<MenuItem Header="Score">
+						<MenuItem Header="Equals">
+							<NumericUpDown Value="0" FormatString="0"/>
+						</MenuItem>
+						<MenuItem Header="Within Range">
+							<NumericUpDown Value="-1" FormatString="0"/>
+							<NumericUpDown Value="1" FormatString="0"/>
+						</MenuItem>
+					</MenuItem>
+					<MenuItem Header="Sort By">
+						<CheckBox Content="Id" />
+						<CheckBox Content="Search Term" />
+						<CheckBox Content="Date" />
+						<CheckBox Content="Score" />
+					</MenuItem>
+					<MenuItem Header="Order By">
+						<CheckBox Content="Ascending" />
+						<CheckBox Content="Descending" />
+					</MenuItem>
+					<Button
+						Content="Execute"
+						HorizontalAlignment="Center"
+						Command="{Binding ExecuteQuery}"/>
 				</MenuItem>
 			</Menu>
 		</StackPanel>
@@ -31,11 +80,11 @@
 	 	MinHeight="400"
 	 	MaxHeight="1000"
 	 	ItemsSource="{Binding JobListingsDisplayed}"
-		SelectedItem="{Binding SelectedJobListing}"		 
+		SelectedItem="{Binding SelectedJobListing}"
 		RowHeight="150">
 			<DataGrid.ContextMenu>
 				<ContextMenu>
-					<MenuItem Header="Option 1" Command="" />
+					<MenuItem Header="Hide Job" Command="" />
 				</ContextMenu>
 			</DataGrid.ContextMenu>
 			<DataGrid.Columns>
