@@ -18,7 +18,18 @@ namespace AutoJobSearchGUI.Models
 
         public string Description { get; set; } = string.Empty;
 
-        public List<string> ApplicationLinks { get; set; } = new();
+        public string ApplicationLinks { get; set; } = string.Empty;
+
+        //public string ApplicationLinksAsString()
+        //{
+        //    StringBuilder sb = new StringBuilder();
+        //    foreach(var link in ApplicationLinks)
+        //    {
+        //        sb.AppendLine(link);
+        //    }
+
+        //    return sb.ToString();
+        //}
 
         public int Score { get; set; }
 

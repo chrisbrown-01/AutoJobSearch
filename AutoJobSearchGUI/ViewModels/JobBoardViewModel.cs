@@ -16,7 +16,7 @@ namespace AutoJobSearchGUI.ViewModels
     public partial class JobBoardViewModel : ViewModelBase
     {
         public delegate void OpenJobListingViewHandler(JobListingModel job);
-        public event OpenJobListingViewHandler OpenJobListingViewRequest;
+        public event OpenJobListingViewHandler? OpenJobListingViewRequest;
 
         public void TestClick()
         {

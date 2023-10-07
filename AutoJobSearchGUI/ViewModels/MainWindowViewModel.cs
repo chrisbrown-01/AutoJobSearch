@@ -35,7 +35,7 @@ namespace AutoJobSearchGUI.ViewModels
 
         public void ChangeViewToJobListing(JobListingModel jobListing)
         {
-            jobListingViewModel.ChangeListing(jobListing.Id);
+            jobListingViewModel.ChangeListing(jobListing);
             ContentViewModel = jobListingViewModel;
         }
     }

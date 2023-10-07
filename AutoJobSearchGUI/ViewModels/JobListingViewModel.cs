@@ -10,30 +10,20 @@ namespace AutoJobSearchGUI.ViewModels
 {
     public partial class JobListingViewModel : ViewModelBase
     {
-        public string Greeting => "listing";
-
         [ObservableProperty]
         private int _id;
 
+        [ObservableProperty]
+        private JobListingModel _jobListing;
+
         public JobListingViewModel()
         {
+            JobListing = new JobListingModel();
         }
 
-        public void ChangeListing(int id)
+        public void ChangeListing(JobListingModel jobListing)
         {
-            Id = id;
+            JobListing = jobListing;
         }
-
-        //[ObservableProperty]
-        //private JobListingModel _jobListingModel;
-
-        //public JobListingViewModel(JobListingModel jobListing)
-        //{
-        //    var id = jobListing.Id;
-        //    jobListing.ApplicationLinks.Add("link1");
-        //    jobListing.ApplicationLinks.Add("link2");
-
-        //    JobListingModel = jobListing;
-        //}
     }
 }
