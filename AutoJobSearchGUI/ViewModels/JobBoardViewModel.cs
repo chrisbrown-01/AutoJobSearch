@@ -1,6 +1,8 @@
 ﻿using AutoJobSearchGUI.Models;
 using AutoJobSearchShared;
 using Avalonia.Interactivity;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,10 +15,15 @@ namespace AutoJobSearchGUI.ViewModels
 {
     public partial class JobBoardViewModel : ViewModelBase
     {
-        public List<JobListingModel> JobListings { get; }
+        public List<JobListingModel> JobListings { get; } // TODO: change to MVVM tookit observable
+
+        [ObservableProperty]
+        private JobListingModel? _selectedJobListing;
 
         public JobBoardViewModel()
         {
+            TestClickCommand = new RelayCommand(TestClick);
+
             JobListings = new();
             var jobs = SQLiteDb.GetAllJobListings().Result.Take(25);
 
@@ -47,23 +54,29 @@ namespace AutoJobSearchGUI.ViewModels
             Debug.WriteLine($"Property {e.PropertyName} of job listing {jobBoardDataGridItem.Id} has changed.");
         }
 
-        //public void ButtonClicked(object source, RoutedEventArgs args)
-        //{
-        //Debug.WriteLine("Click!");
-        //txt1.Text = "Clicked";
-        //listBox1.ItemsSource = new List<string>
-        //{
-        //    "test1",
-        //    "test2",
-        //    "test3"
-        //};
+        public RelayCommand TestClickCommand { get; }
 
-        // dataGrid1.ItemsSource = SQLiteDb.GetAllJobListings().Result.Take(10);
+        public void TestClick()
+        {
+            Debug.WriteLine("test click");
+
+            if (SelectedJobListing != null)
+            {
+                Debug.WriteLine("Selected id: " + SelectedJobListing.Id);
+            }
+        }
+
+        [ObservableProperty]
+        private List<string> _testStrings = new List<string>()
+        {
+            "test1",
+            "test2"
+        };
+
 
         // TODO: SQLite concurrency disabling?, database relative pathing best practices + keep all relative paths within shared folder?
         // TODO: Menu or tab controls and seperate views for modifiying specific row item, save changes to db features
 
-        // SeleniumTesting.Execute();
-        //}
+        // TODO: SeleniumTesting.Execute();
     }
 }

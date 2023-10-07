@@ -13,23 +13,50 @@
 		<vm:JobBoardViewModel/>
 	</Design.DataContext>
 
- 	<DataGrid 
+	<StackPanel>
+		<Button Command="{Binding TestClick}" Content="Open Selected Job" />
+		<DataGrid
 	 	CanUserResizeColumns="True"
 	 	ColumnWidth="*"
 	 	MinHeight="400"
 	 	MaxHeight="1000"
-	 	ItemsSource="{Binding JobListings}">
-		<DataGrid.Columns>
-			<DataGridTextColumn Header="Id" Binding="{Binding Id}" IsReadOnly="True" />
-			<DataGridTextColumn Header="SearchTerm" Binding="{Binding SearchTerm}" IsReadOnly="True" />
-			<DataGridTextColumn Header="CreatedAt" Binding="{Binding CreatedAt}" IsReadOnly="True" />
-			<DataGridTextColumn Header="Description" Binding="{Binding Description}" IsReadOnly="True" />
-			<DataGridTextColumn Header="Score" Binding="{Binding Score}" IsReadOnly="True" />
-			<DataGridCheckBoxColumn Header="IsAppliedTo" Binding="{Binding IsAppliedTo}" />
-			<DataGridCheckBoxColumn Header="IsInterviewing" Binding="{Binding IsInterviewing}" />
-			<DataGridCheckBoxColumn Header="IsRejected" Binding="{Binding IsRejected}" />
-			<DataGridCheckBoxColumn Header="IsFavourite" Binding="{Binding IsFavourite}" />
-		</DataGrid.Columns>
-	</DataGrid>
+	 	ItemsSource="{Binding JobListings}"
+		SelectedItem="{Binding SelectedJobListing}"
+		RowHeight="150">
+			<DataGrid.ContextMenu>
+				<ContextMenu>
+					<MenuItem Header="Option 1" Command="" />
+				</ContextMenu>
+			</DataGrid.ContextMenu>
+			<!--
+		<DataGrid.RowDetailsTemplate>
+			<DataTemplate x:DataType="vm:JobBoardViewModel">
+				<Button Command="{Binding TestClick}" Content="Click me" />
+			</DataTemplate>
+		</DataGrid.RowDetailsTemplate>
+		-->
+			<DataGrid.Columns>
+				<!--
+		<DataGridTemplateColumn>
+			<DataGridTemplateColumn.CellTemplate>
+				<DataTemplate>
+					<Button Command="{B">test</Button>
+				</DataTemplate>
+			</DataGridTemplateColumn.CellTemplate>
+		</DataGridTemplateColumn>
+		-->
+				<DataGridTextColumn Header="Id" Binding="{Binding Id}" IsReadOnly="True" />
+				<DataGridTextColumn Header="SearchTerm" Binding="{Binding SearchTerm}" IsReadOnly="True" />
+				<DataGridTextColumn Header="CreatedAt" Binding="{Binding CreatedAt}" IsReadOnly="True" />
+				<DataGridTextColumn Header="Description" Binding="{Binding Description}" IsReadOnly="True" />
+				<DataGridTextColumn Header="Score" Binding="{Binding Score}" IsReadOnly="True" />
+				<DataGridCheckBoxColumn Header="IsAppliedTo" Binding="{Binding IsAppliedTo}" />
+				<DataGridCheckBoxColumn Header="IsInterviewing" Binding="{Binding IsInterviewing}" />
+				<DataGridCheckBoxColumn Header="IsRejected" Binding="{Binding IsRejected}" />
+				<DataGridCheckBoxColumn Header="IsFavourite" Binding="{Binding IsFavourite}" />
+			</DataGrid.Columns>
+		</DataGrid>
+	</StackPanel>
+	
 	
 </UserControl>
