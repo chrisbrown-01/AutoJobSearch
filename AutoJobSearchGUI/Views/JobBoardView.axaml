@@ -34,38 +34,62 @@
 						<CheckBox Content="Hidden" IsChecked="{Binding JobBoardQueryModel.IsHidden}" />
 					</MenuItem>
 					<MenuItem Header="Search Term Query String">
-						<TextBox Text="" IsReadOnly="False" />
+						<CheckBox Content="Enable" IsChecked="{Binding JobBoardQueryModel.SearchTermQueryStringEnabled}" />
+						<TextBox Text="{Binding JobBoardQueryModel.SearchTermQueryString}" IsReadOnly="False" />
 					</MenuItem>
 					<MenuItem Header="Job Description Query String">
-						<TextBox Text="" IsReadOnly="False" />
+						<CheckBox Content="Enable" IsChecked="{Binding JobBoardQueryModel.JobDescriptionQueryStringEnabled}" />
+						<TextBox Text="{Binding JobBoardQueryModel.JobDescriptionQueryString}" IsReadOnly="False" />
 					</MenuItem>
 					<MenuItem Header="Search Date">
+						<CheckBox 
+								Content="Enable Searched On Date"
+								IsChecked="{Binding JobBoardQueryModel.SearchedOnDateEnabled}"
+								IsEnabled="{Binding !JobBoardQueryModel.SearchedBetweenDatesEnabled}" />
+						<CheckBox 
+								Content="Enable Search Between Dates"
+								IsChecked="{Binding JobBoardQueryModel.SearchedBetweenDatesEnabled}"
+								IsEnabled="{Binding !JobBoardQueryModel.SearchedOnDateEnabled}" />
 						<MenuItem Header="Searched On Date">
-							<DatePicker />
+							<DatePicker SelectedDate="{Binding JobBoardQueryModel.SearchedOnDate}" />
 						</MenuItem>
 						<MenuItem Header="Searched Between Dates">
-							<DatePicker />
-							<DatePicker />
+							<DatePicker SelectedDate="{Binding JobBoardQueryModel.SearchedOnDateStart}" />
+							<DatePicker SelectedDate="{Binding JobBoardQueryModel.SearchedOnDateEnd}" />
 						</MenuItem>
 					</MenuItem>
 					<MenuItem Header="Score">
+						<CheckBox
+							   Content="Enable Equals"
+							   IsChecked="{Binding JobBoardQueryModel.ScoreEqualsEnabled}"
+							   IsEnabled="{Binding !JobBoardQueryModel.ScoreRangeEnabled}" />
+						<CheckBox
+							   Content="Enable Range"
+							   IsChecked="{Binding JobBoardQueryModel.ScoreRangeEnabled}"
+							   IsEnabled="{Binding !JobBoardQueryModel.ScoreEqualsEnabled}" />
 						<MenuItem Header="Equals">
-							<NumericUpDown Value="0" FormatString="0"/>
+							<NumericUpDown Value="{Binding JobBoardQueryModel.ScoreEquals}" FormatString="0"/>
 						</MenuItem>
 						<MenuItem Header="Within Range">
-							<NumericUpDown Value="-1" FormatString="0"/>
-							<NumericUpDown Value="1" FormatString="0"/>
+							<NumericUpDown Value="{Binding JobBoardQueryModel.ScoreRangeMin}" FormatString="0"/>
+							<NumericUpDown Value="{Binding JobBoardQueryModel.ScoreRangeMax}" FormatString="0"/>
 						</MenuItem>
 					</MenuItem>
 					<MenuItem Header="Sort By">
-						<CheckBox Content="Id" />
-						<CheckBox Content="Search Term" />
-						<CheckBox Content="Date" />
-						<CheckBox Content="Score" />
+						<CheckBox Content="Id" IsChecked="{Binding JobBoardQueryModel.SortById}" />
+						<CheckBox Content="Search Term" IsChecked="{Binding JobBoardQueryModel.SortBySearchTerm}" />
+						<CheckBox Content="Date" IsChecked="{Binding JobBoardQueryModel.SortByCreatedAt}" />
+						<CheckBox Content="Score" IsChecked="{Binding JobBoardQueryModel.SortByScore}" />
 					</MenuItem>
 					<MenuItem Header="Order By">
-						<CheckBox Content="Ascending" />
-						<CheckBox Content="Descending" />
+						<CheckBox 
+							Content="Ascending" 
+							IsChecked="{Binding JobBoardQueryModel.OrderByAscending}"
+							IsEnabled="{Binding !JobBoardQueryModel.OrderByDescending}"/>
+						<CheckBox 
+							Content="Descending" 
+							IsChecked="{Binding JobBoardQueryModel.OrderByDescending}"
+							IsEnabled="{Binding !JobBoardQueryModel.OrderByAscending}"/>
 					</MenuItem>
 					<Button
 						Content="Execute"
