@@ -13,31 +13,34 @@ using System.Threading.Tasks;
 
 namespace AutoJobSearchGUI.ViewModels
 {
+    // TODO: SQLite concurrency disabling?, database relative pathing best practices + keep all relative paths within shared folder?
+    // TODO: Menu or tab controls and seperate views for modifiying specific row item, save changes to db features
+    // TODO: SeleniumTesting.Execute(); inside of Job Search menu item
+    // TODO: view and models for specifiying search terms and scoring keywords
+    // TODO: filtering/querying of job board results, hiding/deleting of objects. ex. get all favourites, dont show rejected
+
+
     public partial class JobBoardViewModel : ViewModelBase
     {
         public delegate void OpenJobListingViewHandler(JobListingModel job);
         public event OpenJobListingViewHandler? OpenJobListingViewRequest;
 
-        public void TestClick()
+        //public RelayCommand TestClickCommand { get; }
+        public void TestClick() // TODO: convert to use RelayCommand?
         {
-            Debug.WriteLine("test click");
-
-            if (SelectedJobListing != null)
-            {
-                Debug.WriteLine("Selected id: " + SelectedJobListing.Id);
-
-                OpenJobListingViewRequest?.Invoke(SelectedJobListing);
-            }
+            if (SelectedJobListing == null) return;
+            OpenJobListingViewRequest?.Invoke(SelectedJobListing);
         }
 
-        public List<JobListingModel> JobListings { get; } // TODO: change to MVVM tookit observable
+        [ObservableProperty]
+        private List<JobListingModel> _jobListings;
 
         [ObservableProperty]
         private JobListingModel? _selectedJobListing;
 
         public JobBoardViewModel()
         {
-            TestClickCommand = new RelayCommand(TestClick);
+            //TestClickCommand = new RelayCommand(TestClick);
 
             JobListings = new();
             var jobs = SQLiteDb.GetAllJobListings().Result.Take(25);
@@ -57,31 +60,10 @@ namespace AutoJobSearchGUI.ViewModels
                     IsFavourite = job.IsFavourite
                 };
 
-                jobListing.PropertyChanged += JobListingMVVM_PropertyChanged; // TODO: unsubscibe somewhere or delete
-
                 JobListings.Add(jobListing);
             }
         }
 
-        private void JobListingMVVM_PropertyChanged(object? sender, PropertyChangedEventArgs e)
-        {
-            var jobBoardDataGridItem = (JobListingModel)sender!;
-            Debug.WriteLine($"Property {e.PropertyName} of job listing {jobBoardDataGridItem.Id} has changed.");
-        }
 
-        public RelayCommand TestClickCommand { get; }
-
-        [ObservableProperty]
-        private List<string> _testStrings = new List<string>()
-        {
-            "test1",
-            "test2"
-        };
-
-
-        // TODO: SQLite concurrency disabling?, database relative pathing best practices + keep all relative paths within shared folder?
-        // TODO: Menu or tab controls and seperate views for modifiying specific row item, save changes to db features
-
-        // TODO: SeleniumTesting.Execute();
     }
 }

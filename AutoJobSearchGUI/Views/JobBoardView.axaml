@@ -28,23 +28,7 @@
 					<MenuItem Header="Option 1" Command="" />
 				</ContextMenu>
 			</DataGrid.ContextMenu>
-			<!--
-		<DataGrid.RowDetailsTemplate>
-			<DataTemplate x:DataType="vm:JobBoardViewModel">
-				<Button Command="{Binding TestClick}" Content="Click me" />
-			</DataTemplate>
-		</DataGrid.RowDetailsTemplate>
-		-->
 			<DataGrid.Columns>
-				<!--
-		<DataGridTemplateColumn>
-			<DataGridTemplateColumn.CellTemplate>
-				<DataTemplate>
-					<Button Command="{B">test</Button>
-				</DataTemplate>
-			</DataGridTemplateColumn.CellTemplate>
-		</DataGridTemplateColumn>
-		-->
 				<DataGridTextColumn Header="Id" Binding="{Binding Id}" IsReadOnly="True" />
 				<DataGridTextColumn Header="SearchTerm" Binding="{Binding SearchTerm}" IsReadOnly="True" />
 				<DataGridTextColumn Header="CreatedAt" Binding="{Binding CreatedAt}" IsReadOnly="True" />
@@ -57,6 +41,4 @@
 			</DataGrid.Columns>
 		</DataGrid>
 	</StackPanel>
-	
-	
 </UserControl>

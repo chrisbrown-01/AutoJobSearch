@@ -7,7 +7,7 @@
         x:Class="AutoJobSearchGUI.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
-        Title="AutoJobSearchGUI"
+        Title="AutoJobSearch"
 		MinWidth="500" MinHeight="500">
 
 	<Design.DataContext>
