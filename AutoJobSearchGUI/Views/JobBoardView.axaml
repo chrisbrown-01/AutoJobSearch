@@ -3,7 +3,7 @@
 			 xmlns:vm="using:AutoJobSearchGUI.ViewModels"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="800"
              x:Class="AutoJobSearchGUI.Views.JobBoardView"
 			 x:DataType="vm:JobBoardViewModel">
 
@@ -14,7 +14,11 @@
 	</Design.DataContext>
 
 	<StackPanel>
-		<Button Command="{Binding TestClick}" Content="Open Selected Job" />
+		<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" >
+			<Button Command="{Binding TestClick}" Content="Open Selected Job" />
+			<Button Command="{Binding GoToPreviousPage}" Content="Previous Page" />
+			<Button Command="{Binding GoToNextPage}" Content="Next Page" />
+		</StackPanel>
 		<DataGrid
 	 	CanUserResizeColumns="True"
 	 	ColumnWidth="*"

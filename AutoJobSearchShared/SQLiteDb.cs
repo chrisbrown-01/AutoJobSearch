@@ -2,42 +2,48 @@
 using AutoJobSearchShared.Models;
 using Dapper;
 using Microsoft.Data.Sqlite; // TODO: uninstall packages where they're not required
+using System.Diagnostics;
 using System.Text;
 
 namespace AutoJobSearchShared
 {
     public class SQLiteDb
     {
-        public static async Task<IEnumerable<Models.JobListing>> GetAllJobListings()
+        public static async Task<IEnumerable<Models.JobListing>> GetJobListings(int page = 0, int pageSize = 25)
         {
+            Debug.WriteLine($"Getting job listings for page {page} and pagesize {pageSize}"); // TODO: proper logging
+
             var jobListings = new List<Models.JobListing>();
 
             using (var connection = new SqliteConnection(Constants.SQLITE_CONNECTION_STRING)) // TODO: db connection pooling
             {
                 await connection.OpenAsync();
 
-                // var sqlQuery = "SELECT * FROM JobListings";
                 var sqlQuery = @"SELECT 
-                                 Id, 
-                                 SearchTerm, 
-                                 CreatedAt, 
-                                 Description, 
-                                 Score, 
-                                 IsAppliedTo,
-                                 IsInterviewing,
-                                 IsRejected,
-                                 IsFavourite
-                                 FROM JobListings";
+                         Id, 
+                         SearchTerm, 
+                         CreatedAt, 
+                         Description, 
+                         Score, 
+                         IsAppliedTo,
+                         IsInterviewing,
+                         IsRejected,
+                         IsFavourite
+                         FROM JobListings
+                         LIMIT @PageSize OFFSET @PageOffset";
 
-                var jobListingsQuery = await connection.QueryAsync<Models.JobListing>(sqlQuery);
+                var jobListingsQuery = await connection.QueryAsync<Models.JobListing>(sqlQuery, new { PageSize = pageSize, PageOffset = page * pageSize });
                 jobListings = jobListingsQuery.ToList(); // TODO: improve, perform null checking?
             }
 
             return jobListings;
         }
 
+
         public static async Task<string> GetNotesById(int id)
         {
+            Debug.WriteLine($"Getting notes for listing id {id}"); // TODO: proper logging
+
             string notes = string.Empty;
 
             using (var connection = new SqliteConnection(Constants.SQLITE_CONNECTION_STRING))
@@ -55,6 +61,8 @@ namespace AutoJobSearchShared
 
         public static async Task<string> GetApplicationLinksById(int id)
         {
+            Debug.WriteLine($"Getting links for listing id {id}"); // TODO: proper logging
+
             string links = string.Empty;  
 
             using (var connection = new SqliteConnection(Constants.SQLITE_CONNECTION_STRING))

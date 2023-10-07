@@ -12,7 +12,8 @@ namespace AutoJobSearchGUI.Data
     {
         public static void UpdateDatabase(string columnName, bool value, int id) // TODO: async Task?
         {
-            Debug.WriteLine("Updating database"); // TODO: proper logging
+            // TODO: proper logging
+            // Debug.WriteLine("Updating database"); // TODO: proper logging
             SQLiteDb.UpdateDatabaseBoolPropertyById(columnName, value, id);
         }
     }

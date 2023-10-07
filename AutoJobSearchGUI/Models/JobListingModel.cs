@@ -3,6 +3,7 @@ using AutoJobSearchGUI.Data;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -50,21 +51,25 @@ namespace AutoJobSearchGUI.Models
 
         partial void OnIsAppliedToChanged(bool value)
         {
+            Debug.WriteLine($"Updating IsAppliedTo for listing id {this.Id}"); // TODO: proper logging
             DbContextSQLite.UpdateDatabase("IsAppliedTo", value, this.Id); // TODO: convert to use DI
         }
 
         partial void OnIsInterviewingChanged(bool value)
         {
+            Debug.WriteLine($"Updating IsInterviewing for listing id {this.Id}"); // TODO: proper logging
             DbContextSQLite.UpdateDatabase("IsInterviewing", value, this.Id);
         }
 
         partial void OnIsRejectedChanged(bool value)
         {
+            Debug.WriteLine($"Updating IsRejected for listing id {this.Id}"); // TODO: proper logging
             DbContextSQLite.UpdateDatabase("IsRejected", value, this.Id);
         }
 
         partial void OnIsFavouriteChanged(bool value)
         {
+            Debug.WriteLine($"Updating IsFavourite for listing id {this.Id}"); // TODO: proper logging
             DbContextSQLite.UpdateDatabase("IsFavourite", value, this.Id);
         }
     }

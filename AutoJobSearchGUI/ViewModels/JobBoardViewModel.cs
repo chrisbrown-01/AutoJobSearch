@@ -1,5 +1,6 @@
 ﻿using AutoJobSearchGUI.Models;
 using AutoJobSearchShared;
+using AutoJobSearchShared.Models;
 using Avalonia.Interactivity;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -32,18 +33,49 @@ namespace AutoJobSearchGUI.ViewModels
             OpenJobListingViewRequest?.Invoke(SelectedJobListing);
         }
 
+        public void GoToNextPage()
+        {
+            var jobListings = GetJobListings(PageIndex + 1, PageSize).Result;
+
+            if (jobListings.Count == 0) return;
+
+            PageIndex++;
+            JobListings = jobListings;
+        }
+
+        public void GoToPreviousPage()
+        {
+            if (PageIndex - 1 < 0) return; 
+            PageIndex--;
+            JobListings = GetJobListings(PageIndex, PageSize).Result;
+        }
+
         [ObservableProperty]
         private List<JobListingModel> _jobListings;
 
         [ObservableProperty]
         private JobListingModel? _selectedJobListing;
 
+        [ObservableProperty]
+        private int _pageIndex;
+
+        [ObservableProperty]
+        private int _pageSize;
+
         public JobBoardViewModel()
         {
             //TestClickCommand = new RelayCommand(TestClick);
 
-            JobListings = new();
-            var jobs = SQLiteDb.GetAllJobListings().Result.Take(25);
+            PageIndex = 0;
+            PageSize = 25;
+
+            JobListings = GetJobListings(PageIndex, PageSize).Result;
+        }
+
+        private async Task<List<JobListingModel>> GetJobListings(int pageIndex, int pageSize)
+        {
+            var jobListings = new List<JobListingModel>();
+            var jobs = await SQLiteDb.GetJobListings(pageIndex, pageSize);
 
             foreach (var job in jobs)
             {
@@ -60,8 +92,10 @@ namespace AutoJobSearchGUI.ViewModels
                     IsFavourite = job.IsFavourite
                 };
 
-                JobListings.Add(jobListing);
+                jobListings.Add(jobListing);
             }
+
+            return jobListings;
         }
 
 
