@@ -3,6 +3,7 @@ using AutoJobSearchShared;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,7 +22,8 @@ namespace AutoJobSearchGUI.ViewModels
 
         public void ChangeListing(JobListingModel jobListing)
         {
-            // TODO: consolidate back to main List?
+            if (jobListing.Id == JobListing.Id) return;
+
             var applicationLinks = SQLiteDb.GetApplicationLinksById(jobListing.Id).Result;
             var notes = SQLiteDb.GetNotesById(jobListing.Id).Result;
 

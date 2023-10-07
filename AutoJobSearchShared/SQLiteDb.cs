@@ -4,11 +4,25 @@ using Dapper;
 using Microsoft.Data.Sqlite; // TODO: uninstall packages where they're not required
 using System.Diagnostics;
 using System.Text;
+using static OpenQA.Selenium.PrintOptions;
 
 namespace AutoJobSearchShared
 {
     public class SQLiteDb
     {
+        public static async Task UpdateNotesById(int id, string notes)
+        {
+            Debug.WriteLine($"Updating notes for id {id}"); // TODO: proper logging
+
+            using (var connection = new SqliteConnection(Constants.SQLITE_CONNECTION_STRING)) // TODO: db connection pooling
+            {
+                await connection.OpenAsync();
+
+                var sqlQuery = "UPDATE JobListings SET Notes = @Notes WHERE Id = @Id;";
+                await connection.ExecuteAsync(sqlQuery, new { Notes = notes, Id = id });
+            }
+        }
+
         public static async Task<IEnumerable<Models.JobListing>> GetJobListings(int page = 0, int pageSize = 25)
         {
             Debug.WriteLine($"Getting job listings for page {page} and pagesize {pageSize}"); // TODO: proper logging

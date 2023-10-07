@@ -1,5 +1,6 @@
 ﻿using AutoJobSearchConsoleApp.Models;
 using AutoJobSearchGUI.Data;
+using AutoJobSearchShared;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 using System.Collections.Generic;
@@ -21,17 +22,6 @@ namespace AutoJobSearchGUI.Models
 
         public string ApplicationLinks { get; set; } = string.Empty;
 
-        //public string ApplicationLinksAsString()
-        //{
-        //    StringBuilder sb = new StringBuilder();
-        //    foreach(var link in ApplicationLinks)
-        //    {
-        //        sb.AppendLine(link);
-        //    }
-
-        //    return sb.ToString();
-        //}
-
         public int Score { get; set; }
 
         [ObservableProperty]
@@ -48,6 +38,16 @@ namespace AutoJobSearchGUI.Models
 
         [ObservableProperty]
         private string _notes = string.Empty;
+
+        // Note that these methods technically cause an excessive amount of database calls but since there is only a single user
+        // interacting with the database, the technical debt is justified to ensure that no data loss occurs if the application
+        // unexpectedly crashes before the user can request for the changes to be saved to the database.
+
+        partial void OnNotesChanged(string value)
+        {
+            Debug.WriteLine($"Updating notes for listing id {this.Id}"); // TODO: proper logging
+            SQLiteDb.UpdateNotesById(this.Id, value);
+        }
 
         partial void OnIsAppliedToChanged(bool value)
         {

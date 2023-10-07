@@ -43,18 +43,18 @@
 		<TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding JobListing.CreatedAt}" />
 
 		<TextBlock Grid.Row="3" Grid.Column="0" HorizontalAlignment="Center">Job Description</TextBlock>
-		<TextBox 
-			Grid.Row="3" 
-			Grid.Column="1" 
-			Text="{Binding JobListing.Description}" 
+		<TextBox
+			Grid.Row="3"
+			Grid.Column="1"
+			Text="{Binding JobListing.Description}"
 			IsReadOnly="True"
 			TextWrapping="Wrap"/>
 
 		<TextBlock Grid.Row="4" Grid.Column="0" HorizontalAlignment="Center">Application Links</TextBlock>
-		<TextBox 
-			Grid.Row="4" 
-		    Grid.Column="1" 
-		    Text="{Binding JobListing.ApplicationLinks}" 
+		<TextBox
+			Grid.Row="4"
+		    Grid.Column="1"
+		    Text="{Binding JobListing.ApplicationLinks}"
 		    IsReadOnly="True"
 		    TextWrapping="Wrap"/>
 
@@ -74,11 +74,11 @@
 		<CheckBox  Grid.Row="9" Grid.Column="1" IsChecked="{Binding JobListing.IsFavourite}" />
 
 		<TextBlock Grid.Row="10" Grid.Column="0" HorizontalAlignment="Center">Notes</TextBlock>
-		<TextBox   
-			Grid.Row="10" 
-			Grid.Column="1" 
+		<TextBox
+			Grid.Row="10"
+			Grid.Column="1"
 			Text="{Binding JobListing.Notes}"
 			TextWrapping="Wrap"/>
 	</Grid>
-	
+
 </UserControl>

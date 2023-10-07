@@ -15,7 +15,6 @@ using System.Threading.Tasks;
 namespace AutoJobSearchGUI.ViewModels
 {
     // TODO: SQLite concurrency disabling?, database relative pathing best practices + keep all relative paths within shared folder?
-    // TODO: Menu or tab controls and seperate views for modifiying specific row item, save changes to db features
     // TODO: SeleniumTesting.Execute(); inside of Job Search menu item
     // TODO: view and models for specifiying search terms and scoring keywords
     // TODO: filtering/querying of job board results, hiding/deleting of objects. ex. get all favourites, dont show rejected
@@ -25,30 +24,6 @@ namespace AutoJobSearchGUI.ViewModels
     {
         public delegate void OpenJobListingViewHandler(JobListingModel job);
         public event OpenJobListingViewHandler? OpenJobListingViewRequest;
-
-        //public RelayCommand TestClickCommand { get; }
-        public void TestClick() // TODO: convert to use RelayCommand?
-        {
-            if (SelectedJobListing == null) return;
-            OpenJobListingViewRequest?.Invoke(SelectedJobListing);
-        }
-
-        public void GoToNextPage()
-        {
-            var jobListings = GetJobListings(PageIndex + 1, PageSize).Result;
-
-            if (jobListings.Count == 0) return;
-
-            PageIndex++;
-            JobListings = jobListings;
-        }
-
-        public void GoToPreviousPage()
-        {
-            if (PageIndex - 1 < 0) return; 
-            PageIndex--;
-            JobListings = GetJobListings(PageIndex, PageSize).Result;
-        }
 
         [ObservableProperty]
         private List<JobListingModel> _jobListings;
@@ -69,6 +44,28 @@ namespace AutoJobSearchGUI.ViewModels
             PageIndex = 0;
             PageSize = 25;
 
+            JobListings = GetJobListings(PageIndex, PageSize).Result;
+        }
+
+        //public RelayCommand TestClickCommand { get; }
+        public void TestClick() // TODO: convert to use RelayCommand?
+        {
+            if (SelectedJobListing == null) return;
+            OpenJobListingViewRequest?.Invoke(SelectedJobListing);
+        }
+
+        public void GoToNextPage()
+        {
+            var jobListings = GetJobListings(PageIndex + 1, PageSize).Result;
+            if (jobListings.Count == 0) return;
+            PageIndex++;
+            JobListings = jobListings;
+        }
+
+        public void GoToPreviousPage()
+        {
+            if (PageIndex - 1 < 0) return;
+            PageIndex--;
             JobListings = GetJobListings(PageIndex, PageSize).Result;
         }
 
