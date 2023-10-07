@@ -12,6 +12,16 @@
              to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
 		<vm:JobListingViewModel/>
 	</Design.DataContext>
+
+	<StackPanel VerticalAlignment="Center">
+		<TextBlock 
+			Text="{Binding Greeting}" 
+			HorizontalAlignment="Center">			
+		</TextBlock>
+		<TextBlock
+			Text="{Binding Id}"
+			HorizontalAlignment="Center">
+			</TextBlock>
+	</StackPanel>
 	
-	Listing view
 </UserControl>

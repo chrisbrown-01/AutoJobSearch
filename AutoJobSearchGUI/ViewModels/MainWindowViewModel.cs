@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using AutoJobSearchGUI.Models;
+using CommunityToolkit.Mvvm.ComponentModel;
 using System.Diagnostics;
 
 namespace AutoJobSearchGUI.ViewModels
@@ -7,6 +8,7 @@ namespace AutoJobSearchGUI.ViewModels
     {
         private JobBoardViewModel jobBoardViewModel;
         private JobSearchViewModel jobSearchViewModel;
+        private JobListingViewModel jobListingViewModel;
 
         [ObservableProperty]
         private ViewModelBase _contentViewModel;
@@ -15,7 +17,10 @@ namespace AutoJobSearchGUI.ViewModels
         {
             jobBoardViewModel = new JobBoardViewModel();
             jobSearchViewModel = new JobSearchViewModel();
+            jobListingViewModel = new JobListingViewModel();
             ContentViewModel = jobBoardViewModel;
+
+            jobBoardViewModel.OpenJobListingViewRequest += ChangeViewToJobListing;
         }
 
         public void ChangeViewToJobBoard()
@@ -26,6 +31,12 @@ namespace AutoJobSearchGUI.ViewModels
         public void ChangeViewToJobSearch()
         {
             ContentViewModel = jobSearchViewModel;
+        }
+
+        public void ChangeViewToJobListing(JobListingModel jobListing)
+        {
+            jobListingViewModel.ChangeListing(jobListing.Id);
+            ContentViewModel = jobListingViewModel;
         }
     }
 }

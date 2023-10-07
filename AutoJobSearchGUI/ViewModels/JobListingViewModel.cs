@@ -12,6 +12,18 @@ namespace AutoJobSearchGUI.ViewModels
     {
         public string Greeting => "listing";
 
+        [ObservableProperty]
+        private int _id;
+
+        public JobListingViewModel()
+        {
+        }
+
+        public void ChangeListing(int id)
+        {
+            Id = id;
+        }
+
         //[ObservableProperty]
         //private JobListingModel _jobListingModel;
 

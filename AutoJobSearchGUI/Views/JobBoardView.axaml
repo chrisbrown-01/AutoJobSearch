@@ -21,7 +21,7 @@
 	 	MinHeight="400"
 	 	MaxHeight="1000"
 	 	ItemsSource="{Binding JobListings}"
-		SelectedItem="{Binding SelectedJobListing}"
+		SelectedItem="{Binding SelectedJobListing}"		 
 		RowHeight="150">
 			<DataGrid.ContextMenu>
 				<ContextMenu>

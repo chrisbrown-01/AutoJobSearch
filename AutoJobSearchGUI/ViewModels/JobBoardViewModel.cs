@@ -15,6 +15,21 @@ namespace AutoJobSearchGUI.ViewModels
 {
     public partial class JobBoardViewModel : ViewModelBase
     {
+        public delegate void OpenJobListingViewHandler(JobListingModel job);
+        public event OpenJobListingViewHandler OpenJobListingViewRequest;
+
+        public void TestClick()
+        {
+            Debug.WriteLine("test click");
+
+            if (SelectedJobListing != null)
+            {
+                Debug.WriteLine("Selected id: " + SelectedJobListing.Id);
+
+                OpenJobListingViewRequest?.Invoke(SelectedJobListing);
+            }
+        }
+
         public List<JobListingModel> JobListings { get; } // TODO: change to MVVM tookit observable
 
         [ObservableProperty]
@@ -55,16 +70,6 @@ namespace AutoJobSearchGUI.ViewModels
         }
 
         public RelayCommand TestClickCommand { get; }
-
-        public void TestClick()
-        {
-            Debug.WriteLine("test click");
-
-            if (SelectedJobListing != null)
-            {
-                Debug.WriteLine("Selected id: " + SelectedJobListing.Id);
-            }
-        }
 
         [ObservableProperty]
         private List<string> _testStrings = new List<string>()
