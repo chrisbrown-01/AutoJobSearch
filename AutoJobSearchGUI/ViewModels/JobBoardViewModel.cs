@@ -1,4 +1,5 @@
-﻿using AutoJobSearchGUI.Models;
+﻿using AutoJobSearchConsoleApp.Models;
+using AutoJobSearchGUI.Models;
 using AutoJobSearchShared;
 using AutoJobSearchShared.Models;
 using Avalonia.Interactivity;
@@ -25,8 +26,10 @@ namespace AutoJobSearchGUI.ViewModels
         public delegate void OpenJobListingViewHandler(JobListingModel job);
         public event OpenJobListingViewHandler? OpenJobListingViewRequest;
 
+        private List<JobListingModel> JobListings { get; set; }
+
         [ObservableProperty]
-        private List<JobListingModel> _jobListings;
+        private List<JobListingModel> _jobListingsDisplayed;
 
         [ObservableProperty]
         private JobListingModel? _selectedJobListing;
@@ -37,6 +40,19 @@ namespace AutoJobSearchGUI.ViewModels
         [ObservableProperty]
         private int _pageSize;
 
+        [ObservableProperty]
+        private bool _isFavouritesFilterEnabled;
+
+        partial void OnIsFavouritesFilterEnabledChanged(bool value)
+        {
+            if (value == true)
+            {
+                JobListingsDisplayed = JobListings.Where(x => x.IsFavourite == value).ToList();
+            }
+
+            else JobListingsDisplayed = JobListings;
+        }
+
         public JobBoardViewModel()
         {
             //TestClickCommand = new RelayCommand(TestClick);
@@ -45,6 +61,7 @@ namespace AutoJobSearchGUI.ViewModels
             PageSize = 25;
 
             JobListings = GetJobListings(PageIndex, PageSize).Result;
+            JobListingsDisplayed = JobListings; // TODO: convert to void method call
         }
 
         //public RelayCommand TestClickCommand { get; }
@@ -60,6 +77,7 @@ namespace AutoJobSearchGUI.ViewModels
             if (jobListings.Count == 0) return;
             PageIndex++;
             JobListings = jobListings;
+            JobListingsDisplayed = JobListings;
         }
 
         public void GoToPreviousPage()
@@ -67,6 +85,7 @@ namespace AutoJobSearchGUI.ViewModels
             if (PageIndex - 1 < 0) return;
             PageIndex--;
             JobListings = GetJobListings(PageIndex, PageSize).Result;
+            JobListingsDisplayed = JobListings;
         }
 
         private async Task<List<JobListingModel>> GetJobListings(int pageIndex, int pageSize)
@@ -94,7 +113,5 @@ namespace AutoJobSearchGUI.ViewModels
 
             return jobListings;
         }
-
-
     }
 }

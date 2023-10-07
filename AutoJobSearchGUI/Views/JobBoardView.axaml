@@ -18,13 +18,19 @@
 			<Button Command="{Binding TestClick}" Content="Open Selected Job" />
 			<Button Command="{Binding GoToPreviousPage}" Content="Previous Page" />
 			<Button Command="{Binding GoToNextPage}" Content="Next Page" />
+			<Menu>
+				<MenuItem Header="Filters">
+					<CheckBox Content="Favourites" IsChecked="{Binding IsFavouritesFilterEnabled}" />
+					<CheckBox Content="Applied" />
+				</MenuItem>
+			</Menu>
 		</StackPanel>
 		<DataGrid
 	 	CanUserResizeColumns="True"
 	 	ColumnWidth="*"
 	 	MinHeight="400"
 	 	MaxHeight="1000"
-	 	ItemsSource="{Binding JobListings}"
+	 	ItemsSource="{Binding JobListingsDisplayed}"
 		SelectedItem="{Binding SelectedJobListing}"		 
 		RowHeight="150">
 			<DataGrid.ContextMenu>
