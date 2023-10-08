@@ -83,5 +83,11 @@ namespace AutoJobSearchGUI.Models
 
         [ObservableProperty]
         private string _jobDescriptionQueryString = string.Empty;
+
+        [ObservableProperty]
+        private bool _notesQueryStringEnabled;
+
+        [ObservableProperty]
+        private string _notesQueryString = string.Empty;
     }
 }

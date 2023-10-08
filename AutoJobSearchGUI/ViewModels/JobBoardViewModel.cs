@@ -71,27 +71,33 @@ namespace AutoJobSearchGUI.ViewModels
 
         public void ExecuteQuery()
         {
-
+            // Try to get some performance improvement by doing the initial simple query directly within the SQLite database
             var result = SQLiteDb.ExecuteJobBoardQuery(
                 JobBoardQueryModel.IsAppliedTo,
                 JobBoardQueryModel.IsInterviewing,
                 JobBoardQueryModel.IsRejected,
                 JobBoardQueryModel.IsFavourite,
-                JobBoardQueryModel.IsHidden).Result.ToList();
+                JobBoardQueryModel.IsHidden).Result.AsQueryable();
 
+            // Easiest solution is to then do the rest of the querying within .NET on the previous result
             if (JobBoardQueryModel.SearchTermQueryStringEnabled)
             {
-                result = result.Where(x => x.SearchTerm.Contains(JobBoardQueryModel.SearchTermQueryString, StringComparison.OrdinalIgnoreCase)).ToList();
+                result = result.Where(x => x.SearchTerm.Contains(JobBoardQueryModel.SearchTermQueryString, StringComparison.OrdinalIgnoreCase));
             }
 
             if (JobBoardQueryModel.JobDescriptionQueryStringEnabled)
             {
-                result = result.Where(x => x.Description.Contains(JobBoardQueryModel.JobDescriptionQueryString, StringComparison.OrdinalIgnoreCase)).ToList();
+                result = result.Where(x => x.Description.Contains(JobBoardQueryModel.JobDescriptionQueryString, StringComparison.OrdinalIgnoreCase));
+            }
+
+            if (JobBoardQueryModel.NotesQueryStringEnabled)
+            {
+                result = result.Where(x => x.Notes.Contains(JobBoardQueryModel.NotesQueryString, StringComparison.OrdinalIgnoreCase));
             }
 
             if (JobBoardQueryModel.SearchedOnDateEnabled)
             {
-                result = result.Where(x => x.CreatedAt.Date == JobBoardQueryModel.SearchedOnDate.Date).ToList();
+                result = result.Where(x => x.CreatedAt.Date == JobBoardQueryModel.SearchedOnDate.Date);
             }
 
             if (JobBoardQueryModel.SearchedBetweenDatesEnabled)
@@ -99,68 +105,68 @@ namespace AutoJobSearchGUI.ViewModels
                 result = result.Where(x => 
                 x.CreatedAt.Date >= JobBoardQueryModel.SearchedOnDateStart.Date &&
                 x.CreatedAt.Date <= JobBoardQueryModel.SearchedOnDateEnd.Date
-                ).ToList();
+                );
             }
 
             if(JobBoardQueryModel.ScoreEqualsEnabled)
             {
-                result = result.Where(x => x.Score == JobBoardQueryModel.ScoreEquals).ToList();
+                result = result.Where(x => x.Score == JobBoardQueryModel.ScoreEquals);
             }
 
             if (JobBoardQueryModel.ScoreRangeEnabled)
             {
                 result = result.Where(x => 
                 x.Score >= JobBoardQueryModel.ScoreRangeMin &&
-                x.Score <= JobBoardQueryModel.ScoreRangeMax).ToList();
+                x.Score <= JobBoardQueryModel.ScoreRangeMax);
             }
 
             if(JobBoardQueryModel.SortByScore)
             {
                 if (JobBoardQueryModel.OrderByDescending)
                 {
-                    result = result.OrderByDescending(x => x.Score).ToList();
+                    result = result.OrderByDescending(x => x.Score);
                 }
                 else
                 {
-                    result = result.OrderBy(x => x.Score).ToList();
+                    result = result.OrderBy(x => x.Score);
                 }
             }
             else if (JobBoardQueryModel.SortByCreatedAt)
             {
                 if (JobBoardQueryModel.OrderByDescending)
                 {
-                    result = result.OrderByDescending(x => x.CreatedAt).ToList();
+                    result = result.OrderByDescending(x => x.CreatedAt);
                 }
                 else
                 {
-                    result = result.OrderBy(x => x.CreatedAt).ToList();
+                    result = result.OrderBy(x => x.CreatedAt);
                 }
             }
             else if (JobBoardQueryModel.SortBySearchTerm)
             {
                 if (JobBoardQueryModel.OrderByDescending)
                 {
-                    result = result.OrderByDescending(x => x.SearchTerm).ToList();
+                    result = result.OrderByDescending(x => x.SearchTerm);
                 }
                 else
                 {
-                    result = result.OrderBy(x => x.SearchTerm).ToList();
+                    result = result.OrderBy(x => x.SearchTerm);
                 }  
             }
             else
             {
                 if (JobBoardQueryModel.OrderByDescending)
                 {
-                    result = result.OrderByDescending(x => x.Id).ToList();
+                    result = result.OrderByDescending(x => x.Id);
                 }
                 else
                 {
-                    result = result.OrderBy(x => x.Id).ToList();
+                    result = result.OrderBy(x => x.Id);
                 }
             }
 
             // TODO: how to do paging for this
-            JobListings = ConvertQueryToDisplayableModel(result);
+            JobListings = ConvertQueryToDisplayableModel(result.ToList());
             JobListingsDisplayed = JobListings.Take(25).ToList();
         }
 

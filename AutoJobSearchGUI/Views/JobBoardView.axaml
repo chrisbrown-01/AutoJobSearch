@@ -41,6 +41,10 @@
 						<CheckBox Content="Enable" IsChecked="{Binding JobBoardQueryModel.JobDescriptionQueryStringEnabled}" />
 						<TextBox Text="{Binding JobBoardQueryModel.JobDescriptionQueryString}" IsReadOnly="False" />
 					</MenuItem>
+					<MenuItem Header="Notes Query String">
+						<CheckBox Content="Enable" IsChecked="{Binding JobBoardQueryModel.NotesQueryStringEnabled}" />
+						<TextBox Text="{Binding JobBoardQueryModel.NotesQueryString}" IsReadOnly="False" />
+					</MenuItem>
 					<MenuItem Header="Search Date">
 						<CheckBox 
 								Content="Enable Searched On Date"
