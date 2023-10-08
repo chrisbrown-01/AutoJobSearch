@@ -1,5 +1,7 @@
 ﻿using AutoJobSearchGUI.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
+using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace AutoJobSearchGUI.ViewModels
@@ -33,9 +35,10 @@ namespace AutoJobSearchGUI.ViewModels
             ContentViewModel = jobSearchViewModel;
         }
 
-        public void ChangeViewToJobListing(JobListingModel jobListing)
+        public void ChangeViewToJobListing(JobListingModel jobListing, IEnumerable<JobListingModel> jobListings)
         {
-            jobListingViewModel.ChangeListing(jobListing);
+            jobListingViewModel.PopulateJobListings(jobListings);
+            jobListingViewModel.OpenJobListing(jobListing);
             ContentViewModel = jobListingViewModel;
         }
     }

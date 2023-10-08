@@ -52,7 +52,7 @@ namespace AutoJobSearchGUI.Models
         partial void OnIsAppliedToChanged(bool value)
         {
             Debug.WriteLine($"Updating IsAppliedTo for listing id {this.Id}"); // TODO: proper logging
-            DbContextSQLite.UpdateDatabase("IsAppliedTo", value, this.Id); // TODO: convert to use DI
+            DbContextSQLite.UpdateDatabase("IsAppliedTo", value, this.Id); // TODO: convert to use DI, async
         }
 
         partial void OnIsInterviewingChanged(bool value)

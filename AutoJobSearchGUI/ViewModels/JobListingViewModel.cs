@@ -15,15 +15,45 @@ namespace AutoJobSearchGUI.ViewModels
         [ObservableProperty]
         private JobListingModel _jobListing;
 
+        private List<JobListingModel> JobListings { get; set; } = default!;
+
         public JobListingViewModel()
         {
             JobListing = new JobListingModel();
         }
 
-        public void ChangeListing(JobListingModel jobListing)
+        public void PopulateJobListings(IEnumerable<JobListingModel> jobListings)
+        {
+            JobListings = jobListings.ToList();
+        }
+
+        public void GoToPreviousJob()
+        {
+            var currentIndex = JobListings.IndexOf(JobListing);
+            if (currentIndex < 0) return;
+
+            var previousIndex = currentIndex - 1;
+            if (previousIndex < 0) return;
+
+            JobListing = JobListings[previousIndex];
+        }
+
+        public void GoToNextJob()
+        {
+            var currentIndex = JobListings.IndexOf(JobListing);
+            if (currentIndex < 0) return;
+
+            var nextIndex = currentIndex + 1;
+            if(nextIndex >= JobListings.Count) return;   
+
+            JobListing = JobListings[nextIndex];
+        }
+
+        public void OpenJobListing(JobListingModel jobListing)
         {
             if (jobListing.Id == JobListing.Id) return;
 
+            // TODO: get full description
             var applicationLinks = SQLiteDb.GetApplicationLinksById(jobListing.Id).Result;
             var notes = SQLiteDb.GetNotesById(jobListing.Id).Result;
 

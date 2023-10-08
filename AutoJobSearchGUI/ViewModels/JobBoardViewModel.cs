@@ -23,7 +23,7 @@ namespace AutoJobSearchGUI.ViewModels
 
     public partial class JobBoardViewModel : ViewModelBase
     {
-        public delegate void OpenJobListingViewHandler(JobListingModel job);
+        public delegate void OpenJobListingViewHandler(JobListingModel job, IEnumerable<JobListingModel> jobListings);
         public event OpenJobListingViewHandler? OpenJobListingViewRequest;
 
         [ObservableProperty]
@@ -165,7 +165,7 @@ namespace AutoJobSearchGUI.ViewModels
         public void OpenJobListing() // TODO: convert to use RelayCommand?
         {
             if (SelectedJobListing == null) return;
-            OpenJobListingViewRequest?.Invoke(SelectedJobListing);
+            OpenJobListingViewRequest?.Invoke(SelectedJobListing, JobListings);
         }
 
         public void GoToNextPage()
