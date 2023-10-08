@@ -10,7 +10,7 @@ namespace AutoJobSearchShared
 {
     public class SQLiteDb
     {
-        public static async Task<IEnumerable<Models.JobListing>> ExecuteJobBoardQuery(
+        public static async Task<IEnumerable<Models.JobListing>> ExecuteJobBoardAdvancedQuery(
             bool isAppliedTo,
             bool isInterviewing,
             bool isRejected,
@@ -72,9 +72,9 @@ namespace AutoJobSearchShared
             }
         }
 
-        public static async Task<IEnumerable<Models.JobListing>> GetJobListings(int page = 0, int pageSize = 25)
+        public static async Task<IEnumerable<Models.JobListing>> GetAllJobListings()
         {
-            Debug.WriteLine($"Getting job listings for page {page} and pagesize {pageSize}"); // TODO: proper logging
+            Debug.WriteLine($"Getting all job listings"); // TODO: proper logging
 
             var jobListings = new List<Models.JobListing>();
 
@@ -86,7 +86,21 @@ namespace AutoJobSearchShared
                          Id, 
                          SearchTerm, 
                          CreatedAt, 
-                         Description, 
+                         SUBSTR(Description, 1, 200) AS Description,
+                         Score, 
+                         IsAppliedTo,
+                         IsInterviewing,
+                         IsRejected,
+                         IsFavourite
+                         FROM JobListings
+                         WHERE IsHidden = False";
+
+                /*                 
+                 var sqlQuery = @"SELECT 
+                         Id, 
+                         SearchTerm, 
+                         CreatedAt, 
+                         SUBSTR(Description, 1, 200) AS Description,
                          Score, 
                          IsAppliedTo,
                          IsInterviewing,
@@ -96,6 +110,10 @@ namespace AutoJobSearchShared
                          LIMIT @PageSize OFFSET @PageOffset";
 
                 var jobListingsQuery = await connection.QueryAsync<Models.JobListing>(sqlQuery, new { PageSize = pageSize, PageOffset = page * pageSize });
+
+                */
+
+                var jobListingsQuery = await connection.QueryAsync<Models.JobListing>(sqlQuery);
                 jobListings = jobListingsQuery.ToList(); // TODO: improve, perform null checking?
             }
 

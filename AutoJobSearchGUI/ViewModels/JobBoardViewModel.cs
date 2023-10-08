@@ -29,10 +29,10 @@ namespace AutoJobSearchGUI.ViewModels
         [ObservableProperty]
         private JobBoardQueryModel _jobBoardQueryModel;
 
-        private List<JobListingModel> JobListings { get; set; }
+        private IEnumerable<JobListingModel> JobListings { get; set; }
 
         [ObservableProperty]
-        private List<JobListingModel> _jobListingsDisplayed;
+        private IEnumerable<JobListingModel> _jobListingsDisplayed;
 
         [ObservableProperty]
         private JobListingModel? _selectedJobListing;
@@ -52,14 +52,14 @@ namespace AutoJobSearchGUI.ViewModels
             PageIndex = 0;
             PageSize = 25;
 
-            JobListings = GetJobListings(PageIndex, PageSize).Result;
-            JobListingsDisplayed = JobListings; // TODO: convert to void method call
+            JobListings = GetAllJobListings().Result;
+            JobListingsDisplayed = JobListings.Skip(PageIndex*PageSize).Take(PageSize); // TODO: convert to void method call, paginate
         }
 
         public void ExecuteQuery()
         {
             // Try to get some performance improvement by doing the initial simple query directly within the SQLite database
-            var result = SQLiteDb.ExecuteJobBoardQuery(
+            var result = SQLiteDb.ExecuteJobBoardAdvancedQuery(
                 JobBoardQueryModel.IsAppliedTo,
                 JobBoardQueryModel.IsInterviewing,
                 JobBoardQueryModel.IsRejected,
@@ -154,7 +154,7 @@ namespace AutoJobSearchGUI.ViewModels
 
             // TODO: how to do paging for this
             JobListings = ConvertQueryToDisplayableModel(result.ToList());
-            JobListingsDisplayed = JobListings.Take(25).ToList();
+            JobListingsDisplayed = JobListings.Take(25);
         }
 
         //public RelayCommand TestClickCommand { get; }
@@ -166,19 +166,17 @@ namespace AutoJobSearchGUI.ViewModels
 
         public void GoToNextPage()
         {
-            var jobListings = GetJobListings(PageIndex + 1, PageSize).Result;
-            if (jobListings.Count == 0) return;
+            var jobListings = JobListings.Skip((PageIndex + 1) * PageSize).Take(PageSize);
+            if (!jobListings.Any()) return;
             PageIndex++;
-            JobListings = jobListings;
-            JobListingsDisplayed = JobListings;
+            JobListingsDisplayed = jobListings;
         }
 
         public void GoToPreviousPage()
         {
             if (PageIndex - 1 < 0) return;
             PageIndex--;
-            JobListings = GetJobListings(PageIndex, PageSize).Result;
-            JobListingsDisplayed = JobListings;
+            JobListingsDisplayed = JobListings.Skip(PageIndex * PageSize).Take(PageSize);
         }
 
         private List<JobListingModel> ConvertQueryToDisplayableModel(List<AutoJobSearchShared.Models.JobListing> jobs)
@@ -207,10 +205,10 @@ namespace AutoJobSearchGUI.ViewModels
             return jobListings;
         }
 
-        private async Task<List<JobListingModel>> GetJobListings(int pageIndex, int pageSize)
+        private async Task<List<JobListingModel>> GetAllJobListings()
         {
             var jobListings = new List<JobListingModel>();
-            var jobs = await SQLiteDb.GetJobListings(pageIndex, pageSize);
+            var jobs = await SQLiteDb.GetAllJobListings();
 
             foreach (var job in jobs)
             {
@@ -225,7 +223,6 @@ namespace AutoJobSearchGUI.ViewModels
                     IsInterviewing = job.IsInterviewing,
                     IsRejected = job.IsRejected,
                     IsFavourite = job.IsFavourite
-                    // TODO: skip IsHidden properties
                 };
 
                 jobListings.Add(jobListing);
