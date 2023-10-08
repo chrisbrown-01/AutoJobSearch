@@ -73,20 +73,14 @@
 						</MenuItem>
 					</MenuItem>
 					<MenuItem Header="Sort By">
-						<CheckBox Content="Id" IsChecked="{Binding JobBoardQueryModel.SortById}" />
 						<CheckBox Content="Search Term" IsChecked="{Binding JobBoardQueryModel.SortBySearchTerm}" />
-						<CheckBox Content="Date" IsChecked="{Binding JobBoardQueryModel.SortByCreatedAt}" />
 						<CheckBox Content="Score" IsChecked="{Binding JobBoardQueryModel.SortByScore}" />
+						<CheckBox Content="Date" IsChecked="{Binding JobBoardQueryModel.SortByCreatedAt}" />
 					</MenuItem>
 					<MenuItem Header="Order By">
 						<CheckBox 
 							Content="Ascending" 
-							IsChecked="{Binding JobBoardQueryModel.OrderByAscending}"
-							IsEnabled="{Binding !JobBoardQueryModel.OrderByDescending}"/>
-						<CheckBox 
-							Content="Descending" 
-							IsChecked="{Binding JobBoardQueryModel.OrderByDescending}"
-							IsEnabled="{Binding !JobBoardQueryModel.OrderByAscending}"/>
+							IsChecked="{Binding JobBoardQueryModel.OrderByAscending}" />
 					</MenuItem>
 					<Button
 						Content="Execute Query"

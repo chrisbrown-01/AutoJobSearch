@@ -91,7 +91,8 @@ namespace AutoJobSearchShared
                          IsFavourite,
                          IsHidden
                          FROM JobListings
-                         WHERE IsHidden = True";
+                         WHERE IsHidden = True
+                        ORDER BY Id DESC";
                 var jobListingsQuery = await connection.QueryAsync<Models.JobListing>(sqlQuery);
                 jobListings = jobListingsQuery.ToList(); // TODO: improve, perform null checking?
             }
@@ -121,7 +122,8 @@ namespace AutoJobSearchShared
                          IsFavourite,
                          IsHidden
                          FROM JobListings
-                         WHERE IsFavourite = True";
+                         WHERE IsFavourite = True
+                        ORDER BY Id DESC";
                 var jobListingsQuery = await connection.QueryAsync<Models.JobListing>(sqlQuery);
                 jobListings = jobListingsQuery.ToList(); // TODO: improve, perform null checking?
             }
@@ -140,36 +142,19 @@ namespace AutoJobSearchShared
                 await connection.OpenAsync();
 
                 var sqlQuery = @"SELECT 
-                         Id, 
-                         SearchTerm, 
-                         CreatedAt, 
-                         SUBSTR(Description, 1, 200) AS Description,
-                         Score, 
-                         IsAppliedTo,
-                         IsInterviewing,
-                         IsRejected,
-                         IsFavourite,
-                         IsHidden
-                         FROM JobListings
-                         WHERE IsHidden = False";
-
-                /*                 
-                 var sqlQuery = @"SELECT 
-                         Id, 
-                         SearchTerm, 
-                         CreatedAt, 
-                         SUBSTR(Description, 1, 200) AS Description,
-                         Score, 
-                         IsAppliedTo,
-                         IsInterviewing,
-                         IsRejected,
-                         IsFavourite
-                         FROM JobListings
-                         LIMIT @PageSize OFFSET @PageOffset";
-
-                var jobListingsQuery = await connection.QueryAsync<Models.JobListing>(sqlQuery, new { PageSize = pageSize, PageOffset = page * pageSize });
-
-                */
+                     Id, 
+                     SearchTerm, 
+                     CreatedAt, 
+                     SUBSTR(Description, 1, 200) AS Description,
+                     Score, 
+                     IsAppliedTo,
+                     IsInterviewing,
+                     IsRejected,
+                     IsFavourite,
+                     IsHidden
+                 FROM JobListings
+                 WHERE IsHidden = False
+                 ORDER BY Id DESC";
 
                 var jobListingsQuery = await connection.QueryAsync<Models.JobListing>(sqlQuery);
                 jobListings = jobListingsQuery.ToList(); // TODO: improve, perform null checking?

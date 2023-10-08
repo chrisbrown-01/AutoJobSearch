@@ -25,9 +25,6 @@ namespace AutoJobSearchGUI.Models
         private bool _isHidden;
 
         [ObservableProperty]
-        private bool _sortById;
-
-        [ObservableProperty]
         private bool _sortBySearchTerm;
 
         [ObservableProperty]
@@ -38,9 +35,6 @@ namespace AutoJobSearchGUI.Models
 
         [ObservableProperty]
         private bool _orderByAscending;
-
-        [ObservableProperty]
-        private bool _orderByDescending;
 
         [ObservableProperty]
         private DateTimeOffset _searchedOnDate = DateTime.Today;

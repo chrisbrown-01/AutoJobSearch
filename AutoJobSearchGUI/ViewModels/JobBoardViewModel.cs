@@ -56,18 +56,21 @@ namespace AutoJobSearchGUI.ViewModels
 
         public void RenderDefaultJobBoard()
         {
+            PageIndex = 0;
             JobListings = GetAllJobListings().Result;
             JobListingsDisplayed = JobListings.Skip(PageIndex * PageSize).Take(PageSize).ToList();
         }
 
         public void RenderHiddenJobs()
         {
+            PageIndex = 0;
             JobListings = GetHiddenJobListings().Result;
             JobListingsDisplayed = JobListings.Skip(PageIndex * PageSize).Take(PageSize).ToList();
         }
 
         public void RenderFavouriteJobs()
         {
+            PageIndex = 0;
             JobListings = GetFavouriteJobListings().Result;
             JobListingsDisplayed = JobListings.Skip(PageIndex * PageSize).Take(PageSize).ToList();
         }
@@ -124,51 +127,52 @@ namespace AutoJobSearchGUI.ViewModels
 
             if (JobBoardQueryModel.SortByScore)
             {
-                if (JobBoardQueryModel.OrderByDescending)
-                {
-                    result = result.OrderByDescending(x => x.Score);
-                }
-                else
+                if (JobBoardQueryModel.OrderByAscending)
                 {
                     result = result.OrderBy(x => x.Score);
                 }
-            }
-            else if (JobBoardQueryModel.SortByCreatedAt)
-            {
-                if (JobBoardQueryModel.OrderByDescending)
-                {
-                    result = result.OrderByDescending(x => x.CreatedAt);
-                }
                 else
                 {
-                    result = result.OrderBy(x => x.CreatedAt);
+                    result = result.OrderByDescending(x => x.Score);
                 }
             }
             else if (JobBoardQueryModel.SortBySearchTerm)
             {
-                if (JobBoardQueryModel.OrderByDescending)
+                if (JobBoardQueryModel.OrderByAscending)
                 {
-                    result = result.OrderByDescending(x => x.SearchTerm);
+                    result = result.OrderBy(x => x.SearchTerm);
                 }
                 else
                 {
-                    result = result.OrderBy(x => x.SearchTerm);
+                    result = result.OrderByDescending(x => x.SearchTerm);
+                }
+            }
+            else if(JobBoardQueryModel.SortByCreatedAt)
+            {
+                if (JobBoardQueryModel.OrderByAscending)
+                {
+                    result = result.OrderBy(x => x.CreatedAt);
+                }
+                else
+                {
+                    result = result.OrderByDescending(x => x.CreatedAt);
                 }
             }
             else
             {
-                if (JobBoardQueryModel.OrderByDescending)
-                {
-                    result = result.OrderByDescending(x => x.Id);
-                }
-                else
+                if (JobBoardQueryModel.OrderByAscending)
                 {
                     result = result.OrderBy(x => x.Id);
                 }
+                else
+                {
+                    result = result.OrderByDescending(x => x.Id);
+                }
             }
 
+            PageIndex = 0;
             JobListings = ConvertQueryToDisplayableModel(result.ToList());
-            JobListingsDisplayed = JobListings.Take(25).ToList();
+            JobListingsDisplayed = JobListings.Skip(PageIndex * PageSize).Take(PageSize).ToList();
         }
 
         //public RelayCommand TestClickCommand { get; }
