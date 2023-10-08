@@ -37,6 +37,9 @@ namespace AutoJobSearchGUI.Models
         private bool _isFavourite;
 
         [ObservableProperty]
+        private bool _isHidden;
+
+        [ObservableProperty]
         private string _notes = string.Empty;
 
         // Note that these methods technically cause an excessive amount of database calls but since there is only a single user
@@ -71,6 +74,12 @@ namespace AutoJobSearchGUI.Models
         {
             Debug.WriteLine($"Updating IsFavourite for listing id {this.Id}"); // TODO: proper logging
             DbContextSQLite.UpdateDatabase("IsFavourite", value, this.Id);
+        }
+
+        partial void OnIsHiddenChanged(bool value)
+        {
+            Debug.WriteLine($"Updating IsHidden for listing id {this.Id}"); // TODO: proper logging
+            DbContextSQLite.UpdateDatabase("IsHidden", value, this.Id);
         }
     }
 }

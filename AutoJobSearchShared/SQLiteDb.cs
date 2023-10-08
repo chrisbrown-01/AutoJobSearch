@@ -14,8 +14,7 @@ namespace AutoJobSearchShared
             bool isAppliedTo,
             bool isInterviewing,
             bool isRejected,
-            bool isFavourite,
-            bool isHidden)
+            bool isFavourite)
         {
             Debug.WriteLine($"Getting job listings per user job board query"); // TODO: proper logging
 
@@ -39,8 +38,7 @@ namespace AutoJobSearchShared
                         WHERE IsAppliedTo = @IsAppliedTo 
                         AND IsInterviewing = @IsInterviewing
                         AND IsRejected = @IsRejected
-                        AND IsFavourite = @IsFavourite
-                        AND IsHidden = @IsHidden;";
+                        AND IsFavourite = @IsFavourite;";
 
                 var jobListingsQuery = await connection.QueryAsync<Models.JobListing>(
                     sqlQuery, 
@@ -49,8 +47,7 @@ namespace AutoJobSearchShared
                         IsAppliedTo = isAppliedTo,
                         IsInterviewing = isInterviewing,
                         IsRejected = isRejected,
-                        IsFavourite = isFavourite,
-                        IsHidden = isHidden
+                        IsFavourite = isFavourite
                     });
 
                 jobListings = jobListingsQuery.ToList(); // TODO: improve, perform null checking?
@@ -72,6 +69,66 @@ namespace AutoJobSearchShared
             }
         }
 
+        public static async Task<IEnumerable<Models.JobListing>> GetHiddenJobListings()
+        {
+            Debug.WriteLine($"Getting hidden job listings"); // TODO: proper logging
+
+            var jobListings = new List<Models.JobListing>();
+
+            using (var connection = new SqliteConnection(Constants.SQLITE_CONNECTION_STRING))
+            {
+                await connection.OpenAsync();
+
+                var sqlQuery = @"SELECT 
+                         Id, 
+                         SearchTerm, 
+                         CreatedAt, 
+                         SUBSTR(Description, 1, 200) AS Description,
+                         Score, 
+                         IsAppliedTo,
+                         IsInterviewing,
+                         IsRejected,
+                         IsFavourite,
+                         IsHidden
+                         FROM JobListings
+                         WHERE IsHidden = True";
+                var jobListingsQuery = await connection.QueryAsync<Models.JobListing>(sqlQuery);
+                jobListings = jobListingsQuery.ToList(); // TODO: improve, perform null checking?
+            }
+
+            return jobListings;
+        }
+
+        public static async Task<IEnumerable<Models.JobListing>> GetFavouriteJobListings()
+        {
+            Debug.WriteLine($"Getting favourite job listings"); // TODO: proper logging
+
+            var jobListings = new List<Models.JobListing>();
+
+            using (var connection = new SqliteConnection(Constants.SQLITE_CONNECTION_STRING))
+            {
+                await connection.OpenAsync();
+
+                var sqlQuery = @"SELECT 
+                         Id, 
+                         SearchTerm, 
+                         CreatedAt, 
+                         SUBSTR(Description, 1, 200) AS Description,
+                         Score, 
+                         IsAppliedTo,
+                         IsInterviewing,
+                         IsRejected,
+                         IsFavourite,
+                         IsHidden
+                         FROM JobListings
+                         WHERE IsFavourite = True";
+                var jobListingsQuery = await connection.QueryAsync<Models.JobListing>(sqlQuery);
+                jobListings = jobListingsQuery.ToList(); // TODO: improve, perform null checking?
+            }
+
+            return jobListings;
+        }
+
         public static async Task<IEnumerable<Models.JobListing>> GetAllJobListings()
         {
             Debug.WriteLine($"Getting all job listings"); // TODO: proper logging
@@ -91,7 +148,8 @@ namespace AutoJobSearchShared
                          IsAppliedTo,
                          IsInterviewing,
                          IsRejected,
-                         IsFavourite
+                         IsFavourite,
+                         IsHidden
                          FROM JobListings
                          WHERE IsHidden = False";
 

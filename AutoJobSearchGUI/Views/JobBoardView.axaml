@@ -25,7 +25,6 @@
 						<CheckBox Content="Interviewing" IsChecked="{Binding JobBoardQueryModel.IsInterviewing}" />
 						<CheckBox Content="Rejected" IsChecked="{Binding JobBoardQueryModel.IsRejected}" />
 						<CheckBox Content="Favourite" IsChecked="{Binding JobBoardQueryModel.IsFavourite}" />
-						<CheckBox Content="Hidden" IsChecked="{Binding JobBoardQueryModel.IsHidden}" />
 					</MenuItem>
 					<MenuItem Header="Search Term Query String">
 						<CheckBox Content="Enable" IsChecked="{Binding JobBoardQueryModel.SearchTermQueryStringEnabled}" />
@@ -94,6 +93,14 @@
 						HorizontalAlignment="Center"
 						Command="{Binding ExecuteQuery}"/>
 					<Button
+						Content="Get Hidden Jobs"
+						HorizontalAlignment="Center"
+						Command="{Binding RenderHiddenJobs}"/>
+					<Button
+						Content="Get Favourite Jobs"
+						HorizontalAlignment="Center"
+						Command="{Binding RenderFavouriteJobs}"/>
+					<Button
 						Content="Clear All Filters"
 						HorizontalAlignment="Center"
 						Command="{Binding RenderDefaultJobBoard}"/>
@@ -110,7 +117,7 @@
 		RowHeight="150">
 			<DataGrid.ContextMenu>
 				<ContextMenu>
-					<MenuItem Header="Hide Job" Command="" />
+					<MenuItem Header="Hide Job" Command="{Binding HideJob}" />
 				</ContextMenu>
 			</DataGrid.ContextMenu>
 			<DataGrid.Columns>

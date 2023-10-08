@@ -18,7 +18,6 @@ namespace AutoJobSearchGUI.ViewModels
     // TODO: SQLite concurrency disabling?, database relative pathing best practices + keep all relative paths within shared folder?
     // TODO: SeleniumTesting.Execute(); inside of Job Search menu item
     // TODO: view and models for specifiying search terms and scoring keywords
-    // TODO: filtering/querying of job board results, hiding/deleting of objects. ex. get all favourites, dont show rejected
 
 
     public partial class JobBoardViewModel : ViewModelBase
@@ -29,10 +28,10 @@ namespace AutoJobSearchGUI.ViewModels
         [ObservableProperty]
         private JobBoardQueryModel _jobBoardQueryModel;
 
-        private IEnumerable<JobListingModel> JobListings { get; set; } = default!;
+        private List<JobListingModel> JobListings { get; set; } = default!;
 
         [ObservableProperty]
-        private IEnumerable<JobListingModel> _jobListingsDisplayed = default!;
+        private List<JobListingModel> _jobListingsDisplayed = default!;
 
         [ObservableProperty]
         private JobListingModel? _selectedJobListing;
@@ -58,7 +57,19 @@ namespace AutoJobSearchGUI.ViewModels
         public void RenderDefaultJobBoard()
         {
             JobListings = GetAllJobListings().Result;
-            JobListingsDisplayed = JobListings.Skip(PageIndex * PageSize).Take(PageSize);
+            JobListingsDisplayed = JobListings.Skip(PageIndex * PageSize).Take(PageSize).ToList();
+        }
+
+        public void RenderHiddenJobs()
+        {
+            JobListings = GetHiddenJobListings().Result;
+            JobListingsDisplayed = JobListings.Skip(PageIndex * PageSize).Take(PageSize).ToList();
+        }
+
+        public void RenderFavouriteJobs()
+        {
+            JobListings = GetFavouriteJobListings().Result;
+            JobListingsDisplayed = JobListings.Skip(PageIndex * PageSize).Take(PageSize).ToList();
         }
 
         public void ExecuteQuery()
@@ -68,8 +79,7 @@ namespace AutoJobSearchGUI.ViewModels
                 JobBoardQueryModel.IsAppliedTo,
                 JobBoardQueryModel.IsInterviewing,
                 JobBoardQueryModel.IsRejected,
-                JobBoardQueryModel.IsFavourite,
-                JobBoardQueryModel.IsHidden).Result.AsQueryable();
+                JobBoardQueryModel.IsFavourite).Result.AsQueryable();
 
             // Easiest solution is to then do the rest of the querying within .NET on the previous result
             if (JobBoardQueryModel.SearchTermQueryStringEnabled)
@@ -94,25 +104,25 @@ namespace AutoJobSearchGUI.ViewModels
 
             if (JobBoardQueryModel.SearchedBetweenDatesEnabled)
             {
-                result = result.Where(x => 
+                result = result.Where(x =>
                 x.CreatedAt.Date >= JobBoardQueryModel.SearchedOnDateStart.Date &&
                 x.CreatedAt.Date <= JobBoardQueryModel.SearchedOnDateEnd.Date
                 );
             }
 
-            if(JobBoardQueryModel.ScoreEqualsEnabled)
+            if (JobBoardQueryModel.ScoreEqualsEnabled)
             {
                 result = result.Where(x => x.Score == JobBoardQueryModel.ScoreEquals);
             }
 
             if (JobBoardQueryModel.ScoreRangeEnabled)
             {
-                result = result.Where(x => 
+                result = result.Where(x =>
                 x.Score >= JobBoardQueryModel.ScoreRangeMin &&
                 x.Score <= JobBoardQueryModel.ScoreRangeMax);
             }
 
-            if(JobBoardQueryModel.SortByScore)
+            if (JobBoardQueryModel.SortByScore)
             {
                 if (JobBoardQueryModel.OrderByDescending)
                 {
@@ -143,7 +153,7 @@ namespace AutoJobSearchGUI.ViewModels
                 else
                 {
                     result = result.OrderBy(x => x.SearchTerm);
-                }  
+                }
             }
             else
             {
@@ -158,7 +168,7 @@ namespace AutoJobSearchGUI.ViewModels
             }
 
             JobListings = ConvertQueryToDisplayableModel(result.ToList());
-            JobListingsDisplayed = JobListings.Take(25);
+            JobListingsDisplayed = JobListings.Take(25).ToList();
         }
 
         //public RelayCommand TestClickCommand { get; }
@@ -168,19 +178,27 @@ namespace AutoJobSearchGUI.ViewModels
             OpenJobListingViewRequest?.Invoke(SelectedJobListing, JobListings);
         }
 
+        public void HideJob()
+        {
+            if (SelectedJobListing == null) return;
+            SelectedJobListing.IsHidden = true;
+            JobListings.Remove(SelectedJobListing);
+            JobListingsDisplayed.Remove(SelectedJobListing);
+        }
+
         public void GoToNextPage()
         {
             var jobListings = JobListings.Skip((PageIndex + 1) * PageSize).Take(PageSize);
             if (!jobListings.Any()) return;
             PageIndex++;
-            JobListingsDisplayed = jobListings;
+            JobListingsDisplayed = jobListings.ToList();
         }
 
         public void GoToPreviousPage()
         {
             if (PageIndex - 1 < 0) return;
             PageIndex--;
-            JobListingsDisplayed = JobListings.Skip(PageIndex * PageSize).Take(PageSize);
+            JobListingsDisplayed = JobListings.Skip(PageIndex * PageSize).Take(PageSize).ToList();
         }
 
         private List<JobListingModel> ConvertQueryToDisplayableModel(List<AutoJobSearchShared.Models.JobListing> jobs)
@@ -199,7 +217,62 @@ namespace AutoJobSearchGUI.ViewModels
                     IsAppliedTo = job.IsAppliedTo,
                     IsInterviewing = job.IsInterviewing,
                     IsRejected = job.IsRejected,
-                    IsFavourite = job.IsFavourite
+                    IsFavourite = job.IsFavourite,
+                    IsHidden = job.IsHidden
+                };
+
+                jobListings.Add(jobListing);
+            }
+
+            return jobListings;
+        }
+
+        private static async Task<List<JobListingModel>> GetFavouriteJobListings()
+        {
+            var jobListings = new List<JobListingModel>();
+            var jobs = await SQLiteDb.GetFavouriteJobListings();
+
+            foreach (var job in jobs)
+            {
+                var jobListing = new JobListingModel
+                {
+                    Id = job.Id,
+                    SearchTerm = job.SearchTerm,
+                    CreatedAt = job.CreatedAt,
+                    Description = job.Description,
+                    Score = job.Score,
+                    IsAppliedTo = job.IsAppliedTo,
+                    IsInterviewing = job.IsInterviewing,
+                    IsRejected = job.IsRejected,
+                    IsFavourite = job.IsFavourite,
+                    IsHidden = job.IsHidden
+                };
+
+                jobListings.Add(jobListing);
+            }
+
+            return jobListings;
+        }
+
+        private static async Task<List<JobListingModel>> GetHiddenJobListings()
+        {
+            var jobListings = new List<JobListingModel>();
+            var jobs = await SQLiteDb.GetHiddenJobListings();
+
+            foreach (var job in jobs)
+            {
+                var jobListing = new JobListingModel
+                {
+                    Id = job.Id,
+                    SearchTerm = job.SearchTerm,
+                    CreatedAt = job.CreatedAt,
+                    Description = job.Description,
+                    Score = job.Score,
+                    IsAppliedTo = job.IsAppliedTo,
+                    IsInterviewing = job.IsInterviewing,
+                    IsRejected = job.IsRejected,
+                    IsFavourite = job.IsFavourite,
+                    IsHidden = job.IsHidden
                 };
 
                 jobListings.Add(jobListing);
@@ -225,7 +298,8 @@ namespace AutoJobSearchGUI.ViewModels
                     IsAppliedTo = job.IsAppliedTo,
                     IsInterviewing = job.IsInterviewing,
                     IsRejected = job.IsRejected,
-                    IsFavourite = job.IsFavourite
+                    IsFavourite = job.IsFavourite,
+                    IsHidden = job.IsHidden
                 };
 
                 jobListings.Add(jobListing);
