@@ -10,7 +10,12 @@ namespace AutoJobSearchShared
 {
     public class SQLiteDb
     {
-        public static async Task<IEnumerable<Models.JobListing>> ExecuteJobBoardQuery(Models.JobListing jobListingQuery)
+        public static async Task<IEnumerable<Models.JobListing>> ExecuteJobBoardQuery(
+            bool isAppliedTo,
+            bool isInterviewing,
+            bool isRejected,
+            bool isFavourite,
+            bool isHidden)
         {
             Debug.WriteLine($"Getting job listings per user job board query"); // TODO: proper logging
 
@@ -20,7 +25,17 @@ namespace AutoJobSearchShared
             {
                 await connection.OpenAsync();
 
-                var sqlQuery = @"SELECT * FROM JobListings
+                var sqlQuery = @"SELECT Id, 
+                         SearchTerm, 
+                         CreatedAt, 
+                         Description, 
+                         Score, 
+                         IsAppliedTo,
+                         IsInterviewing,
+                         IsRejected,
+                         IsFavourite,
+                        IsHidden,
+                        Notes FROM JobListings
                         WHERE IsAppliedTo = @IsAppliedTo 
                         AND IsInterviewing = @IsInterviewing
                         AND IsRejected = @IsRejected
@@ -31,11 +46,11 @@ namespace AutoJobSearchShared
                     sqlQuery, 
                     new 
                     { 
-                        IsAppliedTo = jobListingQuery.IsAppliedTo,
-                        IsInterviewing = jobListingQuery.IsInterviewing,
-                        IsRejected = jobListingQuery.IsRejected,
-                        IsFavourite = jobListingQuery.IsFavourite,
-                        IsHidden = jobListingQuery.IsHidden
+                        IsAppliedTo = isAppliedTo,
+                        IsInterviewing = isInterviewing,
+                        IsRejected = isRejected,
+                        IsFavourite = isFavourite,
+                        IsHidden = isHidden
                     });
 
                 jobListings = jobListingsQuery.ToList(); // TODO: improve, perform null checking?

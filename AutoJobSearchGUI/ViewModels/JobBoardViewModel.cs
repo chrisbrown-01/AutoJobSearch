@@ -71,15 +71,97 @@ namespace AutoJobSearchGUI.ViewModels
 
         public void ExecuteQuery()
         {
-            var test = JobBoardQueryModel;
 
-            //var jobListingQueryValues = new AutoJobSearchShared.Models.JobListing()
-            //{
+            var result = SQLiteDb.ExecuteJobBoardQuery(
+                JobBoardQueryModel.IsAppliedTo,
+                JobBoardQueryModel.IsInterviewing,
+                JobBoardQueryModel.IsRejected,
+                JobBoardQueryModel.IsFavourite,
+                JobBoardQueryModel.IsHidden).Result.ToList();
 
-            //};
+            if (JobBoardQueryModel.SearchTermQueryStringEnabled)
+            {
+                result = result.Where(x => x.SearchTerm.Contains(JobBoardQueryModel.SearchTermQueryString, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
 
+            if (JobBoardQueryModel.JobDescriptionQueryStringEnabled)
+            {
+                result = result.Where(x => x.Description.Contains(JobBoardQueryModel.JobDescriptionQueryString, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
 
-            //SQLiteDb.ExecuteJobBoardQuery
+            if (JobBoardQueryModel.SearchedOnDateEnabled)
+            {
+                result = result.Where(x => x.CreatedAt.Date == JobBoardQueryModel.SearchedOnDate.Date).ToList();
+            }
+
+            if (JobBoardQueryModel.SearchedBetweenDatesEnabled)
+            {
+                result = result.Where(x => 
+                x.CreatedAt.Date >= JobBoardQueryModel.SearchedOnDateStart.Date &&
+                x.CreatedAt.Date <= JobBoardQueryModel.SearchedOnDateEnd.Date
+                ).ToList();
+            }
+
+            if(JobBoardQueryModel.ScoreEqualsEnabled)
+            {
+                result = result.Where(x => x.Score == JobBoardQueryModel.ScoreEquals).ToList();
+            }
+
+            if (JobBoardQueryModel.ScoreRangeEnabled)
+            {
+                result = result.Where(x => 
+                x.Score >= JobBoardQueryModel.ScoreRangeMin &&
+                x.Score <= JobBoardQueryModel.ScoreRangeMax).ToList();
+            }
+
+            if(JobBoardQueryModel.SortByScore)
+            {
+                if (JobBoardQueryModel.OrderByDescending)
+                {
+                    result = result.OrderByDescending(x => x.Score).ToList();
+                }
+                else
+                {
+                    result = result.OrderBy(x => x.Score).ToList();
+                }
+            }
+            else if (JobBoardQueryModel.SortByCreatedAt)
+            {
+                if (JobBoardQueryModel.OrderByDescending)
+                {
+                    result = result.OrderByDescending(x => x.CreatedAt).ToList();
+                }
+                else
+                {
+                    result = result.OrderBy(x => x.CreatedAt).ToList();
+                }
+            }
+            else if (JobBoardQueryModel.SortBySearchTerm)
+            {
+                if (JobBoardQueryModel.OrderByDescending)
+                {
+                    result = result.OrderByDescending(x => x.SearchTerm).ToList();
+                }
+                else
+                {
+                    result = result.OrderBy(x => x.SearchTerm).ToList();
+                }  
+            }
+            else
+            {
+                if (JobBoardQueryModel.OrderByDescending)
+                {
+                    result = result.OrderByDescending(x => x.Id).ToList();
+                }
+                else
+                {
+                    result = result.OrderBy(x => x.Id).ToList();
+                }
+            }
+
+            // TODO: how to do paging for this
+            JobListings = ConvertQueryToDisplayableModel(result);
+            JobListingsDisplayed = JobListings.Take(25).ToList();
         }
 
         //public RelayCommand TestClickCommand { get; }
@@ -104,6 +186,32 @@ namespace AutoJobSearchGUI.ViewModels
             PageIndex--;
             JobListings = GetJobListings(PageIndex, PageSize).Result;
             JobListingsDisplayed = JobListings;
+        }
+
+        private List<JobListingModel> ConvertQueryToDisplayableModel(List<AutoJobSearchShared.Models.JobListing> jobs)
+        {
+            var jobListings = new List<JobListingModel>();
+
+            foreach (var job in jobs)
+            {
+                var jobListing = new JobListingModel
+                {
+                    Id = job.Id,
+                    SearchTerm = job.SearchTerm,
+                    CreatedAt = job.CreatedAt,
+                    Description = job.Description,
+                    Score = job.Score,
+                    IsAppliedTo = job.IsAppliedTo,
+                    IsInterviewing = job.IsInterviewing,
+                    IsRejected = job.IsRejected,
+                    IsFavourite = job.IsFavourite
+                    // TODO: skip IsHidden properties
+                };
+
+                jobListings.Add(jobListing);
+            }
+
+            return jobListings;
         }
 
         private async Task<List<JobListingModel>> GetJobListings(int pageIndex, int pageSize)
