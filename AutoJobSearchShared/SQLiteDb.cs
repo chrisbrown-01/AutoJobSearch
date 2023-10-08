@@ -140,6 +140,25 @@ namespace AutoJobSearchShared
             return notes;
         }
 
+        public static async Task<string> GetDescriptionById(int id)
+        {
+            Debug.WriteLine($"Getting description for listing id {id}"); // TODO: proper logging
+
+            string description = string.Empty;
+
+            using (var connection = new SqliteConnection(Constants.SQLITE_CONNECTION_STRING))
+            {
+                await connection.OpenAsync();
+
+                var descriptionQuery = "SELECT Description From JobListings Where Id = @Id;";
+                var query = await connection.QuerySingleAsync<string>(descriptionQuery, new { Id = id });
+
+                if (query != null) description = query;
+            }
+
+            return description;
+        }
+
         public static async Task<string> GetApplicationLinksById(int id)
         {
             Debug.WriteLine($"Getting links for listing id {id}"); // TODO: proper logging
