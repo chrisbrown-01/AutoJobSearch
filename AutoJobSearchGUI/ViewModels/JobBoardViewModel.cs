@@ -43,19 +43,6 @@ namespace AutoJobSearchGUI.ViewModels
         [ObservableProperty]
         private int _pageSize;
 
-        [ObservableProperty]
-        private bool _isFavouritesFilterEnabled;
-
-        partial void OnIsFavouritesFilterEnabledChanged(bool value)
-        {
-            if (value == true)
-            {
-                JobListingsDisplayed = JobListings.Where(x => x.IsFavourite == value).ToList();
-            }
-
-            else JobListingsDisplayed = JobListings;
-        }
-
         public JobBoardViewModel()
         {
             //TestClickCommand = new RelayCommand(TestClick);

@@ -19,12 +19,6 @@
 			<Button Command="{Binding GoToPreviousPage}" Content="Previous Page" />
 			<Button Command="{Binding GoToNextPage}" Content="Next Page" />
 			<Menu>
-				<MenuItem Header="Current Page Filters">
-					<CheckBox Content="Favourites" IsChecked="{Binding IsFavouritesFilterEnabled}" />
-					<CheckBox Content="Applied" />
-				</MenuItem>
-			</Menu>
-			<Menu>
 				<MenuItem Header="Advanced Query">
 					<MenuItem Header="Column Filters">
 						<CheckBox Content="Applied" IsChecked="{Binding JobBoardQueryModel.IsAppliedTo}" />
