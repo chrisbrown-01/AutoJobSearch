@@ -15,7 +15,7 @@
 
 	<StackPanel>
 		<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" >
-			<Button Command="{Binding TestClick}" Content="Open Selected Job" />
+			<Button Command="{Binding OpenJobListing}" Content="Open Selected Job" />
 			<Button Command="{Binding GoToPreviousPage}" Content="Previous Page" />
 			<Button Command="{Binding GoToNextPage}" Content="Next Page" />
 			<Menu>
@@ -90,9 +90,13 @@
 							IsEnabled="{Binding !JobBoardQueryModel.OrderByAscending}"/>
 					</MenuItem>
 					<Button
-						Content="Execute"
+						Content="Execute Query"
 						HorizontalAlignment="Center"
 						Command="{Binding ExecuteQuery}"/>
+					<Button
+						Content="Clear All Filters"
+						HorizontalAlignment="Center"
+						Command="{Binding RenderDefaultJobBoard}"/>
 				</MenuItem>
 			</Menu>
 		</StackPanel>

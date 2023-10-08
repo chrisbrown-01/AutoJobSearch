@@ -29,10 +29,10 @@ namespace AutoJobSearchGUI.ViewModels
         [ObservableProperty]
         private JobBoardQueryModel _jobBoardQueryModel;
 
-        private IEnumerable<JobListingModel> JobListings { get; set; }
+        private IEnumerable<JobListingModel> JobListings { get; set; } = default!;
 
         [ObservableProperty]
-        private IEnumerable<JobListingModel> _jobListingsDisplayed;
+        private IEnumerable<JobListingModel> _jobListingsDisplayed = default!;
 
         [ObservableProperty]
         private JobListingModel? _selectedJobListing;
@@ -52,8 +52,13 @@ namespace AutoJobSearchGUI.ViewModels
             PageIndex = 0;
             PageSize = 25;
 
+            RenderDefaultJobBoard();
+        }
+
+        public void RenderDefaultJobBoard()
+        {
             JobListings = GetAllJobListings().Result;
-            JobListingsDisplayed = JobListings.Skip(PageIndex*PageSize).Take(PageSize); // TODO: convert to void method call, paginate
+            JobListingsDisplayed = JobListings.Skip(PageIndex * PageSize).Take(PageSize);
         }
 
         public void ExecuteQuery()
@@ -152,13 +157,12 @@ namespace AutoJobSearchGUI.ViewModels
                 }
             }
 
-            // TODO: how to do paging for this
             JobListings = ConvertQueryToDisplayableModel(result.ToList());
             JobListingsDisplayed = JobListings.Take(25);
         }
 
         //public RelayCommand TestClickCommand { get; }
-        public void TestClick() // TODO: convert to use RelayCommand?
+        public void OpenJobListing() // TODO: convert to use RelayCommand?
         {
             if (SelectedJobListing == null) return;
             OpenJobListingViewRequest?.Invoke(SelectedJobListing);
@@ -196,7 +200,6 @@ namespace AutoJobSearchGUI.ViewModels
                     IsInterviewing = job.IsInterviewing,
                     IsRejected = job.IsRejected,
                     IsFavourite = job.IsFavourite
-                    // TODO: skip IsHidden properties
                 };
 
                 jobListings.Add(jobListing);
@@ -205,7 +208,7 @@ namespace AutoJobSearchGUI.ViewModels
             return jobListings;
         }
 
-        private async Task<List<JobListingModel>> GetAllJobListings()
+        private static async Task<List<JobListingModel>> GetAllJobListings()
         {
             var jobListings = new List<JobListingModel>();
             var jobs = await SQLiteDb.GetAllJobListings();
