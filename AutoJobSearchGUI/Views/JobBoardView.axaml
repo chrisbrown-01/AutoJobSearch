@@ -119,7 +119,13 @@
 				<DataGridTextColumn Header="Id" Binding="{Binding Id}" IsReadOnly="True" />
 				<DataGridTextColumn Header="SearchTerm" Binding="{Binding SearchTerm}" IsReadOnly="True" />
 				<DataGridTextColumn Header="CreatedAt" Binding="{Binding CreatedAt}" IsReadOnly="True" />
-				<DataGridTextColumn Header="Description" Binding="{Binding Description}" IsReadOnly="True" />
+				<DataGridTemplateColumn Header="Description">
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate>
+							<TextBlock Text="{Binding Description}" TextWrapping="Wrap" />
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+				</DataGridTemplateColumn>
 				<DataGridTextColumn Header="Score" Binding="{Binding Score}" IsReadOnly="True" />
 				<DataGridCheckBoxColumn Header="IsAppliedTo" Binding="{Binding IsAppliedTo}" />
 				<DataGridCheckBoxColumn Header="IsInterviewing" Binding="{Binding IsInterviewing}" />
