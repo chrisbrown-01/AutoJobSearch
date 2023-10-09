@@ -54,35 +54,35 @@ namespace AutoJobSearchGUI.ViewModels
             RenderDefaultJobBoard();
         }
 
-        public void RenderDefaultJobBoard()
+        public async Task RenderDefaultJobBoard()
         {
             PageIndex = 0;
-            JobListings = GetAllJobListings().Result;
+            JobListings = await GetAllJobListings();
             JobListingsDisplayed = JobListings.Skip(PageIndex * PageSize).Take(PageSize).ToList();
         }
 
-        public void RenderHiddenJobs()
+        public async Task RenderHiddenJobs()
         {
             PageIndex = 0;
-            JobListings = GetHiddenJobListings().Result;
+            JobListings = await GetHiddenJobListings();
             JobListingsDisplayed = JobListings.Skip(PageIndex * PageSize).Take(PageSize).ToList();
         }
 
-        public void RenderFavouriteJobs()
+        public async Task RenderFavouriteJobs()
         {
             PageIndex = 0;
-            JobListings = GetFavouriteJobListings().Result;
+            JobListings = await GetFavouriteJobListings();
             JobListingsDisplayed = JobListings.Skip(PageIndex * PageSize).Take(PageSize).ToList();
         }
 
-        public void ExecuteQuery()
+        public async Task ExecuteQuery()
         {
             // Try to get some performance improvement by doing the initial simple query directly within the SQLite database
-            var result = SQLiteDb.ExecuteJobBoardAdvancedQuery(
+            var result = await SQLiteDb.ExecuteJobBoardAdvancedQuery(
                 JobBoardQueryModel.IsAppliedTo,
                 JobBoardQueryModel.IsInterviewing,
                 JobBoardQueryModel.IsRejected,
-                JobBoardQueryModel.IsFavourite).Result.AsQueryable();
+                JobBoardQueryModel.IsFavourite);
 
             // Easiest solution is to then do the rest of the querying within .NET on the previous result
             if (JobBoardQueryModel.SearchTermQueryStringEnabled)
@@ -171,7 +171,7 @@ namespace AutoJobSearchGUI.ViewModels
             }
 
             PageIndex = 0;
-            JobListings = ConvertQueryToDisplayableModel(result.ToList());
+            JobListings = ConvertQueryToDisplayableModel(result);
             JobListingsDisplayed = JobListings.Skip(PageIndex * PageSize).Take(PageSize).ToList();
         }
 
@@ -205,7 +205,7 @@ namespace AutoJobSearchGUI.ViewModels
             JobListingsDisplayed = JobListings.Skip(PageIndex * PageSize).Take(PageSize).ToList();
         }
 
-        private List<JobListingModel> ConvertQueryToDisplayableModel(List<AutoJobSearchShared.Models.JobListing> jobs)
+        private List<JobListingModel> ConvertQueryToDisplayableModel(IQueryable<AutoJobSearchShared.Models.JobListing> jobs)
         {
             var jobListings = new List<JobListingModel>();
 
@@ -231,6 +231,7 @@ namespace AutoJobSearchGUI.ViewModels
             return jobListings;
         }
 
+        // TODO: consolidate all into single method?
         private static async Task<List<JobListingModel>> GetFavouriteJobListings()
         {
             var jobListings = new List<JobListingModel>();

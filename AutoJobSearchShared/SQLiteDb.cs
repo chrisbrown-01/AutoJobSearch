@@ -17,52 +17,50 @@ namespace AutoJobSearchShared
         //    _logger = logger;
         //}
 
-        public static async Task<IEnumerable<Models.JobListing>> ExecuteJobBoardAdvancedQuery(
-            bool isAppliedTo,
-            bool isInterviewing,
-            bool isRejected,
-            bool isFavourite)
+        public static async Task<IQueryable<Models.JobListing>> ExecuteJobBoardAdvancedQuery(
+    bool isAppliedTo,
+    bool isInterviewing,
+    bool isRejected,
+    bool isFavourite)
         {
-            //_logger.LogDebug("test");
             Debug.WriteLine($"Getting job listings per user job board query"); // TODO: proper logging
 
-            var jobListings = new List<Models.JobListing>();
+            IEnumerable<Models.JobListing> jobListings;
 
             using (var connection = new SqliteConnection(Constants.SQLITE_CONNECTION_STRING))
             {
                 await connection.OpenAsync();
 
                 var sqlQuery = @"SELECT Id, 
-                         SearchTerm, 
-                         CreatedAt, 
-                         Description, 
-                         Score, 
-                         IsAppliedTo,
-                         IsInterviewing,
-                         IsRejected,
-                         IsFavourite,
-                        IsHidden,
-                        Notes FROM JobListings
-                        WHERE IsAppliedTo = @IsAppliedTo 
-                        AND IsInterviewing = @IsInterviewing
-                        AND IsRejected = @IsRejected
-                        AND IsFavourite = @IsFavourite;";
+                 SearchTerm, 
+                 CreatedAt, 
+                 Description, 
+                 Score, 
+                 IsAppliedTo,
+                 IsInterviewing,
+                 IsRejected,
+                 IsFavourite,
+                IsHidden,
+                Notes FROM JobListings
+                WHERE IsAppliedTo = @IsAppliedTo 
+                AND IsInterviewing = @IsInterviewing
+                AND IsRejected = @IsRejected
+                AND IsFavourite = @IsFavourite;";
 
-                var jobListingsQuery = await connection.QueryAsync<Models.JobListing>(
-                    sqlQuery, 
-                    new 
-                    { 
+                jobListings = await connection.QueryAsync<Models.JobListing>(
+                    sqlQuery,
+                    new
+                    {
                         IsAppliedTo = isAppliedTo,
                         IsInterviewing = isInterviewing,
                         IsRejected = isRejected,
                         IsFavourite = isFavourite
                     });
-
-                jobListings = jobListingsQuery.ToList(); // TODO: improve, perform null checking?
             }
 
-            return jobListings;
+            return jobListings.AsQueryable();
         }
+
 
         public static async Task UpdateNotesById(int id, string notes)
         {
