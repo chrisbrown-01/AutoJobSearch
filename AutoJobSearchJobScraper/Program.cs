@@ -17,12 +17,12 @@ namespace AutoJobSearchJobScraper
             var utility = new JobListingUtility();
             var db = new SQLiteDbContext();
 
-            var existingLinks = await db.GetAllApplicationLinks();
+            //var existingLinks = await db.GetAllApplicationLinks();
             var scrapedJobs = await scraper.ScrapeJobs("c# developer toronto");
-            var cleanedJobs = await utility.FilterDuplicates(scrapedJobs, existingLinks.ToHashSet());
-            var scoredJobs = await utility.ApplyScorings(cleanedJobs);
+            //var cleanedJobs = await utility.FilterDuplicates(scrapedJobs, existingLinks.ToHashSet());
+            //var scoredJobs = await utility.ApplyScorings(cleanedJobs);
 
-            await db.SaveJobListings(scoredJobs);
+            //await db.SaveJobListings(scoredJobs);
         }
     }
 }

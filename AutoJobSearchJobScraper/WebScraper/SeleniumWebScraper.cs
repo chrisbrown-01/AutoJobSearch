@@ -26,7 +26,7 @@ namespace AutoJobSearchJobScraper.WebScraper
             // TODO: deserialize csv search term string first
             var searchTerms = new List<string>()
             {
-                "c# developer toronto"
+                "c# developer nashville"
             };
 
             var jobListings = new List<JobListing>();
@@ -136,18 +136,19 @@ namespace AutoJobSearchJobScraper.WebScraper
                     try
                     {
                         listing.Description = listing.Description_Raw.Substring(startingIndex + ConfigVariables.STARTING_INDEX_KEY.Length, endingIndex - (startingIndex + ConfigVariables.STARTING_INDEX_KEY.Length));
+                        listing.Description = StringHelpers.AddNewLinesToMisformedString(listing.Description);
                     }
                     catch
                     {
                         Console.WriteLine("Substring error"); // TODO: implement logger and replace
-                        listing.Description = StringHelpers.AddNewLinesToMisformedString(listing.Description_Raw);
+                        listing.Description = StringHelpers.AddNewLinesToMisformedString(listing.Description_Raw); // TODO: Delete?
                     }
                 }
                 else
                 {
                     listing.Description = StringHelpers.AddNewLinesToMisformedString(listing.Description_Raw);
                 }
-
+                
                 jobList.Add(listing);
             }
 

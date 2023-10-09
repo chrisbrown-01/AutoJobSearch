@@ -9,9 +9,9 @@ namespace AutoJobSearchJobScraper.Constants
     // TODO: convert to config files
     internal static class ConfigVariables
     {
-        public const int MAX_START_PAGE = 10;
-        public const string STARTING_INDEX_KEY = "CollapseJob description";
-        public const string ENDING_INDEX_KEY = "Show full description"; // "Show full description" or if none found, "Report this job"
+        public const int MAX_START_PAGE = 20;
+        public const string STARTING_INDEX_KEY = "Click to copy link";
+        public const string ENDING_INDEX_KEY = "Report this listing"; 
         public const string REGEX_URL_PATTERN = @"https?://[^\s""]+";
         public static readonly List<string> KEYWORDS_POSITIVE = new()
         {
