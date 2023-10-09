@@ -28,7 +28,17 @@
 			<RowDefinition Height="3*" />
 		</Grid.RowDefinitions>
 
-		<Button Grid.Row="0" Content="Execute Job Scraper" HorizontalAlignment="Center" />
+		<StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center">
+			<Button Content="Execute Job Search" Background="LightGray" />
+			<Button Content="Create New Search Profile" Background="LightGray" />
+			<Button Content="Delete Current Search Profile" Background="LightGray" />
+			<ComboBox 
+				IsTextSearchEnabled="True" 
+				PlaceholderText="Select Profile" 
+				ItemsSource="{Binding SearchProfiles}"
+				SelectedItem="{Binding SelectedSearchProfile}">			
+			</ComboBox>
+		</StackPanel>
 
 		<TextBlock Grid.Row="1" Text="Searches" Margin="30 0"/>
 		<TextBox Grid.Row="2" IsReadOnly="False" TextWrapping="NoWrap" Margin="30 5" AcceptsReturn="True" />
