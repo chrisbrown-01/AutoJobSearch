@@ -49,37 +49,37 @@ namespace AutoJobSearchGUI.Models
         partial void OnNotesChanged(string value)
         {
             Debug.WriteLine($"Updating notes for listing id {this.Id}"); // TODO: proper logging
-            SQLiteDb.UpdateNotesById(this.Id, value);
+            Task.Run(async () => await SQLiteDb.UpdateNotesById(this.Id, value));
         }
 
         partial void OnIsAppliedToChanged(bool value)
         {
             Debug.WriteLine($"Updating IsAppliedTo for listing id {this.Id}"); // TODO: proper logging
-            DbContextSQLite.UpdateDatabase("IsAppliedTo", value, this.Id); // TODO: convert to use DI, async
+            Task.Run(async () => await DbContextSQLite.UpdateDatabase("IsAppliedTo", value, this.Id)); // TODO: convert to use DI, async
         }
 
         partial void OnIsInterviewingChanged(bool value)
         {
             Debug.WriteLine($"Updating IsInterviewing for listing id {this.Id}"); // TODO: proper logging
-            DbContextSQLite.UpdateDatabase("IsInterviewing", value, this.Id);
+            Task.Run(async () => await DbContextSQLite.UpdateDatabase("IsInterviewing", value, this.Id)); // TODO: convert to use DI, async
         }
 
         partial void OnIsRejectedChanged(bool value)
         {
             Debug.WriteLine($"Updating IsRejected for listing id {this.Id}"); // TODO: proper logging
-            DbContextSQLite.UpdateDatabase("IsRejected", value, this.Id);
+            Task.Run(async () => await DbContextSQLite.UpdateDatabase("IsRejected", value, this.Id)); // TODO: convert to use DI, async
         }
 
         partial void OnIsFavouriteChanged(bool value)
         {
             Debug.WriteLine($"Updating IsFavourite for listing id {this.Id}"); // TODO: proper logging
-            DbContextSQLite.UpdateDatabase("IsFavourite", value, this.Id);
+            Task.Run(async () => await DbContextSQLite.UpdateDatabase("IsFavourite", value, this.Id)); // TODO: convert to use DI, async
         }
 
         partial void OnIsHiddenChanged(bool value)
         {
             Debug.WriteLine($"Updating IsHidden for listing id {this.Id}"); // TODO: proper logging
-            DbContextSQLite.UpdateDatabase("IsHidden", value, this.Id);
+            Task.Run(async () => await DbContextSQLite.UpdateDatabase("IsHidden", value, this.Id)); // TODO: convert to use DI, async
         }
     }
 }

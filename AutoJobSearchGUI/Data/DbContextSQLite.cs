@@ -10,11 +10,10 @@ namespace AutoJobSearchGUI.Data
 {
     internal class DbContextSQLite
     {
-        public static void UpdateDatabase(string columnName, bool value, int id) // TODO: async Task?
+        public static async Task UpdateDatabase(string columnName, bool value, int id)
         {
             // TODO: proper logging
-            // Debug.WriteLine("Updating database"); // TODO: proper logging
-            SQLiteDb.UpdateDatabaseBoolPropertyById(columnName, value, id);
+            await SQLiteDb.UpdateDatabaseBoolPropertyById(columnName, value, id);
         }
     }
 }
