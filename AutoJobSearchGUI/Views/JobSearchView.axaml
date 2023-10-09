@@ -13,6 +13,18 @@
 		<vm:JobSearchViewModel/>
 	</Design.DataContext>
 
-	<TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+	<StackPanel>
+		<Button Content="Execute Job Scraper" HorizontalAlignment="Center" />
+		<TextBlock Text="Searches" />
+		<TextBox IsReadOnly="False" TextWrapping="NoWrap" Margin="30 10" AcceptsReturn="True"  />
+		<TextBlock Text="Positive Scoring Keywords" Foreground="Green" />
+		<TextBox IsReadOnly="False" TextWrapping="NoWrap" Margin="30 10" />
+		<TextBlock Text="Negative Scoring Keywords" Foreground="Red" />
+		<TextBox IsReadOnly="False" TextWrapping="NoWrap" Margin="30 10" />
+		<TextBlock Text="Positive Scoring Sentiments" Foreground="Green" />
+		<TextBox IsReadOnly="False" TextWrapping="NoWrap" Margin="30 10" />
+		<TextBlock Text="Negative Scoring Sentiments" Foreground="Red" />
+		<TextBox IsReadOnly="False" TextWrapping="NoWrap" Margin="30 10" />
+	</StackPanel>
 
 </UserControl>
