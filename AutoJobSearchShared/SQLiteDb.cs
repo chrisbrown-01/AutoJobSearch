@@ -19,6 +19,58 @@ namespace AutoJobSearchShared
         //    _logger = logger;
         //}
 
+        public static async Task AddJobListingsAndApplicationLinksToDb(IEnumerable<Models.JobListing> jobListings)
+        {
+            using (var connection = new SqliteConnection(Constants.SQLITE_CONNECTION_STRING))
+            {
+                await connection.OpenAsync();
+
+                const string insertJobListingSQL = @"
+                INSERT INTO JobListings (
+                SearchTerm, 
+                CreatedAt, 
+                Description_Raw, 
+                Description, 
+                Score, 
+                IsAppliedTo, 
+                IsInterviewing, 
+                IsRejected, 
+                IsFavourite,
+                IsHidden,
+                Notes
+                ) VALUES (
+                @SearchTerm, 
+                @CreatedAt, 
+                @Description_Raw, 
+                @Description, 
+                @Score, 
+                @IsAppliedTo, 
+                @IsInterviewing, 
+                @IsRejected, 
+                @IsFavourite, 
+                @IsHidden,
+                @Notes
+                );";
+
+                const string getLastInsertIdSQL = "SELECT last_insert_rowid();";
+
+                const string insertApplicationLinksSQL = "INSERT INTO ApplicationLinks (JobListingId, Link, Link_RawHTML) Values (@JobListingId, @Link, @Link_RawHTML)"; // TODO: make const/static, try to complete in batches
+
+                foreach (var job in jobListings)
+                {
+                    await connection.ExecuteAsync(insertJobListingSQL, job);
+                    var jobListingId = await connection.QuerySingleAsync<int>(getLastInsertIdSQL);
+
+                    foreach (var link in job.ApplicationLinks)
+                    {
+                        link.JobListingId = jobListingId;
+
+                        await connection.ExecuteAsync(insertApplicationLinksSQL, link);
+                    }
+                }
+            }
+        }
+
         public static async Task DeleteJobSearchProfile(int id)
         {
             Debug.WriteLine($"Getting job search profile id {id}"); // TODO: proper logging
@@ -60,7 +112,7 @@ namespace AutoJobSearchShared
             using (var connection = new SqliteConnection(Constants.SQLITE_CONNECTION_STRING))
             {
                 await connection.OpenAsync();
-
+                // TODO: change all sql strings to const
                 const string sql = @"
             INSERT INTO JobSearchProfiles 
             (ProfileName, Searches, KeywordsPositive, KeywordsNegative, SentimentsPositive, SentimentsNegative) 
