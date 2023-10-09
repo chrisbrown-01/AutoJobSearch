@@ -13,8 +13,8 @@
 		<vm:JobBoardViewModel/>
 	</Design.DataContext>
 
-	<StackPanel>
-		<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" >
+	<DockPanel>
+		<StackPanel DockPanel.Dock="Top" Orientation="Horizontal" HorizontalAlignment="Center" >
 			<Button Command="{Binding OpenJobListing}" Content="Open Selected Job" />
 			<Button Command="{Binding GoToPreviousPage}" Content="Previous Page" />
 			<Button Command="{Binding GoToNextPage}" Content="Next Page" />
@@ -132,5 +132,5 @@
 				<DataGridCheckBoxColumn Header="IsFavourite" Binding="{Binding IsFavourite}" />
 			</DataGrid.Columns>
 		</DataGrid>
-	</StackPanel>
+	</DockPanel>
 </UserControl>

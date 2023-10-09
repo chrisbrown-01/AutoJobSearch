@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace AutoJobSearchGUI.ViewModels
 {
+    // TODO: add margin/padding to views
     public partial class JobListingViewModel : ViewModelBase // Needs to be public for View previewer to work
     {
         [ObservableProperty]

@@ -28,17 +28,17 @@
 			</Grid.ColumnDefinitions>
 
 			<Grid.RowDefinitions>
-				<RowDefinition Height="0.5*" />
-				<RowDefinition Height="0.5*" />
-				<RowDefinition Height="0.5*" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
 				<RowDefinition Height="5*" />
 				<RowDefinition Height="2*" />
-				<RowDefinition Height="0.5*" />
-				<RowDefinition Height="0.5*" />
-				<RowDefinition Height="0.5*" />
-				<RowDefinition Height="0.5*" />
-				<RowDefinition Height="0.5*" />
-				<RowDefinition Height="0.5*" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
 				<RowDefinition Height="2*" />
 			</Grid.RowDefinitions>
 
@@ -90,7 +90,9 @@
 				Grid.Row="11"
 				Grid.Column="1"
 				Text="{Binding JobListing.Notes}"
-				TextWrapping="Wrap"/>
+				TextWrapping="Wrap"
+				AcceptsReturn="True"
+				AcceptsTab="True" />
 		</Grid>
 	</DockPanel>
 	

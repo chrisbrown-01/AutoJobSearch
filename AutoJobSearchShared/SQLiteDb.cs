@@ -42,12 +42,13 @@ namespace AutoJobSearchShared
                  IsInterviewing,
                  IsRejected,
                  IsFavourite,
-                IsHidden,
-                Notes FROM JobListings
-                WHERE IsAppliedTo = @IsAppliedTo 
-                AND IsInterviewing = @IsInterviewing
-                AND IsRejected = @IsRejected
-                AND IsFavourite = @IsFavourite;";
+                 IsHidden,
+                 Notes FROM JobListings
+                 WHERE IsAppliedTo = @IsAppliedTo 
+                 AND IsInterviewing = @IsInterviewing
+                 AND IsRejected = @IsRejected
+                 AND IsFavourite = @IsFavourite
+                 AND IsHidden = False;";
 
                 jobListings = await connection.QueryAsync<Models.JobListing>(
                     sqlQuery,
