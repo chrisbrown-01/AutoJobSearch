@@ -35,56 +35,48 @@ namespace AutoJobSearchGUI.ViewModels
         {
             _dbContext = dbContext;
 
-            RenderDefaultJobSearchView();
+            Task.Run(RenderDefaultJobSearchView);
         }
 
-        private void RenderDefaultJobSearchView()
+        private async Task RenderDefaultJobSearchView()
         {
-            SearchProfiles = ConvertProfilesToMvvmModel(_dbContext.GetAllJobSearchProfiles().Result);
+            var allProfiles = await _dbContext.GetAllJobSearchProfiles();
 
-            if (SearchProfiles.Any())
+            if (!allProfiles.Any())
             {
-                SelectedSearchProfile = SearchProfiles.First();
+                await CreateNewProfile();
+                return;
             }
-            else SelectedSearchProfile = new();
+
+            SearchProfiles = ConvertProfilesToMvvmModel(allProfiles);
+            if (!SearchProfiles.Any()) throw new Exception("No objects could be rendered for SearchProfiles"); // TODO: proper logging, custom exception
+            SelectedSearchProfile = SearchProfiles.First();
         }
 
         public async Task CreateNewProfile()
         {
+            // TODO: how to throw exceptions in avalonia? relaycommands?
+            //throw new Exception();
+
             await _dbContext.CreateNewJobSearchProfile(new JobSearchProfile());
 
             var allProfiles = await _dbContext.GetAllJobSearchProfiles();
+
+            if (!allProfiles.Any()) throw new Exception("No objects could be rendered for SearchProfiles"); // TODO: proper logging, custom exception
+
             SearchProfiles = ConvertProfilesToMvvmModel(allProfiles);
+
             SelectedSearchProfile = SearchProfiles.Last();
 
             await Task.CompletedTask;
         }
-
-        //public async Task CreateNewProfile()
-        //{
-        //    var newProfile = new JobSearchProfile()
-        //    {
-        //        Searches = SelectedSearchProfile.Searches,
-        //        KeywordsPositive = SelectedSearchProfile.KeywordsPositive,
-        //        KeywordsNegative = SelectedSearchProfile.KeywordsNegative,
-        //        SentimentsPositive = SelectedSearchProfile.SentimentsPositive,
-        //        SentimentsNegative = SelectedSearchProfile.SentimentsNegative
-        //    };
-
-        //    await _dbContext.CreateNewJobSearchProfile(newProfile);
-
-        //    var allProfiles = await _dbContext.GetAllJobSearchProfiles();
-        //    SearchProfiles = ConvertProfilesToMvvmModel(allProfiles);
-
-        //    await Task.CompletedTask;
-        //}
 
         public async Task DeleteCurrentProfile()
         {
             if (SelectedSearchProfile == null || SelectedSearchProfile.Id < 1) return;
 
             await _dbContext.DeleteJobSearchProfile(SelectedSearchProfile.Id);
-            RenderDefaultJobSearchView();
+            await RenderDefaultJobSearchView();
 
             await Task.CompletedTask;
         }
@@ -93,22 +85,8 @@ namespace AutoJobSearchGUI.ViewModels
         {
             var profilesMvvm = new List<JobSearchProfileModel>();   
 
-            // TODO: extract to method?
             foreach(var profile in profiles)
             {
-                //var profileMvvm = new JobSearchProfileModel()
-                //{
-                //    Id = profile.Id,
-                //    ProfileName = profile.ProfileName,
-                //    Searches = profile.Searches,
-                //    KeywordsPositive = profile.KeywordsPositive,
-                //    KeywordsNegative = profile.KeywordsNegative,
-                //    SentimentsPositive = profile.SentimentsPositive,
-                //    SentimentsNegative = profile.SentimentsNegative
-                //};
-
-                //profilesMvvm.Add(profileMvvm);
-
                 profilesMvvm.Add(ConvertProfileToMvvmModel(profile));
             }
 
@@ -130,11 +108,5 @@ namespace AutoJobSearchGUI.ViewModels
 
             return result;
         }
-
-        //partial void OnSelectedComboBoxItemChanged(string? value)
-        //{
-        //    if (value.IsNullOrEmpty()) return;
-        //    Debug.WriteLine($"selected value is {value}");
-        //}
     }
 }
