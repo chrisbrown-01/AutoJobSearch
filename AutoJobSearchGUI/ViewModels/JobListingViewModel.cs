@@ -27,7 +27,7 @@ namespace AutoJobSearchGUI.ViewModels
             JobListings = jobListings.ToList();
         }
 
-        public void GoToPreviousJob()
+        public async Task GoToPreviousJob()
         {
             var currentIndex = JobListings.IndexOf(JobListing);
             if (currentIndex < 0) return;
@@ -35,10 +35,10 @@ namespace AutoJobSearchGUI.ViewModels
             var previousIndex = currentIndex - 1;
             if (previousIndex < 0) return;
 
-            OpenJobListing(JobListings[previousIndex]);
+            await OpenJobListing(JobListings[previousIndex]);
         }
 
-        public void GoToNextJob()
+        public async Task GoToNextJob()
         {
             var currentIndex = JobListings.IndexOf(JobListing);
             if (currentIndex < 0) return;
@@ -46,16 +46,14 @@ namespace AutoJobSearchGUI.ViewModels
             var nextIndex = currentIndex + 1;
             if(nextIndex >= JobListings.Count) return;
 
-            OpenJobListing(JobListings[nextIndex]);
+            await OpenJobListing(JobListings[nextIndex]);
         }
 
-        public void OpenJobListing(JobListingModel jobListing)
+        public async Task OpenJobListing(JobListingModel jobListing)
         {
             if (jobListing.Id == JobListing.Id) return;
 
-            // TODO: make async
-            var jobListingDetails = SQLiteDb.GetJobListingDetailsById(jobListing.Id).Result;
-
+            var jobListingDetails = await SQLiteDb.GetJobListingDetailsById(jobListing.Id);
             jobListing.Description = jobListingDetails.Description;
             jobListing.ApplicationLinks = jobListingDetails.ApplicationLinksString;
             jobListing.Notes = jobListingDetails.Notes;

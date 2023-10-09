@@ -22,7 +22,7 @@ namespace AutoJobSearchGUI.ViewModels
 
     public partial class JobBoardViewModel : ViewModelBase
     {
-        public delegate void OpenJobListingViewHandler(JobListingModel job, IEnumerable<JobListingModel> jobListings);
+        public delegate Task OpenJobListingViewHandler(JobListingModel job, IEnumerable<JobListingModel> jobListings);
         public event OpenJobListingViewHandler? OpenJobListingViewRequest;
 
         [ObservableProperty]

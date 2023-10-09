@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace AutoJobSearchGUI.ViewModels
 {
@@ -35,10 +36,10 @@ namespace AutoJobSearchGUI.ViewModels
             ContentViewModel = jobSearchViewModel;
         }
 
-        public void ChangeViewToJobListing(JobListingModel jobListing, IEnumerable<JobListingModel> jobListings)
+        public async Task ChangeViewToJobListing(JobListingModel jobListing, IEnumerable<JobListingModel> jobListings)
         {
             jobListingViewModel.PopulateJobListings(jobListings);
-            jobListingViewModel.OpenJobListing(jobListing);
+            await jobListingViewModel.OpenJobListing(jobListing);
             ContentViewModel = jobListingViewModel;
         }
     }
