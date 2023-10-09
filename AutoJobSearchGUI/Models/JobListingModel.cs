@@ -44,9 +44,9 @@ namespace AutoJobSearchGUI.Models
         [ObservableProperty]
         private string _notes = string.Empty;
 
-        public static event EventHandler<StringFieldChangedEventArgs>? StringFieldChanged;
+        public static event EventHandler<JobListingsStringFieldChangedEventArgs>? StringFieldChanged;
 
-        public static event EventHandler<BoolFieldChangedEventArgs>? BoolFieldChanged;
+        public static event EventHandler<JobListingsBoolFieldChangedEventArgs>? BoolFieldChanged;
 
         // Note that these methods technically cause an excessive amount of database calls but since there is only a single user
         // interacting with the database, the technical debt is justified to ensure that no data loss occurs if the application
@@ -54,32 +54,32 @@ namespace AutoJobSearchGUI.Models
 
         partial void OnNotesChanged(string value)
         {
-            StringFieldChanged?.Invoke(this, new StringFieldChangedEventArgs { Field = DbStringField.Notes, Value = value, Id = this.Id });
+            StringFieldChanged?.Invoke(this, new JobListingsStringFieldChangedEventArgs { Field = JobListingsStringField.Notes, Value = value, Id = this.Id });
         }
 
         partial void OnIsAppliedToChanged(bool value)
         {
-            BoolFieldChanged?.Invoke(this, new BoolFieldChangedEventArgs { Field = DbBoolField.IsAppliedTo, Value = value, Id = this.Id });
+            BoolFieldChanged?.Invoke(this, new JobListingsBoolFieldChangedEventArgs { Field = JobListingsBoolField.IsAppliedTo, Value = value, Id = this.Id });
         }
 
         partial void OnIsInterviewingChanged(bool value)
         {
-            BoolFieldChanged?.Invoke(this, new BoolFieldChangedEventArgs { Field = DbBoolField.IsInterviewing, Value = value, Id = this.Id });
+            BoolFieldChanged?.Invoke(this, new JobListingsBoolFieldChangedEventArgs { Field = JobListingsBoolField.IsInterviewing, Value = value, Id = this.Id });
         }
 
         partial void OnIsRejectedChanged(bool value)
         {
-            BoolFieldChanged?.Invoke(this, new BoolFieldChangedEventArgs { Field = DbBoolField.IsRejected, Value = value, Id = this.Id });
+            BoolFieldChanged?.Invoke(this, new JobListingsBoolFieldChangedEventArgs { Field = JobListingsBoolField.IsRejected, Value = value, Id = this.Id });
         }
 
         partial void OnIsFavouriteChanged(bool value)
         {
-            BoolFieldChanged?.Invoke(this, new BoolFieldChangedEventArgs { Field = DbBoolField.IsFavourite, Value = value, Id = this.Id });
+            BoolFieldChanged?.Invoke(this, new JobListingsBoolFieldChangedEventArgs { Field = JobListingsBoolField.IsFavourite, Value = value, Id = this.Id });
         }
 
         partial void OnIsHiddenChanged(bool value)
         {
-            BoolFieldChanged?.Invoke(this, new BoolFieldChangedEventArgs { Field = DbBoolField.IsHidden, Value = value, Id = this.Id });
+            BoolFieldChanged?.Invoke(this, new JobListingsBoolFieldChangedEventArgs { Field = JobListingsBoolField.IsHidden, Value = value, Id = this.Id });
         }
     }
 }

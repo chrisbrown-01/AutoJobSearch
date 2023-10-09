@@ -11,9 +11,14 @@ namespace AutoJobSearchGUI.Data
 {
     public class SQLiteDbContext : IDbContext
     {
-        public async Task CreateNewJobSearchProfile(JobSearchProfile profile)
+        public async Task<JobSearchProfile> CreateNewJobSearchProfile(JobSearchProfile profile)
         {
-            await SQLiteDb.CreateNewJobSearchProfile(profile);
+            return await SQLiteDb.CreateNewJobSearchProfile(profile);
+        }
+
+        public async Task DeleteJobSearchProfile(int id)
+        {
+            await SQLiteDb.DeleteJobSearchProfile(id);
         }
 
         public async Task<IQueryable<JobListing>> ExecuteJobBoardAdvancedQuery(
@@ -50,14 +55,19 @@ namespace AutoJobSearchGUI.Data
             return await SQLiteDb.GetJobListingDetails(id);
         }
 
-        public async Task UpdateJobListingBoolProperty(DbBoolField columnName, bool value, int id)
+        public async Task UpdateJobListingBoolProperty(JobListingsBoolField columnName, bool value, int id)
         {
             await SQLiteDb.UpdateJobListingBoolProperty(columnName, value, id);
         }
 
-        public async Task UpdateJobListingStringProperty(DbStringField columnName, string value, int id)
+        public async Task UpdateJobListingStringProperty(JobListingsStringField columnName, string value, int id)
         {
             await SQLiteDb.UpdateJobListingStringProperty(columnName, value, id);
+        }
+
+        public async Task UpdateJobSearchProfileStringProperty(JobSearchProfilesStringField columnName, string value, int id)
+        {
+            await SQLiteDb.UpdateJobSearchProfileStringProperty(columnName, value, id);
         }
     }
 }

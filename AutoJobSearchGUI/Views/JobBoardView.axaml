@@ -97,7 +97,7 @@
 					<Button
 						Content="Clear All Filters"
 						HorizontalAlignment="Center"
-						Command="{Binding RenderDefaultJobBoard}"/>
+						Command="{Binding RenderDefaultJobBoardView}"/>
 				</MenuItem>
 			</Menu>
 		</StackPanel>

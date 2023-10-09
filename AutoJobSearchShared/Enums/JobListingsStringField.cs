@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AutoJobSearchShared.Enums
 {
-    public enum DbStringField
+    public enum JobListingsStringField
     {
         Notes
     }

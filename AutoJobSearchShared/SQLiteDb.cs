@@ -19,6 +19,20 @@ namespace AutoJobSearchShared
         //    _logger = logger;
         //}
 
+        public static async Task DeleteJobSearchProfile(int id)
+        {
+            Debug.WriteLine($"Getting job search profile id {id}"); // TODO: proper logging
+
+            using (var connection = new SqliteConnection(Constants.SQLITE_CONNECTION_STRING))
+            {
+                await connection.OpenAsync();
+
+                var sqlQuery = @"DELETE FROM JobSearchProfiles WHERE Id = @Id;";
+
+                await connection.ExecuteAsync(sqlQuery, new {Id = id});
+            }
+        }
+
         public static async Task<IEnumerable<JobSearchProfile>> GetAllJobSearchProfiles()
         {
             Debug.WriteLine($"Getting all job search profile"); // TODO: proper logging
@@ -37,21 +51,31 @@ namespace AutoJobSearchShared
             return profiles;
         }
 
-        public static async Task CreateNewJobSearchProfile(JobSearchProfile profile)
+        public static async Task<JobSearchProfile> CreateNewJobSearchProfile(JobSearchProfile profile)
         {
+            var newProfile = new JobSearchProfile();
+
             Debug.WriteLine($"Creating new job search profile"); // TODO: proper logging
 
             using (var connection = new SqliteConnection(Constants.SQLITE_CONNECTION_STRING))
             {
                 await connection.OpenAsync();
 
-                    const string sql = @"
-                INSERT INTO JobSearchProfiles 
-                (ProfileName, Searches, KeywordsPositive, KeywordsNegative, SentimentsPositive, SentimentsNegative) 
-                VALUES (@ProfileName, @Searches, @KeywordsPositive, @KeywordsNegative, @SentimentsPositive, @SentimentsNegative)";
+                const string sql = @"
+            INSERT INTO JobSearchProfiles 
+            (ProfileName, Searches, KeywordsPositive, KeywordsNegative, SentimentsPositive, SentimentsNegative) 
+            VALUES (@ProfileName, @Searches, @KeywordsPositive, @KeywordsNegative, @SentimentsPositive, @SentimentsNegative);
+            SELECT * FROM JobSearchProfiles WHERE Id = last_insert_rowid();";
 
-                await connection.ExecuteAsync(sql, profile);
+                var result = await connection.QuerySingleAsync<JobSearchProfile>(sql, profile);
+
+                if(result != null)
+                {
+                    newProfile = result;
+                }
             }
+
+            return newProfile;
         }
 
         public static async Task<IQueryable<Models.JobListing>> ExecuteJobBoardAdvancedQuery(
@@ -228,23 +252,35 @@ namespace AutoJobSearchShared
             return jobListing;
         }
 
-        public static async Task UpdateJobListingBoolProperty(DbBoolField columnName, bool value, int id) // TODO: convert to use enum
+        public static async Task UpdateJobListingBoolProperty(JobListingsBoolField columnName, bool value, int id) 
         {
             Debug.WriteLine($"Updating boolean for id {id}"); // TODO: proper logging
 
             using (var connection = new SqliteConnection(Constants.SQLITE_CONNECTION_STRING)) 
             {
                 await connection.OpenAsync();
-                string sql = $"UPDATE JobListings SET {columnName} = @Value WHERE Id = @Id"; // TODO: change to stored procedure
+                string sql = $"UPDATE JobListings SET {columnName} = @Value WHERE Id = @Id"; 
                 await connection.ExecuteAsync(sql, new { Value = value, Id = id });
             }
         }
 
-        public static async Task UpdateJobListingStringProperty(DbStringField columnName, string value, int id) // TODO: convert to use enum
+        public static async Task UpdateJobSearchProfileStringProperty(JobSearchProfilesStringField columnName, string value, int id)
+        {
+            Debug.WriteLine($"Updating string for job profile id {id}"); // TODO: proper logging
+
+            using (var connection = new SqliteConnection(Constants.SQLITE_CONNECTION_STRING))
+            {
+                await connection.OpenAsync();
+                string sql = $"UPDATE JobSearchProfiles SET {columnName} = @Value WHERE Id = @Id"; 
+                await connection.ExecuteAsync(sql, new { Value = value, Id = id });
+            }
+        }
+
+        public static async Task UpdateJobListingStringProperty(JobListingsStringField columnName, string value, int id) 
         {
             Debug.WriteLine($"Updating notes for id {id}"); // TODO: proper logging
 
-            using (var connection = new SqliteConnection(Constants.SQLITE_CONNECTION_STRING)) // TODO: db connection pooling
+            using (var connection = new SqliteConnection(Constants.SQLITE_CONNECTION_STRING)) 
             {
                 await connection.OpenAsync();
 

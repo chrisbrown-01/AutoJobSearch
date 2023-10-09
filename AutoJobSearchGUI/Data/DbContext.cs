@@ -27,11 +27,22 @@ namespace AutoJobSearchGUI.Data
             {
                 await UpdateJobListingStringProperty(e.Field, e.Value, e.Id);
             };
+
+            JobSearchProfileModel.StringFieldChanged += async (sender, e) =>
+            {
+                await UpdateJobSearchProfileStringProperty(e.Field, e.Value, e.Id);
+            };
         }
 
-        public async Task CreateNewJobSearchProfile(JobSearchProfile profile)
+        public async Task UpdateJobSearchProfileStringProperty(JobSearchProfilesStringField columnName, string value, int id)
         {
-            await _dbContext.CreateNewJobSearchProfile(profile);
+            // TODO: proper logging
+            await _dbContext.UpdateJobSearchProfileStringProperty(columnName, value, id);
+        }
+
+        public async Task<JobSearchProfile> CreateNewJobSearchProfile(JobSearchProfile profile)
+        {
+            return await _dbContext.CreateNewJobSearchProfile(profile);
         }
 
         public async Task<IQueryable<JobListing>> ExecuteJobBoardAdvancedQuery(
@@ -69,16 +80,21 @@ namespace AutoJobSearchGUI.Data
             return await _dbContext.GetJobListingDetails(id);
         }
 
-        public async Task UpdateJobListingBoolProperty(DbBoolField columnName, bool value, int id)
+        public async Task UpdateJobListingBoolProperty(JobListingsBoolField columnName, bool value, int id)
         {
             // TODO: proper logging
             await _dbContext.UpdateJobListingBoolProperty(columnName, value, id);
         }
 
-        public async Task UpdateJobListingStringProperty(DbStringField columnName, string value, int id)
+        public async Task UpdateJobListingStringProperty(JobListingsStringField columnName, string value, int id)
         {
             // TODO: proper logging
             await _dbContext.UpdateJobListingStringProperty(columnName, value, id);
+        }
+
+        public async Task DeleteJobSearchProfile(int id)
+        {
+            await _dbContext.DeleteJobSearchProfile(id);
         }
     }
 }

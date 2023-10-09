@@ -8,12 +8,16 @@ namespace AutoJobSearchGUI.Data
 {
     public interface IDbContext
     {
+        Task DeleteJobSearchProfile(int id);
+
         Task<IEnumerable<JobSearchProfile>> GetAllJobSearchProfiles();
 
-        Task CreateNewJobSearchProfile(JobSearchProfile profile);
+        Task<JobSearchProfile> CreateNewJobSearchProfile(JobSearchProfile profile);
 
-        Task UpdateJobListingBoolProperty(DbBoolField columnName, bool value, int id);
-        Task UpdateJobListingStringProperty(DbStringField columnName, string value, int id);
+        Task UpdateJobListingBoolProperty(JobListingsBoolField columnName, bool value, int id);
+        Task UpdateJobListingStringProperty(JobListingsStringField columnName, string value, int id);
+
+        Task UpdateJobSearchProfileStringProperty(JobSearchProfilesStringField columnName, string value, int id);
 
         Task<IQueryable<JobListing>> ExecuteJobBoardAdvancedQuery(
             bool isAppliedTo,

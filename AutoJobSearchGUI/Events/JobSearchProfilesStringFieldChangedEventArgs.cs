@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace AutoJobSearchGUI.Events
 {
-    public class BoolFieldChangedEventArgs : EventArgs // Needs to be public for delegates to work
+    public class JobSearchProfilesStringFieldChangedEventArgs : EventArgs
     {
-        public bool Value { get; set; }
+        public string Value { get; set; } = string.Empty;
         public int Id { get; set; }
-        public DbBoolField Field { get; set; }
+        public JobSearchProfilesStringField Field { get; set; }
     }
 }
