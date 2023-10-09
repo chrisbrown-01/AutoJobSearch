@@ -2,6 +2,7 @@
 using AutoJobSearchShared.Models;
 using Dapper;
 using Microsoft.Data.Sqlite; // TODO: uninstall packages where they're not required
+using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 using System.Text;
 using static OpenQA.Selenium.PrintOptions;
@@ -10,12 +11,19 @@ namespace AutoJobSearchShared
 {
     public class SQLiteDb
     {
+        //private readonly ILogger _logger;
+        //public SQLiteDb(ILogger logger)
+        //{
+        //    _logger = logger;
+        //}
+
         public static async Task<IEnumerable<Models.JobListing>> ExecuteJobBoardAdvancedQuery(
             bool isAppliedTo,
             bool isInterviewing,
             bool isRejected,
             bool isFavourite)
         {
+            //_logger.LogDebug("test");
             Debug.WriteLine($"Getting job listings per user job board query"); // TODO: proper logging
 
             var jobListings = new List<Models.JobListing>();
@@ -163,72 +171,39 @@ namespace AutoJobSearchShared
             return jobListings;
         }
 
-
-        public static async Task<string> GetNotesById(int id)
+        public static async Task<Models.JobListing> GetJobListingDetailsById(int id)
         {
-            Debug.WriteLine($"Getting notes for listing id {id}"); // TODO: proper logging
+            Debug.WriteLine($"Getting details for listing id {id}"); // TODO: proper logging
 
-            string notes = string.Empty;
+            var jobListing = new Models.JobListing();
 
             using (var connection = new SqliteConnection(Constants.SQLITE_CONNECTION_STRING))
             {
                 await connection.OpenAsync();
 
-                var notesQuery = "SELECT Notes From JobListings Where Id = @Id;";
-                var query = await connection.QuerySingleAsync<string>(notesQuery, new { Id = id });
+                var jobListingTableQuery = "SELECT Description, Notes From JobListings Where Id = @Id;";
+                var jobListingTableResult = await connection.QuerySingleAsync<Models.JobListing>(jobListingTableQuery, new { Id = id });
 
-                if (query != null) notes = query;
-            }
+                var applicationLinksTableQuery = "SELECT Link FROM ApplicationLinks Where JobListingId = @Id;";
+                var applicationLinksTableResult = await connection.QueryAsync<string>(applicationLinksTableQuery, new { Id = id });
 
-            return notes;
-        }
+                jobListing.Description = jobListingTableResult.Description;
+                jobListing.Notes = jobListingTableResult.Notes;
 
-        public static async Task<string> GetDescriptionById(int id)
-        {
-            Debug.WriteLine($"Getting description for listing id {id}"); // TODO: proper logging
-
-            string description = string.Empty;
-
-            using (var connection = new SqliteConnection(Constants.SQLITE_CONNECTION_STRING))
-            {
-                await connection.OpenAsync();
-
-                var descriptionQuery = "SELECT Description From JobListings Where Id = @Id;";
-                var query = await connection.QuerySingleAsync<string>(descriptionQuery, new { Id = id });
-
-                if (query != null) description = query;
-            }
-
-            return description;
-        }
-
-        public static async Task<string> GetApplicationLinksById(int id)
-        {
-            Debug.WriteLine($"Getting links for listing id {id}"); // TODO: proper logging
-
-            string links = string.Empty;  
-
-            using (var connection = new SqliteConnection(Constants.SQLITE_CONNECTION_STRING))
-            {
-                await connection.OpenAsync();
-
-                var linksQuery = "SELECT Link FROM ApplicationLinks Where JobListingId = @Id;";
-                var query = await connection.QueryAsync<string>(linksQuery, new { Id = id });
-
-                if(query != null)
+                if (applicationLinksTableResult != null)
                 {
                     StringBuilder sb = new();
 
-                    foreach(var link in query)
+                    foreach (var link in applicationLinksTableResult)
                     {
                         sb.AppendLine(link);
                     }
 
-                    links = sb.ToString();
+                    jobListing.ApplicationLinksString = sb.ToString();
                 }
             }
 
-            return links;
+            return jobListing;
         }
 
         public static async Task UpdateDatabaseBoolPropertyById(string columnName, bool value, int id) // TODO: better naming

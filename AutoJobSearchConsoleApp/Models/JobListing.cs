@@ -20,6 +20,8 @@ namespace AutoJobSearchConsoleApp.Models
 
         public List<ApplicationLink> ApplicationLinks { get; set; } = new();
 
+        public string ApplicationLinksString { get; set; } = string.Empty;  
+
         public int Score { get; set; } = 0;
 
         public bool IsAppliedTo { get; set; } = false;

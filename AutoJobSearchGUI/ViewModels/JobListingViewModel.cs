@@ -53,14 +53,12 @@ namespace AutoJobSearchGUI.ViewModels
         {
             if (jobListing.Id == JobListing.Id) return;
 
-            // TODO: consolidate into single SQL query, make async
-            var description = SQLiteDb.GetDescriptionById(jobListing.Id).Result;
-            var applicationLinks = SQLiteDb.GetApplicationLinksById(jobListing.Id).Result;
-            var notes = SQLiteDb.GetNotesById(jobListing.Id).Result;
+            // TODO: make async
+            var jobListingDetails = SQLiteDb.GetJobListingDetailsById(jobListing.Id).Result;
 
-            jobListing.Description = description;
-            jobListing.ApplicationLinks = applicationLinks;
-            jobListing.Notes = notes;
+            jobListing.Description = jobListingDetails.Description;
+            jobListing.ApplicationLinks = jobListingDetails.ApplicationLinksString;
+            jobListing.Notes = jobListingDetails.Notes;
 
             JobListing = jobListing;
         }
