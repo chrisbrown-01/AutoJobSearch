@@ -6,12 +6,13 @@ using Microsoft.Data.Sqlite; // TODO: uninstall packages where they're not requi
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 using System.Text;
-using static OpenQA.Selenium.PrintOptions;
 
 namespace AutoJobSearchShared
 {
     public class SQLiteDb
     {
+        // TODO: implement logger, remove statics?
+
         //private readonly ILogger _logger;
         //public SQLiteDb(ILogger logger)
         //{
