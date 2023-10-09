@@ -175,8 +175,7 @@ namespace AutoJobSearchGUI.ViewModels
             JobListingsDisplayed = JobListings.Skip(PageIndex * PageSize).Take(PageSize).ToList();
         }
 
-        //public RelayCommand TestClickCommand { get; }
-        public void OpenJobListing() // TODO: convert to use RelayCommand?
+        public void OpenJobListing() 
         {
             if (SelectedJobListing == null) return;
             OpenJobListingViewRequest?.Invoke(SelectedJobListing, JobListings);
