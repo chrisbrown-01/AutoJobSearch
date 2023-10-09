@@ -1,4 +1,5 @@
 ﻿using AutoJobSearchConsoleApp.Models;
+using AutoJobSearchShared.Enums;
 using AutoJobSearchShared.Models;
 using Dapper;
 using Microsoft.Data.Sqlite; // TODO: uninstall packages where they're not required
@@ -18,10 +19,10 @@ namespace AutoJobSearchShared
         //}
 
         public static async Task<IQueryable<Models.JobListing>> ExecuteJobBoardAdvancedQuery(
-    bool isAppliedTo,
-    bool isInterviewing,
-    bool isRejected,
-    bool isFavourite)
+            bool isAppliedTo,
+            bool isInterviewing,
+            bool isRejected,
+            bool isFavourite)
         {
             Debug.WriteLine($"Getting job listings per user job board query"); // TODO: proper logging
 
@@ -59,20 +60,6 @@ namespace AutoJobSearchShared
             }
 
             return jobListings.AsQueryable();
-        }
-
-
-        public static async Task UpdateNotesById(int id, string notes)
-        {
-            Debug.WriteLine($"Updating notes for id {id}"); // TODO: proper logging
-
-            using (var connection = new SqliteConnection(Constants.SQLITE_CONNECTION_STRING)) // TODO: db connection pooling
-            {
-                await connection.OpenAsync();
-
-                var sqlQuery = "UPDATE JobListings SET Notes = @Notes WHERE Id = @Id;";
-                await connection.ExecuteAsync(sqlQuery, new { Notes = notes, Id = id });
-            }
         }
 
         public static async Task<IEnumerable<Models.JobListing>> GetHiddenJobListings()
@@ -204,13 +191,28 @@ namespace AutoJobSearchShared
             return jobListing;
         }
 
-        public static async Task UpdateDatabaseBoolPropertyById(string columnName, bool value, int id) // TODO: better naming
+        public static async Task UpdateJobListingBoolProperty(DbBoolField columnName, bool value, int id) // TODO: convert to use enum
         {
+            Debug.WriteLine($"Updating boolean for id {id}"); // TODO: proper logging
+
             using (var connection = new SqliteConnection(Constants.SQLITE_CONNECTION_STRING)) 
             {
                 await connection.OpenAsync();
                 string sql = $"UPDATE JobListings SET {columnName} = @Value WHERE Id = @Id"; // TODO: change to stored procedure
                 await connection.ExecuteAsync(sql, new { Value = value, Id = id });
+            }
+        }
+
+        public static async Task UpdateJobListingStringProperty(DbStringField columnName, string value, int id) // TODO: convert to use enum
+        {
+            Debug.WriteLine($"Updating notes for id {id}"); // TODO: proper logging
+
+            using (var connection = new SqliteConnection(Constants.SQLITE_CONNECTION_STRING)) // TODO: db connection pooling
+            {
+                await connection.OpenAsync();
+
+                var sqlQuery = $"UPDATE JobListings SET {columnName} = @Value WHERE Id = @Id;";
+                await connection.ExecuteAsync(sqlQuery, new { Value = value, Id = id });
             }
         }
 
