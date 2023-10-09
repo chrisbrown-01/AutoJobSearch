@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace AutoJobSearchGUI.ViewModels
 {
-    public partial class JobListingViewModel : ViewModelBase // TODO: Make internal?
+    internal partial class JobListingViewModel : ViewModelBase // TODO: Make internal?
     {
         [ObservableProperty]
         private JobListingModel _jobListing;

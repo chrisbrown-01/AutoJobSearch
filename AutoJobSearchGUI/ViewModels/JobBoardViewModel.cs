@@ -21,7 +21,7 @@ namespace AutoJobSearchGUI.ViewModels
     // TODO: view and models for specifiying search terms and scoring keywords
 
 
-    public partial class JobBoardViewModel : ViewModelBase
+    internal partial class JobBoardViewModel : ViewModelBase
     {
         public delegate Task OpenJobListingViewHandler(JobListingModel job, IEnumerable<JobListingModel> jobListings);
         public event OpenJobListingViewHandler? OpenJobListingViewRequest;
@@ -212,7 +212,7 @@ namespace AutoJobSearchGUI.ViewModels
 
         private async Task<List<JobListingModel>> GetFavouriteJobListings() 
         {
-            var jobs = await _dbContext.GetFavouriteJobListings(); // TODO: convert to use dbcontext
+            var jobs = await _dbContext.GetFavouriteJobListings(); 
             return ConvertJobListingsToJobListingModels(jobs);
         }
 

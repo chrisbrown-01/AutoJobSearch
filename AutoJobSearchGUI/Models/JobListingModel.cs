@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace AutoJobSearchGUI.Models
 {
-    public partial class JobListingModel : ObservableObject 
+    internal partial class JobListingModel : ObservableObject 
     {
         public int Id { get; set; }
         public string SearchTerm { get; set; } = string.Empty;
@@ -44,9 +44,9 @@ namespace AutoJobSearchGUI.Models
         [ObservableProperty]
         private string _notes = string.Empty;
 
-        internal static event EventHandler<StringFieldChangedEventArgs>? StringFieldChanged;
+        public static event EventHandler<StringFieldChangedEventArgs>? StringFieldChanged;
 
-        internal static event EventHandler<BoolFieldChangedEventArgs>? BoolFieldChanged;
+        public static event EventHandler<BoolFieldChangedEventArgs>? BoolFieldChanged;
 
         // Note that these methods technically cause an excessive amount of database calls but since there is only a single user
         // interacting with the database, the technical debt is justified to ensure that no data loss occurs if the application

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace AutoJobSearchGUI.Models
 {
-    public partial class JobBoardQueryModel : ObservableObject
+    internal partial class JobBoardQueryModel : ObservableObject
     {
         [ObservableProperty]
         private bool _isAppliedTo;

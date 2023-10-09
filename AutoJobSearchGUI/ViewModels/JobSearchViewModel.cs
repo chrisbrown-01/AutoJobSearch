@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AutoJobSearchGUI.ViewModels
 {
-    public partial class JobSearchViewModel : ViewModelBase
+    internal partial class JobSearchViewModel : ViewModelBase
     {
         public string Greeting => "Job search";
     }

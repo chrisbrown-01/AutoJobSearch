@@ -8,7 +8,7 @@ using Avalonia.Markup.Xaml;
 
 namespace AutoJobSearchGUI
 {
-    public partial class App : Application
+    internal partial class App : Application
     {
         public override void Initialize()
         {
