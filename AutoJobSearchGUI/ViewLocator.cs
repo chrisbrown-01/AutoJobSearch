@@ -5,7 +5,7 @@ using System;
 
 namespace AutoJobSearchGUI
 {
-    internal class ViewLocator : IDataTemplate
+    public class ViewLocator : IDataTemplate // Needs to be public for View previewer to work
     {
         public Control Build(object? data)
         {

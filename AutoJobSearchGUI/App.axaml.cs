@@ -8,7 +8,7 @@ using Avalonia.Markup.Xaml;
 
 namespace AutoJobSearchGUI
 {
-    internal partial class App : Application
+    public partial class App : Application // Needs to be public for View previewer to work
     {
         public override void Initialize()
         {

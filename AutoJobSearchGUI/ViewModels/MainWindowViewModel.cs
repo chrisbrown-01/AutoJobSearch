@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace AutoJobSearchGUI.ViewModels
 {
-    internal partial class MainWindowViewModel : ViewModelBase
+    public partial class MainWindowViewModel : ViewModelBase // Needs to be public for View previewer to work
     {
         private JobBoardViewModel jobBoardViewModel;
         private JobSearchViewModel jobSearchViewModel;

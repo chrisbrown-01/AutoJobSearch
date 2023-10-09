@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace AutoJobSearchGUI.Data
 {
-    internal class DbContext : IDbContext
+    public class DbContext : IDbContext
     {
         private readonly IDbContext _dbContext;
 

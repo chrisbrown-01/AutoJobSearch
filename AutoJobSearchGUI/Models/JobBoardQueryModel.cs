@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace AutoJobSearchGUI.Models
 {
-    internal partial class JobBoardQueryModel : ObservableObject
+    public partial class JobBoardQueryModel : ObservableObject // Needs to be public for delegates to work
     {
         [ObservableProperty]
         private bool _isAppliedTo;

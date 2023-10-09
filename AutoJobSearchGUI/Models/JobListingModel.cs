@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace AutoJobSearchGUI.Models
 {
-    internal partial class JobListingModel : ObservableObject 
+    public partial class JobListingModel : ObservableObject // Needs to be public for delegates to work
     {
         public int Id { get; set; }
         public string SearchTerm { get; set; } = string.Empty;

@@ -2,7 +2,7 @@
 
 namespace AutoJobSearchGUI.ViewModels
 {
-    internal class ViewModelBase : ObservableObject
+    public class ViewModelBase : ObservableObject
     {
     }
 }

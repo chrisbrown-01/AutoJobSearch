@@ -21,7 +21,7 @@ namespace AutoJobSearchGUI.ViewModels
     // TODO: view and models for specifiying search terms and scoring keywords
 
 
-    internal partial class JobBoardViewModel : ViewModelBase
+    public partial class JobBoardViewModel : ViewModelBase // Needs to be public for View previewer to work
     {
         public delegate Task OpenJobListingViewHandler(JobListingModel job, IEnumerable<JobListingModel> jobListings);
         public event OpenJobListingViewHandler? OpenJobListingViewRequest;
@@ -43,9 +43,17 @@ namespace AutoJobSearchGUI.ViewModels
         [ObservableProperty]
         private int _pageSize;
 
-        internal readonly IDbContext _dbContext;
+        private readonly IDbContext _dbContext;
 
-        internal JobBoardViewModel(IDbContext dbContext)
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+        public JobBoardViewModel() // For View previewer only
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+        {
+            // Design-time data setup
+            JobBoardQueryModel = new();
+        }
+
+        public JobBoardViewModel(IDbContext dbContext)
         {
             //TestClickCommand = new RelayCommand(TestClick);
 

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace AutoJobSearchGUI.Data
 {
-    internal class SQLiteDbContext : IDbContext
+    public class SQLiteDbContext : IDbContext
     {
         public async Task<IQueryable<JobListing>> ExecuteJobBoardAdvancedQuery(
             bool isAppliedTo, 

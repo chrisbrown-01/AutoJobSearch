@@ -11,16 +11,23 @@ using System.Threading.Tasks;
 
 namespace AutoJobSearchGUI.ViewModels
 {
-    internal partial class JobListingViewModel : ViewModelBase // TODO: Make internal?
+    public partial class JobListingViewModel : ViewModelBase // Needs to be public for View previewer to work
     {
         [ObservableProperty]
         private JobListingModel _jobListing;
 
         private List<JobListingModel> JobListings { get; set; } = default!;
 
-        internal readonly IDbContext _dbContext;
+        private readonly IDbContext _dbContext;
 
-        internal JobListingViewModel(IDbContext dbContext)
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+        public JobListingViewModel() // For View previewer only
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+        {
+            JobListing = new JobListingModel();
+        }
+
+        public JobListingViewModel(IDbContext dbContext)
         {
             JobListing = new JobListingModel();
             _dbContext = dbContext;

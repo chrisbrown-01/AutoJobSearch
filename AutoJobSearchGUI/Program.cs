@@ -3,7 +3,7 @@ using System;
 
 namespace AutoJobSearchGUI
 {
-    internal class Program
+    public class Program // Needs to be public for View previewer to work
     {
         // Initialization code. Don't use any Avalonia, third-party APIs or any
         // SynchronizationContext-reliant code before AppMain is called: things aren't initialized

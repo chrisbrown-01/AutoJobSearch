@@ -2,7 +2,7 @@ using Avalonia.Controls;
 
 namespace AutoJobSearchGUI.Views
 {
-    internal partial class JobBoardView : UserControl
+    public partial class JobBoardView : UserControl // Needs to be public for View previewer to work
     {
         public JobBoardView()
         {
