@@ -171,7 +171,7 @@ namespace AutoJobSearchGUI.ViewModels
             }
 
             PageIndex = 0;
-            JobListings = ConvertQueryToDisplayableModel(result);
+            JobListings = ConvertJobListingsToJobListingModels(result);
             JobListingsDisplayed = JobListings.Skip(PageIndex * PageSize).Take(PageSize).ToList();
         }
 
@@ -204,64 +204,21 @@ namespace AutoJobSearchGUI.ViewModels
             JobListingsDisplayed = JobListings.Skip(PageIndex * PageSize).Take(PageSize).ToList();
         }
 
-        private List<JobListingModel> ConvertQueryToDisplayableModel(IQueryable<AutoJobSearchShared.Models.JobListing> jobs)
+        private static async Task<List<JobListingModel>> GetFavouriteJobListings() // TODO: remove statics
         {
-            var jobListings = new List<JobListingModel>();
-
-            foreach (var job in jobs)
-            {
-                var jobListing = new JobListingModel
-                {
-                    Id = job.Id,
-                    SearchTerm = job.SearchTerm,
-                    CreatedAt = job.CreatedAt,
-                    Description = job.Description,
-                    Score = job.Score,
-                    IsAppliedTo = job.IsAppliedTo,
-                    IsInterviewing = job.IsInterviewing,
-                    IsRejected = job.IsRejected,
-                    IsFavourite = job.IsFavourite,
-                    IsHidden = job.IsHidden
-                };
-
-                jobListings.Add(jobListing);
-            }
-
-            return jobListings;
-        }
-
-        // TODO: consolidate all into single method?
-        private static async Task<List<JobListingModel>> GetFavouriteJobListings()
-        {
-            var jobListings = new List<JobListingModel>();
-            var jobs = await SQLiteDb.GetFavouriteJobListings();
-
-            foreach (var job in jobs)
-            {
-                var jobListing = new JobListingModel
-                {
-                    Id = job.Id,
-                    SearchTerm = job.SearchTerm,
-                    CreatedAt = job.CreatedAt,
-                    Description = job.Description,
-                    Score = job.Score,
-                    IsAppliedTo = job.IsAppliedTo,
-                    IsInterviewing = job.IsInterviewing,
-                    IsRejected = job.IsRejected,
-                    IsFavourite = job.IsFavourite,
-                    IsHidden = job.IsHidden
-                };
-
-                jobListings.Add(jobListing);
-            }
-
-            return jobListings;
+            var jobs = await SQLiteDb.GetFavouriteJobListings(); // TODO: convert to use dbcontext
+            return ConvertJobListingsToJobListingModels(jobs);
         }
 
         private static async Task<List<JobListingModel>> GetHiddenJobListings()
         {
-            var jobListings = new List<JobListingModel>();
             var jobs = await SQLiteDb.GetHiddenJobListings();
+            return ConvertJobListingsToJobListingModels(jobs);
+        }
+
+        private static List<JobListingModel> ConvertJobListingsToJobListingModels(IEnumerable<AutoJobSearchShared.Models.JobListing> jobs) // TODO: remove namespace from model, maybe improve naming
+        {
+            var jobListings = new List<JobListingModel>();
 
             foreach (var job in jobs)
             {
@@ -285,31 +242,10 @@ namespace AutoJobSearchGUI.ViewModels
             return jobListings;
         }
 
-        private static async Task<List<JobListingModel>> GetAllJobListings()
+        private async Task<List<JobListingModel>> GetAllJobListings()
         {
-            var jobListings = new List<JobListingModel>();
             var jobs = await SQLiteDb.GetAllJobListings();
-
-            foreach (var job in jobs)
-            {
-                var jobListing = new JobListingModel
-                {
-                    Id = job.Id,
-                    SearchTerm = job.SearchTerm,
-                    CreatedAt = job.CreatedAt,
-                    Description = job.Description,
-                    Score = job.Score,
-                    IsAppliedTo = job.IsAppliedTo,
-                    IsInterviewing = job.IsInterviewing,
-                    IsRejected = job.IsRejected,
-                    IsFavourite = job.IsFavourite,
-                    IsHidden = job.IsHidden
-                };
-
-                jobListings.Add(jobListing);
-            }
-
-            return jobListings;
+            return ConvertJobListingsToJobListingModels(jobs);
         }
     }
 }
