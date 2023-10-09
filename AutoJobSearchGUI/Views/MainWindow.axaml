@@ -20,6 +20,7 @@
 		<Menu DockPanel.Dock="Top">
 			<MenuItem Header="Job Board" Command="{Binding ChangeViewToJobBoard}"/>
 			<MenuItem Header="Job Search" Command="{Binding ChangeViewToJobSearch}"/>
+			<MenuItem Header="Help" />
 		</Menu>
 		<ContentControl Content="{Binding ContentViewModel}" />
 	</DockPanel>

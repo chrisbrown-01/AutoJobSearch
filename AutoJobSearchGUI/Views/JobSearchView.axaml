@@ -3,7 +3,7 @@
 			 xmlns:vm="using:AutoJobSearchGUI.ViewModels"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="1000"
              x:Class="AutoJobSearchGUI.Views.JobSearchView"
 			 x:DataType="vm:JobSearchViewModel">
 	
@@ -13,18 +13,38 @@
 		<vm:JobSearchViewModel/>
 	</Design.DataContext>
 
-	<StackPanel>
-		<Button Content="Execute Job Scraper" HorizontalAlignment="Center" />
-		<TextBlock Text="Searches" />
-		<TextBox IsReadOnly="False" TextWrapping="NoWrap" Margin="30 10" AcceptsReturn="True"  />
-		<TextBlock Text="Positive Scoring Keywords" Foreground="Green" />
-		<TextBox IsReadOnly="False" TextWrapping="NoWrap" Margin="30 10" />
-		<TextBlock Text="Negative Scoring Keywords" Foreground="Red" />
-		<TextBox IsReadOnly="False" TextWrapping="NoWrap" Margin="30 10" />
-		<TextBlock Text="Positive Scoring Sentiments" Foreground="Green" />
-		<TextBox IsReadOnly="False" TextWrapping="NoWrap" Margin="30 10" />
-		<TextBlock Text="Negative Scoring Sentiments" Foreground="Red" />
-		<TextBox IsReadOnly="False" TextWrapping="NoWrap" Margin="30 10" />
-	</StackPanel>
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="0.5*" />
+			<RowDefinition Height="3*" />
+			<RowDefinition Height="0.5*" />
+			<RowDefinition Height="3*" />
+			<RowDefinition Height="0.5*" />
+			<RowDefinition Height="3*" />
+			<RowDefinition Height="0.5*" />
+			<RowDefinition Height="3*" />
+			<RowDefinition Height="0.5*" />
+			<RowDefinition Height="3*" />
+		</Grid.RowDefinitions>
+
+		<Button Grid.Row="0" Content="Execute Job Scraper" HorizontalAlignment="Center" />
+
+		<TextBlock Grid.Row="1" Text="Searches" />
+		<TextBox Grid.Row="2" IsReadOnly="False" TextWrapping="NoWrap" Margin="30 5" AcceptsReturn="True" />
+
+		<TextBlock Grid.Row="3" Text="Positive Scoring Keywords" Foreground="Green" />
+		<TextBox Grid.Row="4" IsReadOnly="False" TextWrapping="NoWrap" Margin="30 5" AcceptsReturn="True" />
+
+		<TextBlock Grid.Row="5" Text="Negative Scoring Keywords" Foreground="Red" />
+		<TextBox Grid.Row="6" IsReadOnly="False" TextWrapping="NoWrap" Margin="30 5" AcceptsReturn="True" />
+
+		<TextBlock Grid.Row="7" Text="Positive Scoring Sentiments" Foreground="Green" />
+		<TextBox Grid.Row="8" IsReadOnly="False" TextWrapping="NoWrap" Margin="30 5" AcceptsReturn="True" />
+
+		<TextBlock Grid.Row="9" Text="Negative Scoring Sentiments" Foreground="Red" />
+		<TextBox Grid.Row="10" IsReadOnly="False" TextWrapping="NoWrap" Margin="30 5" AcceptsReturn="True" />
+	</Grid>
+
 
 </UserControl>
