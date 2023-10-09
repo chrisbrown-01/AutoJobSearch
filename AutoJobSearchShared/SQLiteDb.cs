@@ -157,7 +157,7 @@ namespace AutoJobSearchShared
             return jobListings;
         }
 
-        public static async Task<Models.JobListing> GetJobListingDetailsById(int id)
+        public static async Task<Models.JobListing> GetJobListingDetails(int id)
         {
             Debug.WriteLine($"Getting details for listing id {id}"); // TODO: proper logging
 

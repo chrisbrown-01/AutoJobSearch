@@ -1,4 +1,5 @@
-﻿using AutoJobSearchGUI.Models;
+﻿using AutoJobSearchGUI.Data;
+using AutoJobSearchGUI.Models;
 using AutoJobSearchShared;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System;
@@ -10,16 +11,19 @@ using System.Threading.Tasks;
 
 namespace AutoJobSearchGUI.ViewModels
 {
-    public partial class JobListingViewModel : ViewModelBase
+    public partial class JobListingViewModel : ViewModelBase // TODO: Make internal?
     {
         [ObservableProperty]
         private JobListingModel _jobListing;
 
         private List<JobListingModel> JobListings { get; set; } = default!;
 
-        public JobListingViewModel()
+        internal readonly IDbContext _dbContext;
+
+        internal JobListingViewModel(IDbContext dbContext)
         {
             JobListing = new JobListingModel();
+            _dbContext = dbContext;
         }
 
         public void PopulateJobListings(IEnumerable<JobListingModel> jobListings)
@@ -53,7 +57,7 @@ namespace AutoJobSearchGUI.ViewModels
         {
             if (jobListing.Id == JobListing.Id) return;
 
-            var jobListingDetails = await SQLiteDb.GetJobListingDetailsById(jobListing.Id);
+            var jobListingDetails = await _dbContext.GetJobListingDetails(jobListing.Id); 
             jobListing.Description = jobListingDetails.Description;
             jobListing.ApplicationLinks = jobListingDetails.ApplicationLinksString;
             jobListing.Notes = jobListingDetails.Notes;

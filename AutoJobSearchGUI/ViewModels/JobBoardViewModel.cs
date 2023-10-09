@@ -1,4 +1,5 @@
 ﻿using AutoJobSearchConsoleApp.Models;
+using AutoJobSearchGUI.Data;
 using AutoJobSearchGUI.Models;
 using AutoJobSearchShared;
 using AutoJobSearchShared.Models;
@@ -42,16 +43,21 @@ namespace AutoJobSearchGUI.ViewModels
         [ObservableProperty]
         private int _pageSize;
 
-        public JobBoardViewModel()
+        internal readonly IDbContext _dbContext;
+
+        internal JobBoardViewModel(IDbContext dbContext)
         {
             //TestClickCommand = new RelayCommand(TestClick);
 
             JobBoardQueryModel = new();
+            _dbContext = dbContext;
 
             PageIndex = 0;
             PageSize = 25;
 
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
             RenderDefaultJobBoard();
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
         }
 
         public async Task RenderDefaultJobBoard()
@@ -78,7 +84,7 @@ namespace AutoJobSearchGUI.ViewModels
         public async Task ExecuteQuery()
         {
             // Try to get some performance improvement by doing the initial simple query directly within the SQLite database
-            var result = await SQLiteDb.ExecuteJobBoardAdvancedQuery(
+            var result = await _dbContext.ExecuteJobBoardAdvancedQuery(
                 JobBoardQueryModel.IsAppliedTo,
                 JobBoardQueryModel.IsInterviewing,
                 JobBoardQueryModel.IsRejected,
@@ -204,19 +210,19 @@ namespace AutoJobSearchGUI.ViewModels
             JobListingsDisplayed = JobListings.Skip(PageIndex * PageSize).Take(PageSize).ToList();
         }
 
-        private static async Task<List<JobListingModel>> GetFavouriteJobListings() // TODO: remove statics
+        private async Task<List<JobListingModel>> GetFavouriteJobListings() 
         {
-            var jobs = await SQLiteDb.GetFavouriteJobListings(); // TODO: convert to use dbcontext
+            var jobs = await _dbContext.GetFavouriteJobListings(); // TODO: convert to use dbcontext
             return ConvertJobListingsToJobListingModels(jobs);
         }
 
-        private static async Task<List<JobListingModel>> GetHiddenJobListings()
+        private async Task<List<JobListingModel>> GetHiddenJobListings()
         {
-            var jobs = await SQLiteDb.GetHiddenJobListings();
+            var jobs = await _dbContext.GetHiddenJobListings();
             return ConvertJobListingsToJobListingModels(jobs);
         }
 
-        private static List<JobListingModel> ConvertJobListingsToJobListingModels(IEnumerable<AutoJobSearchShared.Models.JobListing> jobs) // TODO: remove namespace from model, maybe improve naming
+        private List<JobListingModel> ConvertJobListingsToJobListingModels(IEnumerable<AutoJobSearchShared.Models.JobListing> jobs) // TODO: remove namespace from model, maybe improve naming
         {
             var jobListings = new List<JobListingModel>();
 
@@ -244,7 +250,7 @@ namespace AutoJobSearchGUI.ViewModels
 
         private async Task<List<JobListingModel>> GetAllJobListings()
         {
-            var jobs = await SQLiteDb.GetAllJobListings();
+            var jobs = await _dbContext.GetAllJobListings();
             return ConvertJobListingsToJobListingModels(jobs);
         }
     }

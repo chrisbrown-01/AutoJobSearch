@@ -1,6 +1,7 @@
 ﻿using AutoJobSearchGUI.Models;
 using AutoJobSearchShared;
 using AutoJobSearchShared.Enums;
+using AutoJobSearchShared.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,6 +27,36 @@ namespace AutoJobSearchGUI.Data
             {
                 await UpdateJobListingStringProperty(e.Field, e.Value, e.Id);
             };
+        }
+
+        public async Task<IQueryable<JobListing>> ExecuteJobBoardAdvancedQuery(
+            bool isAppliedTo,
+            bool isInterviewing,
+            bool isRejected,
+            bool isFavourite)
+        {
+            // TODO: proper logging
+            return await _dbContext.ExecuteJobBoardAdvancedQuery(isAppliedTo, isInterviewing, isRejected, isFavourite);
+        }
+
+        public async Task<IEnumerable<JobListing>> GetAllJobListings()
+        {
+            return await _dbContext.GetAllJobListings();
+        }
+
+        public async Task<IEnumerable<JobListing>> GetFavouriteJobListings()
+        {
+            return await _dbContext.GetFavouriteJobListings();
+        }
+
+        public async Task<IEnumerable<JobListing>> GetHiddenJobListings()
+        {
+            return await _dbContext.GetHiddenJobListings();
+        }
+
+        public async Task<JobListing> GetJobListingDetails(int id)
+        {
+            return await _dbContext.GetJobListingDetails(id);
         }
 
         public async Task UpdateJobListingBoolProperty(DbBoolField columnName, bool value, int id)

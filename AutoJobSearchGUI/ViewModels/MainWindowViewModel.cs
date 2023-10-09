@@ -20,10 +20,10 @@ namespace AutoJobSearchGUI.ViewModels
 
         public MainWindowViewModel()
         {
-            jobBoardViewModel = new JobBoardViewModel();
-            jobSearchViewModel = new JobSearchViewModel();
-            jobListingViewModel = new JobListingViewModel();
             dbContext = new DbContext();
+            jobBoardViewModel = new JobBoardViewModel(dbContext);
+            jobSearchViewModel = new JobSearchViewModel();
+            jobListingViewModel = new JobListingViewModel(dbContext);
             ContentViewModel = jobBoardViewModel;
 
             jobBoardViewModel.OpenJobListingViewRequest += ChangeViewToJobListing;
