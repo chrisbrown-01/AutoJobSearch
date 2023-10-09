@@ -1,5 +1,6 @@
 ﻿using AutoJobSearchGUI.Data;
 using AutoJobSearchGUI.Models;
+using AutoJobSearchShared.EventAggregator;
 using AutoJobSearchShared.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.IdentityModel.Tokens;
@@ -22,6 +23,7 @@ namespace AutoJobSearchGUI.ViewModels
         private JobSearchProfileModel _selectedSearchProfile = new();
 
         private readonly IDbContext _dbContext;
+        private readonly EventAggregator _eventAggregator;
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         public JobSearchViewModel() // For View previewer only
@@ -31,11 +33,17 @@ namespace AutoJobSearchGUI.ViewModels
             SelectedSearchProfile = new();
         }
 
-        public JobSearchViewModel(IDbContext dbContext)
+        public JobSearchViewModel(IDbContext dbContext, EventAggregator eventAggregator)
         {
             _dbContext = dbContext;
+            _eventAggregator = eventAggregator;
 
             Task.Run(RenderDefaultJobSearchView);
+        }
+
+        public void ExecuteJobSearch()
+        {
+            _eventAggregator.OnStartConsoleAppEvent();
         }
 
         private async Task RenderDefaultJobSearchView()

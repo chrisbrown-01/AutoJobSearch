@@ -12,7 +12,7 @@ namespace AutoJobSearchConsoleApp
         // TODO: keep track of what job search query the listing was found in
         static async Task Main(string[] args)
         {
-            //await SeleniumTesting.Execute();
+            await SeleniumTesting.Execute();
 
 
             //await LocalFileTesting.CreateJsonFiles();

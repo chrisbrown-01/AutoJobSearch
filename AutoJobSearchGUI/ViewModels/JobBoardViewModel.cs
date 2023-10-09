@@ -18,7 +18,6 @@ namespace AutoJobSearchGUI.ViewModels
 {
     // TODO: SQLite concurrency disabling?, database relative pathing best practices + keep all relative paths within shared folder?
     // TODO: SeleniumTesting.Execute(); inside of Job Search menu item
-    // TODO: view and models for specifiying search terms and scoring keywords
 
 
     public partial class JobBoardViewModel : ViewModelBase // Needs to be public for View previewer to work
