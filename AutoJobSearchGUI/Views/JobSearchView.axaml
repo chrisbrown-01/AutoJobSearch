@@ -16,35 +16,33 @@
 	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
-			<RowDefinition Height="0.5*" />
+			<RowDefinition Height="Auto" />
 			<RowDefinition Height="3*" />
-			<RowDefinition Height="0.5*" />
+			<RowDefinition Height="Auto" />
 			<RowDefinition Height="3*" />
-			<RowDefinition Height="0.5*" />
+			<RowDefinition Height="Auto" />
 			<RowDefinition Height="3*" />
-			<RowDefinition Height="0.5*" />
+			<RowDefinition Height="Auto" />
 			<RowDefinition Height="3*" />
-			<RowDefinition Height="0.5*" />
+			<RowDefinition Height="Auto" />
 			<RowDefinition Height="3*" />
 		</Grid.RowDefinitions>
 
 		<Button Grid.Row="0" Content="Execute Job Scraper" HorizontalAlignment="Center" />
 
-		<TextBlock Grid.Row="1" Text="Searches" />
+		<TextBlock Grid.Row="1" Text="Searches" Margin="30 0"/>
 		<TextBox Grid.Row="2" IsReadOnly="False" TextWrapping="NoWrap" Margin="30 5" AcceptsReturn="True" />
 
-		<TextBlock Grid.Row="3" Text="Positive Scoring Keywords" Foreground="Green" />
+		<TextBlock Grid.Row="3" Text="Positive Scoring Keywords" Foreground="Green" Margin="30 0"/>
 		<TextBox Grid.Row="4" IsReadOnly="False" TextWrapping="NoWrap" Margin="30 5" AcceptsReturn="True" />
 
-		<TextBlock Grid.Row="5" Text="Negative Scoring Keywords" Foreground="Red" />
+		<TextBlock Grid.Row="5" Text="Negative Scoring Keywords" Foreground="Red" Margin="30 0"/>
 		<TextBox Grid.Row="6" IsReadOnly="False" TextWrapping="NoWrap" Margin="30 5" AcceptsReturn="True" />
 
-		<TextBlock Grid.Row="7" Text="Positive Scoring Sentiments" Foreground="Green" />
-		<TextBox Grid.Row="8" IsReadOnly="False" TextWrapping="NoWrap" Margin="30 5" AcceptsReturn="True" />
+		<TextBlock Grid.Row="7" Text="Positive Scoring Sentiments" Foreground="Green" Margin="30 0"/>
+		<TextBox Grid.Row="8" IsReadOnly="False" TextWrapping="NoWrap" Margin="30 5" AcceptsReturn="True"/>
 
-		<TextBlock Grid.Row="9" Text="Negative Scoring Sentiments" Foreground="Red" />
-		<TextBox Grid.Row="10" IsReadOnly="False" TextWrapping="NoWrap" Margin="30 5" AcceptsReturn="True" />
+		<TextBlock Grid.Row="9" Text="Negative Scoring Sentiments" Foreground="Red" Margin="30 0"/>
+		<TextBox Grid.Row="10" IsReadOnly="False" TextWrapping="NoWrap" Margin="30 5" AcceptsReturn="True"/>
 	</Grid>
-
-
 </UserControl>
