@@ -29,6 +29,11 @@ namespace AutoJobSearchGUI.Data
             };
         }
 
+        public async Task CreateNewJobSearchProfile(JobSearchProfile profile)
+        {
+            await _dbContext.CreateNewJobSearchProfile(profile);
+        }
+
         public async Task<IQueryable<JobListing>> ExecuteJobBoardAdvancedQuery(
             bool isAppliedTo,
             bool isInterviewing,
@@ -42,6 +47,11 @@ namespace AutoJobSearchGUI.Data
         public async Task<IEnumerable<JobListing>> GetAllJobListings()
         {
             return await _dbContext.GetAllJobListings();
+        }
+
+        public async Task<IEnumerable<JobSearchProfile>> GetAllJobSearchProfiles()
+        {
+            return await _dbContext.GetAllJobSearchProfiles();
         }
 
         public async Task<IEnumerable<JobListing>> GetFavouriteJobListings()

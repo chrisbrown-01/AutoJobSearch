@@ -22,16 +22,17 @@ namespace AutoJobSearchGUI.ViewModels
         {
             dbContext = new DbContext();
             jobBoardViewModel = new JobBoardViewModel(dbContext);
-            jobSearchViewModel = new JobSearchViewModel();
+            jobSearchViewModel = new JobSearchViewModel(dbContext);
             jobListingViewModel = new JobListingViewModel(dbContext);
             ContentViewModel = jobBoardViewModel;
 
             jobBoardViewModel.OpenJobListingViewRequest += ChangeViewToJobListing;
         }
 
-        public void ChangeViewToJobBoard()
+        public void ChangeViewToJobBoard() // TODO: convert all to Tasks
         {
             ContentViewModel = jobBoardViewModel;
+            //await Task.CompletedTask;
         }
 
         public void ChangeViewToJobSearch()

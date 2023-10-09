@@ -9,7 +9,7 @@ namespace AutoJobSearchGUI.Models
 {
     public partial class JobSearchProfileModel : ObservableObject
     {
-        public int Id { get; }
+        public int Id { get; set; }
 
         [ObservableProperty]
         private string _profileName = string.Empty;

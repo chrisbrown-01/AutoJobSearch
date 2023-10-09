@@ -8,6 +8,10 @@ namespace AutoJobSearchGUI.Data
 {
     public interface IDbContext
     {
+        Task<IEnumerable<JobSearchProfile>> GetAllJobSearchProfiles();
+
+        Task CreateNewJobSearchProfile(JobSearchProfile profile);
+
         Task UpdateJobListingBoolProperty(DbBoolField columnName, bool value, int id);
         Task UpdateJobListingStringProperty(DbStringField columnName, string value, int id);
 

@@ -11,6 +11,11 @@ namespace AutoJobSearchGUI.Data
 {
     public class SQLiteDbContext : IDbContext
     {
+        public async Task CreateNewJobSearchProfile(JobSearchProfile profile)
+        {
+            await SQLiteDb.CreateNewJobSearchProfile(profile);
+        }
+
         public async Task<IQueryable<JobListing>> ExecuteJobBoardAdvancedQuery(
             bool isAppliedTo, 
             bool isInterviewing, 
@@ -23,6 +28,11 @@ namespace AutoJobSearchGUI.Data
         public async Task<IEnumerable<JobListing>> GetAllJobListings()
         {
             return await SQLiteDb.GetAllJobListings();
+        }
+
+        public async Task<IEnumerable<JobSearchProfile>> GetAllJobSearchProfiles()
+        {
+            return await SQLiteDb.GetAllJobSearchProfiles();
         }
 
         public async Task<IEnumerable<JobListing>> GetFavouriteJobListings()

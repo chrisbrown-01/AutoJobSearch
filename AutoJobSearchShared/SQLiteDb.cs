@@ -19,6 +19,41 @@ namespace AutoJobSearchShared
         //    _logger = logger;
         //}
 
+        public static async Task<IEnumerable<JobSearchProfile>> GetAllJobSearchProfiles()
+        {
+            Debug.WriteLine($"Getting all job search profile"); // TODO: proper logging
+
+            IEnumerable<JobSearchProfile> profiles;
+
+            using (var connection = new SqliteConnection(Constants.SQLITE_CONNECTION_STRING))
+            {
+                await connection.OpenAsync();
+
+                var sqlQuery = @"SELECT * FROM JobSearchProfiles;";
+
+                profiles = await connection.QueryAsync<JobSearchProfile>(sqlQuery);
+            }
+
+            return profiles;
+        }
+
+        public static async Task CreateNewJobSearchProfile(JobSearchProfile profile)
+        {
+            Debug.WriteLine($"Creating new job search profile"); // TODO: proper logging
+
+            using (var connection = new SqliteConnection(Constants.SQLITE_CONNECTION_STRING))
+            {
+                await connection.OpenAsync();
+
+                    const string sql = @"
+                INSERT INTO JobSearchProfiles 
+                (ProfileName, Searches, KeywordsPositive, KeywordsNegative, SentimentsPositive, SentimentsNegative) 
+                VALUES (@ProfileName, @Searches, @KeywordsPositive, @KeywordsNegative, @SentimentsPositive, @SentimentsNegative)";
+
+                await connection.ExecuteAsync(sql, profile);
+            }
+        }
+
         public static async Task<IQueryable<Models.JobListing>> ExecuteJobBoardAdvancedQuery(
             bool isAppliedTo,
             bool isInterviewing,
