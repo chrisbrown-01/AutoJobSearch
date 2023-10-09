@@ -19,6 +19,22 @@ namespace AutoJobSearchShared
         //    _logger = logger;
         //}
 
+        public static async Task<IEnumerable<string>> GetAllApplicationLinks()
+        {
+            IEnumerable<string> applicationLinks;
+
+            using (var connection = new SqliteConnection(Constants.SQLITE_CONNECTION_STRING))
+            {
+                await connection.OpenAsync();
+
+                const string sql = "SELECT Link FROM ApplicationLinks;";
+
+                applicationLinks = await connection.QueryAsync<string>(sql);
+            }
+
+            return applicationLinks;
+        }
+
         public static async Task AddJobListingsAndApplicationLinksToDb(IEnumerable<Models.JobListing> jobListings)
         {
             using (var connection = new SqliteConnection(Constants.SQLITE_CONNECTION_STRING))

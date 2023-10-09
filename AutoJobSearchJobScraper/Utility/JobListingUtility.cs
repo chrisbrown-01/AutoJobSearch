@@ -28,6 +28,7 @@ namespace AutoJobSearchJobScraper.Utility
                     if(existingApplicationLinks.Contains(link.Link))
                     {
                         cleanedJobListings.Remove(jobListing); // TODO: ensure that upon removal, the iterator doesn't lose track of where it was. Might be best to track index then remove at end.
+                        break;
                     }
                     else
                     {

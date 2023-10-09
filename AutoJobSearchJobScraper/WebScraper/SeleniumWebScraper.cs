@@ -24,7 +24,10 @@ namespace AutoJobSearchJobScraper.WebScraper
         public async Task<List<JobListing>> ScrapeJobs(string searchTermsString) // TODO: extract interface
         {
             // TODO: deserialize csv search term string first
-            var searchTerms = new List<string>();
+            var searchTerms = new List<string>()
+            {
+                "c# developer toronto"
+            };
 
             var jobListings = new List<JobListing>();
 

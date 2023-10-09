@@ -9,6 +9,8 @@ namespace AutoJobSearchJobScraper.Data
 {
     internal interface IDbContext
     {
-        Task AddJobListingsAndApplicationLinksToDb(IEnumerable<JobListing> jobListings);
+        Task<IEnumerable<string>> GetAllApplicationLinks();
+
+        Task SaveJobListings(IEnumerable<JobListing> jobListings);
     }
 }

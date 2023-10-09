@@ -8,7 +8,6 @@ namespace AutoJobSearchJobScraper
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello, World!");
             RunProgram();
         }
 
@@ -18,9 +17,12 @@ namespace AutoJobSearchJobScraper
             var utility = new JobListingUtility();
             var db = new SQLiteDbContext();
 
-            //var existingLinks = await db.
+            var existingLinks = await db.GetAllApplicationLinks();
             var scrapedJobs = await scraper.ScrapeJobs("c# developer toronto");
-            var cleanedJobs = await utility.FilterDuplicates(scrapedJobs);
+            var cleanedJobs = await utility.FilterDuplicates(scrapedJobs, existingLinks.ToHashSet());
+            var scoredJobs = await utility.ApplyScorings(cleanedJobs);
+
+            await db.SaveJobListings(scoredJobs);
         }
     }
 }

@@ -10,9 +10,12 @@ namespace AutoJobSearchJobScraper.Data
 {
     internal class SQLiteDbContext : IDbContext
     {
-       // public async Task<List<string>>
+        public async Task<IEnumerable<string>> GetAllApplicationLinks()
+        {
+            return await SQLiteDb.GetAllApplicationLinks();
+        }
 
-        public async Task AddJobListingsAndApplicationLinksToDb(IEnumerable<JobListing> jobListings)
+        public async Task SaveJobListings(IEnumerable<JobListing> jobListings)
         {
             await SQLiteDb.AddJobListingsAndApplicationLinksToDb(jobListings);
         }
