@@ -11,6 +11,7 @@ namespace AutoJobSearchJobScraper.Utility
 {
     internal class JobListingUtility
     {
+        // TODO: make entire class static?
         public JobListingUtility()
         {
             
@@ -23,17 +24,23 @@ namespace AutoJobSearchJobScraper.Utility
 
             foreach(var jobListing in jobListingsPossibleDuplicates)
             {
+                bool isJobDuplicate = false;
+
                 foreach(var link in jobListing.ApplicationLinks)
                 {
                     if(existingApplicationLinks.Contains(link.Link))
                     {
-                        cleanedJobListings.Remove(jobListing); // TODO: ensure that upon removal, the iterator doesn't lose track of where it was. Might be best to track index then remove at end.
+                        cleanedJobListings.Remove(jobListing);
+                        isJobDuplicate = true;
                         break;
                     }
-                    else
-                    {
-                        existingApplicationLinks.Add(link.Link);
-                    }
+                }
+
+                if (isJobDuplicate) continue;
+
+                foreach(var link in jobListing.ApplicationLinks)
+                {
+                    existingApplicationLinks.Add(link.Link);
                 }
             }
 
@@ -46,7 +53,7 @@ namespace AutoJobSearchJobScraper.Utility
             IEnumerable<string> keywordsPositive,
             IEnumerable<string> keywordsNegative,
             IEnumerable<string> sentimentsPositive,
-            IEnumerable<string> sentimentsNegative) // TODO: ensure functional programming is occurring, implement arguments
+            IEnumerable<string> sentimentsNegative) // TODO: implement arguments, convert to IEnumerable return type
         {
             // TODO: start method with creating lower case versions of everything necessary
 

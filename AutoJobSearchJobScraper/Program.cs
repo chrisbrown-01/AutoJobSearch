@@ -2,6 +2,7 @@
 using AutoJobSearchJobScraper.Utility;
 using AutoJobSearchJobScraper.WebScraper;
 using AutoJobSearchShared.Helpers;
+using AutoJobSearchShared.Models;
 
 namespace AutoJobSearchJobScraper
 {
@@ -9,50 +10,37 @@ namespace AutoJobSearchJobScraper
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("started job scraper");
+            RunProgram(38);
 
-            foreach(var stringArg in args)
-            {
-                Console.WriteLine(stringArg);
-            }
+            //if (args.Length < 1) throw new ArgumentException("No arguments provided."); // TODO: custom exception
 
-            Console.ReadLine();
-
-            Thread.Sleep(5000);
-
-            // RunProgram(38);
-
-            if (args.Length < 1) throw new ArgumentException("No arguments provided."); // TODO: custom exception
-
-            if (int.TryParse(args[0], out int jobSearchProfileId))
-            {
-                RunProgram(jobSearchProfileId);
-            }
-            else
-            {
-                RunProgram(new List<string>(args)); // TODO: find all manual declaration of List conversions and convert to this
-            }
+            //if (int.TryParse(args[0], out int jobSearchProfileId))
+            //{
+            //    RunProgram(jobSearchProfileId);
+            //}
+            //else
+            //{
+            //    RunProgram(new List<string>(args)); // TODO: find all manual declaration of List conversions and convert to this
+            //}
         }
 
         private static async Task RunProgram(int jobSearchProfileId)
         {
             var test = jobSearchProfileId;
 
-            //var db = new SQLiteDbContext();
-            //var scraper = new SeleniumWebScraper();
-            //var utility = new JobListingUtility();
+            var db = new SQLiteDbContext();
+            var scraper = new SeleniumWebScraper();
+            var utility = new JobListingUtility();
 
-            //var jobSearchProfile = await db.GetJobSearchProfileByIdAsync(jobSearchProfileId);
-            //if (jobSearchProfile == null) throw new NullReferenceException(); // TODO: custom exception
+            var jobSearchProfile = await db.GetJobSearchProfileByIdAsync(jobSearchProfileId);
+            if (jobSearchProfile == null) throw new NullReferenceException(); // TODO: custom exception
 
-            //var existingLinks = await db.GetAllApplicationLinks();
-
-
+            var scrapedJobs = new List<JobListing>();
             //var scrapedJobs = await scraper.ScrapeJobs(StringHelpers.ConvertCommaSeperatedStringsToIEnumerable(jobSearchProfile.Searches));
 
-            //var cleanedJobs = scrapedJobs;
-            // var cleanedJobs = await utility.FilterDuplicates(scrapedJobs, existingLinks.ToHashSet());
-            
+            var existingLinks = await db.GetAllApplicationLinks();
+            var cleanedJobs = await utility.FilterDuplicates(scrapedJobs, existingLinks.ToHashSet());
+
             //var scoredJobs = await utility.ApplyScorings(
             //    cleanedJobs,
             //    StringHelpers.ConvertCommaSeperatedStringsToIEnumerable(jobSearchProfile.KeywordsPositive),
