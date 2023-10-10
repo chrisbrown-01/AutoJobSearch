@@ -21,7 +21,9 @@ namespace AutoJobSearchShared.Helpers
 
         public static IEnumerable<string> ConvertCommaSeperatedStringsToIEnumerable(string commaSeperatedStrings)
         {
-            return commaSeperatedStrings.Split(',').ToList();
+            return commaSeperatedStrings.Split(',')
+                                        .Select(s => s.Replace("\r\n", string.Empty)) // Remove newline sequences
+                                        .ToList();
         }
     }
 }

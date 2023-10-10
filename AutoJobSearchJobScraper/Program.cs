@@ -9,16 +9,21 @@ namespace AutoJobSearchJobScraper
     {
         static void Main(string[] args)
         {
-            if (args.Length < 1) throw new ArgumentException("No arguments provided."); // TODO: custom exception
+            RunProgram(38);
 
-            if (int.TryParse(args[0], out int jobSearchProfileId))
-            {
-                RunProgram(jobSearchProfileId);
-            }
-            else
-            {
-                RunProgram(new List<string>(args)); // TODO: find all manual declaration of List conversions and convert to this
-            }
+
+
+            // TODO: uncomment
+            //if (args.Length < 1) throw new ArgumentException("No arguments provided."); // TODO: custom exception
+
+            //if (int.TryParse(args[0], out int jobSearchProfileId))
+            //{
+            //    RunProgram(jobSearchProfileId);
+            //}
+            //else
+            //{
+            //    RunProgram(new List<string>(args)); // TODO: find all manual declaration of List conversions and convert to this
+            //}
         }
 
         private static async Task RunProgram(int jobSearchProfileId)
@@ -27,14 +32,23 @@ namespace AutoJobSearchJobScraper
             var scraper = new SeleniumWebScraper();
             var utility = new JobListingUtility();
 
-            var existingLinks = await db.GetAllApplicationLinks();
             var jobSearchProfile = await db.GetJobSearchProfileByIdAsync(jobSearchProfileId);
-
             if (jobSearchProfile == null) throw new NullReferenceException(); // TODO: custom exception
 
+            var existingLinks = await db.GetAllApplicationLinks();
+
+
             var scrapedJobs = await scraper.ScrapeJobs(StringHelpers.ConvertCommaSeperatedStringsToIEnumerable(jobSearchProfile.Searches));
-            //var cleanedJobs = await utility.FilterDuplicates(scrapedJobs, existingLinks.ToHashSet());
-            //var scoredJobs = await utility.ApplyScorings(cleanedJobs);
+
+            var cleanedJobs = scrapedJobs;
+            // var cleanedJobs = await utility.FilterDuplicates(scrapedJobs, existingLinks.ToHashSet());
+            
+            var scoredJobs = await utility.ApplyScorings(
+                cleanedJobs,
+                StringHelpers.ConvertCommaSeperatedStringsToIEnumerable(jobSearchProfile.KeywordsPositive),
+                StringHelpers.ConvertCommaSeperatedStringsToIEnumerable(jobSearchProfile.KeywordsNegative),
+                StringHelpers.ConvertCommaSeperatedStringsToIEnumerable(jobSearchProfile.SentimentsPositive),
+                StringHelpers.ConvertCommaSeperatedStringsToIEnumerable(jobSearchProfile.SentimentsNegative));
 
             //await db.SaveJobListings(scoredJobs);
         }
