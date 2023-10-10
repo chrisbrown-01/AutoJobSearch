@@ -56,6 +56,7 @@ namespace AutoJobSearchJobScraper.Utility
             IEnumerable<string> sentimentsNegative) // TODO: implement arguments, convert to IEnumerable return type
         {
             // TODO: start method with creating lower case versions of everything necessary
+            // TODO: parallelize?
 
             var jobList = jobListingsUnscored.ToList();
 

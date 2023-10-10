@@ -8,6 +8,7 @@ namespace AutoJobSearchJobScraper
 {
     internal class Program
     {
+        // TODO: logging
         static void Main(string[] args)
         {
             RunProgram(38);
@@ -26,8 +27,6 @@ namespace AutoJobSearchJobScraper
 
         private static async Task RunProgram(int jobSearchProfileId)
         {
-            var test = jobSearchProfileId;
-
             var db = new SQLiteDbContext();
             var scraper = new SeleniumWebScraper();
             var utility = new JobListingUtility();
@@ -35,35 +34,33 @@ namespace AutoJobSearchJobScraper
             var jobSearchProfile = await db.GetJobSearchProfileByIdAsync(jobSearchProfileId);
             if (jobSearchProfile == null) throw new NullReferenceException(); // TODO: custom exception
 
-            var scrapedJobs = new List<JobListing>();
-            //var scrapedJobs = await scraper.ScrapeJobs(StringHelpers.ConvertCommaSeperatedStringsToIEnumerable(jobSearchProfile.Searches));
+            var scrapedJobs = await scraper.ScrapeJobs(StringHelpers.ConvertCommaSeperatedStringsToIEnumerable(jobSearchProfile.Searches));
 
             var existingLinks = await db.GetAllApplicationLinks();
+
             var cleanedJobs = await utility.FilterDuplicates(scrapedJobs, existingLinks.ToHashSet());
 
-            //var scoredJobs = await utility.ApplyScorings(
-            //    cleanedJobs,
-            //    StringHelpers.ConvertCommaSeperatedStringsToIEnumerable(jobSearchProfile.KeywordsPositive),
-            //    StringHelpers.ConvertCommaSeperatedStringsToIEnumerable(jobSearchProfile.KeywordsNegative),
-            //    StringHelpers.ConvertCommaSeperatedStringsToIEnumerable(jobSearchProfile.SentimentsPositive),
-            //    StringHelpers.ConvertCommaSeperatedStringsToIEnumerable(jobSearchProfile.SentimentsNegative));
+            var scoredJobs = await utility.ApplyScorings(
+                cleanedJobs,
+                StringHelpers.ConvertCommaSeperatedStringsToIEnumerable(jobSearchProfile.KeywordsPositive),
+                StringHelpers.ConvertCommaSeperatedStringsToIEnumerable(jobSearchProfile.KeywordsNegative),
+                StringHelpers.ConvertCommaSeperatedStringsToIEnumerable(jobSearchProfile.SentimentsPositive),
+                StringHelpers.ConvertCommaSeperatedStringsToIEnumerable(jobSearchProfile.SentimentsNegative));
 
-            //await db.SaveJobListings(scoredJobs);
+            await db.SaveJobListings(scoredJobs);
         }
 
         private static async Task RunProgram(IEnumerable<string> searchTerms)
         {
-            var test = searchTerms;
+            var db = new SQLiteDbContext();
+            var scraper = new SeleniumWebScraper();
+            var utility = new JobListingUtility();
 
-            //var db = new SQLiteDbContext();
-            //var scraper = new SeleniumWebScraper();
-            //var utility = new JobListingUtility();
+            var existingLinks = await db.GetAllApplicationLinks();
+            var scrapedJobs = await scraper.ScrapeJobs(searchTerms);
+            var cleanedJobs = await utility.FilterDuplicates(scrapedJobs, existingLinks.ToHashSet());
 
-            //var existingLinks = await db.GetAllApplicationLinks();
-            //var scrapedJobs = await scraper.ScrapeJobs(searchTerms);
-            //var cleanedJobs = await utility.FilterDuplicates(scrapedJobs, existingLinks.ToHashSet());
-
-            //await db.SaveJobListings(scoredJobs);
+            await db.SaveJobListings(cleanedJobs);
         }
     }
 }
