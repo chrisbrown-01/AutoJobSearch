@@ -53,16 +53,18 @@ namespace AutoJobSearchJobScraper.Utility
             IEnumerable<string> keywordsPositive,
             IEnumerable<string> keywordsNegative,
             IEnumerable<string> sentimentsPositive,
-            IEnumerable<string> sentimentsNegative) // TODO: implement arguments, convert to IEnumerable return type
+            IEnumerable<string> sentimentsNegative) // TODO: keep as List return type?
         {
-            // TODO: start method with creating lower case versions of everything necessary
             // TODO: parallelize?
+
+            sentimentsPositive = sentimentsPositive.Select(s => s.ToLower());
+            sentimentsNegative = sentimentsNegative.Select(s => s.ToLower());
 
             var jobList = jobListingsUnscored.ToList();
 
             foreach (var job in jobList)
             {
-                foreach (var keyword in ConfigVariables.KEYWORDS_POSITIVE)
+                foreach (var keyword in keywordsPositive)
                 {
                     if (job.Description.Contains(keyword, StringComparison.OrdinalIgnoreCase))
                     {
@@ -70,7 +72,7 @@ namespace AutoJobSearchJobScraper.Utility
                     }
                 }
 
-                foreach (var item in ConfigVariables.KEYWORDS_NEGATIVE)
+                foreach (var item in keywordsNegative)
                 {
                     if (job.Description.Contains(item, StringComparison.OrdinalIgnoreCase))
                     {
@@ -78,20 +80,19 @@ namespace AutoJobSearchJobScraper.Utility
                     }
                 }
 
-                // TODO: more robust ensuring that arguments are made lower case
-                foreach (var sentiment in ConfigVariables.SENTIMENTS_POSITIVE)
+                foreach (var sentiment in sentimentsPositive)
                 {
-                    if (Fuzz.WeightedRatio(sentiment.ToLower(), job.Description.ToLower()) >= 50 &&
-                       Fuzz.PartialRatio(sentiment.ToLower(), job.Description.ToLower()) >= 50)
+                    if (Fuzz.WeightedRatio(sentiment, job.Description.ToLower()) >= 50 &&
+                       Fuzz.PartialRatio(sentiment, job.Description.ToLower()) >= 50)
                     {
                         job.Score++;
                     }
                 }
 
-                foreach (var sentiment in ConfigVariables.SENTIMENTS_NEGATIVE)
+                foreach (var sentiment in sentimentsNegative)
                 {
-                    if (Fuzz.WeightedRatio(sentiment.ToLower(), job.Description.ToLower()) >= 50 &&
-                       Fuzz.PartialRatio(sentiment.ToLower(), job.Description.ToLower()) >= 50)
+                    if (Fuzz.WeightedRatio(sentiment, job.Description.ToLower()) >= 50 &&
+                       Fuzz.PartialRatio(sentiment, job.Description.ToLower()) >= 50)
                     {
                         job.Score--;
                     }
