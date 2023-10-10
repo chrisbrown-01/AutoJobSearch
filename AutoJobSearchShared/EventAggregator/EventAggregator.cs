@@ -9,13 +9,14 @@ namespace AutoJobSearchShared.EventAggregator
 {
     public class EventAggregator
     {
-        public void OnStartConsoleAppEvent()
+        public void OnStartConsoleAppEvent(int jobSearchProfileId) // TODO: rename
         {
             Debug.WriteLine("starting console app"); // TODO: proper logging
             // TODO: figure out how to start executable after program is installed, try using relative paths?
-            //var process = new System.Diagnostics.Process();
-            //process.StartInfo.FileName = "C:\\Users\\chris\\Documents\\GitHub\\AutoJobSearch\\AutoJobSearchConsoleApp\\bin\\Debug\\net7.0\\AutoJobSearchConsoleApp.exe";
-            //process.Start();
+            var process = new System.Diagnostics.Process();
+            process.StartInfo.FileName = "C:\\Users\\chris\\Documents\\GitHub\\AutoJobSearch\\AutoJobSearchJobScraper\\bin\\Debug\\net7.0\\AutoJobSearchJobScraper.exe";
+            process.StartInfo.Arguments = jobSearchProfileId.ToString();
+            process.Start();
         }
     }
 }

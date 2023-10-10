@@ -9,58 +9,70 @@ namespace AutoJobSearchJobScraper
     {
         static void Main(string[] args)
         {
-            RunProgram(38);
+            Console.WriteLine("started job scraper");
 
+            foreach(var stringArg in args)
+            {
+                Console.WriteLine(stringArg);
+            }
 
+            Console.ReadLine();
 
-            // TODO: uncomment
-            //if (args.Length < 1) throw new ArgumentException("No arguments provided."); // TODO: custom exception
+            Thread.Sleep(5000);
 
-            //if (int.TryParse(args[0], out int jobSearchProfileId))
-            //{
-            //    RunProgram(jobSearchProfileId);
-            //}
-            //else
-            //{
-            //    RunProgram(new List<string>(args)); // TODO: find all manual declaration of List conversions and convert to this
-            //}
+            // RunProgram(38);
+
+            if (args.Length < 1) throw new ArgumentException("No arguments provided."); // TODO: custom exception
+
+            if (int.TryParse(args[0], out int jobSearchProfileId))
+            {
+                RunProgram(jobSearchProfileId);
+            }
+            else
+            {
+                RunProgram(new List<string>(args)); // TODO: find all manual declaration of List conversions and convert to this
+            }
         }
 
         private static async Task RunProgram(int jobSearchProfileId)
         {
-            var db = new SQLiteDbContext();
-            var scraper = new SeleniumWebScraper();
-            var utility = new JobListingUtility();
+            var test = jobSearchProfileId;
 
-            var jobSearchProfile = await db.GetJobSearchProfileByIdAsync(jobSearchProfileId);
-            if (jobSearchProfile == null) throw new NullReferenceException(); // TODO: custom exception
+            //var db = new SQLiteDbContext();
+            //var scraper = new SeleniumWebScraper();
+            //var utility = new JobListingUtility();
 
-            var existingLinks = await db.GetAllApplicationLinks();
+            //var jobSearchProfile = await db.GetJobSearchProfileByIdAsync(jobSearchProfileId);
+            //if (jobSearchProfile == null) throw new NullReferenceException(); // TODO: custom exception
+
+            //var existingLinks = await db.GetAllApplicationLinks();
 
 
-            var scrapedJobs = await scraper.ScrapeJobs(StringHelpers.ConvertCommaSeperatedStringsToIEnumerable(jobSearchProfile.Searches));
+            //var scrapedJobs = await scraper.ScrapeJobs(StringHelpers.ConvertCommaSeperatedStringsToIEnumerable(jobSearchProfile.Searches));
 
-            var cleanedJobs = scrapedJobs;
+            //var cleanedJobs = scrapedJobs;
             // var cleanedJobs = await utility.FilterDuplicates(scrapedJobs, existingLinks.ToHashSet());
             
-            var scoredJobs = await utility.ApplyScorings(
-                cleanedJobs,
-                StringHelpers.ConvertCommaSeperatedStringsToIEnumerable(jobSearchProfile.KeywordsPositive),
-                StringHelpers.ConvertCommaSeperatedStringsToIEnumerable(jobSearchProfile.KeywordsNegative),
-                StringHelpers.ConvertCommaSeperatedStringsToIEnumerable(jobSearchProfile.SentimentsPositive),
-                StringHelpers.ConvertCommaSeperatedStringsToIEnumerable(jobSearchProfile.SentimentsNegative));
+            //var scoredJobs = await utility.ApplyScorings(
+            //    cleanedJobs,
+            //    StringHelpers.ConvertCommaSeperatedStringsToIEnumerable(jobSearchProfile.KeywordsPositive),
+            //    StringHelpers.ConvertCommaSeperatedStringsToIEnumerable(jobSearchProfile.KeywordsNegative),
+            //    StringHelpers.ConvertCommaSeperatedStringsToIEnumerable(jobSearchProfile.SentimentsPositive),
+            //    StringHelpers.ConvertCommaSeperatedStringsToIEnumerable(jobSearchProfile.SentimentsNegative));
 
             //await db.SaveJobListings(scoredJobs);
         }
 
         private static async Task RunProgram(IEnumerable<string> searchTerms)
         {
-            var db = new SQLiteDbContext();
-            var scraper = new SeleniumWebScraper();
-            var utility = new JobListingUtility();
+            var test = searchTerms;
+
+            //var db = new SQLiteDbContext();
+            //var scraper = new SeleniumWebScraper();
+            //var utility = new JobListingUtility();
 
             //var existingLinks = await db.GetAllApplicationLinks();
-            var scrapedJobs = await scraper.ScrapeJobs(searchTerms);
+            //var scrapedJobs = await scraper.ScrapeJobs(searchTerms);
             //var cleanedJobs = await utility.FilterDuplicates(scrapedJobs, existingLinks.ToHashSet());
 
             //await db.SaveJobListings(scoredJobs);

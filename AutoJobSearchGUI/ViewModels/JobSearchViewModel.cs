@@ -43,7 +43,7 @@ namespace AutoJobSearchGUI.ViewModels
 
         public void ExecuteJobSearch()
         {
-            _eventAggregator.OnStartConsoleAppEvent();
+            _eventAggregator.OnStartConsoleAppEvent(SelectedSearchProfile.Id);
         }
 
         private async Task RenderDefaultJobSearchView()
