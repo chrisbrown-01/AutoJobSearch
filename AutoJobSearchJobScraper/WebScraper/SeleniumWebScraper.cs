@@ -21,14 +21,8 @@ namespace AutoJobSearchJobScraper.WebScraper
         }
 
         // TODO: surround in try-catch so that results are still saved even if captcha kills selenium
-        public async Task<List<JobListing>> ScrapeJobs(string searchTermsString) // TODO: extract interface
+        public async Task<List<JobListing>> ScrapeJobs(IEnumerable<string> searchTerms) // TODO: extract interface
         {
-            // TODO: deserialize csv search term string first
-            var searchTerms = new List<string>()
-            {
-                "c# developer nashville"
-            };
-
             var jobListings = new List<JobListing>();
 
             var innerTexts = new List<string>(); // TODO: remove?
@@ -136,7 +130,7 @@ namespace AutoJobSearchJobScraper.WebScraper
                     try
                     {
                         listing.Description = listing.Description_Raw.Substring(startingIndex + ConfigVariables.STARTING_INDEX_KEY.Length, endingIndex - (startingIndex + ConfigVariables.STARTING_INDEX_KEY.Length));
-                        listing.Description = StringHelpers.AddNewLinesToMisformedString(listing.Description);
+                        listing.Description = StringHelpers.AddNewLinesToMisformedString(listing.Description); // TODO: test effectiveness
                     }
                     catch
                     {

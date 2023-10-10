@@ -40,9 +40,9 @@ namespace AutoJobSearchGUI.Data
             await _dbContext.UpdateJobSearchProfileStringProperty(columnName, value, id);
         }
 
-        public async Task<JobSearchProfile> CreateNewJobSearchProfile(JobSearchProfile profile)
+        public async Task<JobSearchProfile> CreateJobSearchProfile(JobSearchProfile profile)
         {
-            return await _dbContext.CreateNewJobSearchProfile(profile);
+            return await _dbContext.CreateJobSearchProfile(profile);
         }
 
         public async Task<IQueryable<JobListing>> ExecuteJobBoardAdvancedQuery(
@@ -60,9 +60,9 @@ namespace AutoJobSearchGUI.Data
             return await _dbContext.GetAllJobListings();
         }
 
-        public async Task<IEnumerable<JobSearchProfile>> GetAllJobSearchProfiles()
+        public async Task<IEnumerable<JobSearchProfile>> GetAllJobSearchProfilesAsync()
         {
-            return await _dbContext.GetAllJobSearchProfiles();
+            return await _dbContext.GetAllJobSearchProfilesAsync();
         }
 
         public async Task<IEnumerable<JobListing>> GetFavouriteJobListings()

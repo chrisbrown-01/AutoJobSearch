@@ -15,9 +15,19 @@ namespace AutoJobSearchJobScraper.Data
             return await SQLiteDb.GetAllApplicationLinks();
         }
 
+        public async Task<IEnumerable<JobSearchProfile>> GetAllJobSearchProfilesAsync()
+        {
+            return await SQLiteDb.GetAllJobSearchProfilesAsync();
+        }
+
+        public async Task<JobSearchProfile?> GetJobSearchProfileByIdAsync(int id)
+        {
+            return await SQLiteDb.GetJobSearchProfileByIdAsync(id);
+        }
+
         public async Task SaveJobListings(IEnumerable<JobListing> jobListings)
         {
-            await SQLiteDb.AddJobListingsAndApplicationLinksToDb(jobListings);
+            await SQLiteDb.SaveJobListings(jobListings);
         }
     }
 }

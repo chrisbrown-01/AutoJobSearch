@@ -41,8 +41,15 @@ namespace AutoJobSearchJobScraper.Utility
             return cleanedJobListings;
         }
 
-        public async Task<List<JobListing>> ApplyScorings(IEnumerable<JobListing> jobListingsUnscored) // TODO: ensure functional programming is occurring
+        public async Task<List<JobListing>> ApplyScorings(
+            IEnumerable<JobListing> jobListingsUnscored, 
+            IEnumerable<string> keywordsPositive,
+            IEnumerable<string> keywordsNegative,
+            IEnumerable<string> sentimentsPositive,
+            IEnumerable<string> sentimentsNegative) // TODO: ensure functional programming is occurring, implement arguments
         {
+            // TODO: start method with creating lower case versions of everything necessary
+
             var jobList = jobListingsUnscored.ToList();
 
             foreach (var job in jobList)

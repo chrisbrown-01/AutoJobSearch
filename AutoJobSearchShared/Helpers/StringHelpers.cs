@@ -18,5 +18,10 @@ namespace AutoJobSearchShared.Helpers
 
             return result;
         }
+
+        public static IEnumerable<string> ConvertCommaSeperatedStringsToIEnumerable(string commaSeperatedStrings)
+        {
+            return commaSeperatedStrings.Split(',').ToList();
+        }
     }
 }

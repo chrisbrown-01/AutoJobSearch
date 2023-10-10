@@ -11,9 +11,9 @@ namespace AutoJobSearchGUI.Data
 {
     public class SQLiteDbContext : IDbContext
     {
-        public async Task<JobSearchProfile> CreateNewJobSearchProfile(JobSearchProfile profile)
+        public async Task<JobSearchProfile> CreateJobSearchProfile(JobSearchProfile profile)
         {
-            return await SQLiteDb.CreateNewJobSearchProfile(profile);
+            return await SQLiteDb.CreateJobSearchProfile(profile);
         }
 
         public async Task DeleteJobSearchProfile(int id)
@@ -35,9 +35,9 @@ namespace AutoJobSearchGUI.Data
             return await SQLiteDb.GetAllJobListings();
         }
 
-        public async Task<IEnumerable<JobSearchProfile>> GetAllJobSearchProfiles()
+        public async Task<IEnumerable<JobSearchProfile>> GetAllJobSearchProfilesAsync()
         {
-            return await SQLiteDb.GetAllJobSearchProfiles();
+            return await SQLiteDb.GetAllJobSearchProfilesAsync();
         }
 
         public async Task<IEnumerable<JobListing>> GetFavouriteJobListings()

@@ -9,7 +9,7 @@ using System.Text;
 
 namespace AutoJobSearchShared
 {
-    public class SQLiteDb
+    public class SQLiteDb // TODO: extract interface
     {
         // TODO: implement logger, remove statics?
 
@@ -18,6 +18,22 @@ namespace AutoJobSearchShared
         //{
         //    _logger = logger;
         //}
+
+        public static async Task<JobSearchProfile?> GetJobSearchProfileByIdAsync(int id)
+        {
+            JobSearchProfile? profile;
+
+            using (var connection = new SqliteConnection(Constants.SQLITE_CONNECTION_STRING))
+            {
+                await connection.OpenAsync();
+
+                const string sql = "SELECT * FROM JobSearchProfiles WHERE Id = @Id;";
+
+                profile = await connection.QuerySingleAsync<JobSearchProfile>(sql, new { Id = id });
+            }
+
+            return profile;
+        }
 
         public static async Task<IEnumerable<string>> GetAllApplicationLinks()
         {
@@ -35,7 +51,7 @@ namespace AutoJobSearchShared
             return applicationLinks;
         }
 
-        public static async Task AddJobListingsAndApplicationLinksToDb(IEnumerable<Models.JobListing> jobListings)
+        public static async Task SaveJobListings(IEnumerable<Models.JobListing> jobListings)
         {
             using (var connection = new SqliteConnection(Constants.SQLITE_CONNECTION_STRING))
             {
@@ -101,7 +117,7 @@ namespace AutoJobSearchShared
             }
         }
 
-        public static async Task<IEnumerable<JobSearchProfile>> GetAllJobSearchProfiles()
+        public static async Task<IEnumerable<JobSearchProfile>> GetAllJobSearchProfilesAsync()
         {
             Debug.WriteLine($"Getting all job search profile"); // TODO: proper logging
 
@@ -111,15 +127,15 @@ namespace AutoJobSearchShared
             {
                 await connection.OpenAsync();
 
-                var sqlQuery = @"SELECT * FROM JobSearchProfiles;";
+                const string sql = "SELECT * FROM JobSearchProfiles";
 
-                profiles = await connection.QueryAsync<JobSearchProfile>(sqlQuery);
+                profiles = await connection.QueryAsync<JobSearchProfile>(sql);
             }
 
             return profiles;
         }
 
-        public static async Task<JobSearchProfile> CreateNewJobSearchProfile(JobSearchProfile profile)
+        public static async Task<JobSearchProfile> CreateJobSearchProfile(JobSearchProfile profile)
         {
             var newProfile = new JobSearchProfile();
 
@@ -146,7 +162,7 @@ namespace AutoJobSearchShared
             return newProfile;
         }
 
-        public static async Task<IQueryable<Models.JobListing>> ExecuteJobBoardAdvancedQuery(
+        public static async Task<IQueryable<Models.JobListing>> ExecuteJobBoardAdvancedQuery( // TODO: change name to JobListingQuery?
             bool isAppliedTo,
             bool isInterviewing,
             bool isRejected,
@@ -285,7 +301,7 @@ namespace AutoJobSearchShared
             return jobListings;
         }
 
-        public static async Task<Models.JobListing> GetJobListingDetails(int id)
+        public static async Task<Models.JobListing> GetJobListingDetails(int id) // TODO: rename with id and async
         {
             Debug.WriteLine($"Getting details for listing id {id}"); // TODO: proper logging
 

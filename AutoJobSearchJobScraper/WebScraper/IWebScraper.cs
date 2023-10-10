@@ -6,6 +6,6 @@ namespace AutoJobSearchJobScraper.WebScraper
     internal interface IWebScraper
     {
         // List<JobListing> ExtractJobListingsFromLiElements(IEnumerable<HtmlNode> liElements, string searchTerm);
-        Task<List<JobListing>> ScrapeJobs(string searchTermsString);
+        Task<List<JobListing>> ScrapeJobs(IEnumerable<string> searchTerms);
     }
 }

@@ -10,9 +10,9 @@ namespace AutoJobSearchGUI.Data
     {
         Task DeleteJobSearchProfile(int id);
 
-        Task<IEnumerable<JobSearchProfile>> GetAllJobSearchProfiles();
+        Task<IEnumerable<JobSearchProfile>> GetAllJobSearchProfilesAsync();
 
-        Task<JobSearchProfile> CreateNewJobSearchProfile(JobSearchProfile profile);
+        Task<JobSearchProfile> CreateJobSearchProfile(JobSearchProfile profile);
 
         Task UpdateJobListingBoolProperty(JobListingsBoolField columnName, bool value, int id);
         Task UpdateJobListingStringProperty(JobListingsStringField columnName, string value, int id);

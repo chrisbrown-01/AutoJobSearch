@@ -48,7 +48,7 @@ namespace AutoJobSearchGUI.ViewModels
 
         private async Task RenderDefaultJobSearchView()
         {
-            var allProfiles = await _dbContext.GetAllJobSearchProfiles();
+            var allProfiles = await _dbContext.GetAllJobSearchProfilesAsync();
 
             if (!allProfiles.Any())
             {
@@ -66,9 +66,9 @@ namespace AutoJobSearchGUI.ViewModels
             // TODO: how to throw exceptions in avalonia? relaycommands?
             //throw new Exception();
 
-            await _dbContext.CreateNewJobSearchProfile(new JobSearchProfile());
+            await _dbContext.CreateJobSearchProfile(new JobSearchProfile());
 
-            var allProfiles = await _dbContext.GetAllJobSearchProfiles();
+            var allProfiles = await _dbContext.GetAllJobSearchProfilesAsync();
 
             if (!allProfiles.Any()) throw new Exception("No objects could be rendered for SearchProfiles"); // TODO: proper logging, custom exception
 
