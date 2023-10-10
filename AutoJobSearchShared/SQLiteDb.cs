@@ -19,6 +19,8 @@ namespace AutoJobSearchShared
         //    _logger = logger;
         //}
 
+        // TODO: delete all records methods
+
         public static async Task<JobSearchProfile?> GetJobSearchProfileByIdAsync(int id)
         {
             JobSearchProfile? profile;

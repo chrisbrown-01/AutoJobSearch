@@ -11,18 +11,18 @@ namespace AutoJobSearchJobScraper
         // TODO: logging
         static void Main(string[] args)
         {
-            RunProgram(38);
+            //RunProgram(38)
 
-            //if (args.Length < 1) throw new ArgumentException("No arguments provided."); // TODO: custom exception
+            if (args.Length < 1) throw new ArgumentException("No arguments provided."); // TODO: custom exception
 
-            //if (int.TryParse(args[0], out int jobSearchProfileId))
-            //{
-            //    RunProgram(jobSearchProfileId);
-            //}
-            //else
-            //{
-            //    RunProgram(new List<string>(args)); // TODO: find all manual declaration of List conversions and convert to this
-            //}
+            if (int.TryParse(args[0], out int jobSearchProfileId))
+            {
+                RunProgram(jobSearchProfileId);
+            }
+            else
+            {
+                RunProgram(new List<string>(args)); // TODO: find all manual declaration of List conversions and convert to this
+            }
         }
 
         private static async Task RunProgram(int jobSearchProfileId)
