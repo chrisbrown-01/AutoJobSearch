@@ -16,7 +16,7 @@ namespace AutoJobSearchJobScraper.Utility
         }
 
         // TODO: create unit test project
-        public async Task<List<JobListing>> FilterDuplicates(IEnumerable<JobListing> jobListingsPossibleDuplicates, HashSet<string> existingApplicationLinks) // TODO: static?
+        public async Task<List<JobListing>> FilterDuplicates(IEnumerable<JobListing> jobListingsPossibleDuplicates, HashSet<string> existingApplicationLinks)
         {
             var cleanedJobListings = jobListingsPossibleDuplicates.ToList();
 

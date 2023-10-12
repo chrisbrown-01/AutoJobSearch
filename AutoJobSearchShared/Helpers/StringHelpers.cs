@@ -11,7 +11,6 @@ namespace AutoJobSearchShared.Helpers
     {
         public static string AddNewLinesToMisformedString(string input)
         {
-            // TODO: extract to config file?
             string pattern = @"([a-z]|[.])([A-Z])";
             string replacement = "$1\n$2";
             string result = Regex.Replace(input, pattern, replacement);

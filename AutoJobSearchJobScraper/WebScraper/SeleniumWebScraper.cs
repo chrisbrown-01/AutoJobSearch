@@ -41,9 +41,6 @@ namespace AutoJobSearchJobScraper.WebScraper
         public async Task<List<JobListing>> ScrapeJobs(IEnumerable<string> searchTerms) 
         {
             var jobListings = new List<JobListing>();
-
-            var innerTexts = new List<string>(); // TODO: remove?
-            var linksList = new List<string>();
             var doc = new HtmlDocument();
             var driver = new ChromeDriver();
 
@@ -102,7 +99,7 @@ namespace AutoJobSearchJobScraper.WebScraper
         /// <param name="liElements"></param>
         /// <param name="searchTerm">The search term that the web scraper used to find the HTML list item.</param>
         /// <returns></returns>
-        private List<JobListing> ExtractJobListingsFromLiElements(IEnumerable<HtmlNode> liElements, string searchTerm) // TODO: accessibility, interface
+        private List<JobListing> ExtractJobListingsFromLiElements(IEnumerable<HtmlNode> liElements, string searchTerm) // TODO: accessibility
         {
             var jobList = new List<JobListing>();
 
@@ -147,12 +144,12 @@ namespace AutoJobSearchJobScraper.WebScraper
                     try
                     {
                         listing.Description = listing.Description_Raw.Substring(startingIndex + STARTING_INDEX_KEY.Length, endingIndex - (startingIndex + STARTING_INDEX_KEY.Length));
-                        listing.Description = StringHelpers.AddNewLinesToMisformedString(listing.Description); // TODO: test effectiveness
+                        listing.Description = StringHelpers.AddNewLinesToMisformedString(listing.Description);
                     }
                     catch
                     {
                         Console.WriteLine("Substring error"); // TODO: implement logger and replace
-                        listing.Description = StringHelpers.AddNewLinesToMisformedString(listing.Description_Raw); // TODO: Delete?
+                        listing.Description = StringHelpers.AddNewLinesToMisformedString(listing.Description_Raw); 
                     }
                 }
                 else
