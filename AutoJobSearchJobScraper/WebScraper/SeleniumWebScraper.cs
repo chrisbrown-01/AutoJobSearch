@@ -1,7 +1,8 @@
-﻿using AutoJobSearchJobScraper.Constants;
-using AutoJobSearchShared.Helpers;
+﻿using AutoJobSearchShared.Helpers;
 using AutoJobSearchShared.Models;
 using HtmlAgilityPack;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using OpenQA.Selenium.Chrome;
 using System;
 using System.Collections.Generic;
@@ -15,13 +16,29 @@ namespace AutoJobSearchJobScraper.WebScraper
 {
     internal class SeleniumWebScraper : IWebScraper
     {
+        private const string REGEX_URL_PATTERN = @"https?://[^\s""]+";
+
+        private readonly int MAX_PAGE_INDEX;
+        private readonly string STARTING_INDEX_KEY;
+        private readonly string ENDING_INDEX_KEY;
+
         public SeleniumWebScraper()
         {
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", optional: false);
 
+            IConfiguration config = builder.Build();
+
+            MAX_PAGE_INDEX = config.GetValue<int>("MAX_PAGE_INDEX");
+            if (MAX_PAGE_INDEX < 1) throw new ArgumentException(); // TODO: custom arguments
+
+            STARTING_INDEX_KEY = config.GetValue<string>("STARTING_INDEX_KEY") ?? throw new NullReferenceException();
+            ENDING_INDEX_KEY = config.GetValue<string>("ENDING_INDEX_KEY") ?? throw new NullReferenceException();
         }
 
         // TODO: surround in try-catch so that results are still saved even if captcha kills selenium
-        public async Task<List<JobListing>> ScrapeJobs(IEnumerable<string> searchTerms) // TODO: extract interface
+        public async Task<List<JobListing>> ScrapeJobs(IEnumerable<string> searchTerms) 
         {
             var jobListings = new List<JobListing>();
 
@@ -36,7 +53,7 @@ namespace AutoJobSearchJobScraper.WebScraper
                 {
                     // TODO: place try block inside this loop instead?
 
-                    for (int i = 0; i < ConfigVariables.MAX_START_PAGE + 1; i += 10)
+                    for (int i = 0; i < MAX_PAGE_INDEX + 1; i += 10)
                     {
                         driver.Navigate().GoToUrl($"https://www.google.com/search?q={WebUtility.UrlEncode(searchTerm)}&sourceid=chrome&ie=UTF-8&ibp=htl;jobs&start={i}");
                         doc.LoadHtml(driver.PageSource);
@@ -104,7 +121,7 @@ namespace AutoJobSearchJobScraper.WebScraper
                         Link_RawHTML = link.OuterHtml
                     };
 
-                    MatchCollection matches = Regex.Matches(link.OuterHtml, ConfigVariables.REGEX_URL_PATTERN);
+                    MatchCollection matches = Regex.Matches(link.OuterHtml, REGEX_URL_PATTERN);
 
                     if (matches.FirstOrDefault() != null) // TODO: exception handling?
                     {
@@ -122,14 +139,14 @@ namespace AutoJobSearchJobScraper.WebScraper
                 listing.Description_Raw = WebUtility.HtmlDecode(li.InnerText);
 
                 // TODO: extract to method
-                var startingIndex = listing.Description_Raw.IndexOf(ConfigVariables.STARTING_INDEX_KEY);
-                var endingIndex = listing.Description_Raw.IndexOf(ConfigVariables.ENDING_INDEX_KEY);
+                var startingIndex = listing.Description_Raw.IndexOf(STARTING_INDEX_KEY);
+                var endingIndex = listing.Description_Raw.IndexOf(ENDING_INDEX_KEY);
 
                 if (startingIndex != -1 && endingIndex != -1 && (endingIndex > startingIndex))
                 {
                     try
                     {
-                        listing.Description = listing.Description_Raw.Substring(startingIndex + ConfigVariables.STARTING_INDEX_KEY.Length, endingIndex - (startingIndex + ConfigVariables.STARTING_INDEX_KEY.Length));
+                        listing.Description = listing.Description_Raw.Substring(startingIndex + STARTING_INDEX_KEY.Length, endingIndex - (startingIndex + STARTING_INDEX_KEY.Length));
                         listing.Description = StringHelpers.AddNewLinesToMisformedString(listing.Description); // TODO: test effectiveness
                     }
                     catch

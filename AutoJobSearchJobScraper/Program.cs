@@ -3,6 +3,9 @@ using AutoJobSearchJobScraper.Utility;
 using AutoJobSearchJobScraper.WebScraper;
 using AutoJobSearchShared.Helpers;
 using AutoJobSearchShared.Models;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace AutoJobSearchJobScraper
 {
@@ -11,25 +14,32 @@ namespace AutoJobSearchJobScraper
         // TODO: logging
         static void Main(string[] args)
         {
-            //RunProgram(38)
+            // if (args.Length < 1) throw new ArgumentException("No arguments provided."); // TODO: custom exception
 
-            if (args.Length < 1) throw new ArgumentException("No arguments provided."); // TODO: custom exception
+            var serviceProvider = new ServiceCollection()
+                .AddScoped<IDbContext, SQLiteDbContext>()
+                .AddScoped<IWebScraper, SeleniumWebScraper>()
+                .AddScoped<JobListingUtility>()
+                .BuildServiceProvider();
 
-            if (int.TryParse(args[0], out int jobSearchProfileId))
-            {
-                RunProgram(jobSearchProfileId);
-            }
-            else
-            {
-                RunProgram(new List<string>(args)); // TODO: find all manual declaration of List conversions and convert to this
-            }
+            RunProgram(serviceProvider, 38).Wait();
+
+            //if (int.TryParse(args[0], out int jobSearchProfileId))
+            //{
+            //    RunProgram(serviceProvider, jobSearchProfileId).Wait();
+            //}
+            //else
+            //{
+            //    RunProgram(serviceProvider, args.AsEnumerable()).Wait(); // TODO: find all manual declaration of List conversions and convert to this
+            //}
+
         }
 
-        private static async Task RunProgram(int jobSearchProfileId)
+        private static async Task RunProgram(IServiceProvider serviceProvider, int jobSearchProfileId)
         {
-            var db = new SQLiteDbContext();
-            var scraper = new SeleniumWebScraper();
-            var utility = new JobListingUtility();
+            var db = serviceProvider.GetRequiredService<IDbContext>();
+            var scraper = serviceProvider.GetRequiredService<IWebScraper>();
+            var utility = serviceProvider.GetRequiredService<JobListingUtility>();
 
             var jobSearchProfile = await db.GetJobSearchProfileByIdAsync(jobSearchProfileId);
             if (jobSearchProfile == null) throw new NullReferenceException(); // TODO: custom exception
@@ -50,7 +60,7 @@ namespace AutoJobSearchJobScraper
             await db.SaveJobListings(scoredJobs);
         }
 
-        private static async Task RunProgram(IEnumerable<string> searchTerms)
+        private static async Task RunProgram(IServiceProvider serviceProvider, IEnumerable<string> searchTerms)
         {
             var db = new SQLiteDbContext();
             var scraper = new SeleniumWebScraper();

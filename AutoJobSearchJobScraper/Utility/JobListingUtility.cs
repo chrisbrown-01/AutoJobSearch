@@ -1,5 +1,4 @@
-﻿using AutoJobSearchJobScraper.Constants;
-using AutoJobSearchShared.Models;
+﻿using AutoJobSearchShared.Models;
 using FuzzySharp;
 using System;
 using System.Collections.Generic;
@@ -55,7 +54,7 @@ namespace AutoJobSearchJobScraper.Utility
             IEnumerable<string> sentimentsPositive,
             IEnumerable<string> sentimentsNegative) // TODO: keep as List return type?
         {
-            // TODO: parallelize?
+            // TODO: parallelize
 
             sentimentsPositive = sentimentsPositive.Select(s => s.ToLower());
             sentimentsNegative = sentimentsNegative.Select(s => s.ToLower());

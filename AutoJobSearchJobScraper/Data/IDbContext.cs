@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace AutoJobSearchJobScraper.Data
 {
-    internal interface IDbContext
+    internal interface IDbContext 
     {
         Task<IEnumerable<JobSearchProfile>> GetAllJobSearchProfilesAsync();
         Task<JobSearchProfile?> GetJobSearchProfileByIdAsync(int id);
