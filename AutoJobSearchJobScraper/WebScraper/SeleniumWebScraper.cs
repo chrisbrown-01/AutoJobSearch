@@ -28,7 +28,7 @@ namespace AutoJobSearchJobScraper.WebScraper
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", optional: false);
 
-            IConfiguration config = builder.Build();
+            var config = builder.Build();
 
             MAX_PAGE_INDEX = config.GetValue<int>("MAX_PAGE_INDEX");
             if (MAX_PAGE_INDEX < 1) throw new ArgumentException(); // TODO: custom arguments

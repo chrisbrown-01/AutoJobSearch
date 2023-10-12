@@ -10,7 +10,6 @@ namespace AutoJobSearchJobScraper.Utility
 {
     internal class JobListingUtility
     {
-        // TODO: make entire class static?
         public JobListingUtility()
         {
             
@@ -54,13 +53,49 @@ namespace AutoJobSearchJobScraper.Utility
             IEnumerable<string> sentimentsPositive,
             IEnumerable<string> sentimentsNegative) // TODO: keep as List return type?
         {
-            // TODO: parallelize
-
             sentimentsPositive = sentimentsPositive.Select(s => s.ToLower());
             sentimentsNegative = sentimentsNegative.Select(s => s.ToLower());
 
             var jobList = jobListingsUnscored.ToList();
 
+            Parallel.ForEach(jobList, job =>
+            {
+                foreach (var keyword in keywordsPositive)
+                {
+                    if (job.Description.Contains(keyword, StringComparison.OrdinalIgnoreCase))
+                    {
+                        job.Score++;
+                    }
+                }
+
+                foreach (var item in keywordsNegative)
+                {
+                    if (job.Description.Contains(item, StringComparison.OrdinalIgnoreCase))
+                    {
+                        job.Score--;
+                    }
+                }
+
+                foreach (var sentiment in sentimentsPositive)
+                {
+                    if (Fuzz.WeightedRatio(sentiment, job.Description.ToLower()) >= 50 &&
+                       Fuzz.PartialRatio(sentiment, job.Description.ToLower()) >= 50)
+                    {
+                        job.Score++;
+                    }
+                }
+
+                foreach (var sentiment in sentimentsNegative)
+                {
+                    if (Fuzz.WeightedRatio(sentiment, job.Description.ToLower()) >= 50 &&
+                       Fuzz.PartialRatio(sentiment, job.Description.ToLower()) >= 50)
+                    {
+                        job.Score--;
+                    }
+                }
+            });
+
+            /*
             foreach (var job in jobList)
             {
                 foreach (var keyword in keywordsPositive)
@@ -97,6 +132,7 @@ namespace AutoJobSearchJobScraper.Utility
                     }
                 }
             }
+            */
 
             await Task.CompletedTask;
             return jobList;

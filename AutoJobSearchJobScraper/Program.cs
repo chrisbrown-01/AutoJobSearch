@@ -22,7 +22,7 @@ namespace AutoJobSearchJobScraper
                 .AddScoped<JobListingUtility>()
                 .BuildServiceProvider();
 
-            RunProgram(serviceProvider, 38).Wait();
+            RunProgram(serviceProvider, 38).Wait(); // TODO: remove hardcoding
 
             //if (int.TryParse(args[0], out int jobSearchProfileId))
             //{
