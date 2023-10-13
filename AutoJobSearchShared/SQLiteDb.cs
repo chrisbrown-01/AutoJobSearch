@@ -3,7 +3,6 @@ using AutoJobSearchShared.Enums;
 using AutoJobSearchShared.Models;
 using Dapper;
 using Microsoft.Data.Sqlite; // TODO: uninstall packages where they're not required
-using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 using System.Text;
 

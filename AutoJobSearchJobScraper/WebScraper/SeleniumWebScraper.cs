@@ -3,7 +3,9 @@ using AutoJobSearchShared.Models;
 using HtmlAgilityPack;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using OpenQA.Selenium.Chrome;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,8 +24,13 @@ namespace AutoJobSearchJobScraper.WebScraper
         private readonly string STARTING_INDEX_KEY;
         private readonly string ENDING_INDEX_KEY;
 
-        public SeleniumWebScraper()
+        private readonly ILogger<SeleniumWebScraper> _logger;
+
+        public SeleniumWebScraper(ILogger<SeleniumWebScraper> logger)
         {
+            _logger = logger;
+            _logger.LogDebug("Initializing SeleniumWebScraper logger.");
+
             var builder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", optional: false);
@@ -40,6 +47,9 @@ namespace AutoJobSearchJobScraper.WebScraper
         // TODO: surround in try-catch so that results are still saved even if captcha kills selenium
         public async Task<List<JobListing>> ScrapeJobs(IEnumerable<string> searchTerms) 
         {
+            //Log.Debug("testing logger in selenium web scraper");
+            _logger.LogDebug("test");
+
             var jobListings = new List<JobListing>();
             var doc = new HtmlDocument();
             var driver = new ChromeDriver();

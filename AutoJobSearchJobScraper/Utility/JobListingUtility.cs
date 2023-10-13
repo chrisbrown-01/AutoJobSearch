@@ -1,5 +1,6 @@
 ﻿using AutoJobSearchShared.Models;
 using FuzzySharp;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,9 +11,12 @@ namespace AutoJobSearchJobScraper.Utility
 {
     internal class JobListingUtility
     {
-        public JobListingUtility()
+        private readonly ILogger<JobListingUtility> _logger;
+
+        public JobListingUtility(ILogger<JobListingUtility> logger)
         {
-            
+            _logger = logger;
+            _logger.LogDebug("Initializing JobListingUtility logger.");
         }
 
         // TODO: create unit test project
@@ -58,6 +62,7 @@ namespace AutoJobSearchJobScraper.Utility
 
             var jobList = jobListingsUnscored.ToList();
 
+            // TODO: test speed improvements over single threaded method
             Parallel.ForEach(jobList, job =>
             {
                 foreach (var keyword in keywordsPositive)
