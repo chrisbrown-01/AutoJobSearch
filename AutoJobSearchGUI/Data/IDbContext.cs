@@ -1,12 +1,13 @@
 ﻿using AutoJobSearchShared.Enums;
 using AutoJobSearchShared.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace AutoJobSearchGUI.Data
 {
-    public interface IDbContext
+    public interface IDbContext : IDisposable
     {
         Task DeleteAllJobListingsAsync();
 

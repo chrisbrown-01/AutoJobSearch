@@ -30,7 +30,7 @@ namespace AutoJobSearchJobScraper
 
             Log.Information("Starting job scraper application.");
             //RunProgram(serviceProvider, 38).Wait(); // TODO: remove hardcoding
-            //TestConcurrencyIssues(serviceProvider).Wait();
+            TestConcurrencyIssues(serviceProvider).Wait();
             Log.CloseAndFlush();
 
             //if (int.TryParse(args[0], out int jobSearchProfileId))
@@ -48,29 +48,13 @@ namespace AutoJobSearchJobScraper
 
         }
 
-        private static void ConfigureLogger()
-        {
-            Log.Logger = new LoggerConfiguration()
-                                .MinimumLevel.Information()
-                                .WriteTo.Console(new JsonFormatter())
-                                .WriteTo.File(new JsonFormatter(), "JobScraperLogFile.json")
-                                .CreateLogger();
-
-            // Attach event handler for unhandled exceptions
-            AppDomain.CurrentDomain.UnhandledException += (sender, eventArgs) =>
-            {
-                var exception = (Exception)eventArgs.ExceptionObject;
-                Log.Fatal(exception, "An unhandled exception occurred.");
-            };
-        }
-
         private static async Task TestConcurrencyIssues(IServiceProvider serviceProvider)
         {
-            var db = serviceProvider.GetRequiredService<IDbContext>();
+            using var db = serviceProvider.GetRequiredService<IDbContext>();
 
             var testEntries = new List<JobListing>();
 
-            for (int i = 0; i < 10000; i++)
+            for (int i = 0; i < 1; i++)
             {
                 var jobListing = new JobListing();
                 testEntries.Add(jobListing);
@@ -81,7 +65,7 @@ namespace AutoJobSearchJobScraper
 
         private static async Task RunProgram(IServiceProvider serviceProvider, int jobSearchProfileId)
         {
-            var db = serviceProvider.GetRequiredService<IDbContext>();
+            using var db = serviceProvider.GetRequiredService<IDbContext>();
             var scraper = serviceProvider.GetRequiredService<IWebScraper>();
             var utility = serviceProvider.GetRequiredService<JobListingUtility>();
 
@@ -107,7 +91,7 @@ namespace AutoJobSearchJobScraper
 
         private static async Task RunProgram(IServiceProvider serviceProvider, IEnumerable<string> searchTerms)
         {
-            var db = serviceProvider.GetRequiredService<IDbContext>();
+            using var db = serviceProvider.GetRequiredService<IDbContext>();
             var scraper = serviceProvider.GetRequiredService<IWebScraper>();
             var utility = serviceProvider.GetRequiredService<JobListingUtility>();
 
@@ -116,6 +100,22 @@ namespace AutoJobSearchJobScraper
             var cleanedJobs = await utility.FilterDuplicatesAsync(scrapedJobs, existingLinks.ToHashSet());
 
             await db.SaveJobListingsAsync(cleanedJobs);
+        }
+
+        private static void ConfigureLogger()
+        {
+            Log.Logger = new LoggerConfiguration()
+                                .MinimumLevel.Information()
+                                .WriteTo.Console(new JsonFormatter())
+                                .WriteTo.File(new JsonFormatter(), "JobScraperLogFile.json")
+                                .CreateLogger();
+
+            // Attach event handler for unhandled exceptions
+            AppDomain.CurrentDomain.UnhandledException += (sender, eventArgs) =>
+            {
+                var exception = (Exception)eventArgs.ExceptionObject;
+                Log.Fatal(exception, "An unhandled exception occurred.");
+            };
         }
     }
 }

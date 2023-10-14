@@ -16,7 +16,7 @@ namespace AutoJobSearchGUI.Data
 
         public SQLiteDbContext()
         {
-            _sqliteDb = new SQLiteDb(); // TODO: disposing
+            _sqliteDb = new SQLiteDb(); 
         }
 
         public async Task<JobSearchProfile> CreateJobSearchProfileAsync(JobSearchProfile profile)
@@ -32,6 +32,12 @@ namespace AutoJobSearchGUI.Data
         public async Task DeleteJobSearchProfileAsync(int id)
         {
             await _sqliteDb.DeleteJobSearchProfileAsync(id);
+        }
+
+        public void Dispose()
+        {
+            _sqliteDb.Dispose();
+            GC.SuppressFinalize(this);
         }
 
         public async Task<IQueryable<JobListing>> ExecuteJobListingQueryAsync(

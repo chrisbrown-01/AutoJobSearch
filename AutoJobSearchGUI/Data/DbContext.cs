@@ -116,5 +116,11 @@ namespace AutoJobSearchGUI.Data
             Log.Information("Deleting all job listings and application links.");
             await _dbContext.DeleteAllJobListingsAsync();
         }
+
+        public void Dispose()
+        {
+            Log.Information("Disposing of _dbContext connection.");
+            _dbContext.Dispose();
+        }
     }
 }

@@ -7,7 +7,7 @@ using System.Text;
 
 namespace AutoJobSearchShared.Database
 {
-    public class SQLiteDb : IAutoJobSearchDb, IDisposable
+    public class SQLiteDb : IAutoJobSearchDb
     {
         private readonly SqliteConnection connection;
 

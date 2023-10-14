@@ -13,7 +13,13 @@ namespace AutoJobSearchJobScraper.Data
         public SQLiteDbContext(ILogger<SQLiteDbContext> logger)
         {
             _logger = logger;
-            _sqliteDb = new SQLiteDb(); // TODO: disposing
+            _sqliteDb = new SQLiteDb(); 
+        }
+
+        public void Dispose()
+        {
+            _logger.LogInformation("Disposing of SQLite database connection.");
+            _sqliteDb.Dispose();
         }
 
         public async Task<IEnumerable<string>> GetAllApplicationLinksAsync()

@@ -3,7 +3,7 @@ using AutoJobSearchShared.Models;
 
 namespace AutoJobSearchShared.Database
 {
-    public interface IAutoJobSearchDb
+    public interface IAutoJobSearchDb : IDisposable
     {
         Task<JobSearchProfile> CreateJobSearchProfileAsync(JobSearchProfile profile);
         Task DeleteAllJobListingsAsync();
