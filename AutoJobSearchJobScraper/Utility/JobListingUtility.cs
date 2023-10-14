@@ -19,7 +19,9 @@ namespace AutoJobSearchJobScraper.Utility
         }
 
         // TODO: create unit test project
-        public async Task<List<JobListing>> FilterDuplicates(IEnumerable<JobListing> jobListingsPossibleDuplicates, HashSet<string> existingApplicationLinks)
+        public async Task<IEnumerable<JobListing>> FilterDuplicatesAsync(
+            IEnumerable<JobListing> jobListingsPossibleDuplicates, 
+            HashSet<string> existingApplicationLinks)
         {
             _logger.LogInformation("Filtering duplicate job listings. " +
                                    "{@jobListingsPossibleDuplicates.Count}, " +
@@ -61,12 +63,12 @@ namespace AutoJobSearchJobScraper.Utility
             return cleanedJobListings;
         }
 
-        public async Task<List<JobListing>> ApplyScorings(
+        public async Task<IEnumerable<JobListing>> ApplyScoringsAsync(
             IEnumerable<JobListing> jobListingsUnscored, 
             IEnumerable<string> keywordsPositive,
             IEnumerable<string> keywordsNegative,
             IEnumerable<string> sentimentsPositive,
-            IEnumerable<string> sentimentsNegative) // TODO: keep as List return type?
+            IEnumerable<string> sentimentsNegative) 
         {
             _logger.LogInformation("Applying scorings to job listings. " +
                               "{@jobListingsUnscored.Count}, " +

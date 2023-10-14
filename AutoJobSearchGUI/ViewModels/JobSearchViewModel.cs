@@ -45,7 +45,7 @@ namespace AutoJobSearchGUI.ViewModels
         public void ExecuteJobSearch()
         {
             Log.Information("Executing job search for job search profile {@id}", SelectedSearchProfile.Id);
-            _eventAggregator.OnStartConsoleAppEvent(SelectedSearchProfile.Id);
+            _eventAggregator.StartJobScraper(SelectedSearchProfile.Id);
         }
 
         private async Task RenderDefaultJobSearchView()
@@ -65,9 +65,6 @@ namespace AutoJobSearchGUI.ViewModels
 
         public async Task CreateNewProfile()
         {
-            // TODO: how to throw exceptions in avalonia? relaycommands?
-            //throw new Exception();
-
             await _dbContext.CreateJobSearchProfileAsync(new JobSearchProfile());
 
             var allProfiles = await _dbContext.GetAllJobSearchProfilesAsync();

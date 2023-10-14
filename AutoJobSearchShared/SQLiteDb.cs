@@ -11,7 +11,6 @@ namespace AutoJobSearchShared
     {
 
         // TODO: delete all records methods
-        // TODO: experiment with throwing exceptions inside of here
 
         private readonly SqliteConnection connection;
 

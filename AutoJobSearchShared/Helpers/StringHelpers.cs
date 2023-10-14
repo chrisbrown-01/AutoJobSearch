@@ -20,10 +20,9 @@ namespace AutoJobSearchShared.Helpers
 
         public static IEnumerable<string> ConvertCommaSeperatedStringsToIEnumerable(string commaSeperatedStrings)
         {
-            // TODO: remove any null/whitespace entries, if last character of final split string is a comma then remove it?
-
             return commaSeperatedStrings.Split(',')
                                         .Select(s => s.Replace("\r\n", string.Empty)) // Remove newline sequences
+                                        .Where(s => !string.IsNullOrWhiteSpace(s) && s.Length >= 2) // Filter out null, whitespace, or strings with less than 2 characters
                                         .ToList();
         }
     }

@@ -29,7 +29,8 @@ namespace AutoJobSearchJobScraper
                 .BuildServiceProvider();
 
             Log.Information("Starting job scraper application.");
-            RunProgram(serviceProvider, 38).Wait(); // TODO: remove hardcoding
+            //RunProgram(serviceProvider, 38).Wait(); // TODO: remove hardcoding
+            //TestConcurrencyIssues(serviceProvider).Wait();
             Log.CloseAndFlush();
 
             //if (int.TryParse(args[0], out int jobSearchProfileId))
@@ -63,6 +64,21 @@ namespace AutoJobSearchJobScraper
             };
         }
 
+        private static async Task TestConcurrencyIssues(IServiceProvider serviceProvider)
+        {
+            var db = serviceProvider.GetRequiredService<IDbContext>();
+
+            var testEntries = new List<JobListing>();
+
+            for (int i = 0; i < 10000; i++)
+            {
+                var jobListing = new JobListing();
+                testEntries.Add(jobListing);
+            }
+
+            await db.SaveJobListingsAsync(testEntries);
+        }
+
         private static async Task RunProgram(IServiceProvider serviceProvider, int jobSearchProfileId)
         {
             var db = serviceProvider.GetRequiredService<IDbContext>();
@@ -73,20 +89,20 @@ namespace AutoJobSearchJobScraper
 
             // TODO: delete
             //var scrapedJobs = await scraper.ScrapeJobs(new List<string>() { "programming jobs toronto" }); 
-            var scrapedJobs = await scraper.ScrapeJobs(StringHelpers.ConvertCommaSeperatedStringsToIEnumerable(jobSearchProfile.Searches));
+            var scrapedJobs = await scraper.ScrapeJobsAsync(StringHelpers.ConvertCommaSeperatedStringsToIEnumerable(jobSearchProfile.Searches));
 
-            var existingLinks = await db.GetAllApplicationLinks();
+            var existingLinks = await db.GetAllApplicationLinksAsync();
 
-            var cleanedJobs = await utility.FilterDuplicates(scrapedJobs, existingLinks.ToHashSet());
+            var cleanedJobs = await utility.FilterDuplicatesAsync(scrapedJobs, existingLinks.ToHashSet());
 
-            var scoredJobs = await utility.ApplyScorings(
+            var scoredJobs = await utility.ApplyScoringsAsync(
                 cleanedJobs,
                 StringHelpers.ConvertCommaSeperatedStringsToIEnumerable(jobSearchProfile.KeywordsPositive),
                 StringHelpers.ConvertCommaSeperatedStringsToIEnumerable(jobSearchProfile.KeywordsNegative),
                 StringHelpers.ConvertCommaSeperatedStringsToIEnumerable(jobSearchProfile.SentimentsPositive),
                 StringHelpers.ConvertCommaSeperatedStringsToIEnumerable(jobSearchProfile.SentimentsNegative));
 
-            await db.SaveJobListings(scoredJobs);
+            await db.SaveJobListingsAsync(scoredJobs);
         }
 
         private static async Task RunProgram(IServiceProvider serviceProvider, IEnumerable<string> searchTerms)
@@ -95,11 +111,11 @@ namespace AutoJobSearchJobScraper
             var scraper = serviceProvider.GetRequiredService<IWebScraper>();
             var utility = serviceProvider.GetRequiredService<JobListingUtility>();
 
-            var existingLinks = await db.GetAllApplicationLinks();
-            var scrapedJobs = await scraper.ScrapeJobs(searchTerms);
-            var cleanedJobs = await utility.FilterDuplicates(scrapedJobs, existingLinks.ToHashSet());
+            var existingLinks = await db.GetAllApplicationLinksAsync();
+            var scrapedJobs = await scraper.ScrapeJobsAsync(searchTerms);
+            var cleanedJobs = await utility.FilterDuplicatesAsync(scrapedJobs, existingLinks.ToHashSet());
 
-            await db.SaveJobListings(cleanedJobs);
+            await db.SaveJobListingsAsync(cleanedJobs);
         }
     }
 }

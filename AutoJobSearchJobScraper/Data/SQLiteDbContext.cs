@@ -16,7 +16,7 @@ namespace AutoJobSearchJobScraper.Data
             _sqliteDb = new SQLiteDb(); // TODO: disposing
         }
 
-        public async Task<IEnumerable<string>> GetAllApplicationLinks()
+        public async Task<IEnumerable<string>> GetAllApplicationLinksAsync()
         {
             _logger.LogInformation("Getting all application links.");
             return await _sqliteDb.GetAllApplicationLinksAsync();
@@ -34,7 +34,7 @@ namespace AutoJobSearchJobScraper.Data
             return await _sqliteDb.GetJobSearchProfileByIdAsync(id);
         }
 
-        public async Task SaveJobListings(IEnumerable<JobListing> jobListings)
+        public async Task SaveJobListingsAsync(IEnumerable<JobListing> jobListings)
         {
             _logger.LogInformation("Saving {@jobListings.Count} new job listings.", jobListings.Count());
             await _sqliteDb.SaveJobListingsAsync(jobListings);

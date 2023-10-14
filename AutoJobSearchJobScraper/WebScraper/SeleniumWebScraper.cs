@@ -44,7 +44,7 @@ namespace AutoJobSearchJobScraper.WebScraper
         }
 
         // TODO: surround in try-catch so that results are still saved even if captcha kills selenium
-        public async Task<List<JobListing>> ScrapeJobs(IEnumerable<string> searchTerms) 
+        public async Task<IEnumerable<JobListing>> ScrapeJobsAsync(IEnumerable<string> searchTerms) 
         {
             _logger.LogInformation("Begin scraping jobs. Number of members in searchTerms argument: {@searchTerms.Count}", searchTerms.Count());
 
@@ -104,12 +104,12 @@ namespace AutoJobSearchJobScraper.WebScraper
         }
 
         /// <summary>
-        /// Extracts the job listing description and application links from the raw HTML list item element.
+        /// Extracts the job listing description and application links from each raw HTML list item element.
         /// </summary>
-        /// <param name="liElements"></param>
+        /// <param name="liElements">HTML <li> elements.</param>
         /// <param name="searchTerm">The search term that the web scraper used to find the HTML list item.</param>
         /// <returns></returns>
-        private List<JobListing> ExtractJobListingsFromLiElements(IEnumerable<HtmlNode> liElements, string searchTerm) // TODO: accessibility
+        private IEnumerable<JobListing> ExtractJobListingsFromLiElements(IEnumerable<HtmlNode> liElements, string searchTerm) 
         {
             var jobList = new List<JobListing>();
 

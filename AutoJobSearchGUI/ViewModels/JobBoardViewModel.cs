@@ -16,10 +16,6 @@ using System.Threading.Tasks;
 
 namespace AutoJobSearchGUI.ViewModels
 {
-    // TODO: SQLite concurrency disabling?, database relative pathing best practices + keep all relative paths within shared folder?
-    // TODO: SeleniumTesting.Execute(); inside of Job Search menu item
-
-
     public partial class JobBoardViewModel : ViewModelBase // Needs to be public for View previewer to work
     {
         public delegate Task OpenJobListingViewHandler(JobListingModel job, IEnumerable<JobListingModel> jobListings);

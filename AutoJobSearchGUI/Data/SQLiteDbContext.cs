@@ -26,7 +26,6 @@ namespace AutoJobSearchGUI.Data
 
         public async Task DeleteJobSearchProfileAsync(int id)
         {
-            // TODO: throw exception inside these methods to see how it reacts
             await _sqliteDb.DeleteJobSearchProfileAsync(id);
         }
 

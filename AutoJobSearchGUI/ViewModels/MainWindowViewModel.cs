@@ -17,7 +17,7 @@ namespace AutoJobSearchGUI.ViewModels
         private JobBoardViewModel jobBoardViewModel;
         private JobSearchViewModel jobSearchViewModel;
         private JobListingViewModel jobListingViewModel;
-        private DbContext dbContext; // TODO: convert to readonly
+        private readonly DbContext dbContext; 
         private readonly EventAggregator eventAggregator;
 
         [ObservableProperty]

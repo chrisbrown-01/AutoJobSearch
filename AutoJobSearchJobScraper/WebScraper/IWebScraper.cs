@@ -5,6 +5,6 @@ namespace AutoJobSearchJobScraper.WebScraper
 {
     internal interface IWebScraper
     {
-        Task<List<JobListing>> ScrapeJobs(IEnumerable<string> searchTerms);
+        Task<IEnumerable<JobListing>> ScrapeJobsAsync(IEnumerable<string> searchTerms);
     }
 }

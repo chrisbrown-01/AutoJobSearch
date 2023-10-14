@@ -11,6 +11,10 @@ using Serilog;
 
 namespace AutoJobSearchGUI.Data
 {
+    // At the time of creating this project, there is no official documentation on how to perform dependency injection in Avalonia.
+    // Therefore the purpose of this class is to act as the single point of change if the user wants to convert to using a 
+    // different database.
+
     public class DbContext : IDbContext
     {
         private readonly IDbContext _dbContext;

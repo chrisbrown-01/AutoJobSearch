@@ -12,8 +12,8 @@ namespace AutoJobSearchJobScraper.Data
         Task<IEnumerable<JobSearchProfile>> GetAllJobSearchProfilesAsync();
         Task<JobSearchProfile?> GetJobSearchProfileByIdAsync(int id);
 
-        Task<IEnumerable<string>> GetAllApplicationLinks(); // TODO: rename all methods to have async in name
+        Task<IEnumerable<string>> GetAllApplicationLinksAsync();
 
-        Task SaveJobListings(IEnumerable<JobListing> jobListings);
+        Task SaveJobListingsAsync(IEnumerable<JobListing> jobListings);
     }
 }
