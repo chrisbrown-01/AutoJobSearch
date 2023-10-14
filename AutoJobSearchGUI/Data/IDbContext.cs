@@ -8,6 +8,8 @@ namespace AutoJobSearchGUI.Data
 {
     public interface IDbContext
     {
+        Task DeleteAllJobListingsAsync();
+
         Task DeleteJobSearchProfileAsync(int id);
 
         Task<IEnumerable<JobSearchProfile>> GetAllJobSearchProfilesAsync();

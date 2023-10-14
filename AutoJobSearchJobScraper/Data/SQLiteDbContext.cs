@@ -1,4 +1,4 @@
-﻿using AutoJobSearchShared;
+﻿using AutoJobSearchShared.Database;
 using AutoJobSearchShared.Models;
 using Microsoft.Extensions.Logging;
 

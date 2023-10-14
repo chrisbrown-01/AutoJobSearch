@@ -5,19 +5,22 @@ using Microsoft.Data.Sqlite; // TODO: uninstall packages where they're not requi
 using System.Diagnostics;
 using System.Text;
 
-namespace AutoJobSearchShared
+namespace AutoJobSearchShared.Database
 {
-    public class SQLiteDb : IDisposable // TODO: extract interface
+    public class SQLiteDb : IAutoJobSearchDb, IDisposable
     {
-
-        // TODO: delete all records methods
-
         private readonly SqliteConnection connection;
 
         public SQLiteDb()
         {
             connection = new SqliteConnection(Constants.SQLITE_CONNECTION_STRING);
             connection.Open(); // TODO: seems that db is auto create if it doesn't exist?
+        }
+
+        public async Task DeleteAllJobListingsAsync()
+        {
+            const string sql = "DELETE FROM ApplicationLinks; DELETE FROM JobListings;";
+            await connection.ExecuteAsync(sql).ConfigureAwait(false);
         }
 
         public async Task<JobSearchProfile?> GetJobSearchProfileByIdAsync(int id)
@@ -32,7 +35,7 @@ namespace AutoJobSearchShared
             return await connection.QueryAsync<string>(sql).ConfigureAwait(false); // TODO: testing if no records exist
         }
 
-        public async Task SaveJobListingsAsync(IEnumerable<Models.JobListing> jobListings)
+        public async Task SaveJobListingsAsync(IEnumerable<JobListing> jobListings)
         {
             const string insertJobListingSQL =
                 "INSERT INTO JobListings (" +
@@ -131,7 +134,7 @@ namespace AutoJobSearchShared
             return await connection.QuerySingleAsync<JobSearchProfile>(sql, profile).ConfigureAwait(false);
         }
 
-        public async Task<IQueryable<Models.JobListing>> ExecuteJobListingQueryAsync(
+        public async Task<IQueryable<JobListing>> ExecuteJobListingQueryAsync(
             bool isAppliedTo,
             bool isInterviewing,
             bool isRejected,
@@ -155,7 +158,7 @@ namespace AutoJobSearchShared
                 "AND IsFavourite = @IsFavourite " +
                 "AND IsHidden = False;";
 
-            var jobListings = await connection.QueryAsync<Models.JobListing>(
+            var jobListings = await connection.QueryAsync<JobListing>(
                 sql,
                 new
                 {
@@ -169,7 +172,7 @@ namespace AutoJobSearchShared
         }
 
 
-        public async Task<IEnumerable<Models.JobListing>> GetHiddenJobListingsAsync()
+        public async Task<IEnumerable<JobListing>> GetHiddenJobListingsAsync()
         {
             const string sql =
                 "SELECT Id, " +
@@ -186,10 +189,10 @@ namespace AutoJobSearchShared
                 "WHERE IsHidden = True " +
                 "ORDER BY Id DESC;";
 
-            return await connection.QueryAsync<Models.JobListing>(sql).ConfigureAwait(false); // TODO: testing if no records in db
+            return await connection.QueryAsync<JobListing>(sql).ConfigureAwait(false); // TODO: testing if no records in db
         }
 
-        public async Task<IEnumerable<Models.JobListing>> GetFavouriteJobListingsAsync()
+        public async Task<IEnumerable<JobListing>> GetFavouriteJobListingsAsync()
         {
             const string sql =
                 "SELECT Id, " +
@@ -206,10 +209,10 @@ namespace AutoJobSearchShared
                 "WHERE IsFavourite = True " +
                 "ORDER BY Id DESC;";
 
-            return await connection.QueryAsync<Models.JobListing>(sql).ConfigureAwait(false); // TODO: testing for no records in db
+            return await connection.QueryAsync<JobListing>(sql).ConfigureAwait(false); // TODO: testing for no records in db
         }
 
-        public async Task<IEnumerable<Models.JobListing>> GetAllJobListingsAsync()
+        public async Task<IEnumerable<JobListing>> GetAllJobListingsAsync()
         {
             const string sql =
                 "SELECT Id, " +
@@ -226,13 +229,13 @@ namespace AutoJobSearchShared
                 "WHERE IsHidden = False " +
                 "ORDER BY Id DESC;";
 
-            return await connection.QueryAsync<Models.JobListing>(sql).ConfigureAwait(false); // TODO: testing for no records in db
+            return await connection.QueryAsync<JobListing>(sql).ConfigureAwait(false); // TODO: testing for no records in db
         }
 
-        public async Task<Models.JobListing> GetJobListingDetailsByIdAsync(int id) 
+        public async Task<JobListing> GetJobListingDetailsByIdAsync(int id)
         {
             const string jobListingSQL = "SELECT Description, Notes From JobListings Where Id = @Id;";
-            var jobListing = await connection.QuerySingleAsync<Models.JobListing>(jobListingSQL, new { Id = id }).ConfigureAwait(false);
+            var jobListing = await connection.QuerySingleAsync<JobListing>(jobListingSQL, new { Id = id }).ConfigureAwait(false);
 
             const string applicationLinksSQL = "SELECT Link FROM ApplicationLinks Where JobListingId = @Id;";
             var applicationLinks = await connection.QueryAsync<string>(applicationLinksSQL, new { Id = id }).ConfigureAwait(false); // TODO: testing if no records exist

@@ -1,4 +1,4 @@
-﻿using AutoJobSearchShared;
+﻿using AutoJobSearchShared.Database;
 using AutoJobSearchShared.Enums;
 using AutoJobSearchShared.Models;
 using Serilog;
@@ -22,6 +22,11 @@ namespace AutoJobSearchGUI.Data
         public async Task<JobSearchProfile> CreateJobSearchProfileAsync(JobSearchProfile profile)
         {
             return await _sqliteDb.CreateJobSearchProfileAsync(profile);
+        }
+
+        public async Task DeleteAllJobListingsAsync()
+        {
+            await _sqliteDb.DeleteAllJobListingsAsync();
         }
 
         public async Task DeleteJobSearchProfileAsync(int id)

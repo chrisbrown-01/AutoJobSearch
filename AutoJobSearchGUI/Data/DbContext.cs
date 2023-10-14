@@ -107,8 +107,14 @@ namespace AutoJobSearchGUI.Data
 
         public async Task DeleteJobSearchProfileAsync(int id)
         {
-            Log.Information("Deleting job search profile for {@id}", id, this);
+            Log.Information("Deleting job search profile for {@id}", id);
             await _dbContext.DeleteJobSearchProfileAsync(id);
+        }
+
+        public async Task DeleteAllJobListingsAsync()
+        {
+            Log.Information("Deleting all job listings and application links.");
+            await _dbContext.DeleteAllJobListingsAsync();
         }
     }
 }

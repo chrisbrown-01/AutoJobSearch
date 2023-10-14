@@ -9,7 +9,6 @@ namespace AutoJobSearchJobScraper.Data
 {
     internal interface IDbContext 
     {
-        Task<IEnumerable<JobSearchProfile>> GetAllJobSearchProfilesAsync();
         Task<JobSearchProfile?> GetJobSearchProfileByIdAsync(int id);
 
         Task<IEnumerable<string>> GetAllApplicationLinksAsync();
