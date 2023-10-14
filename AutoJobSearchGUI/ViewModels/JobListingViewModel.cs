@@ -41,6 +41,9 @@ namespace AutoJobSearchGUI.ViewModels
 
         public async Task GoToPreviousJob()
         {
+            // TODO: investigate why calling tasks does not properly throw exception. may need to convert to relaycommand
+            //throw new Exception("test");
+
             var currentIndex = JobListings.IndexOf(JobListing);
             if (currentIndex < 0) return;
 
@@ -65,10 +68,12 @@ namespace AutoJobSearchGUI.ViewModels
         {
             if (jobListing.Id == JobListing.Id) return;
 
-            var jobListingDetails = await _dbContext.GetJobListingDetails(jobListing.Id); 
+            var jobListingDetails = await _dbContext.GetJobListingDetailsByIdAsync(jobListing.Id); 
             jobListing.Description = jobListingDetails.Description;
             jobListing.ApplicationLinks = jobListingDetails.ApplicationLinksString;
             jobListing.Notes = jobListingDetails.Notes;
+
+            // TODO: update job listing entry in the master local list, see if it has already been updated
 
             JobListing = jobListing;
         }

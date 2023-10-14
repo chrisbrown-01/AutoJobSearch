@@ -91,7 +91,7 @@ namespace AutoJobSearchGUI.ViewModels
         public async Task ExecuteQuery()
         {
             // Try to get some performance improvement by doing the initial simple query directly within the SQLite database
-            var result = await _dbContext.ExecuteJobBoardAdvancedQuery(
+            var result = await _dbContext.ExecuteJobListingQueryAsync(
                 JobBoardQueryModel.IsAppliedTo,
                 JobBoardQueryModel.IsInterviewing,
                 JobBoardQueryModel.IsRejected,
@@ -219,13 +219,13 @@ namespace AutoJobSearchGUI.ViewModels
 
         private async Task<List<JobListingModel>> GetFavouriteJobListings() 
         {
-            var jobs = await _dbContext.GetFavouriteJobListings(); 
+            var jobs = await _dbContext.GetFavouriteJobListingsAsync(); 
             return ConvertJobListingsToJobListingModels(jobs);
         }
 
         private async Task<List<JobListingModel>> GetHiddenJobListings()
         {
-            var jobs = await _dbContext.GetHiddenJobListings();
+            var jobs = await _dbContext.GetHiddenJobListingsAsync();
             return ConvertJobListingsToJobListingModels(jobs);
         }
 
@@ -257,7 +257,7 @@ namespace AutoJobSearchGUI.ViewModels
 
         private async Task<List<JobListingModel>> GetAllJobListings()
         {
-            var jobs = await _dbContext.GetAllJobListings();
+            var jobs = await _dbContext.GetAllJobListingsAsync();
             return ConvertJobListingsToJobListingModels(jobs);
         }
     }

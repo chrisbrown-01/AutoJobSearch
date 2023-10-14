@@ -8,29 +8,29 @@ namespace AutoJobSearchGUI.Data
 {
     public interface IDbContext
     {
-        Task DeleteJobSearchProfile(int id);
+        Task DeleteJobSearchProfileAsync(int id);
 
         Task<IEnumerable<JobSearchProfile>> GetAllJobSearchProfilesAsync();
 
-        Task<JobSearchProfile> CreateJobSearchProfile(JobSearchProfile profile);
+        Task<JobSearchProfile> CreateJobSearchProfileAsync(JobSearchProfile profile);
 
-        Task UpdateJobListingBoolProperty(JobListingsBoolField columnName, bool value, int id);
-        Task UpdateJobListingStringProperty(JobListingsStringField columnName, string value, int id);
+        Task UpdateJobListingBoolPropertyAsync(JobListingsBoolField columnName, bool value, int id);
+        Task UpdateJobListingStringPropertyAsync(JobListingsStringField columnName, string value, int id);
 
-        Task UpdateJobSearchProfileStringProperty(JobSearchProfilesStringField columnName, string value, int id);
+        Task UpdateJobSearchProfileStringPropertyAsync(JobSearchProfilesStringField columnName, string value, int id);
 
-        Task<IQueryable<JobListing>> ExecuteJobBoardAdvancedQuery(
+        Task<IQueryable<JobListing>> ExecuteJobListingQueryAsync(
             bool isAppliedTo,
             bool isInterviewing,
             bool isRejected,
             bool isFavourite);
 
-        Task<IEnumerable<JobListing>> GetFavouriteJobListings();
+        Task<IEnumerable<JobListing>> GetFavouriteJobListingsAsync();
 
-        Task<IEnumerable<JobListing>> GetHiddenJobListings();
+        Task<IEnumerable<JobListing>> GetHiddenJobListingsAsync();
 
-        Task<IEnumerable<JobListing>> GetAllJobListings();
+        Task<IEnumerable<JobListing>> GetAllJobListingsAsync();
 
-        Task<JobListing> GetJobListingDetails(int id);
+        Task<JobListing> GetJobListingDetailsByIdAsync(int id);
     }
 }

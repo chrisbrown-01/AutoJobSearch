@@ -68,7 +68,7 @@ namespace AutoJobSearchGUI.ViewModels
             // TODO: how to throw exceptions in avalonia? relaycommands?
             //throw new Exception();
 
-            await _dbContext.CreateJobSearchProfile(new JobSearchProfile());
+            await _dbContext.CreateJobSearchProfileAsync(new JobSearchProfile());
 
             var allProfiles = await _dbContext.GetAllJobSearchProfilesAsync();
 
@@ -85,7 +85,7 @@ namespace AutoJobSearchGUI.ViewModels
         {
             if (SelectedSearchProfile == null || SelectedSearchProfile.Id < 1) return;
 
-            await _dbContext.DeleteJobSearchProfile(SelectedSearchProfile.Id);
+            await _dbContext.DeleteJobSearchProfileAsync(SelectedSearchProfile.Id);
             await RenderDefaultJobSearchView();
 
             await Task.CompletedTask;

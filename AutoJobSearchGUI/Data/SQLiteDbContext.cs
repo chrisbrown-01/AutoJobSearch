@@ -12,64 +12,71 @@ namespace AutoJobSearchGUI.Data
 {
     public class SQLiteDbContext : IDbContext
     {
-        public async Task<JobSearchProfile> CreateJobSearchProfile(JobSearchProfile profile)
+        private readonly SQLiteDb _sqliteDb;
+
+        public SQLiteDbContext()
         {
-            return await SQLiteDb.CreateJobSearchProfile(profile);
+            _sqliteDb = new SQLiteDb(); // TODO: disposing
         }
 
-        public async Task DeleteJobSearchProfile(int id)
+        public async Task<JobSearchProfile> CreateJobSearchProfileAsync(JobSearchProfile profile)
+        {
+            return await _sqliteDb.CreateJobSearchProfileAsync(profile);
+        }
+
+        public async Task DeleteJobSearchProfileAsync(int id)
         {
             // TODO: throw exception inside these methods to see how it reacts
-            await SQLiteDb.DeleteJobSearchProfile(id);
+            await _sqliteDb.DeleteJobSearchProfileAsync(id);
         }
 
-        public async Task<IQueryable<JobListing>> ExecuteJobBoardAdvancedQuery(
+        public async Task<IQueryable<JobListing>> ExecuteJobListingQueryAsync(
             bool isAppliedTo, 
             bool isInterviewing, 
             bool isRejected, 
             bool isFavourite)
         {
-            return await SQLiteDb.ExecuteJobBoardAdvancedQuery(isAppliedTo, isInterviewing, isRejected, isFavourite);
+            return await _sqliteDb.ExecuteJobListingQueryAsync(isAppliedTo, isInterviewing, isRejected, isFavourite);
         }
 
-        public async Task<IEnumerable<JobListing>> GetAllJobListings()
+        public async Task<IEnumerable<JobListing>> GetAllJobListingsAsync()
         {
-            return await SQLiteDb.GetAllJobListings();
+            return await _sqliteDb.GetAllJobListingsAsync();
         }
 
         public async Task<IEnumerable<JobSearchProfile>> GetAllJobSearchProfilesAsync()
         {
-            return await SQLiteDb.GetAllJobSearchProfilesAsync();
+            return await _sqliteDb.GetAllJobSearchProfilesAsync();
         }
 
-        public async Task<IEnumerable<JobListing>> GetFavouriteJobListings()
+        public async Task<IEnumerable<JobListing>> GetFavouriteJobListingsAsync()
         {
-            return await SQLiteDb.GetFavouriteJobListings();
+            return await _sqliteDb.GetFavouriteJobListingsAsync();
         }
 
-        public async Task<IEnumerable<JobListing>> GetHiddenJobListings()
+        public async Task<IEnumerable<JobListing>> GetHiddenJobListingsAsync()
         {
-            return await SQLiteDb.GetHiddenJobListings();
+            return await _sqliteDb.GetHiddenJobListingsAsync();
         }
 
-        public async Task<JobListing> GetJobListingDetails(int id)
+        public async Task<JobListing> GetJobListingDetailsByIdAsync(int id) 
         {
-            return await SQLiteDb.GetJobListingDetails(id);
+            return await _sqliteDb.GetJobListingDetailsByIdAsync(id);
         }
 
-        public async Task UpdateJobListingBoolProperty(JobListingsBoolField columnName, bool value, int id)
+        public async Task UpdateJobListingBoolPropertyAsync(JobListingsBoolField columnName, bool value, int id)
         {
-            await SQLiteDb.UpdateJobListingBoolProperty(columnName, value, id);
+            await _sqliteDb.UpdateJobListingBoolPropertyAsync(columnName, value, id);
         }
 
-        public async Task UpdateJobListingStringProperty(JobListingsStringField columnName, string value, int id)
+        public async Task UpdateJobListingStringPropertyAsync(JobListingsStringField columnName, string value, int id)
         {
-            await SQLiteDb.UpdateJobListingStringProperty(columnName, value, id);
+            await _sqliteDb.UpdateJobListingStringPropertyAsync(columnName, value, id);
         }
 
-        public async Task UpdateJobSearchProfileStringProperty(JobSearchProfilesStringField columnName, string value, int id)
+        public async Task UpdateJobSearchProfileStringPropertyAsync(JobSearchProfilesStringField columnName, string value, int id)
         {
-            await SQLiteDb.UpdateJobSearchProfileStringProperty(columnName, value, id);
+            await _sqliteDb.UpdateJobSearchProfileStringPropertyAsync(columnName, value, id);
         }
     }
 }

@@ -7,34 +7,37 @@ namespace AutoJobSearchJobScraper.Data
 {
     internal class SQLiteDbContext : IDbContext
     {
-        private readonly ILogger<SQLiteDbContext> _logger;   
+        private readonly ILogger<SQLiteDbContext> _logger;
+        private readonly SQLiteDb _sqliteDb;
+
         public SQLiteDbContext(ILogger<SQLiteDbContext> logger)
         {
             _logger = logger;
+            _sqliteDb = new SQLiteDb(); // TODO: disposing
         }
 
         public async Task<IEnumerable<string>> GetAllApplicationLinks()
         {
             _logger.LogInformation("Getting all application links.");
-            return await SQLiteDb.GetAllApplicationLinks();
+            return await _sqliteDb.GetAllApplicationLinksAsync();
         }
 
         public async Task<IEnumerable<JobSearchProfile>> GetAllJobSearchProfilesAsync()
         {
             _logger.LogInformation("Getting all job search profiles.");
-            return await SQLiteDb.GetAllJobSearchProfilesAsync();
+            return await _sqliteDb.GetAllJobSearchProfilesAsync();
         }
 
         public async Task<JobSearchProfile?> GetJobSearchProfileByIdAsync(int id)
         {
             _logger.LogInformation("Getting job search profile for ID {@id}", id);
-            return await SQLiteDb.GetJobSearchProfileByIdAsync(id);
+            return await _sqliteDb.GetJobSearchProfileByIdAsync(id);
         }
 
         public async Task SaveJobListings(IEnumerable<JobListing> jobListings)
         {
             _logger.LogInformation("Saving {@jobListings.Count} new job listings.", jobListings.Count());
-            await SQLiteDb.SaveJobListings(jobListings);
+            await _sqliteDb.SaveJobListingsAsync(jobListings);
         }
     }
 }
