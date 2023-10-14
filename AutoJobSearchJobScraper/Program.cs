@@ -28,17 +28,21 @@ namespace AutoJobSearchJobScraper
                 .AddScoped<JobListingUtility>()
                 .BuildServiceProvider();
 
-            Log.Information("Starting application.");
+            Log.Information("Starting job scraper application.");
             RunProgram(serviceProvider, 38).Wait(); // TODO: remove hardcoding
             Log.CloseAndFlush();
 
             //if (int.TryParse(args[0], out int jobSearchProfileId))
             //{
+            //    Log.Information("Starting application with {@jobSearchProfileId} argument.", jobSearchProfileId);
             //    RunProgram(serviceProvider, jobSearchProfileId).Wait();
+            //    Log.Information("Job scraper application finished executing.");
             //}
             //else
             //{
+            //    Log.Information("Starting application with {@args.Count} string arguments.", args.Count());
             //    RunProgram(serviceProvider, args.AsEnumerable()).Wait(); // TODO: find all manual declaration of List conversions and convert to this
+            //    Log.Information("Job scraper application finished executing.");
             //}
 
         }
@@ -87,17 +91,17 @@ namespace AutoJobSearchJobScraper
             await db.SaveJobListings(scoredJobs);
         }
 
-        //private static async Task RunProgram(IServiceProvider serviceProvider, IEnumerable<string> searchTerms)
-        //{
-        //    var db = new SQLiteDbContext();
-        //    var scraper = new SeleniumWebScraper();
-        //    var utility = new JobListingUtility();
+        private static async Task RunProgram(IServiceProvider serviceProvider, IEnumerable<string> searchTerms)
+        {
+            var db = serviceProvider.GetRequiredService<IDbContext>();
+            var scraper = serviceProvider.GetRequiredService<IWebScraper>();
+            var utility = serviceProvider.GetRequiredService<JobListingUtility>();
 
-        //    var existingLinks = await db.GetAllApplicationLinks();
-        //    var scrapedJobs = await scraper.ScrapeJobs(searchTerms);
-        //    var cleanedJobs = await utility.FilterDuplicates(scrapedJobs, existingLinks.ToHashSet());
+            var existingLinks = await db.GetAllApplicationLinks();
+            var scrapedJobs = await scraper.ScrapeJobs(searchTerms);
+            var cleanedJobs = await utility.FilterDuplicates(scrapedJobs, existingLinks.ToHashSet());
 
-        //    await db.SaveJobListings(cleanedJobs);
-        //}
+            await db.SaveJobListings(cleanedJobs);
+        }
     }
 }
