@@ -87,7 +87,7 @@ namespace AutoJobSearchJobScraper.Utility
 
             var jobList = jobListingsUnscored.ToList();
 
-            // TODO: test speed improvements over single threaded method
+            // TODO: test speed improvements over single threaded method (use 500 jobs)
             Parallel.ForEach(jobList, job =>
             {
                 foreach (var keyword in keywordsPositive)

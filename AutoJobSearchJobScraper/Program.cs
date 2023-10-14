@@ -29,8 +29,8 @@ namespace AutoJobSearchJobScraper
                 .BuildServiceProvider();
 
             Log.Information("Starting job scraper application.");
-            //RunProgram(serviceProvider, 38).Wait(); // TODO: remove hardcoding
-            TestConcurrencyIssues(serviceProvider).Wait();
+            RunProgram(serviceProvider, 38).Wait(); // TODO: remove hardcoding
+            //TestConcurrencyIssues(serviceProvider).Wait();
             Log.CloseAndFlush();
 
             //if (int.TryParse(args[0], out int jobSearchProfileId))
@@ -72,15 +72,15 @@ namespace AutoJobSearchJobScraper
             var jobSearchProfile = await db.GetJobSearchProfileByIdAsync(jobSearchProfileId) ?? throw new NullReferenceException(); // TODO: custom exception
 
             // TODO: delete
-            //var scrapedJobs = await scraper.ScrapeJobs(new List<string>() { "programming jobs toronto" }); 
+            //var scrapedJobs = await scraper.ScrapeJobsAsync(new List<string>() { "programming jobs waterloo" }); 
             var scrapedJobs = await scraper.ScrapeJobsAsync(StringHelpers.ConvertCommaSeperatedStringsToIEnumerable(jobSearchProfile.Searches));
 
             var existingLinks = await db.GetAllApplicationLinksAsync();
 
-            var cleanedJobs = await utility.FilterDuplicatesAsync(scrapedJobs, existingLinks.ToHashSet());
+            var filteredJobs = await utility.FilterDuplicatesAsync(scrapedJobs, existingLinks.ToHashSet());
 
             var scoredJobs = await utility.ApplyScoringsAsync(
-                cleanedJobs,
+                filteredJobs,
                 StringHelpers.ConvertCommaSeperatedStringsToIEnumerable(jobSearchProfile.KeywordsPositive),
                 StringHelpers.ConvertCommaSeperatedStringsToIEnumerable(jobSearchProfile.KeywordsNegative),
                 StringHelpers.ConvertCommaSeperatedStringsToIEnumerable(jobSearchProfile.SentimentsPositive),
@@ -97,9 +97,9 @@ namespace AutoJobSearchJobScraper
 
             var existingLinks = await db.GetAllApplicationLinksAsync();
             var scrapedJobs = await scraper.ScrapeJobsAsync(searchTerms);
-            var cleanedJobs = await utility.FilterDuplicatesAsync(scrapedJobs, existingLinks.ToHashSet());
+            var filteredJobs = await utility.FilterDuplicatesAsync(scrapedJobs, existingLinks.ToHashSet());
 
-            await db.SaveJobListingsAsync(cleanedJobs);
+            await db.SaveJobListingsAsync(filteredJobs);
         }
 
         private static void ConfigureLogger()
