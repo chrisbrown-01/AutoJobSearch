@@ -115,37 +115,43 @@ namespace AutoJobSearchJobScraper.WebScraper
 
             foreach (var li in liElements)
             {
-                var listing = new JobListing();
-                listing.SearchTerm = searchTerm;
-
-                var links = li.Descendants("a").Where(a => a.InnerText.Contains("apply", StringComparison.OrdinalIgnoreCase));
-
-                // TODO: refactor into methods
-                foreach (var link in links)
+                var listing = new JobListing
                 {
-                    var applicationLink = new ApplicationLink
-                    {
-                        Link_RawHTML = link.OuterHtml
-                    };
+                    SearchTerm = searchTerm
+                };
 
-                    MatchCollection matches = Regex.Matches(link.OuterHtml, REGEX_URL_PATTERN);
+                // Get all <a> html elements that contain the word "apply". These will contain the direct web links to the job application.
+                var anchorElements = li.Descendants("a").Where(a => a.InnerText.Contains("apply", StringComparison.OrdinalIgnoreCase));
 
-                    if (matches.FirstOrDefault() != null) // TODO: exception handling?
+                if (!anchorElements.Any()) continue;
+
+                var existingLinks = new HashSet<string>();
+
+                foreach (var anchor in anchorElements)
+                {
+                    MatchCollection hyperlinks = Regex.Matches(anchor.OuterHtml, REGEX_URL_PATTERN);
+                    
+                    if (!hyperlinks.Any()) continue; // If no weblinks found, skip and continue to the next link.
+
+                    var hyperlink = hyperlinks.First().Value;
+
+                    // Only add application link to object if it doesn't already exist.
+                    if (!existingLinks.Contains(hyperlink))
                     {
-                        applicationLink.Link = matches.First().Value;
+                        existingLinks.Add(hyperlink);
+
+                        var applicationLink = new ApplicationLink
+                        {
+                            Link_RawHTML = anchor.OuterHtml,
+                            Link = hyperlink
+                        };
+
+                        listing.ApplicationLinks.Add(applicationLink);                      
                     }
-
-                    // TODO: test this, create hashset instead?
-                    // Prevent duplicate links from being saved to the object.
-                    if (listing.ApplicationLinks.Where(x => x.Link.Equals(applicationLink.Link)).Any())
-                        continue;
-
-                    listing.ApplicationLinks.Add(applicationLink);
                 }
 
                 listing.Description_Raw = WebUtility.HtmlDecode(li.InnerText);
 
-                // TODO: extract to method
                 var startingIndex = listing.Description_Raw.IndexOf(STARTING_INDEX_KEY);
                 var endingIndex = listing.Description_Raw.IndexOf(ENDING_INDEX_KEY);
 
