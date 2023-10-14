@@ -30,6 +30,7 @@ namespace AutoJobSearchJobScraper
 
             Log.Information("Starting application.");
             RunProgram(serviceProvider, 38).Wait(); // TODO: remove hardcoding
+            Log.CloseAndFlush();
 
             //if (int.TryParse(args[0], out int jobSearchProfileId))
             //{
@@ -52,11 +53,12 @@ namespace AutoJobSearchJobScraper
                                 .WriteTo.File(new JsonFormatter(), "JobScraperLogFile.json")
                                 .CreateLogger();
 
-            //Log.Logger = new LoggerConfiguration()
-            //                    .MinimumLevel.Debug()
-            //                    .WriteTo.Console(outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {SourceContext} {Message:lj}{NewLine}{Exception}")
-            //                    .WriteTo.File("JobScraperLogFile.json", outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {SourceContext} {Message:lj}{NewLine}{Exception}")
-            //                    .CreateLogger();
+            // Attach event handler for unhandled exceptions
+            AppDomain.CurrentDomain.UnhandledException += (sender, eventArgs) =>
+            {
+                var exception = (Exception)eventArgs.ExceptionObject;
+                Log.Fatal(exception, "An unhandled exception occurred.");
+            };
         }
 
         private static async Task RunProgram(IServiceProvider serviceProvider, int jobSearchProfileId)
@@ -64,9 +66,9 @@ namespace AutoJobSearchJobScraper
             var db = serviceProvider.GetRequiredService<IDbContext>();
             var scraper = serviceProvider.GetRequiredService<IWebScraper>();
             var utility = serviceProvider.GetRequiredService<JobListingUtility>();
+            var logger = serviceProvider.GetService<Microsoft.Extensions.Logging.ILogger>();
 
-            var jobSearchProfile = await db.GetJobSearchProfileByIdAsync(jobSearchProfileId);
-            if (jobSearchProfile == null) throw new NullReferenceException(); // TODO: custom exception, see if serilog can log without having variable declared for logger in this method
+            var jobSearchProfile = await db.GetJobSearchProfileByIdAsync(jobSearchProfileId) ?? throw new NullReferenceException(); 
 
             var scrapedJobs = await scraper.ScrapeJobs(StringHelpers.ConvertCommaSeperatedStringsToIEnumerable(jobSearchProfile.Searches));
 

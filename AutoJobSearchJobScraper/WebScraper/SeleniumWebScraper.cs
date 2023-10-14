@@ -47,8 +47,7 @@ namespace AutoJobSearchJobScraper.WebScraper
         // TODO: surround in try-catch so that results are still saved even if captcha kills selenium
         public async Task<List<JobListing>> ScrapeJobs(IEnumerable<string> searchTerms) 
         {
-            //Log.Debug("testing logger in selenium web scraper");
-            _logger.LogDebug("test");
+            _logger.LogInformation("Starting ScrapeJobs method. Number of members in searchTerms argument: {@searchTerms.Count}", searchTerms.Count());
 
             var jobListings = new List<JobListing>();
             var doc = new HtmlDocument();

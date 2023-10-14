@@ -110,7 +110,7 @@ namespace AutoJobSearchConsoleApp
                 var sql = "SELECT * FROM ApplicationLinks;";
                 //var sql = "SELECT * FROM ApplicationLinks WHERE JobListingId = your_specific_id;";
 
-                var applicationLinks = await connection.QueryAsync<ApplicationLink>(sql);
+                var applicationLinks = await connection.QueryAsync<ApplicationLink>(sql); // TODO: testing if there are no records in db
 
                 Console.WriteLine();
             }
@@ -127,12 +127,12 @@ namespace AutoJobSearchConsoleApp
                 int id = 50;
                 var sqlQuery = "SELECT * FROM JobListings WHERE Id = @Id;";
 
-                var jobListing = await connection.QuerySingleAsync<JobListing>(sqlQuery, new { Id = id });
+                var jobListing = await connection.QuerySingleOrDefaultAsync<JobListing>(sqlQuery, new { Id = id });
 
                 if (jobListing == null) return;
 
                 var applicationLinksQuery = "SELECT Id, JobListingId, Link FROM ApplicationLinks Where JobListingId = @Id;";
-                var applicationLinks = await connection.QueryAsync<ApplicationLink>(applicationLinksQuery, new { Id = id });
+                var applicationLinks = await connection.QueryAsync<ApplicationLink>(applicationLinksQuery, new { Id = id }); 
 
                 foreach(var applicationLink in applicationLinks)
                 {

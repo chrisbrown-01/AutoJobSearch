@@ -30,7 +30,7 @@ namespace AutoJobSearchShared
 
                 const string sql = "SELECT * FROM JobSearchProfiles WHERE Id = @Id;";
 
-                profile = await connection.QuerySingleAsync<JobSearchProfile>(sql, new { Id = id });
+                profile = await connection.QuerySingleOrDefaultAsync<JobSearchProfile>(sql, new { Id = id });
             }
 
             return profile;
@@ -46,7 +46,7 @@ namespace AutoJobSearchShared
 
                 const string sql = "SELECT Link FROM ApplicationLinks;";
 
-                applicationLinks = await connection.QueryAsync<string>(sql);
+                applicationLinks = await connection.QueryAsync<string>(sql); // TODO: testing if no records exist
             }
 
             return applicationLinks;
@@ -130,7 +130,7 @@ namespace AutoJobSearchShared
 
                 const string sql = "SELECT * FROM JobSearchProfiles";
 
-                profiles = await connection.QueryAsync<JobSearchProfile>(sql);
+                profiles = await connection.QueryAsync<JobSearchProfile>(sql); // TODO: testing if no records in table
             }
 
             return profiles;
@@ -138,7 +138,7 @@ namespace AutoJobSearchShared
 
         public static async Task<JobSearchProfile> CreateJobSearchProfile(JobSearchProfile profile)
         {
-            var newProfile = new JobSearchProfile();
+            JobSearchProfile? newProfile;
 
             Debug.WriteLine($"Creating new job search profile"); // TODO: proper logging
 
@@ -152,12 +152,7 @@ namespace AutoJobSearchShared
             VALUES (@ProfileName, @Searches, @KeywordsPositive, @KeywordsNegative, @SentimentsPositive, @SentimentsNegative);
             SELECT * FROM JobSearchProfiles WHERE Id = last_insert_rowid();";
 
-                var result = await connection.QuerySingleAsync<JobSearchProfile>(sql, profile);
-
-                if(result != null)
-                {
-                    newProfile = result;
-                }
+                newProfile = await connection.QuerySingleAsync<JobSearchProfile>(sql, profile);
             }
 
             return newProfile;
@@ -194,7 +189,8 @@ namespace AutoJobSearchShared
                  AND IsFavourite = @IsFavourite
                  AND IsHidden = False;";
 
-                jobListings = await connection.QueryAsync<Models.JobListing>(
+                // TODO: testing if no records exist
+                jobListings = await connection.QueryAsync<Models.JobListing>( 
                     sqlQuery,
                     new
                     {
@@ -232,7 +228,7 @@ namespace AutoJobSearchShared
                          FROM JobListings
                          WHERE IsHidden = True
                         ORDER BY Id DESC";
-                var jobListingsQuery = await connection.QueryAsync<Models.JobListing>(sqlQuery);
+                var jobListingsQuery = await connection.QueryAsync<Models.JobListing>(sqlQuery); // TODO: testing if no records in db
                 jobListings = jobListingsQuery.ToList(); // TODO: improve, perform null checking?
             }
 
@@ -263,7 +259,7 @@ namespace AutoJobSearchShared
                          FROM JobListings
                          WHERE IsFavourite = True
                         ORDER BY Id DESC";
-                var jobListingsQuery = await connection.QueryAsync<Models.JobListing>(sqlQuery);
+                var jobListingsQuery = await connection.QueryAsync<Models.JobListing>(sqlQuery); // TODO: testing for no records in db
                 jobListings = jobListingsQuery.ToList(); // TODO: improve, perform null checking?
             }
 
@@ -295,7 +291,7 @@ namespace AutoJobSearchShared
                  WHERE IsHidden = False
                  ORDER BY Id DESC";
 
-                var jobListingsQuery = await connection.QueryAsync<Models.JobListing>(sqlQuery);
+                var jobListingsQuery = await connection.QueryAsync<Models.JobListing>(sqlQuery); // TODO: testing for no records in db
                 jobListings = jobListingsQuery.ToList(); // TODO: improve, perform null checking?
             }
 
@@ -316,7 +312,7 @@ namespace AutoJobSearchShared
                 var jobListingTableResult = await connection.QuerySingleAsync<Models.JobListing>(jobListingTableQuery, new { Id = id });
 
                 var applicationLinksTableQuery = "SELECT Link FROM ApplicationLinks Where JobListingId = @Id;";
-                var applicationLinksTableResult = await connection.QueryAsync<string>(applicationLinksTableQuery, new { Id = id });
+                var applicationLinksTableResult = await connection.QueryAsync<string>(applicationLinksTableQuery, new { Id = id }); // TODO: testing if no records exist
 
                 jobListing.Description = jobListingTableResult.Description;
                 jobListing.Notes = jobListingTableResult.Notes;
