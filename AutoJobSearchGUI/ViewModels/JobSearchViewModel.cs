@@ -4,6 +4,7 @@ using AutoJobSearchShared.EventAggregator;
 using AutoJobSearchShared.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -38,11 +39,12 @@ namespace AutoJobSearchGUI.ViewModels
             _dbContext = dbContext;
             _eventAggregator = eventAggregator;
 
-            Task.Run(RenderDefaultJobSearchView);
+            RenderDefaultJobSearchView().Wait();
         }
 
         public void ExecuteJobSearch()
         {
+            Log.Information("Executing job search for job search profile {@id}", SelectedSearchProfile.Id);
             _eventAggregator.OnStartConsoleAppEvent(SelectedSearchProfile.Id);
         }
 

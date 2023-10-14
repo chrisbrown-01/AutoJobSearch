@@ -2,6 +2,9 @@
 using AutoJobSearchGUI.Models;
 using AutoJobSearchShared.EventAggregator;
 using CommunityToolkit.Mvvm.ComponentModel;
+using Serilog;
+using Serilog.Formatting.Json;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -20,8 +23,26 @@ namespace AutoJobSearchGUI.ViewModels
         [ObservableProperty]
         private ViewModelBase _contentViewModel;
 
+        private void ConfigureSerilog()
+        {
+            Log.Logger = new LoggerConfiguration()
+                    .MinimumLevel.Information()
+                    .WriteTo.Console(new JsonFormatter())
+                    .WriteTo.File(new JsonFormatter(), "AutoJobSearchGuiLogFile.json", rollingInterval: RollingInterval.Month)
+                    .CreateLogger();
+
+            // Attach event handler for unhandled exceptions
+            AppDomain.CurrentDomain.UnhandledException += (sender, eventArgs) =>
+            {
+                var exception = (Exception)eventArgs.ExceptionObject;
+                Log.Fatal(exception, "An unhandled exception occurred.");
+            };
+        }
+
         public MainWindowViewModel()
         {
+            ConfigureSerilog();
+
             eventAggregator = new EventAggregator();
             dbContext = new DbContext();
             jobBoardViewModel = new JobBoardViewModel(dbContext);

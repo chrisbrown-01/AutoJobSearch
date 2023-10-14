@@ -49,10 +49,8 @@ namespace AutoJobSearchJobScraper
 
         private static void ConfigureLogger()
         {
-            // TODO: change minimum log level to info
-
             Log.Logger = new LoggerConfiguration()
-                                .MinimumLevel.Debug()
+                                .MinimumLevel.Information()
                                 .WriteTo.Console(new JsonFormatter())
                                 .WriteTo.File(new JsonFormatter(), "JobScraperLogFile.json")
                                 .CreateLogger();

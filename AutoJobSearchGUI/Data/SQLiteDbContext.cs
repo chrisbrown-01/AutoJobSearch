@@ -1,6 +1,7 @@
 ﻿using AutoJobSearchShared;
 using AutoJobSearchShared.Enums;
 using AutoJobSearchShared.Models;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +19,7 @@ namespace AutoJobSearchGUI.Data
 
         public async Task DeleteJobSearchProfile(int id)
         {
+            // TODO: throw exception inside these methods to see how it reacts
             await SQLiteDb.DeleteJobSearchProfile(id);
         }
 

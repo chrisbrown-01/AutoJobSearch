@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Serilog;
 
 namespace AutoJobSearchGUI.Data
 {
@@ -16,6 +17,7 @@ namespace AutoJobSearchGUI.Data
 
         public DbContext()
         {
+            Log.Information("Creating new DbContext object using SQLite provider.");
             _dbContext = new SQLiteDbContext();
 
             JobListingModel.BoolFieldChanged += async (sender, e) =>
@@ -36,12 +38,12 @@ namespace AutoJobSearchGUI.Data
 
         public async Task UpdateJobSearchProfileStringProperty(JobSearchProfilesStringField columnName, string value, int id)
         {
-            // TODO: proper logging
             await _dbContext.UpdateJobSearchProfileStringProperty(columnName, value, id);
         }
 
         public async Task<JobSearchProfile> CreateJobSearchProfile(JobSearchProfile profile)
         {
+            Log.Information("Creating new job search profile in database.");
             return await _dbContext.CreateJobSearchProfile(profile);
         }
 
@@ -51,49 +53,57 @@ namespace AutoJobSearchGUI.Data
             bool isRejected,
             bool isFavourite)
         {
-            // TODO: proper logging
+            Log.Information("Executing job board advanced query against database.");
             return await _dbContext.ExecuteJobBoardAdvancedQuery(isAppliedTo, isInterviewing, isRejected, isFavourite);
         }
 
         public async Task<IEnumerable<JobListing>> GetAllJobListings()
         {
+            Log.Information("Getting all job listings from database.");
             return await _dbContext.GetAllJobListings();
         }
 
         public async Task<IEnumerable<JobSearchProfile>> GetAllJobSearchProfilesAsync()
         {
+            Log.Information("Getting all job search profiles from database.");
             return await _dbContext.GetAllJobSearchProfilesAsync();
         }
 
         public async Task<IEnumerable<JobListing>> GetFavouriteJobListings()
         {
+            Log.Information("Getting favourite job listings from database.");
             return await _dbContext.GetFavouriteJobListings();
         }
 
         public async Task<IEnumerable<JobListing>> GetHiddenJobListings()
         {
+            Log.Information("Getting hidden job listings from database.");
             return await _dbContext.GetHiddenJobListings();
         }
 
         public async Task<JobListing> GetJobListingDetails(int id)
         {
+            Log.Information("Getting job listing details from database for {@id}", id);
             return await _dbContext.GetJobListingDetails(id);
         }
 
         public async Task UpdateJobListingBoolProperty(JobListingsBoolField columnName, bool value, int id)
         {
-            // TODO: proper logging
+            Log.Information(
+                "Updating {@columnName} field for job listing {@id} to {@value}.",
+                columnName, id, value);
+
             await _dbContext.UpdateJobListingBoolProperty(columnName, value, id);
         }
 
         public async Task UpdateJobListingStringProperty(JobListingsStringField columnName, string value, int id)
         {
-            // TODO: proper logging
             await _dbContext.UpdateJobListingStringProperty(columnName, value, id);
         }
 
         public async Task DeleteJobSearchProfile(int id)
         {
+            Log.Information("Deleting job search profile for {@id}", id, this);
             await _dbContext.DeleteJobSearchProfile(id);
         }
     }

@@ -9,6 +9,7 @@ using System.Text;
 namespace AutoJobSearchShared
 {
     public class SQLiteDb // TODO: extract interface
+        // TODO: connection pooling/sharing
     {
         // TODO: implement logger, remove statics?
 
