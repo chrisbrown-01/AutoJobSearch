@@ -99,10 +99,10 @@ namespace AutoJobSearchJobScraper.WebScraper
                         jobListings.AddRange(ExtractJobListingsFromLiElements(liElements, searchTerm));
                     }
                 }
-                catch (Exception ex) // TODO: try and see what exceptions would actually get thrown then define them
+                catch (Exception ex) // TODO: try and see what exceptions would actually get thrown then handle them
                 {
                     _logger.LogError("Exception thrown during job scraping. {@Exception}", ex);
-                    throw; // TODO: handle
+                    throw; 
                 }
             }
 

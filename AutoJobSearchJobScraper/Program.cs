@@ -69,7 +69,8 @@ namespace AutoJobSearchJobScraper
             var scraper = serviceProvider.GetRequiredService<IWebScraper>();
             var utility = serviceProvider.GetRequiredService<JobListingUtility>();
 
-            var jobSearchProfile = await db.GetJobSearchProfileByIdAsync(jobSearchProfileId) ?? throw new NullReferenceException(); // TODO: custom exception
+            var jobSearchProfile = await db.GetJobSearchProfileByIdAsync(jobSearchProfileId) ?? 
+                throw new NullReferenceException($"Job search profile ID {jobSearchProfileId} not found in database."); 
 
             // TODO: delete
             //var scrapedJobs = await scraper.ScrapeJobsAsync(new List<string>() { "programming jobs waterloo" }); 
