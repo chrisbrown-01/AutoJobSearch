@@ -66,10 +66,11 @@ namespace AutoJobSearchJobScraper
             var db = serviceProvider.GetRequiredService<IDbContext>();
             var scraper = serviceProvider.GetRequiredService<IWebScraper>();
             var utility = serviceProvider.GetRequiredService<JobListingUtility>();
-            var logger = serviceProvider.GetService<Microsoft.Extensions.Logging.ILogger>();
 
-            var jobSearchProfile = await db.GetJobSearchProfileByIdAsync(jobSearchProfileId) ?? throw new NullReferenceException(); 
+            var jobSearchProfile = await db.GetJobSearchProfileByIdAsync(jobSearchProfileId) ?? throw new NullReferenceException(); // TODO: custom exception
 
+            // TODO: delete
+            //var scrapedJobs = await scraper.ScrapeJobs(new List<string>() { "programming jobs toronto" }); 
             var scrapedJobs = await scraper.ScrapeJobs(StringHelpers.ConvertCommaSeperatedStringsToIEnumerable(jobSearchProfile.Searches));
 
             var existingLinks = await db.GetAllApplicationLinks();

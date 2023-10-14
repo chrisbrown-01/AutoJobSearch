@@ -11,30 +11,29 @@ namespace AutoJobSearchJobScraper.Data
         public SQLiteDbContext(ILogger<SQLiteDbContext> logger)
         {
             _logger = logger;
-            _logger.LogDebug("Initializing SQLiteDbContext logger.");
         }
 
         public async Task<IEnumerable<string>> GetAllApplicationLinks()
         {
-            //Log.Debug("testing logger in SQLite Db get all application links");
+            _logger.LogInformation("Getting all application links.");
             return await SQLiteDb.GetAllApplicationLinks();
         }
 
         public async Task<IEnumerable<JobSearchProfile>> GetAllJobSearchProfilesAsync()
         {
-            //Log.Debug("testing logger in SQLite Db get all job search profiles");
+            _logger.LogInformation("Getting all job search profiles.");
             return await SQLiteDb.GetAllJobSearchProfilesAsync();
         }
 
         public async Task<JobSearchProfile?> GetJobSearchProfileByIdAsync(int id)
         {
-            //Log.Debug("testing logger in SQLite Db get job search profile by id");
+            _logger.LogInformation("Getting job search profile for ID {@id}", id);
             return await SQLiteDb.GetJobSearchProfileByIdAsync(id);
         }
 
         public async Task SaveJobListings(IEnumerable<JobListing> jobListings)
         {
-            //Log.Debug("testing logger in SQLite Db save job listings");
+            _logger.LogInformation("Saving {@jobListings.Count} new job listings.", jobListings.Count());
             await SQLiteDb.SaveJobListings(jobListings);
         }
     }

@@ -29,7 +29,6 @@ namespace AutoJobSearchJobScraper.WebScraper
         public SeleniumWebScraper(ILogger<SeleniumWebScraper> logger)
         {
             _logger = logger;
-            _logger.LogDebug("Initializing SeleniumWebScraper logger.");
 
             var builder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
@@ -38,16 +37,16 @@ namespace AutoJobSearchJobScraper.WebScraper
             var config = builder.Build();
 
             MAX_PAGE_INDEX = config.GetValue<int>("MAX_PAGE_INDEX");
-            if (MAX_PAGE_INDEX < 1) throw new ArgumentException(); // TODO: custom arguments
+            if (MAX_PAGE_INDEX < 1) throw new ArgumentException($"MAX_PAGE_INDEX must be greater than 0. Current value is {MAX_PAGE_INDEX}."); 
 
-            STARTING_INDEX_KEY = config.GetValue<string>("STARTING_INDEX_KEY") ?? throw new NullReferenceException();
+            STARTING_INDEX_KEY = config.GetValue<string>("STARTING_INDEX_KEY") ?? throw new NullReferenceException(); // TODO: custom exception for json config file arguments
             ENDING_INDEX_KEY = config.GetValue<string>("ENDING_INDEX_KEY") ?? throw new NullReferenceException();
         }
 
         // TODO: surround in try-catch so that results are still saved even if captcha kills selenium
         public async Task<List<JobListing>> ScrapeJobs(IEnumerable<string> searchTerms) 
         {
-            _logger.LogInformation("Starting ScrapeJobs method. Number of members in searchTerms argument: {@searchTerms.Count}", searchTerms.Count());
+            _logger.LogInformation("Begin scraping jobs. Number of members in searchTerms argument: {@searchTerms.Count}", searchTerms.Count());
 
             var jobListings = new List<JobListing>();
             var doc = new HtmlDocument();
@@ -99,6 +98,8 @@ namespace AutoJobSearchJobScraper.WebScraper
             }
 
             await Task.CompletedTask;
+
+            _logger.LogInformation("Finished scraping {@jobListings.Count} jobs.", jobListings.Count);
             return jobListings;
         }
 
@@ -157,7 +158,17 @@ namespace AutoJobSearchJobScraper.WebScraper
                     }
                     catch
                     {
-                        Console.WriteLine("Substring error"); // TODO: implement logger and replace
+                        _logger.LogError("Error extracting Description from Description_Raw. " +
+                            "Variable values: " +
+                            "{@startingIndex}, " +
+                            "{@endingIndex}, " +
+                            "@{STARTING_INDEX_KEY}, " +
+                            "@{STARTING_INDEX_KEY.Length}",
+                            startingIndex,
+                            endingIndex,
+                            STARTING_INDEX_KEY,
+                            STARTING_INDEX_KEY.Length);
+
                         listing.Description = StringHelpers.AddNewLinesToMisformedString(listing.Description_Raw); 
                     }
                 }

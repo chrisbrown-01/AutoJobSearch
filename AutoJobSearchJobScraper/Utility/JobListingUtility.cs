@@ -16,12 +16,17 @@ namespace AutoJobSearchJobScraper.Utility
         public JobListingUtility(ILogger<JobListingUtility> logger)
         {
             _logger = logger;
-            _logger.LogDebug("Initializing JobListingUtility logger.");
         }
 
         // TODO: create unit test project
         public async Task<List<JobListing>> FilterDuplicates(IEnumerable<JobListing> jobListingsPossibleDuplicates, HashSet<string> existingApplicationLinks)
         {
+            _logger.LogInformation("Filtering duplicate job listings. " +
+                                   "{@jobListingsPossibleDuplicates.Count}, " +
+                                   "{@existingApplicationLinks.Count}", 
+                                    jobListingsPossibleDuplicates.Count(),
+                                    existingApplicationLinks.Count);
+
             var cleanedJobListings = jobListingsPossibleDuplicates.ToList();
 
             foreach(var jobListing in jobListingsPossibleDuplicates)
@@ -47,6 +52,12 @@ namespace AutoJobSearchJobScraper.Utility
             }
 
             await Task.CompletedTask;
+
+            _logger.LogInformation(
+                "Completed filtering for duplicate job listings. " +
+                "Returning {@cleanedJobListings.Count} unique job listings.", 
+                cleanedJobListings.Count);
+
             return cleanedJobListings;
         }
 
@@ -57,6 +68,18 @@ namespace AutoJobSearchJobScraper.Utility
             IEnumerable<string> sentimentsPositive,
             IEnumerable<string> sentimentsNegative) // TODO: keep as List return type?
         {
+            _logger.LogInformation("Applying scorings to job listings. " +
+                              "{@jobListingsUnscored.Count}, " +
+                              "{@keywordsPositive.Count}, " +
+                              "{@keywordsNegative.Count}, " +
+                              "{@sentimentsPositive.Count}, " +
+                              "{@sentimentsNegative.Count}",
+                              jobListingsUnscored.Count(),
+                              keywordsPositive.Count(),
+                              keywordsNegative.Count(),
+                              sentimentsPositive.Count(),
+                              sentimentsNegative.Count());
+
             sentimentsPositive = sentimentsPositive.Select(s => s.ToLower());
             sentimentsNegative = sentimentsNegative.Select(s => s.ToLower());
 
