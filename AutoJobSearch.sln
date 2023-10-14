@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoJobSearchShared", "Auto
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoJobSearchGUI", "AutoJobSearchGUI\AutoJobSearchGUI.csproj", "{1D65CD8B-1FC0-4533-90CF-B7E217B1082D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoJobSearchJobScraper", "AutoJobSearchJobScraper\AutoJobSearchJobScraper.csproj", "{1B582340-E427-4E80-829B-3F0565742D9E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoJobSearchJobScraper", "AutoJobSearchJobScraper\AutoJobSearchJobScraper.csproj", "{1B582340-E427-4E80-829B-3F0565742D9E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "testToDelete", "testToDelete\testToDelete.csproj", "{7695C2FB-808E-4919-A3B8-28EC5C25323F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{1B582340-E427-4E80-829B-3F0565742D9E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1B582340-E427-4E80-829B-3F0565742D9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1B582340-E427-4E80-829B-3F0565742D9E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7695C2FB-808E-4919-A3B8-28EC5C25323F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7695C2FB-808E-4919-A3B8-28EC5C25323F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7695C2FB-808E-4919-A3B8-28EC5C25323F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7695C2FB-808E-4919-A3B8-28EC5C25323F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

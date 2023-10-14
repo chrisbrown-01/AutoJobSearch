@@ -87,7 +87,6 @@ namespace AutoJobSearchJobScraper.Utility
 
             var jobList = jobListingsUnscored.ToList();
 
-            // TODO: test speed improvements over single threaded method (use 500 jobs)
             Parallel.ForEach(jobList, job =>
             {
                 foreach (var keyword in keywordsPositive)
@@ -108,6 +107,7 @@ namespace AutoJobSearchJobScraper.Utility
 
                 foreach (var sentiment in sentimentsPositive)
                 {
+                    // TODO: experiment with thresholds. maybe convert to using config file
                     if (Fuzz.WeightedRatio(sentiment, job.Description.ToLower()) >= 50 &&
                        Fuzz.PartialRatio(sentiment, job.Description.ToLower()) >= 50)
                     {
@@ -124,45 +124,6 @@ namespace AutoJobSearchJobScraper.Utility
                     }
                 }
             });
-
-            /*
-            foreach (var job in jobList)
-            {
-                foreach (var keyword in keywordsPositive)
-                {
-                    if (job.Description.Contains(keyword, StringComparison.OrdinalIgnoreCase))
-                    {
-                        job.Score++;
-                    }
-                }
-
-                foreach (var item in keywordsNegative)
-                {
-                    if (job.Description.Contains(item, StringComparison.OrdinalIgnoreCase))
-                    {
-                        job.Score--;
-                    }
-                }
-
-                foreach (var sentiment in sentimentsPositive)
-                {
-                    if (Fuzz.WeightedRatio(sentiment, job.Description.ToLower()) >= 50 &&
-                       Fuzz.PartialRatio(sentiment, job.Description.ToLower()) >= 50)
-                    {
-                        job.Score++;
-                    }
-                }
-
-                foreach (var sentiment in sentimentsNegative)
-                {
-                    if (Fuzz.WeightedRatio(sentiment, job.Description.ToLower()) >= 50 &&
-                       Fuzz.PartialRatio(sentiment, job.Description.ToLower()) >= 50)
-                    {
-                        job.Score--;
-                    }
-                }
-            }
-            */
 
             await Task.CompletedTask;
             return jobList;

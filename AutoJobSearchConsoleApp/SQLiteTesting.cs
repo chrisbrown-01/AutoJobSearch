@@ -84,7 +84,7 @@ namespace AutoJobSearchConsoleApp
 
                 var getLastInsertIdSQL = "SELECT last_insert_rowid();";
 
-                var insertApplicationLinksSQL = "INSERT INTO ApplicationLinks (JobListingId, Link, Link_RawHTML) Values (@JobListingId, @Link, @Link_RawHTML)"; // TODO: make const/static, try to complete in batches
+                var insertApplicationLinksSQL = "INSERT INTO ApplicationLinks (JobListingId, Link, Link_RawHTML) Values (@JobListingId, @Link, @Link_RawHTML)"; 
 
                 foreach (var job in jobListings)
                 {
@@ -110,7 +110,7 @@ namespace AutoJobSearchConsoleApp
                 var sql = "SELECT * FROM ApplicationLinks;";
                 //var sql = "SELECT * FROM ApplicationLinks WHERE JobListingId = your_specific_id;";
 
-                var applicationLinks = await connection.QueryAsync<ApplicationLink>(sql); // TODO: testing if there are no records in db
+                var applicationLinks = await connection.QueryAsync<ApplicationLink>(sql);
 
                 Console.WriteLine();
             }

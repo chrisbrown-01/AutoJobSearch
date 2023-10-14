@@ -12,9 +12,7 @@ using System.Web;
 
 namespace AutoJobSearchConsoleApp
 {
-    // TODO: experiment with selenium https://www.google.com/search?q=.net+jobs+tennessee&oq=.net+j&aqs=edge.1.69i57j69i59l2j69i60l2j69i61j69i65l2.2826j0j1&sourceid=chrome&ie=UTF-8&ibp=htl;jobs&start=40       
-    // https://www.google.com/search?q=.net+jobs+tennessee&sourceid=chrome&ie=UTF-8&ibp=htl;jobs&start=0#htivrt=jobs&htidocid=0VYeCcUww-VtJxSlAAAAAA%3D%3D&fpstate=tldetail
-
+    
 
 
     public class SeleniumTesting

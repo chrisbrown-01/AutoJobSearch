@@ -39,7 +39,7 @@ namespace AutoJobSearchJobScraper.WebScraper
             var config = builder.Build();
 
             MAX_JOB_LISTING_INDEX = config.GetValue<int>(nameof(MAX_JOB_LISTING_INDEX));
-            if (MAX_JOB_LISTING_INDEX < 1) throw new ArgumentException($"{nameof(MAX_JOB_LISTING_INDEX)} must be greater than 0. Current value is {MAX_JOB_LISTING_INDEX}."); // TODO: test nameof
+            if (MAX_JOB_LISTING_INDEX < 1) throw new ArgumentException($"{nameof(MAX_JOB_LISTING_INDEX)} must be greater than 0. Current value is {MAX_JOB_LISTING_INDEX}.");
 
             STARTING_INDEX_KEYWORD = config.GetValue<string>(nameof(STARTING_INDEX_KEYWORD)) ?? throw new NullReferenceException(); // TODO: custom exception for json config file arguments
             ENDING_INDEX_KEYWORD = config.GetValue<string>(nameof(ENDING_INDEX_KEYWORD)) ?? throw new NullReferenceException();

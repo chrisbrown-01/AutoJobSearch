@@ -14,14 +14,12 @@ namespace AutoJobSearchConsoleApp
 {
     internal class JobScraperSelenium
     {
-        // TODO: convert to use config file
         private const string STARTING_INDEX_KEY = "CollapseJob description";
         private const string ENDING_INDEX_KEY = "Show full description"; // "Show full description" or if none found, "Report this job"
         private const string REGEX_URL_PATTERN = @"https?://[^\s""]+";
         private const int MAX_START_PAGE = 100; 
 
-        // TODO: surround in try-catch so that results are still saved even if captcha kills selenium
-        public static async Task<IList<JobListing>> ScrapeJobs(IEnumerable<string> searchTerms) // TODO: extract interface
+        public static async Task<IList<JobListing>> ScrapeJobs(IEnumerable<string> searchTerms) 
         {
             var jobListings = new List<JobListing>();
 
@@ -36,7 +34,7 @@ namespace AutoJobSearchConsoleApp
                     {
                         driver.Navigate().GoToUrl($"https://www.google.com/search?q={WebUtility.UrlEncode(searchTerm)}&ibp=htl;jobs&start={i}");
 
-                        var newUrl = driver.Url; // TODO: experiment with selenium URLs
+                        var newUrl = driver.Url;
 
                         doc.LoadHtml(driver.PageSource);
                         var liElements = doc.DocumentNode?.SelectNodes("//li")?.ToList();
@@ -45,7 +43,7 @@ namespace AutoJobSearchConsoleApp
 
                         jobListings.AddRange(ExtractJobListingsFromLiElements(liElements, searchTerm));
 
-                        await Task.Delay(Random.Shared.Next(3000, 6000)); // TODO: make delay values part of config file
+                        await Task.Delay(Random.Shared.Next(3000, 6000)); 
                     }
                 }
 
@@ -83,7 +81,7 @@ namespace AutoJobSearchConsoleApp
 
                     MatchCollection matches = Regex.Matches(link.OuterHtml, REGEX_URL_PATTERN);
 
-                    if (matches.FirstOrDefault() != null) // TODO: exception handling?
+                    if (matches.FirstOrDefault() != null) 
                     {
                         applicationLink.Link = matches.First().Value;
                     }
@@ -93,7 +91,6 @@ namespace AutoJobSearchConsoleApp
 
                 listing.Description_Raw = WebUtility.HtmlDecode(li.InnerText);
 
-                // TODO: extract to method
                 var startingIndex = listing.Description_Raw.IndexOf(STARTING_INDEX_KEY);
                 var endingIndex = listing.Description_Raw.IndexOf(ENDING_INDEX_KEY);
 
@@ -105,7 +102,7 @@ namespace AutoJobSearchConsoleApp
                     }
                     catch
                     {
-                        Console.WriteLine("Substring error"); // TODO: implement logger and replace
+                        Console.WriteLine("Substring error"); 
                         listing.Description = StringUtility.AddNewLinesToMisformedString(listing.Description_Raw);
                     }
                 }

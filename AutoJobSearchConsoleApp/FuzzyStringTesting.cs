@@ -9,7 +9,6 @@ namespace AutoJobSearchConsoleApp
 {
     internal class FuzzyStringTesting
     {
-        // TODO: case sensitivity matters so convert listing to upper/lower before running fuzzy methods
         public static void Test1()
         {
             var goodJobs = DataHelpers.GOOD_LISTINGS;

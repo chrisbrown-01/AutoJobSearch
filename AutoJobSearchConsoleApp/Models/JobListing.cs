@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace AutoJobSearchConsoleApp.Models
 {
-    public class JobListing // TODO: remove and consolidate with Shared model
+    public class JobListing 
     {
         public int Id { get; }
-        public string SearchTerm { get; set; } = "FOUND BY SEARCH TERM: ___"; // TODO: update value
+        public string SearchTerm { get; set; } = "FOUND BY SEARCH TERM: ___"; 
 
         public DateTime CreatedAt { get; } = DateTime.Now;
 

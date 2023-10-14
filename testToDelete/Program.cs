@@ -1,41 +1,54 @@
-﻿using AutoJobSearchConsoleApp.Models;
+﻿using AutoJobSearchShared.Database;
+using AutoJobSearchShared.Helpers;
+using AutoJobSearchShared.Models;
+using Dapper;
 using FuzzySharp;
-using HtmlAgilityPack;
-using OpenQA.Selenium.Chrome;
-using System.Net.Http.Headers;
+using Microsoft.Data.Sqlite;
+using System.Diagnostics;
 
-namespace AutoJobSearchConsoleApp
+namespace testToDelete
 {
     internal class Program
     {
-        static async Task Main(string[] args)
+        static void Main(string[] args)
         {
-            /*
-            //await SeleniumTesting.Execute();
+            Console.WriteLine("Hello, World!");
 
+            string SQLITE_CONNECTION_STRING = "Data Source=C:\\Users\\chris\\Documents\\GitHub\\AutoJobSearch\\AutoJobSearchConsoleApp\\AutoJobSearch.db";
 
-            //await LocalFileTesting.CreateJsonFiles();
-            //LocalFileTesting.LoadFromJsonFileTests();
-            //LocalFileTesting.ScoringTest(); 
-            //LocalFileTesting.CheckForDuplicatesTest();
+            using var connection = new SqliteConnection(SQLITE_CONNECTION_STRING);
 
-            //FuzzyStringTesting.Test1();
-            //FuzzyStringTesting.TestStringContains();
+            var jobs = connection.Query<JobListing>("SELECT * FROM JobListings;");
+            var profile = connection.QueryFirstOrDefault<JobSearchProfile>("SELECT * FROM JobSearchProfiles;");
 
-            //SQLiteTesting.CreateDb();
-            //await SQLiteTesting.PopulateDb(LocalFileTesting.LoadFromJsonFile(Paths.MULTI_PAGE_JSON_FILE_PATH));
-            //await SQLiteTesting.GetAllLinks();
-            //await SQLiteTesting.UpdateJobListing();
-            */
+            var stopwatch = Stopwatch.StartNew();
+
+            ApplyScoringsSingleThread(jobs,
+                StringHelpers.ConvertCommaSeperatedStringsToIEnumerable(profile.KeywordsPositive), 
+                StringHelpers.ConvertCommaSeperatedStringsToIEnumerable(profile.KeywordsNegative), 
+                StringHelpers.ConvertCommaSeperatedStringsToIEnumerable(profile.SentimentsPositive),
+                StringHelpers.ConvertCommaSeperatedStringsToIEnumerable(profile.SentimentsNegative));
+
+            stopwatch.Stop();
+            Console.WriteLine($"Time taken for ApplyScoringsSingleThread: {stopwatch.Elapsed}");
+            stopwatch.Restart();
+
+            ApplyScoringsParallel(jobs,
+                StringHelpers.ConvertCommaSeperatedStringsToIEnumerable(profile.KeywordsPositive),
+                StringHelpers.ConvertCommaSeperatedStringsToIEnumerable(profile.KeywordsNegative),
+                StringHelpers.ConvertCommaSeperatedStringsToIEnumerable(profile.SentimentsPositive),
+                StringHelpers.ConvertCommaSeperatedStringsToIEnumerable(profile.SentimentsNegative));
+
+            stopwatch.Stop();
+            Console.WriteLine($"Time taken for ApplyScoringsParallel: {stopwatch.Elapsed}");
         }
 
-
-        private void ApplyScoringsParallelAsync(
-    IEnumerable<JobListing> jobListingsUnscored,
-    IEnumerable<string> keywordsPositive,
-    IEnumerable<string> keywordsNegative,
-    IEnumerable<string> sentimentsPositive,
-    IEnumerable<string> sentimentsNegative)
+        private static void ApplyScoringsParallel(
+IEnumerable<JobListing> jobListingsUnscored,
+IEnumerable<string> keywordsPositive,
+IEnumerable<string> keywordsNegative,
+IEnumerable<string> sentimentsPositive,
+IEnumerable<string> sentimentsNegative)
         {
             sentimentsPositive = sentimentsPositive.Select(s => s.ToLower());
             sentimentsNegative = sentimentsNegative.Select(s => s.ToLower());
@@ -81,7 +94,7 @@ namespace AutoJobSearchConsoleApp
         }
 
 
-        private void ApplyScoringsSingleThreadAsync(
+        private static void ApplyScoringsSingleThread(
                 IEnumerable<JobListing> jobListingsUnscored,
                 IEnumerable<string> keywordsPositive,
                 IEnumerable<string> keywordsNegative,
@@ -93,7 +106,7 @@ namespace AutoJobSearchConsoleApp
 
             var jobList = jobListingsUnscored.ToList();
 
-            
+
             foreach (var job in jobList)
             {
                 foreach (var keyword in keywordsPositive)
@@ -131,15 +144,6 @@ namespace AutoJobSearchConsoleApp
                 }
             }
         }
-
-
-
-
-
-
-
-
-
 
     }
 }

@@ -15,7 +15,6 @@ namespace AutoJobSearchConsoleApp
 {
     internal class LocalFileTesting
     {
-        // TODO: create tests
         private const string STARTING_INDEX_KEY = "CollapseJob description";
         private const string ENDING_INDEX_KEY = "Show full description"; // "Show full description" or if none found, "Report this job"
         private const string REGEX_URL_PATTERN = @"https?://[^\s""]+";
@@ -59,8 +58,7 @@ namespace AutoJobSearchConsoleApp
             Console.WriteLine();
         }
 
-        // TODO: make method follow functional programming
-        private static List<JobListing> ApplyScorings(List<JobListing> jobList) // TODO: make everything async
+        private static List<JobListing> ApplyScorings(List<JobListing> jobList) 
         {
             foreach (var job in jobList)
             {
@@ -80,7 +78,6 @@ namespace AutoJobSearchConsoleApp
                     }
                 }
 
-                // TODO: more robust ensuring that arguments are made lower case
                 foreach (var sentiment in DataHelpers.SENTIMENTS_POSITIVE)
                 {
                     if (Fuzz.WeightedRatio(sentiment.ToLower(), job.Description.ToLower()) >= 50 &&
@@ -119,7 +116,7 @@ namespace AutoJobSearchConsoleApp
 
         public static List<JobListing> LoadFromJsonFile(string path)
         {
-            return JsonSerializer.Deserialize<List<JobListing>>(File.ReadAllText(path))!; // TODO: exception handling
+            return JsonSerializer.Deserialize<List<JobListing>>(File.ReadAllText(path))!; 
         }
 
         public static async Task<List<JobListing>> GetJobListingsFromFiles()
@@ -135,7 +132,7 @@ namespace AutoJobSearchConsoleApp
                 jobListings.AddRange(ExtractJobs(doc));
             }
 
-            var jobListingsScrubbed = RemoveDuplicates(jobListings); // TODO: better variable naming
+            var jobListingsScrubbed = RemoveDuplicates(jobListings); 
 
             ApplyScorings(jobListingsScrubbed);
 
@@ -144,14 +141,14 @@ namespace AutoJobSearchConsoleApp
 
         private static async Task GenerateJobListingJsonFileFromMultipleTextFiles()
         {
-            var jobListingsScrubbed = await GetJobListingsFromFiles(); // TODO: better variable naming
+            var jobListingsScrubbed = await GetJobListingsFromFiles(); 
 
             await File.WriteAllTextAsync(Paths.MULTI_PAGE_JSON_FILE_PATH, JsonSerializer.Serialize(jobListingsScrubbed));
         }
 
         private static List<JobListing> RemoveDuplicates(List<JobListing> listWithPossibleDuplicates)
         {
-            var uniqueLinks = new List<string>(); // TODO: uniqueLinks will need to first be populated with existing items from database
+            var uniqueLinks = new List<string>(); 
             var uniqueJobPostings = new List<JobListing>();
 
             foreach (var jobPosting in listWithPossibleDuplicates)
@@ -188,7 +185,7 @@ namespace AutoJobSearchConsoleApp
 
             var jobListings = ExtractJobs(doc);
 
-            var jobListingsScrubbed = RemoveDuplicates(jobListings); // TODO: better variable naming
+            var jobListingsScrubbed = RemoveDuplicates(jobListings); 
 
             await File.WriteAllTextAsync(Paths.SINGLE_PAGE_JSON_FILE_PATH, JsonSerializer.Serialize(jobListingsScrubbed));
         }
@@ -201,7 +198,6 @@ namespace AutoJobSearchConsoleApp
 
             foreach (var li in liElements)
             {
-                // TODO: update SearchTerm property
                 var listing = new JobListing();
 
                 var links = li.Descendants("a")
@@ -217,7 +213,7 @@ namespace AutoJobSearchConsoleApp
 
                     MatchCollection matches = Regex.Matches(link.OuterHtml, REGEX_URL_PATTERN);
 
-                    if(matches.FirstOrDefault() != null) // TODO: exception handling?
+                    if(matches.FirstOrDefault() != null) 
                     {
                         applicationLink.Link = matches.First().Value;
                     }
@@ -227,7 +223,6 @@ namespace AutoJobSearchConsoleApp
 
                 listing.Description_Raw = WebUtility.HtmlDecode(li.InnerText);
 
-                // TODO: extract to method
                 var startingIndex = listing.Description_Raw.IndexOf(STARTING_INDEX_KEY);
                 var endingIndex = listing.Description_Raw.IndexOf(ENDING_INDEX_KEY);
 
@@ -239,7 +234,7 @@ namespace AutoJobSearchConsoleApp
                     }
                     catch
                     {
-                        Console.WriteLine("Substring error"); // TODO: implement logger and replace
+                        Console.WriteLine("Substring error"); 
                         listing.Description = StringFormattingHeuristic(listing.Description_Raw);
                     }
                 }
