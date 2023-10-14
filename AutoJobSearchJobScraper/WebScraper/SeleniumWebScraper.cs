@@ -1,4 +1,5 @@
-﻿using AutoJobSearchShared.Helpers;
+﻿using AutoJobSearchJobScraper.Exceptions;
+using AutoJobSearchShared.Helpers;
 using AutoJobSearchShared.Models;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using HtmlAgilityPack;
@@ -38,11 +39,29 @@ namespace AutoJobSearchJobScraper.WebScraper
 
             var config = builder.Build();
 
-            MAX_JOB_LISTING_INDEX = config.GetValue<int>(nameof(MAX_JOB_LISTING_INDEX));
-            if (MAX_JOB_LISTING_INDEX < 1) throw new ArgumentException($"{nameof(MAX_JOB_LISTING_INDEX)} must be greater than 0. Current value is {MAX_JOB_LISTING_INDEX}.");
+            try
+            {
+                MAX_JOB_LISTING_INDEX = config.GetValue<int>(nameof(MAX_JOB_LISTING_INDEX));
+            }
+            catch (InvalidOperationException)
+            {
+                throw new AppSettingsFileArgumentException(
+                    $"Failed to read {nameof(MAX_JOB_LISTING_INDEX)} from appsettings.json config file. " +
+                    $"Ensure that {nameof(MAX_JOB_LISTING_INDEX)} is an integer.");
+            }
 
-            STARTING_INDEX_KEYWORD = config.GetValue<string>(nameof(STARTING_INDEX_KEYWORD)) ?? throw new NullReferenceException(); // TODO: custom exception for json config file arguments
-            ENDING_INDEX_KEYWORD = config.GetValue<string>(nameof(ENDING_INDEX_KEYWORD)) ?? throw new NullReferenceException();
+            if (MAX_JOB_LISTING_INDEX < 1)
+            {
+                throw new AppSettingsFileArgumentException(
+                    $"Failed to read {nameof(MAX_JOB_LISTING_INDEX)} from appsettings.json config file. " +
+                    $"Ensure that {nameof(MAX_JOB_LISTING_INDEX)} has a value greater than 0.");
+            }
+
+            STARTING_INDEX_KEYWORD = config.GetValue<string>(nameof(STARTING_INDEX_KEYWORD)) ?? 
+                throw new AppSettingsFileArgumentException($"Failed to read {nameof(STARTING_INDEX_KEYWORD)} from appsettings.json config file.");
+            
+            ENDING_INDEX_KEYWORD = config.GetValue<string>(nameof(ENDING_INDEX_KEYWORD)) ??
+                throw new AppSettingsFileArgumentException($"Failed to read {nameof(ENDING_INDEX_KEYWORD)} from appsettings.json config file.");
         }
 
         public async Task<IEnumerable<JobListing>> ScrapeJobsAsync(IEnumerable<string> searchTerms)
