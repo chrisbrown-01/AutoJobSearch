@@ -68,6 +68,7 @@ namespace AutoJobSearchGUI.ViewModels
             PageIndex = 0;
             JobListings = await GetAllJobListings();
             JobListingsDisplayed = JobListings.Skip(PageIndex * PageSize).Take(PageSize).ToList();
+            EnableOnChangedEvents(JobListingsDisplayed);
         }
 
         public async Task RenderHiddenJobs()
@@ -75,6 +76,7 @@ namespace AutoJobSearchGUI.ViewModels
             PageIndex = 0;
             JobListings = await GetHiddenJobListings();
             JobListingsDisplayed = JobListings.Skip(PageIndex * PageSize).Take(PageSize).ToList();
+            EnableOnChangedEvents(JobListingsDisplayed);
         }
 
         public async Task RenderFavouriteJobs()
@@ -82,6 +84,7 @@ namespace AutoJobSearchGUI.ViewModels
             PageIndex = 0;
             JobListings = await GetFavouriteJobListings();
             JobListingsDisplayed = JobListings.Skip(PageIndex * PageSize).Take(PageSize).ToList();
+            EnableOnChangedEvents(JobListingsDisplayed);
         }
 
         public async Task ExecuteQuery()
@@ -182,11 +185,13 @@ namespace AutoJobSearchGUI.ViewModels
             PageIndex = 0;
             JobListings = ConvertJobListingsToJobListingModels(result);
             JobListingsDisplayed = JobListings.Skip(PageIndex * PageSize).Take(PageSize).ToList();
+            EnableOnChangedEvents(JobListingsDisplayed);
         }
 
         public void OpenJobListing() 
         {
             if (SelectedJobListing == null) return;
+            DisableOnChangedEvents(JobListingsDisplayed);
             OpenJobListingViewRequest?.Invoke(SelectedJobListing, JobListings);
         }
 
@@ -202,15 +207,37 @@ namespace AutoJobSearchGUI.ViewModels
         {
             var jobListings = JobListings.Skip((PageIndex + 1) * PageSize).Take(PageSize);
             if (!jobListings.Any()) return;
+
+            DisableOnChangedEvents(JobListingsDisplayed);
             PageIndex++;
             JobListingsDisplayed = jobListings.ToList();
+            EnableOnChangedEvents(JobListingsDisplayed);
         }
 
         public void GoToPreviousPage()
         {
             if (PageIndex - 1 < 0) return;
+
+            DisableOnChangedEvents(JobListingsDisplayed);
             PageIndex--;
             JobListingsDisplayed = JobListings.Skip(PageIndex * PageSize).Take(PageSize).ToList();
+            EnableOnChangedEvents(JobListingsDisplayed);
+        }
+
+        private void EnableOnChangedEvents(IEnumerable<JobListingModel> jobListingModels)
+        {
+            foreach(var jobListingModel in jobListingModels)
+            {
+                jobListingModel.EnableEvents = true;
+            }
+        }
+
+        private void DisableOnChangedEvents(IEnumerable<JobListingModel> jobListingModels)
+        {
+            foreach (var jobListingModel in jobListingModels)
+            {
+                jobListingModel.EnableEvents = false;
+            }
         }
 
         private async Task<List<JobListingModel>> GetFavouriteJobListings() 

@@ -38,6 +38,7 @@ namespace AutoJobSearchGUI.Models
         // unexpectedly crashes before the user can request for the changes to be saved to the database.
 
         // TODO: convert all of these to the 2 argument old/new method and compare. if comparison is equal, do not invoke the event
+
         partial void OnProfileNameChanged(string value)
         {
             StringFieldChanged?.Invoke(this, new JobSearchProfilesStringFieldChangedEventArgs { Field = JobSearchProfilesStringField.ProfileName, Value = value, Id = this.Id });

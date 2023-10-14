@@ -50,6 +50,8 @@ namespace AutoJobSearchGUI.ViewModels
             var previousIndex = currentIndex - 1;
             if (previousIndex < 0) return;
 
+            DisableOnChangedEvents(JobListing);
+
             await OpenJobListing(JobListings[previousIndex]);
         }
 
@@ -60,6 +62,8 @@ namespace AutoJobSearchGUI.ViewModels
 
             var nextIndex = currentIndex + 1;
             if(nextIndex >= JobListings.Count) return;
+
+            DisableOnChangedEvents(JobListing);
 
             await OpenJobListing(JobListings[nextIndex]);
         }
@@ -76,6 +80,17 @@ namespace AutoJobSearchGUI.ViewModels
             // TODO: update job listing entry in the master local list, see if it has already been updated
 
             JobListing = jobListing;
+            EnableOnChangedEvents(JobListing);
+        }
+
+        private void EnableOnChangedEvents(JobListingModel jobListing)
+        {
+            jobListing.EnableEvents = true;
+        }
+
+        private void DisableOnChangedEvents(JobListingModel jobListing)
+        {
+            jobListing.EnableEvents = false;
         }
     }
 }

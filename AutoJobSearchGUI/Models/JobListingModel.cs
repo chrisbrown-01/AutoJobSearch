@@ -26,6 +26,10 @@ namespace AutoJobSearchGUI.Models
 
         public int Score { get; set; }
 
+        public bool DetailsPopulated { get; set; } = false; // TODO: comment this to explain
+
+        public bool EnableEvents { get; set; } = false; // TODO: comment this to explain
+
         [ObservableProperty]
         private bool _isAppliedTo;
 
@@ -54,31 +58,37 @@ namespace AutoJobSearchGUI.Models
 
         partial void OnNotesChanged(string value)
         {
+            if (!this.EnableEvents) return;
             StringFieldChanged?.Invoke(this, new JobListingsStringFieldChangedEventArgs { Field = JobListingsStringField.Notes, Value = value, Id = this.Id });
         }
 
         partial void OnIsAppliedToChanged(bool value)
         {
+            if (!this.EnableEvents) return;
             BoolFieldChanged?.Invoke(this, new JobListingsBoolFieldChangedEventArgs { Field = JobListingsBoolField.IsAppliedTo, Value = value, Id = this.Id });
         }
 
         partial void OnIsInterviewingChanged(bool value)
         {
+            if (!this.EnableEvents) return;
             BoolFieldChanged?.Invoke(this, new JobListingsBoolFieldChangedEventArgs { Field = JobListingsBoolField.IsInterviewing, Value = value, Id = this.Id });
         }
 
         partial void OnIsRejectedChanged(bool value)
         {
+            if (!this.EnableEvents) return;
             BoolFieldChanged?.Invoke(this, new JobListingsBoolFieldChangedEventArgs { Field = JobListingsBoolField.IsRejected, Value = value, Id = this.Id });
         }
 
         partial void OnIsFavouriteChanged(bool value)
         {
+            if (!this.EnableEvents) return;
             BoolFieldChanged?.Invoke(this, new JobListingsBoolFieldChangedEventArgs { Field = JobListingsBoolField.IsFavourite, Value = value, Id = this.Id });
         }
 
         partial void OnIsHiddenChanged(bool value)
         {
+            if (!this.EnableEvents) return;
             BoolFieldChanged?.Invoke(this, new JobListingsBoolFieldChangedEventArgs { Field = JobListingsBoolField.IsHidden, Value = value, Id = this.Id });
         }
     }
