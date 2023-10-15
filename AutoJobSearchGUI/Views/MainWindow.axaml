@@ -8,8 +8,8 @@
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
         Title="AutoJobSearch"
-		MinWidth="500" MinHeight="500"
-		Height="1000" Width="1000">
+		MinWidth="800" MinHeight="600"
+		Height="800" Width="600">
 
 	<Design.DataContext>
 		<!-- This only sets the DataContext for the previewer in an IDE,

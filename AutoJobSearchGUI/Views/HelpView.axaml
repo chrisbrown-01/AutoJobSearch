@@ -13,36 +13,33 @@
 		<vm:HelpViewModel/>
 	</Design.DataContext>
 
-	<TabControl HorizontalAlignment="Center" VerticalAlignment="Top">
+	<TabControl 
+		FontSize="16"
+		FontWeight="Light">
 		<TabItem Header="Project">
 			<TextBlock Text="{Binding AboutThisProject}"
 					   TextWrapping="Wrap"
-					   Margin="30"
-					   FontSize="16" />
+					   Margin="30"/>
 		</TabItem>
 		<TabItem Header="Job Board">
 			<TextBlock Text="{Binding AboutJobBoard}"
 					   TextWrapping="Wrap"
-					   Margin="30"
-					   FontSize="16" />
+					   Margin="30" />
 		</TabItem>
 		<TabItem Header="Job Search">
 			<TextBlock Text="{Binding AboutJobSearch}"
 					   TextWrapping="Wrap"
-					   Margin="30"
-					   FontSize="16" />
+					   Margin="30" />
 		</TabItem>
 		<TabItem Header="Job Scoring">
 			<TextBlock Text="{Binding AboutJobScoring}"
 					   TextWrapping="Wrap"
-					   Margin="30"
-					   FontSize="16" />
+					   Margin="30" />
 		</TabItem>
 		<TabItem Header="Job Scraper">
 			<TextBlock Text="{Binding AboutJobScraper}"
 					   TextWrapping="Wrap"
-					   Margin="30"
-					   FontSize="16" />
+					   Margin="30" />
 		</TabItem>
 	</TabControl>
 </UserControl>
