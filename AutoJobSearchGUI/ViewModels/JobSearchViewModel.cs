@@ -39,7 +39,7 @@ namespace AutoJobSearchGUI.ViewModels
             _dbContext = dbContext;
             _eventAggregator = eventAggregator;
 
-            RenderDefaultJobSearchView().Wait();
+            RenderDefaultJobSearchView();
         }
 
         public void ExecuteJobSearch()
@@ -48,29 +48,36 @@ namespace AutoJobSearchGUI.ViewModels
             _eventAggregator.StartJobScraper(SelectedSearchProfile.Id);
         }
 
-        private async Task RenderDefaultJobSearchView()
+        private async void RenderDefaultJobSearchView()
         {
             var allProfiles = await _dbContext.GetAllJobSearchProfilesAsync();
 
             if (!allProfiles.Any())
             {
-                await CreateNewProfile();
+                CreateNewProfile(); 
                 return;
             }
 
             SearchProfiles = ConvertProfilesToMvvmModel(allProfiles);
-            if (!SearchProfiles.Any()) throw new Exception("No objects could be rendered for SearchProfiles"); // TODO: proper logging, custom exception
+
+            if (!SearchProfiles.Any())
+            {
+                Log.Error($"No job search profiles were loaded into {nameof(SearchProfiles)} view model property.");
+                return;
+            }
+
             SelectedSearchProfile = SearchProfiles.First();
             EnableOnChangedEvents(SearchProfiles);
         }
 
-        public async Task CreateNewProfile()
+        public async void CreateNewProfile()
         {
             await _dbContext.CreateJobSearchProfileAsync(new JobSearchProfile());
 
             var allProfiles = await _dbContext.GetAllJobSearchProfilesAsync();
 
-            if (!allProfiles.Any()) throw new Exception("No objects could be rendered for SearchProfiles"); // TODO: proper logging, custom exception
+            if (!allProfiles.Any())
+                throw new ApplicationException("No job search profiles could be loaded for the Job Search page.");
 
             SearchProfiles = ConvertProfilesToMvvmModel(allProfiles);
 
@@ -78,12 +85,12 @@ namespace AutoJobSearchGUI.ViewModels
             EnableOnChangedEvents(SearchProfiles);
         }
 
-        public async Task DeleteCurrentProfile()
+        public async void DeleteCurrentProfile()
         {
             if (SelectedSearchProfile == null || SelectedSearchProfile.Id < 1) return;
 
             await _dbContext.DeleteJobSearchProfileAsync(SelectedSearchProfile.Id);
-            await RenderDefaultJobSearchView();
+            RenderDefaultJobSearchView();
         }
 
         /// <summary>

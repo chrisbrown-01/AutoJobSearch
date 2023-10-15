@@ -37,10 +37,9 @@ namespace AutoJobSearchGUI.ViewModels
             jobBoardViewModel.OpenJobListingViewRequest += ChangeViewToJobListing;
         }
 
-        public void ChangeViewToJobBoard() // TODO: convert all to Tasks or RelayCommands (if exception handling improves?)
+        public void ChangeViewToJobBoard()
         {
             ContentViewModel = jobBoardViewModel;
-            //await Task.CompletedTask;
         }
 
         public void ChangeViewToJobSearch()
@@ -48,7 +47,7 @@ namespace AutoJobSearchGUI.ViewModels
             ContentViewModel = jobSearchViewModel;
         }
 
-        public async Task ChangeViewToJobListing(JobListingModel jobListing, IEnumerable<JobListingModel> jobListings)
+        public async Task ChangeViewToJobListing(JobListingModel jobListing, IEnumerable<JobListingModel> jobListings) // TODO: convert to void
         {
             jobListingViewModel.PopulateJobListings(jobListings);
             await jobListingViewModel.OpenJobListing(jobListing);
