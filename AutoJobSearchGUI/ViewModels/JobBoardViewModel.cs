@@ -18,7 +18,7 @@ namespace AutoJobSearchGUI.ViewModels
 {
     public partial class JobBoardViewModel : ViewModelBase // Needs to be public for View previewer to work
     {
-        public delegate Task OpenJobListingViewHandler(JobListingModel job, IEnumerable<JobListingModel> jobListings);
+        public delegate void OpenJobListingViewHandler(JobListingModel job, IEnumerable<JobListingModel> jobListings);
         public event OpenJobListingViewHandler? OpenJobListingViewRequest;
 
         [ObservableProperty]
@@ -48,20 +48,19 @@ namespace AutoJobSearchGUI.ViewModels
             JobBoardQueryModel = new();
         }
 
+        // TODO: change max width/lines for all text boxes in view
         public JobBoardViewModel(IDbContext dbContext)
         {
-            //TestClickCommand = new RelayCommand(TestClick);
-
             JobBoardQueryModel = new();
             _dbContext = dbContext;
 
             PageIndex = 0;
             PageSize = 25; // TODO: move out to config file
 
-            RenderDefaultJobBoardView().Wait();
+            RenderDefaultJobBoardView();
         }
 
-        public async Task RenderDefaultJobBoardView()
+        public async void RenderDefaultJobBoardView()
         {
             PageIndex = 0;
             JobListings = await GetAllJobListings();
@@ -69,7 +68,7 @@ namespace AutoJobSearchGUI.ViewModels
             EnableOnChangedEvents(JobListingsDisplayed);
         }
 
-        public async Task RenderHiddenJobs()
+        public async void RenderHiddenJobs()
         {
             PageIndex = 0;
             JobListings = await GetHiddenJobListings();
@@ -77,7 +76,7 @@ namespace AutoJobSearchGUI.ViewModels
             EnableOnChangedEvents(JobListingsDisplayed);
         }
 
-        public async Task RenderFavouriteJobs()
+        public async void RenderFavouriteJobs()
         {
             PageIndex = 0;
             JobListings = await GetFavouriteJobListings();
@@ -85,7 +84,7 @@ namespace AutoJobSearchGUI.ViewModels
             EnableOnChangedEvents(JobListingsDisplayed);
         }
 
-        public async Task ExecuteQuery()
+        public async void ExecuteQuery()
         {
             // Try to get some performance improvement by doing the initial simple query directly within the SQLite database
             var result = await _dbContext.ExecuteJobListingQueryAsync(

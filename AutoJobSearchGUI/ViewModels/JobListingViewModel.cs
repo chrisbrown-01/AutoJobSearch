@@ -39,11 +39,8 @@ namespace AutoJobSearchGUI.ViewModels
             JobListings = jobListings.ToList();
         }
 
-        public async Task GoToPreviousJob()
+        public void GoToPreviousJob()
         {
-            // TODO: investigate why calling tasks does not properly throw exception. may need to convert to relaycommand
-            //throw new Exception("test");
-
             var currentIndex = JobListings.IndexOf(JobListing);
             if (currentIndex < 0) return;
 
@@ -52,10 +49,10 @@ namespace AutoJobSearchGUI.ViewModels
 
             DisableOnChangedEvents(JobListing);
 
-            await OpenJobListing(JobListings[previousIndex]);
+            OpenJobListing(JobListings[previousIndex]);
         }
 
-        public async Task GoToNextJob()
+        public void GoToNextJob()
         {
             var currentIndex = JobListings.IndexOf(JobListing);
             if (currentIndex < 0) return;
@@ -65,10 +62,10 @@ namespace AutoJobSearchGUI.ViewModels
 
             DisableOnChangedEvents(JobListing);
 
-            await OpenJobListing(JobListings[nextIndex]);
+            OpenJobListing(JobListings[nextIndex]);
         }
 
-        public async Task OpenJobListing(JobListingModel jobListing)
+        public async void OpenJobListing(JobListingModel jobListing)
         {
             if(!jobListing.DetailsPopulated)
             {

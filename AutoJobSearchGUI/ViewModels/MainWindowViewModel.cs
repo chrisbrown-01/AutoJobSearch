@@ -47,10 +47,10 @@ namespace AutoJobSearchGUI.ViewModels
             ContentViewModel = jobSearchViewModel;
         }
 
-        public async Task ChangeViewToJobListing(JobListingModel jobListing, IEnumerable<JobListingModel> jobListings) // TODO: convert to void
+        public void ChangeViewToJobListing(JobListingModel jobListing, IEnumerable<JobListingModel> jobListings)
         {
             jobListingViewModel.PopulateJobListings(jobListings);
-            await jobListingViewModel.OpenJobListing(jobListing);
+            jobListingViewModel.OpenJobListing(jobListing);
             ContentViewModel = jobListingViewModel;
         }
 
@@ -67,13 +67,6 @@ namespace AutoJobSearchGUI.ViewModels
                     .CreateLogger();
 
             Log.Information("Starting GUI application.");
-
-            // Attach event handler for unhandled exceptions
-            AppDomain.CurrentDomain.UnhandledException += (sender, eventArgs) =>
-            {
-                var exception = (Exception)eventArgs.ExceptionObject;
-                Log.Fatal(exception, "An unhandled exception occurred.");
-            };
         }
     }
 }
