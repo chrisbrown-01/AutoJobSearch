@@ -28,13 +28,18 @@ namespace AutoJobSearchGUI.ViewModels
             ConfigureSerilog();
 
             eventAggregator = new EventAggregator();
-            dbContext = new DbContext();// TODO: ensure connection gets disposed. way to link dispose method to avalonia close application command? 
+            dbContext = new DbContext();
             jobBoardViewModel = new JobBoardViewModel(dbContext);
             jobSearchViewModel = new JobSearchViewModel(dbContext, eventAggregator);
             jobListingViewModel = new JobListingViewModel(dbContext);
             ContentViewModel = jobBoardViewModel;
 
             jobBoardViewModel.OpenJobListingViewRequest += ChangeViewToJobListing;
+        }
+
+        public void Dispose()
+        {
+            dbContext.Dispose();
         }
 
         public void ChangeViewToJobBoard()
