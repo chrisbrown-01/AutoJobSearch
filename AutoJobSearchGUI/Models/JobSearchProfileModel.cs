@@ -13,6 +13,9 @@ namespace AutoJobSearchGUI.Models
     {
         public int Id { get; set; }
 
+        // This property prevents events from unnecessarily firing when the view model is simply instantiating new models.
+        public bool EnableEvents { get; set; } = false; 
+
         [ObservableProperty]
         private string _profileName = string.Empty;
 
@@ -37,35 +40,39 @@ namespace AutoJobSearchGUI.Models
         // interacting with the database, the technical debt is justified to ensure that no data loss occurs if the application
         // unexpectedly crashes before the user can request for the changes to be saved to the database.
 
-        // TODO: convert all of these to the 2 argument old/new method and compare. if comparison is equal, do not invoke the event
-
         partial void OnProfileNameChanged(string value)
         {
+            if (!this.EnableEvents) return;
             StringFieldChanged?.Invoke(this, new JobSearchProfilesStringFieldChangedEventArgs { Field = JobSearchProfilesStringField.ProfileName, Value = value, Id = this.Id });
         }
 
         partial void OnSearchesChanged(string value)
         {
+            if (!this.EnableEvents) return;
             StringFieldChanged?.Invoke(this, new JobSearchProfilesStringFieldChangedEventArgs { Field = JobSearchProfilesStringField.Searches, Value = value, Id = this.Id });
         }
 
         partial void OnKeywordsPositiveChanged(string value)
         {
+            if (!this.EnableEvents) return;
             StringFieldChanged?.Invoke(this, new JobSearchProfilesStringFieldChangedEventArgs { Field = JobSearchProfilesStringField.KeywordsPositive, Value = value, Id = this.Id });
         }
 
         partial void OnKeywordsNegativeChanged(string value)
         {
+            if (!this.EnableEvents) return;
             StringFieldChanged?.Invoke(this, new JobSearchProfilesStringFieldChangedEventArgs { Field = JobSearchProfilesStringField.KeywordsNegative, Value = value, Id = this.Id });
         }
 
         partial void OnSentimentsPositiveChanged(string value)
         {
+            if (!this.EnableEvents) return;
             StringFieldChanged?.Invoke(this, new JobSearchProfilesStringFieldChangedEventArgs { Field = JobSearchProfilesStringField.SentimentsPositive, Value = value, Id = this.Id });
         }
 
         partial void OnSentimentsNegativeChanged(string value)
         {
+            if (!this.EnableEvents) return;
             StringFieldChanged?.Invoke(this, new JobSearchProfilesStringFieldChangedEventArgs { Field = JobSearchProfilesStringField.SentimentsNegative, Value = value, Id = this.Id });
         }
     }

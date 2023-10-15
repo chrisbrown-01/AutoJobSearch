@@ -58,9 +58,7 @@ namespace AutoJobSearchGUI.ViewModels
             PageIndex = 0;
             PageSize = 25; // TODO: move out to config file
 
-#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-            RenderDefaultJobBoardView();
-#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+            RenderDefaultJobBoardView().Wait();
         }
 
         public async Task RenderDefaultJobBoardView()
@@ -224,6 +222,10 @@ namespace AutoJobSearchGUI.ViewModels
             EnableOnChangedEvents(JobListingsDisplayed);
         }
 
+        /// <summary>
+        /// Allows events to fire. This method should be called after the view model properties have been fully instantiated.
+        /// </summary>
+        /// <param name="jobListingModels"></param>
         private void EnableOnChangedEvents(IEnumerable<JobListingModel> jobListingModels)
         {
             foreach(var jobListingModel in jobListingModels)
@@ -232,6 +234,10 @@ namespace AutoJobSearchGUI.ViewModels
             }
         }
 
+        /// <summary>
+        /// Prevent events from firing. This method should be called in preparation of instantiating new view model properties.
+        /// </summary>
+        /// <param name="jobListingModels"></param>
         private void DisableOnChangedEvents(IEnumerable<JobListingModel> jobListingModels)
         {
             foreach (var jobListingModel in jobListingModels)

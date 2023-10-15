@@ -61,6 +61,7 @@ namespace AutoJobSearchGUI.ViewModels
             SearchProfiles = ConvertProfilesToMvvmModel(allProfiles);
             if (!SearchProfiles.Any()) throw new Exception("No objects could be rendered for SearchProfiles"); // TODO: proper logging, custom exception
             SelectedSearchProfile = SearchProfiles.First();
+            EnableOnChangedEvents(SearchProfiles);
         }
 
         public async Task CreateNewProfile()
@@ -74,8 +75,7 @@ namespace AutoJobSearchGUI.ViewModels
             SearchProfiles = ConvertProfilesToMvvmModel(allProfiles);
 
             SelectedSearchProfile = SearchProfiles.Last();
-
-            await Task.CompletedTask;
+            EnableOnChangedEvents(SearchProfiles);
         }
 
         public async Task DeleteCurrentProfile()
@@ -84,8 +84,18 @@ namespace AutoJobSearchGUI.ViewModels
 
             await _dbContext.DeleteJobSearchProfileAsync(SelectedSearchProfile.Id);
             await RenderDefaultJobSearchView();
+        }
 
-            await Task.CompletedTask;
+        /// <summary>
+        /// Allows events to fire. This method should be called after the view model properties have been fully instantiated.
+        /// </summary>
+        /// <param name="profiles"></param>
+        private void EnableOnChangedEvents(IEnumerable<JobSearchProfileModel> profiles)
+        {
+            foreach(var profile in profiles)
+            {
+                profile.EnableEvents = true;
+            }  
         }
 
         private List<JobSearchProfileModel> ConvertProfilesToMvvmModel(IEnumerable<JobSearchProfile> profiles)

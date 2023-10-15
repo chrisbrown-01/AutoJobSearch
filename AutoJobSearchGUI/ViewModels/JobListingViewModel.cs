@@ -70,24 +70,32 @@ namespace AutoJobSearchGUI.ViewModels
 
         public async Task OpenJobListing(JobListingModel jobListing)
         {
-            if (jobListing.Id == JobListing.Id) return;
-
-            var jobListingDetails = await _dbContext.GetJobListingDetailsByIdAsync(jobListing.Id); 
-            jobListing.Description = jobListingDetails.Description;
-            jobListing.ApplicationLinks = jobListingDetails.ApplicationLinksString;
-            jobListing.Notes = jobListingDetails.Notes;
-
-            // TODO: update job listing entry in the master local list, see if it has already been updated
+            if(!jobListing.DetailsPopulated)
+            {
+                var jobListingDetails = await _dbContext.GetJobListingDetailsByIdAsync(jobListing.Id);
+                jobListing.Description = jobListingDetails.Description;
+                jobListing.ApplicationLinks = jobListingDetails.ApplicationLinksString;
+                jobListing.Notes = jobListingDetails.Notes;
+                jobListing.DetailsPopulated = true;
+            }
 
             JobListing = jobListing;
             EnableOnChangedEvents(JobListing);
         }
 
+        /// <summary>
+        /// Allows events to fire. This method should be called after the view model properties have been fully instantiated.
+        /// </summary>
+        /// <param name="jobListing"></param>
         private void EnableOnChangedEvents(JobListingModel jobListing)
         {
             jobListing.EnableEvents = true;
         }
 
+        /// <summary>
+        /// Prevent events from firing. This method should be called in preparation of instantiating new view model properties.
+        /// </summary>
+        /// <param name="jobListing"></param>
         private void DisableOnChangedEvents(JobListingModel jobListing)
         {
             jobListing.EnableEvents = false;
