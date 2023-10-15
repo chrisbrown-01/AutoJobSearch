@@ -55,7 +55,7 @@ namespace AutoJobSearchGUI.ViewModels
             _dbContext = dbContext;
 
             PageIndex = 0;
-            PageSize = 25; // TODO: move out to config file
+            PageSize = 50; 
 
             RenderDefaultJobBoardView();
         }

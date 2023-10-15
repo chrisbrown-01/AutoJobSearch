@@ -28,7 +28,8 @@ namespace AutoJobSearchGUI
             }
             finally
             {
-                Log.CloseAndFlush(); // TODO: also include this in avalonia shutdown top right button
+                Log.Information("Application closed.");
+                Log.CloseAndFlush(); 
             }
         }
 

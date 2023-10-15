@@ -17,6 +17,7 @@ namespace AutoJobSearchGUI.ViewModels
         private JobBoardViewModel jobBoardViewModel;
         private JobSearchViewModel jobSearchViewModel;
         private JobListingViewModel jobListingViewModel;
+        private HelpViewModel helpViewModel;
         private readonly DbContext dbContext;
         private readonly EventAggregator eventAggregator;
 
@@ -32,6 +33,7 @@ namespace AutoJobSearchGUI.ViewModels
             jobBoardViewModel = new JobBoardViewModel(dbContext);
             jobSearchViewModel = new JobSearchViewModel(dbContext, eventAggregator);
             jobListingViewModel = new JobListingViewModel(dbContext);
+            helpViewModel = new HelpViewModel();
             ContentViewModel = jobBoardViewModel;
 
             jobBoardViewModel.OpenJobListingViewRequest += ChangeViewToJobListing;
@@ -45,6 +47,11 @@ namespace AutoJobSearchGUI.ViewModels
         public void ChangeViewToJobBoard()
         {
             ContentViewModel = jobBoardViewModel;
+        }
+
+        public void ChangeViewToHelp()
+        {
+            ContentViewModel = helpViewModel;
         }
 
         public void ChangeViewToJobSearch()
