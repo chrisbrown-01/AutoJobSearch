@@ -40,7 +40,7 @@
 				SelectedItem="{Binding SelectedSearchProfile}" >
 				<ComboBox.ItemTemplate>
 					<DataTemplate>
-						<TextBlock Text="{Binding ProfileName}" MaxWidth="125" />
+						<TextBlock Text="{Binding ProfileName}" Width="125" />
 					</DataTemplate>
 				</ComboBox.ItemTemplate>
 			</ComboBox>
@@ -48,7 +48,7 @@
 
 		<StackPanel Orientation="Horizontal" Grid.Row="1" Margin="30 5">
 			<TextBlock Text="Profile Name" />
-			<TextBox Text="{Binding SelectedSearchProfile.ProfileName}" />
+			<TextBox Text="{Binding SelectedSearchProfile.ProfileName}" Width="125" />
 		</StackPanel>
 
 		<TextBlock Grid.Row="2" Text="Searches" Margin="30 0"/>

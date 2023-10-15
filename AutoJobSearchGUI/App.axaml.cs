@@ -25,6 +25,8 @@ namespace AutoJobSearchGUI
                 desktop.MainWindow = new MainWindow
                 {
                     DataContext = new MainWindowViewModel(),
+                    WindowStartupLocation = Avalonia.Controls.WindowStartupLocation.CenterScreen,
+                    WindowState = Avalonia.Controls.WindowState.Maximized
                 };
             }
 

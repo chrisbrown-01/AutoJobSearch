@@ -28,15 +28,15 @@
 					</MenuItem>
 					<MenuItem Header="Search Term Query String">
 						<CheckBox Content="Enable" IsChecked="{Binding JobBoardQueryModel.SearchTermQueryStringEnabled}" />
-						<TextBox Text="{Binding JobBoardQueryModel.SearchTermQueryString}" IsReadOnly="False" />
+						<TextBox Text="{Binding JobBoardQueryModel.SearchTermQueryString}" IsReadOnly="False" MaxWidth="250" />
 					</MenuItem>
 					<MenuItem Header="Job Description Query String">
 						<CheckBox Content="Enable" IsChecked="{Binding JobBoardQueryModel.JobDescriptionQueryStringEnabled}" />
-						<TextBox Text="{Binding JobBoardQueryModel.JobDescriptionQueryString}" IsReadOnly="False" />
+						<TextBox Text="{Binding JobBoardQueryModel.JobDescriptionQueryString}" IsReadOnly="False" MaxWidth="250" />
 					</MenuItem>
 					<MenuItem Header="Notes Query String">
 						<CheckBox Content="Enable" IsChecked="{Binding JobBoardQueryModel.NotesQueryStringEnabled}" />
-						<TextBox Text="{Binding JobBoardQueryModel.NotesQueryString}" IsReadOnly="False" />
+						<TextBox Text="{Binding JobBoardQueryModel.NotesQueryString}" IsReadOnly="False" MaxWidth="250" />
 					</MenuItem>
 					<MenuItem Header="Search Date">
 						<CheckBox 
