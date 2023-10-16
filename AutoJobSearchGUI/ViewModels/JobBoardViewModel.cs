@@ -1,11 +1,11 @@
-﻿using AutoJobSearchConsoleApp.Models;
-using AutoJobSearchGUI.Data;
+﻿using AutoJobSearchGUI.Data;
 using AutoJobSearchGUI.Models;
 using AutoJobSearchShared;
 using AutoJobSearchShared.Models;
 using Avalonia.Interactivity;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using MsBox.Avalonia;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -48,7 +48,6 @@ namespace AutoJobSearchGUI.ViewModels
             JobBoardQueryModel = new();
         }
 
-        // TODO: change max width/lines for all text boxes in view
         public JobBoardViewModel(IDbContext dbContext)
         {
             JobBoardQueryModel = new();
@@ -58,6 +57,22 @@ namespace AutoJobSearchGUI.ViewModels
             PageSize = 50; 
 
             RenderDefaultJobBoardView();
+        }
+
+        public async void DeleteAllRecords()
+        {
+            var box = MessageBoxManager.GetMessageBoxStandard(
+                "Confirm Delete All Records", 
+                "Are you sure you want to delete all job listings from the database? This action cannot be reversed.", 
+                MsBox.Avalonia.Enums.ButtonEnum.OkAbort, 
+                MsBox.Avalonia.Enums.Icon.Warning);
+
+            var result = await box.ShowAsync();
+
+            if(result == MsBox.Avalonia.Enums.ButtonResult.Ok)
+            {
+                await _dbContext.DeleteAllJobListingsAsync();
+            }
         }
 
         public async void RenderDefaultJobBoardView()
@@ -257,7 +272,7 @@ namespace AutoJobSearchGUI.ViewModels
             return ConvertJobListingsToJobListingModels(jobs);
         }
 
-        private List<JobListingModel> ConvertJobListingsToJobListingModels(IEnumerable<AutoJobSearchShared.Models.JobListing> jobs) // TODO: remove namespace from model, maybe improve naming
+        private List<JobListingModel> ConvertJobListingsToJobListingModels(IEnumerable<JobListing> jobs) 
         {
             var jobListings = new List<JobListingModel>();
 

@@ -100,6 +100,11 @@
 						Command="{Binding RenderDefaultJobBoardView}"/>
 				</MenuItem>
 			</Menu>
+			<Menu>
+				<MenuItem Header="Options">
+					<MenuItem Header="Delete All Records" Command="{Binding DeleteAllRecords}" />				
+				</MenuItem>
+			</Menu>
 		</StackPanel>
 		<DataGrid
 	 	CanUserResizeColumns="True"

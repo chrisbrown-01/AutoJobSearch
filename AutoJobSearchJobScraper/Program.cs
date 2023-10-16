@@ -14,7 +14,6 @@ namespace AutoJobSearchJobScraper
 {
     internal class Program
     {
-        // TODO: uninstall unused nuget packages
         static void Main(string[] args)
         {
             ConfigureLogger();
