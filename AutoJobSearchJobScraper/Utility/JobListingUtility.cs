@@ -107,7 +107,7 @@ namespace AutoJobSearchJobScraper.Utility
 
                 foreach (var sentiment in sentimentsPositive)
                 {
-                    // TODO: experiment with thresholds. maybe convert to using config file
+                    // TODO: final - experiment with thresholds. maybe convert to using config file
                     if (Fuzz.WeightedRatio(sentiment, job.Description.ToLower()) >= 50 &&
                        Fuzz.PartialRatio(sentiment, job.Description.ToLower()) >= 50)
                     {

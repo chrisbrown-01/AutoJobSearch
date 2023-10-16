@@ -33,8 +33,8 @@ namespace AutoJobSearchJobScraper.WebScraper
             _logger = logger;
 
             var builder = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json", optional: false);
+                .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+                .AddJsonFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "appsettings.json"), optional: false);
 
             var config = builder.Build();
 
@@ -98,7 +98,7 @@ namespace AutoJobSearchJobScraper.WebScraper
                         jobListings.AddRange(ExtractJobListingsFromLiElements(liElements, searchTerm));
                     }
                 }
-                catch (Exception ex) // TODO: try and see what exceptions would actually get thrown then handle them
+                catch (Exception ex) // TODO: final - try and see what exceptions would actually get thrown then handle them
                 {
                     _logger.LogError("Exception thrown during job scraping. {@Exception}", ex);
                     throw; 

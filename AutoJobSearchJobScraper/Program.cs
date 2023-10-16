@@ -18,7 +18,11 @@ namespace AutoJobSearchJobScraper
         {
             ConfigureLogger();
 
-            // if (args.Length < 1) throw new ArgumentException("No arguments provided."); 
+            // TODO: remove hardcoding
+            //if (args.Length < 1) throw new ArgumentException("No arguments provided."); 
+
+            args = new string[1];
+            args[0] = "1";
 
             var serviceProvider = new ServiceCollection()
                 .AddLogging(builder => builder.AddSerilog(Log.Logger, true))
@@ -27,25 +31,19 @@ namespace AutoJobSearchJobScraper
                 .AddScoped<JobListingUtility>()
                 .BuildServiceProvider();
 
-            Log.Information("Starting job scraper application.");
-            RunProgram(serviceProvider, 38).Wait(); // TODO: remove hardcoding
-            //TestConcurrencyIssues(serviceProvider).Wait();
+            if (int.TryParse(args[0], out int jobSearchProfileId))
+            {
+                Log.Information("Starting application with {@jobSearchProfileId} argument.", jobSearchProfileId);
+                RunProgram(serviceProvider, jobSearchProfileId).Wait();
+            }
+            else
+            {
+                Log.Information("Starting application with {@args.Count} string arguments.", args.Count());
+                RunProgram(serviceProvider, args.AsEnumerable()).Wait();            
+            }
+
+            Log.Information("Job scraper application finished executing.");
             Log.CloseAndFlush();
-
-            // TODO: test starting application from command line
-            //if (int.TryParse(args[0], out int jobSearchProfileId))
-            //{
-            //    Log.Information("Starting application with {@jobSearchProfileId} argument.", jobSearchProfileId);
-            //    RunProgram(serviceProvider, jobSearchProfileId).Wait();
-            //    Log.Information("Job scraper application finished executing.");
-            //}
-            //else
-            //{
-            //    Log.Information("Starting application with {@args.Count} string arguments.", args.Count());
-            //    RunProgram(serviceProvider, args.AsEnumerable()).Wait(); // TODO: find all manual declaration of List conversions and convert to this
-            //    Log.Information("Job scraper application finished executing.");
-            //}
-
         }
 
         private static async Task RunProgram(IServiceProvider serviceProvider, int jobSearchProfileId)
@@ -57,8 +55,6 @@ namespace AutoJobSearchJobScraper
             var jobSearchProfile = await db.GetJobSearchProfileByIdAsync(jobSearchProfileId) ?? 
                 throw new NullReferenceException($"Job search profile ID {jobSearchProfileId} not found in database."); 
 
-            // TODO: delete
-            //var scrapedJobs = await scraper.ScrapeJobsAsync(new List<string>() { "programming jobs waterloo" }); 
             var scrapedJobs = await scraper.ScrapeJobsAsync(StringHelpers.ConvertCommaSeperatedStringsToIEnumerable(jobSearchProfile.Searches));
 
             var existingLinks = await db.GetAllApplicationLinksAsync();
@@ -90,10 +86,20 @@ namespace AutoJobSearchJobScraper
 
         private static void ConfigureLogger()
         {
+            const string LOG_FILE_NAME = "JobScraperLogFile.json";
+            var logFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, LOG_FILE_NAME);
+
+            if (!File.Exists(logFilePath))
+            {
+                var fileStream = File.Create(logFilePath);
+                fileStream.Close();
+                fileStream.Dispose();
+            }
+
             Log.Logger = new LoggerConfiguration()
                                 .MinimumLevel.Information()
                                 .WriteTo.Console(new JsonFormatter())
-                                .WriteTo.File(new JsonFormatter(), "JobScraperLogFile.json")
+                                .WriteTo.File(new JsonFormatter(), logFilePath)
                                 .CreateLogger();
 
             // Attach event handler for unhandled exceptions

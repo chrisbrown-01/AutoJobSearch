@@ -14,11 +14,12 @@ namespace AutoJobSearchShared.Database
 
         public SQLiteDb()
         {
+            // TODO: when starting via GUI, it creates the database file inside the GUI bin folder. need to use relative paths instead 
+            // and preferably keep it inside shared project folder
             var dbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, DATABASE_FILE_NAME);
             var connectionString = $"Data Source={dbPath}";
             connection = new SqliteConnection(connectionString);
 
-            // Check if the database file exists
             if (!File.Exists(dbPath))
             {
                 connection.Open();
@@ -192,7 +193,6 @@ namespace AutoJobSearchShared.Database
             bool isRejected,
             bool isFavourite)
         {
-            // TODO: convert to string builder or other
             const string sql =
                 "SELECT Id, " +
                 "SearchTerm, " +
