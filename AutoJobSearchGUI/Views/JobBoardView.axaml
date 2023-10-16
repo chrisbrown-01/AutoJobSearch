@@ -106,9 +106,7 @@
 		CanUserReorderColumns="True"
 	 	ItemsSource="{Binding JobListingsDisplayed}"
 		SelectedItem="{Binding SelectedJobListing}"
-		RowHeight="150"
-		MaxColumnWidth="350"
-		ColumnWidth="*">
+		RowHeight="150">
 			<DataGrid.ContextMenu>
 				<ContextMenu>
 					<MenuItem Header="Hide Job" Command="{Binding HideJob}" />
