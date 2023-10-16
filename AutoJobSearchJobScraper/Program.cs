@@ -32,6 +32,7 @@ namespace AutoJobSearchJobScraper
             //TestConcurrencyIssues(serviceProvider).Wait();
             Log.CloseAndFlush();
 
+            // TODO: test starting application from command line
             //if (int.TryParse(args[0], out int jobSearchProfileId))
             //{
             //    Log.Information("Starting application with {@jobSearchProfileId} argument.", jobSearchProfileId);
@@ -45,21 +46,6 @@ namespace AutoJobSearchJobScraper
             //    Log.Information("Job scraper application finished executing.");
             //}
 
-        }
-
-        private static async Task TestConcurrencyIssues(IServiceProvider serviceProvider)
-        {
-            using var db = serviceProvider.GetRequiredService<IDbContext>();
-
-            var testEntries = new List<JobListing>();
-
-            for (int i = 0; i < 1; i++)
-            {
-                var jobListing = new JobListing();
-                testEntries.Add(jobListing);
-            }
-
-            await db.SaveJobListingsAsync(testEntries);
         }
 
         private static async Task RunProgram(IServiceProvider serviceProvider, int jobSearchProfileId)
