@@ -3,7 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:vm="using:AutoJobSearchGUI.ViewModels"
-             mc:Ignorable="d" d:DesignWidth="700" d:DesignHeight="700"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
              x:Class="AutoJobSearchGUI.Views.JobListingView"
 			 x:DataType="vm:JobListingViewModel">
 
@@ -18,7 +18,7 @@
 			DockPanel.Dock="Top" 
 			Orientation="Horizontal"
 			HorizontalAlignment="Center">
-			<Button Content="Previous Job" Command="{Binding GoToPreviousJob}" />
+			<Button Content="Previous Job" Margin="5 0" Command="{Binding GoToPreviousJob}" />
 			<Button Content="Next Job" Command="{Binding GoToNextJob}" />
 		</StackPanel>
 		<Grid>
@@ -31,14 +31,10 @@
 				<RowDefinition Height="Auto" />
 				<RowDefinition Height="Auto" />
 				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
 				<RowDefinition Height="5*" />
 				<RowDefinition Height="2*" />
-				<RowDefinition Height="Auto" />
-				<RowDefinition Height="Auto" />
-				<RowDefinition Height="Auto" />
-				<RowDefinition Height="Auto" />
-				<RowDefinition Height="Auto" />
-				<RowDefinition Height="Auto" />
 				<RowDefinition Height="2*" />
 			</Grid.RowDefinitions>
 
@@ -48,51 +44,67 @@
 			<TextBlock Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center">Search Term</TextBlock>
 			<TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding JobListing.SearchTerm}" />
 
-			<TextBlock Grid.Row="2" Grid.Column="0" HorizontalAlignment="Center">Time Created At</TextBlock>
+			<TextBlock Grid.Row="2" Grid.Column="0" HorizontalAlignment="Center">Created At</TextBlock>
 			<TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding JobListing.CreatedAt}" />
 
-			<TextBlock Grid.Row="3" Grid.Column="0" HorizontalAlignment="Center">Job Description</TextBlock>
+			<TextBlock Grid.Row="3" Grid.Column="0" HorizontalAlignment="Center">Score</TextBlock>
+			<TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding JobListing.Score}" />
+
+			<StackPanel Grid.Row="4"
+			Grid.ColumnSpan="2"
+			Orientation="Horizontal"
+			HorizontalAlignment="Center">
+				<TextBlock VerticalAlignment="Center" Margin="25 0 5 0">Applied</TextBlock>
+				<CheckBox IsChecked="{Binding JobListing.IsAppliedTo}" />
+				<TextBlock VerticalAlignment="Center" Margin="25 0 5 0">Interviewing</TextBlock>
+				<CheckBox IsChecked="{Binding JobListing.IsInterviewing}" />
+				<TextBlock VerticalAlignment="Center" Margin="25 0 5 0">Rejected</TextBlock>
+				<CheckBox IsChecked="{Binding JobListing.IsRejected}" />
+				<TextBlock VerticalAlignment="Center" Margin="25 0 5 0">Favourite</TextBlock>
+				<CheckBox IsChecked="{Binding JobListing.IsFavourite}" />
+				<TextBlock VerticalAlignment="Center" Margin="25 0 5 0">Hidden</TextBlock>
+				<CheckBox IsChecked="{Binding JobListing.IsHidden}" />
+			</StackPanel>
+
+			<TextBlock 
+				Grid.Row="5" 
+				Grid.Column="0" 
+				HorizontalAlignment="Center"
+				Text="Job Description"/>
 			<TextBox
-				Grid.Row="3"
+				Grid.Row="5"
 				Grid.Column="1"
 				Text="{Binding JobListing.Description}"
-				IsReadOnly="True"
-				TextWrapping="Wrap"/>
+				IsReadOnly="True" 
+				TextWrapping="Wrap"
+				Margin="0 1"/>
 
-			<TextBlock Grid.Row="4" Grid.Column="0" HorizontalAlignment="Center">Application Links</TextBlock>
+			<TextBlock 
+				Grid.Row="6" 
+				Grid.Column="0" 
+				HorizontalAlignment="Center" 
+				Text="Application Links"/>
 			<TextBox
-				Grid.Row="4"
+				Grid.Row="6"
 				Grid.Column="1"
 				Text="{Binding JobListing.ApplicationLinks}"
 				IsReadOnly="True"
-				TextWrapping="Wrap"/>
+				TextWrapping="Wrap"
+				Margin="0 1"/>
 
-			<TextBlock Grid.Row="5" Grid.Column="0" HorizontalAlignment="Center">Job Score</TextBlock>
-			<TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding JobListing.Score}" />
-
-			<TextBlock Grid.Row="6" Grid.Column="0" HorizontalAlignment="Center">Applied To</TextBlock>
-			<CheckBox  Grid.Row="6" Grid.Column="1" IsChecked="{Binding JobListing.IsAppliedTo}" />
-
-			<TextBlock Grid.Row="7" Grid.Column="0" HorizontalAlignment="Center">Interviewing</TextBlock>
-			<CheckBox  Grid.Row="7" Grid.Column="1" IsChecked="{Binding JobListing.IsInterviewing}" />
-
-			<TextBlock Grid.Row="8" Grid.Column="0" HorizontalAlignment="Center">Rejected</TextBlock>
-			<CheckBox  Grid.Row="8" Grid.Column="1" IsChecked="{Binding JobListing.IsRejected}" />
-
-			<TextBlock Grid.Row="9" Grid.Column="0" HorizontalAlignment="Center">Favourite</TextBlock>
-			<CheckBox  Grid.Row="9" Grid.Column="1" IsChecked="{Binding JobListing.IsFavourite}" />
-
-			<TextBlock Grid.Row="10" Grid.Column="0" HorizontalAlignment="Center">Hidden</TextBlock>
-			<CheckBox  Grid.Row="10" Grid.Column="1" IsChecked="{Binding JobListing.IsHidden}" />
-
-			<TextBlock Grid.Row="11" Grid.Column="0" HorizontalAlignment="Center">Notes</TextBlock>
+			<TextBlock 
+				Grid.Row="7" 
+				Grid.Column="0" 
+				HorizontalAlignment="Center" 
+				Text="Notes"/>
 			<TextBox
-				Grid.Row="11"
+				Grid.Row="7"
 				Grid.Column="1"
 				Text="{Binding JobListing.Notes}"
 				TextWrapping="Wrap"
 				AcceptsReturn="True"
-				AcceptsTab="True" />
+				AcceptsTab="True" 
+				Margin="0 1"/>
 		</Grid>
 	</DockPanel>
 	
