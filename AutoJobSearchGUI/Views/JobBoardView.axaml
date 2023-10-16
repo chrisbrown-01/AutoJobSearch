@@ -3,7 +3,7 @@
 			 xmlns:vm="using:AutoJobSearchGUI.ViewModels"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="1000"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
              x:Class="AutoJobSearchGUI.Views.JobBoardView"
 			 x:DataType="vm:JobBoardViewModel">
 
@@ -103,33 +103,60 @@
 		</StackPanel>
 		<DataGrid
 	 	CanUserResizeColumns="True"
-	 	ColumnWidth="*"
-	 	MinHeight="400"
-	 	MaxHeight="1000"
+		CanUserReorderColumns="True"
 	 	ItemsSource="{Binding JobListingsDisplayed}"
 		SelectedItem="{Binding SelectedJobListing}"
-		RowHeight="150">
+		RowHeight="150"
+		MaxColumnWidth="350"
+		ColumnWidth="*">
 			<DataGrid.ContextMenu>
 				<ContextMenu>
 					<MenuItem Header="Hide Job" Command="{Binding HideJob}" />
 				</ContextMenu>
 			</DataGrid.ContextMenu>
 			<DataGrid.Columns>
-				<DataGridTextColumn Header="Id" Binding="{Binding Id}" IsReadOnly="True" />
-				<DataGridTextColumn Header="SearchTerm" Binding="{Binding SearchTerm}" IsReadOnly="True" />
-				<DataGridTextColumn Header="CreatedAt" Binding="{Binding CreatedAt}" IsReadOnly="True" />
-				<DataGridTemplateColumn Header="Description">
+				<DataGridTextColumn 
+					Header="Search Term" 
+					Binding="{Binding SearchTerm}" 
+					IsReadOnly="True" 
+					Width="1.5*" />
+				<DataGridTextColumn 
+					Header="Created At" 
+					Binding="{Binding CreatedAt}" 
+					IsReadOnly="True"
+					Width="1*" />
+				<DataGridTemplateColumn 
+					Header="Job Description" 
+					Width="3*">
 					<DataGridTemplateColumn.CellTemplate>
 						<DataTemplate>
-							<TextBlock Text="{Binding Description}" TextWrapping="Wrap" />
+							<TextBlock 
+								Text="{Binding Description}" 
+								TextWrapping="Wrap" />
 						</DataTemplate>
 					</DataGridTemplateColumn.CellTemplate>
 				</DataGridTemplateColumn>
-				<DataGridTextColumn Header="Score" Binding="{Binding Score}" IsReadOnly="True" />
-				<DataGridCheckBoxColumn Header="IsAppliedTo" Binding="{Binding IsAppliedTo}" />
-				<DataGridCheckBoxColumn Header="IsInterviewing" Binding="{Binding IsInterviewing}" />
-				<DataGridCheckBoxColumn Header="IsRejected" Binding="{Binding IsRejected}" />
-				<DataGridCheckBoxColumn Header="IsFavourite" Binding="{Binding IsFavourite}" />
+				<DataGridTextColumn 
+					Header="Score" 
+					Binding="{Binding Score}" 
+					IsReadOnly="True"
+					Width="0.5*" />
+				<DataGridCheckBoxColumn 
+					Header="Applied" 
+					Binding="{Binding IsAppliedTo}"
+					Width="0.5*" />
+				<DataGridCheckBoxColumn 
+					Header="Interviewing" 
+					Binding="{Binding IsInterviewing}"
+					Width="0.5*" />
+				<DataGridCheckBoxColumn 
+					Header="Rejected" 
+					Binding="{Binding IsRejected}"
+					Width="0.5*" />
+				<DataGridCheckBoxColumn 
+					Header="Favourite" 
+					Binding="{Binding IsFavourite}"
+					Width="0.5*" />
 			</DataGrid.Columns>
 		</DataGrid>
 	</DockPanel>
