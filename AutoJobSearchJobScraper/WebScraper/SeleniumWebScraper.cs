@@ -1,7 +1,6 @@
 ﻿using AutoJobSearchJobScraper.Exceptions;
 using AutoJobSearchShared.Helpers;
 using AutoJobSearchShared.Models;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using HtmlAgilityPack;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

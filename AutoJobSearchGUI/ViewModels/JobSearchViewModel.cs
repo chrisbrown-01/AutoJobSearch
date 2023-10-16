@@ -3,7 +3,6 @@ using AutoJobSearchGUI.Models;
 using AutoJobSearchShared.EventAggregator;
 using AutoJobSearchShared.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
-using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using System;
 using System.Collections;

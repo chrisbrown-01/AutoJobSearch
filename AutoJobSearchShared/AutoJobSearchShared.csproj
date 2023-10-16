@@ -7,11 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\AutoJobSearchConsoleApp\AutoJobSearchConsoleApp.csproj" />
+    <PackageReference Include="Dapper" Version="2.1.11" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="7.0.12" />
   </ItemGroup>
 
 </Project>

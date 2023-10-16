@@ -1,5 +1,4 @@
-﻿using AutoJobSearchConsoleApp.Models;
-using AutoJobSearchGUI.Data;
+﻿using AutoJobSearchGUI.Data;
 using AutoJobSearchGUI.Events;
 using AutoJobSearchShared;
 using AutoJobSearchShared.Enums;

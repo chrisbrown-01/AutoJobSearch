@@ -1,7 +1,7 @@
 ﻿using AutoJobSearchShared.Enums;
 using AutoJobSearchShared.Models;
 using Dapper;
-using Microsoft.Data.Sqlite; // TODO: uninstall packages where they're not required
+using Microsoft.Data.Sqlite; 
 using System.Diagnostics;
 using System.Text;
 
@@ -9,12 +9,64 @@ namespace AutoJobSearchShared.Database
 {
     public class SQLiteDb : IAutoJobSearchDb
     {
+        private const string DATABASE_FILE_NAME = "AutoJobSearch.db";
         private readonly SqliteConnection connection;
 
         public SQLiteDb()
         {
-            connection = new SqliteConnection(Constants.SQLITE_CONNECTION_STRING);
-            connection.Open(); // TODO: seems that db is auto create if it doesn't exist?
+            var dbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, DATABASE_FILE_NAME);
+            var connectionString = $"Data Source={dbPath}";
+            connection = new SqliteConnection(connectionString);
+
+            // Check if the database file exists
+            if (!File.Exists(dbPath))
+            {
+                connection.Open();
+                CreateTables();
+            }
+            else
+            {
+                connection.Open();
+            }
+        }
+
+        public void CreateTables()
+        {
+            const string createJobListingsTableSQL = "CREATE TABLE JobListings (" +
+                "Id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "SearchTerm TEXT," +
+                "CreatedAt TEXT," +
+                "Description_Raw TEXT," +
+                "Description TEXT," +
+                "Notes TEXT," +
+                "Score INTEGER," +
+                "IsAppliedTo INTEGER," +
+                "IsInterviewing INTEGER," +
+                "IsRejected INTEGER," +
+                "IsFavourite INTEGER," +
+                "IsHidden INTEGER)";
+
+            connection.Execute(createJobListingsTableSQL);
+
+            const string createApplicationLinksTableSQL = "CREATE TABLE ApplicationLinks (" +
+                 "Id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                 "JobListingId INTEGER," +
+                 "Link TEXT," +
+                 "Link_RawHTML TEXT," +
+                 "FOREIGN KEY(JobListingId) REFERENCES JobListings(Id))";
+
+            connection.Execute(createApplicationLinksTableSQL);
+
+            const string createJobSearchProfilesTableSQL = "CREATE TABLE JobSearchProfiles (" +
+                 "Id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                 "ProfileName TEXT," +
+                 "Searches TEXT," +
+                 "KeywordsPositive TEXT," +
+                 "KeywordsNegative TEXT," +
+                 "SentimentsPositive TEXT," +
+                 "SentimentsNegative TEXT)";
+
+            connection.Execute(createJobSearchProfilesTableSQL);
         }
 
         public async Task DeleteAllJobListingsAsync()
@@ -140,6 +192,7 @@ namespace AutoJobSearchShared.Database
             bool isRejected,
             bool isFavourite)
         {
+            // TODO: convert to string builder or other
             const string sql =
                 "SELECT Id, " +
                 "SearchTerm, " +
