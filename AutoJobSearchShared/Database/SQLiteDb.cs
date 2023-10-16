@@ -247,6 +247,7 @@ namespace AutoJobSearchShared.Database
                 foreach (var link in applicationLinks)
                 {
                     sb.AppendLine(link);
+                    sb.AppendLine();
                 }
 
                 jobListing.ApplicationLinksString = sb.ToString();
