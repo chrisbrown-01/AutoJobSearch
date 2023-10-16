@@ -46,12 +46,12 @@
 			</ComboBox>
 		</StackPanel>
 
-		<StackPanel Orientation="Horizontal" Grid.Row="1" Margin="30 5">
-			<TextBlock Text="Profile Name" />
+		<StackPanel VerticalAlignment="Center" Orientation="Horizontal" Grid.Row="1" Margin="30 5">
+			<TextBlock Text="Profile Name" Margin="0,0,10,0" />
 			<TextBox Text="{Binding SelectedSearchProfile.ProfileName}" Width="125" />
 		</StackPanel>
 
-		<TextBlock Grid.Row="2" Text="Searches" Margin="30 0"/>
+		<TextBlock Grid.Row="2" Text="Search Terms" Margin="30 0"/>
 		<TextBox 
 			Grid.Row="3" 
 			IsReadOnly="False" 
@@ -60,7 +60,7 @@
 			AcceptsReturn="True"
 			Text="{Binding SelectedSearchProfile.Searches}" />
 
-		<TextBlock Grid.Row="4" Text="Positive Scoring Keywords" Foreground="Green" Margin="30 0"/>
+		<TextBlock Grid.Row="4" Text="Positive Scoring Keywords" Foreground="SeaGreen" Margin="30 0"/>
 		<TextBox 
 			Grid.Row="5" 
 			IsReadOnly="False" 
@@ -69,7 +69,7 @@
 			AcceptsReturn="True"
 			Text="{Binding SelectedSearchProfile.KeywordsPositive}" />
 
-		<TextBlock Grid.Row="6" Text="Negative Scoring Keywords" Foreground="Red" Margin="30 0"/>
+		<TextBlock Grid.Row="6" Text="Negative Scoring Keywords" Foreground="Crimson" Margin="30 0"/>
 		<TextBox 
 			Grid.Row="7" 
 			IsReadOnly="False" 
@@ -78,7 +78,7 @@
 			AcceptsReturn="True"
 			Text="{Binding SelectedSearchProfile.KeywordsNegative}" />
 
-		<TextBlock Grid.Row="8" Text="Positive Scoring Sentiments" Foreground="Green" Margin="30 0"/>
+		<TextBlock Grid.Row="8" Text="Positive Scoring Sentiments" Foreground="SeaGreen" Margin="30 0"/>
 		<TextBox 
 			Grid.Row="9" 
 			IsReadOnly="False" 
@@ -87,7 +87,7 @@
 			AcceptsReturn="True"
 			Text="{Binding SelectedSearchProfile.SentimentsPositive}" />
 
-		<TextBlock Grid.Row="10" Text="Negative Scoring Sentiments" Foreground="Red" Margin="30 0"/>
+		<TextBlock Grid.Row="10" Text="Negative Scoring Sentiments" Foreground="Crimson" Margin="30 0"/>
 		<TextBox 
 			Grid.Row="11" 
 			IsReadOnly="False" 
