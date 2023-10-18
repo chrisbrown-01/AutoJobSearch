@@ -236,7 +236,7 @@ namespace AutoJobSearchJobScraper.WebScraper
                     Description_Raw = WebUtility.HtmlDecode(li.InnerText)
                 };
 
-                GetApplicationLinksForJobListing(listing, anchorElements);
+                GetApplicationLinksForJobListing(listing, anchorElements); // TODO: convert away from void functions
                 GetDescriptionForJobListing(listing);
 
                 jobList.Add(listing);

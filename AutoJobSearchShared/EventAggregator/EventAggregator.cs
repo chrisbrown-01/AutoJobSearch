@@ -11,9 +11,8 @@ namespace AutoJobSearchShared.EventAggregator
     {
         public void StartJobScraper(int jobSearchProfileId)
         {
-            // TODO: figure out how to start executable after program is installed, try using relative paths?
-            var process = new System.Diagnostics.Process();
-            process.StartInfo.FileName = "C:\\Users\\chris\\Documents\\GitHub\\AutoJobSearch\\AutoJobSearchJobScraper\\bin\\Debug\\net7.0\\AutoJobSearchJobScraper.exe";
+            var process = new Process();
+            process.StartInfo.FileName = "AutoJobSearchJobScraper.dll";
             process.StartInfo.Arguments = jobSearchProfileId.ToString();
             process.Start();
         }

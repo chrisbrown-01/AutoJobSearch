@@ -8,6 +8,11 @@ namespace AutoJobSearchShared.Models
 {
     public class ApplicationLink
     {
+        public ApplicationLink()
+        {
+
+        }
+
         public int Id { get; }
 
         public int JobListingId { get; set; }
