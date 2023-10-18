@@ -11,8 +11,9 @@ namespace AutoJobSearchShared.EventAggregator
     {
         public void StartJobScraper(int jobSearchProfileId)
         {
+            // TODO: ensure cross platform
             var process = new Process();
-            process.StartInfo.FileName = "AutoJobSearchJobScraper.dll";
+            process.StartInfo.FileName = "..\\AutoJobSearchJobScraper\\AutoJobSearchJobScraper.exe";
             process.StartInfo.Arguments = jobSearchProfileId.ToString();
             process.Start();
         }
