@@ -83,7 +83,7 @@ namespace AutoJobSearchShared.Database
         public async Task<IEnumerable<string>> GetAllApplicationLinksAsync()
         {
             const string sql = "SELECT Link FROM ApplicationLinks;";
-            return await connection.QueryAsync<string>(sql).ConfigureAwait(false); 
+            return await connection.QueryAsync<string>(sql).ConfigureAwait(false); // TODO: test
         }
 
         public async Task SaveJobListingsAsync(IEnumerable<JobListing> jobListings)
