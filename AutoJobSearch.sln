@@ -9,6 +9,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoJobSearchGUI", "AutoJob
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoJobSearchJobScraper", "AutoJobSearchJobScraper\AutoJobSearchJobScraper.csproj", "{1B582340-E427-4E80-829B-3F0565742D9E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoJobSearchGUI.Tests", "AutoJobSearchGUI.Tests\AutoJobSearchGUI.Tests.csproj", "{FA99BF0C-2A84-4DBF-BF42-15DF6FC7AA87}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoJobSearchJobScraper.Tests", "AutoJobSearchJobScraper.Tests\AutoJobSearchJobScraper.Tests.csproj", "{82E03D5A-06EF-44A2-8F8B-62BB2452B2D5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoJobSearchShared.Tests", "AutoJobSearchShared.Tests\AutoJobSearchShared.Tests.csproj", "{2A35C218-F6D4-479E-902A-CF195EDD9A95}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +33,18 @@ Global
 		{1B582340-E427-4E80-829B-3F0565742D9E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1B582340-E427-4E80-829B-3F0565742D9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1B582340-E427-4E80-829B-3F0565742D9E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FA99BF0C-2A84-4DBF-BF42-15DF6FC7AA87}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA99BF0C-2A84-4DBF-BF42-15DF6FC7AA87}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA99BF0C-2A84-4DBF-BF42-15DF6FC7AA87}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA99BF0C-2A84-4DBF-BF42-15DF6FC7AA87}.Release|Any CPU.Build.0 = Release|Any CPU
+		{82E03D5A-06EF-44A2-8F8B-62BB2452B2D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{82E03D5A-06EF-44A2-8F8B-62BB2452B2D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{82E03D5A-06EF-44A2-8F8B-62BB2452B2D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{82E03D5A-06EF-44A2-8F8B-62BB2452B2D5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2A35C218-F6D4-479E-902A-CF195EDD9A95}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2A35C218-F6D4-479E-902A-CF195EDD9A95}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2A35C218-F6D4-479E-902A-CF195EDD9A95}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2A35C218-F6D4-479E-902A-CF195EDD9A95}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
