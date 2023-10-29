@@ -9,7 +9,7 @@ namespace AutoJobSearchShared.Database
 {
     public class SQLiteDb : IAutoJobSearchDb
     {
-        private const string DATABASE_FILE_NAME = "..\\AutoJobSearch.db";
+        private const string DATABASE_FILE_NAME = "../AutoJobSearch.db";
         private readonly SqliteConnection connection;
 
         public SQLiteDb()
