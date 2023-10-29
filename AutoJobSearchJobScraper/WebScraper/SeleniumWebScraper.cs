@@ -56,9 +56,9 @@ namespace AutoJobSearchJobScraper.WebScraper
                     $"Ensure that {nameof(MAX_JOB_LISTING_INDEX)} has a value greater than 0.");
             }
 
-            STARTING_INDEX_KEYWORD = config.GetValue<string>(nameof(STARTING_INDEX_KEYWORD)) ?? 
+            STARTING_INDEX_KEYWORD = config.GetValue<string>(nameof(STARTING_INDEX_KEYWORD)) ??
                 throw new AppSettingsFileArgumentException($"Failed to read {nameof(STARTING_INDEX_KEYWORD)} from appsettings.json config file.");
-            
+
             ENDING_INDEX_KEYWORD = config.GetValue<string>(nameof(ENDING_INDEX_KEYWORD)) ??
                 throw new AppSettingsFileArgumentException($"Failed to read {nameof(ENDING_INDEX_KEYWORD)} from appsettings.json config file.");
         }
@@ -101,7 +101,7 @@ namespace AutoJobSearchJobScraper.WebScraper
                 catch (Exception ex) // TODO: final - try and see what exceptions would actually get thrown then handle them
                 {
                     _logger.LogError("Exception thrown during job scraping. {@Exception}", ex);
-                    throw; 
+                    throw;
                 }
             }
 
@@ -141,8 +141,9 @@ namespace AutoJobSearchJobScraper.WebScraper
         /// </summary>
         /// <param name="listing"></param>
         /// <param name="anchorElements"></param>
-        private void GetApplicationLinksForJobListing(JobListing listing, IEnumerable<HtmlNode> anchorElements)
+        private List<ApplicationLink> GetApplicationLinks(IEnumerable<HtmlNode> anchorElements)
         {
+            var applicationLinks = new List<ApplicationLink>();
             var existingLinks = new HashSet<string>();
 
             foreach (var anchor in anchorElements)
@@ -159,21 +160,21 @@ namespace AutoJobSearchJobScraper.WebScraper
 
                 existingLinks.Add(hyperlink);
 
-                var applicationLink = new ApplicationLink
+                applicationLinks.Add(new ApplicationLink
                 {
                     Link_RawHTML = anchor.OuterHtml,
                     Link = hyperlink
-                };
-
-                listing.ApplicationLinks.Add(applicationLink);
+                });
             }
+
+            return applicationLinks;
         }
 
         /// <summary>
         /// This method attempts to extract only the important portions of the scraped job listing description.
         /// </summary>
         /// <param name="listing"></param>
-        private void GetDescriptionForJobListing(JobListing listing)
+        private string GetDescription(JobListing listing)
         {
             // The raw job descriptions contain a lot of unhelpful and boilerplate text that Google applies to present the job on their website.
             // Usually the main job description can be found as a substring between two keywords that Google generally applies at the beginning and
@@ -187,8 +188,8 @@ namespace AutoJobSearchJobScraper.WebScraper
             {
                 try
                 {
-                    listing.Description = listing.Description_Raw.Substring(startingIndex + STARTING_INDEX_KEYWORD.Length, endingIndex - (startingIndex + STARTING_INDEX_KEYWORD.Length));
-                    listing.Description = StringHelpers.AddNewLinesToMisformedString(listing.Description);
+                    var description = listing.Description_Raw.Substring(startingIndex + STARTING_INDEX_KEYWORD.Length, endingIndex - (startingIndex + STARTING_INDEX_KEYWORD.Length));
+                    return StringHelpers.AddNewLinesToMisformedString(description);
                 }
                 catch
                 {
@@ -203,12 +204,12 @@ namespace AutoJobSearchJobScraper.WebScraper
                         STARTING_INDEX_KEYWORD,
                         STARTING_INDEX_KEYWORD.Length);
 
-                    listing.Description = StringHelpers.AddNewLinesToMisformedString(listing.Description_Raw);
+                    return StringHelpers.AddNewLinesToMisformedString(listing.Description_Raw);
                 }
             }
             else
             {
-                listing.Description = StringHelpers.AddNewLinesToMisformedString(listing.Description_Raw);
+                return StringHelpers.AddNewLinesToMisformedString(listing.Description_Raw);
             }
         }
 
@@ -236,8 +237,8 @@ namespace AutoJobSearchJobScraper.WebScraper
                     Description_Raw = WebUtility.HtmlDecode(li.InnerText)
                 };
 
-                GetApplicationLinksForJobListing(listing, anchorElements); // TODO: convert away from void functions
-                GetDescriptionForJobListing(listing);
+                listing.ApplicationLinks = GetApplicationLinks(anchorElements);
+                listing.Description = GetDescription(listing);
 
                 jobList.Add(listing);
             }
