@@ -1,5 +1,7 @@
-﻿using AutoJobSearchShared.Models;
+﻿using AutoJobSearchJobScraper.Exceptions;
+using AutoJobSearchShared.Models;
 using FuzzySharp;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -11,11 +13,55 @@ namespace AutoJobSearchJobScraper.Utility
 {
     internal class JobListingUtility
     {
+        private readonly int WEIGHTED_FUZZ_RATIO_THRESHOLD;
+        private readonly int PARTIAL_FUZZ_RATIO_THRESHOLD;
         private readonly ILogger<JobListingUtility> _logger;
 
         public JobListingUtility(ILogger<JobListingUtility> logger)
         {
             _logger = logger;
+
+            var builder = new ConfigurationBuilder()
+               .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+               .AddJsonFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "appsettings.json"), optional: false);
+
+            var config = builder.Build();
+
+            try
+            {
+                WEIGHTED_FUZZ_RATIO_THRESHOLD = config.GetValue<int>(nameof(WEIGHTED_FUZZ_RATIO_THRESHOLD));
+            }
+            catch (InvalidOperationException)
+            {
+                throw new AppSettingsFileArgumentException(
+                    $"Failed to read {nameof(WEIGHTED_FUZZ_RATIO_THRESHOLD)} from appsettings.json config file. " +
+                    $"Ensure that {nameof(WEIGHTED_FUZZ_RATIO_THRESHOLD)} is an integer.");
+            }
+
+            if (WEIGHTED_FUZZ_RATIO_THRESHOLD < 1)
+            {
+                throw new AppSettingsFileArgumentException(
+                    $"Failed to read {nameof(WEIGHTED_FUZZ_RATIO_THRESHOLD)} from appsettings.json config file. " +
+                    $"Ensure that {nameof(WEIGHTED_FUZZ_RATIO_THRESHOLD)} has a value greater than 0.");
+            }
+
+            try
+            {
+                PARTIAL_FUZZ_RATIO_THRESHOLD = config.GetValue<int>(nameof(PARTIAL_FUZZ_RATIO_THRESHOLD));
+            }
+            catch (InvalidOperationException)
+            {
+                throw new AppSettingsFileArgumentException(
+                    $"Failed to read {nameof(PARTIAL_FUZZ_RATIO_THRESHOLD)} from appsettings.json config file. " +
+                    $"Ensure that {nameof(PARTIAL_FUZZ_RATIO_THRESHOLD)} is an integer.");
+            }
+
+            if (PARTIAL_FUZZ_RATIO_THRESHOLD < 1)
+            {
+                throw new AppSettingsFileArgumentException(
+                    $"Failed to read {nameof(PARTIAL_FUZZ_RATIO_THRESHOLD)} from appsettings.json config file. " +
+                    $"Ensure that {nameof(PARTIAL_FUZZ_RATIO_THRESHOLD)} has a value greater than 0.");
+            }
         }
 
         // TODO: create unit test project
@@ -107,9 +153,9 @@ namespace AutoJobSearchJobScraper.Utility
 
                 foreach (var sentiment in sentimentsPositive)
                 {
-                    // TODO: final - experiment with thresholds. maybe convert to using config file
-                    if (Fuzz.WeightedRatio(sentiment, job.Description.ToLower()) >= 50 &&
-                       Fuzz.PartialRatio(sentiment, job.Description.ToLower()) >= 50)
+                    // TODO: final - experiment with thresholds
+                    if (Fuzz.WeightedRatio(sentiment, job.Description.ToLower()) >= WEIGHTED_FUZZ_RATIO_THRESHOLD &&
+                       Fuzz.PartialRatio(sentiment, job.Description.ToLower()) >= PARTIAL_FUZZ_RATIO_THRESHOLD)
                     {
                         job.Score++;
                     }
@@ -117,8 +163,8 @@ namespace AutoJobSearchJobScraper.Utility
 
                 foreach (var sentiment in sentimentsNegative)
                 {
-                    if (Fuzz.WeightedRatio(sentiment, job.Description.ToLower()) >= 50 &&
-                       Fuzz.PartialRatio(sentiment, job.Description.ToLower()) >= 50)
+                    if (Fuzz.WeightedRatio(sentiment, job.Description.ToLower()) >= WEIGHTED_FUZZ_RATIO_THRESHOLD &&
+                       Fuzz.PartialRatio(sentiment, job.Description.ToLower()) >= PARTIAL_FUZZ_RATIO_THRESHOLD)
                     {
                         job.Score--;
                     }

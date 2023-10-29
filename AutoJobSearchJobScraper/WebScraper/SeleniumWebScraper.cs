@@ -75,7 +75,7 @@ namespace AutoJobSearchJobScraper.WebScraper
             {
                 try
                 {
-                    // Parse through the amount of jobs specified by MAX_PAGE_INDEX. Parse for 10 jobs per iteration.
+                    // Parse through the amount of jobs specified by MAX_PAGE_INDEX. Increment the start index by 10 every iteration.
                     for (int i = 0; i < MAX_JOB_LISTING_INDEX + 1; i += 10)
                     {
                         driver.Navigate().GoToUrl($"https://www.google.com/search?q={WebUtility.UrlEncode(searchTerm)}&sourceid=chrome&ie=UTF-8&ibp=htl;jobs&start={i}");
