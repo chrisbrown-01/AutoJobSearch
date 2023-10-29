@@ -16,8 +16,6 @@ using System.Threading.Tasks;
 
 namespace AutoJobSearchGUI.ViewModels
 {
-    // TODO: make it easier for user to render the default view. 
-    // TODO: create sample data feature for testing/demo purposes
     public partial class JobBoardViewModel : ViewModelBase // Needs to be public for View previewer to work
     {
         public delegate void OpenJobListingViewHandler(JobListingModel job, IEnumerable<JobListingModel> jobListings);
