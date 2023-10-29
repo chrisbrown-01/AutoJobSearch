@@ -25,4 +25,8 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\AutoJobSearchJobScraper\AutoJobSearchJobScraper.csproj" />
+  </ItemGroup>
+
 </Project>
