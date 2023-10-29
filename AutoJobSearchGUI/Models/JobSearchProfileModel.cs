@@ -1,4 +1,4 @@
-﻿using AutoJobSearchGUI.Events;
+﻿using AutoJobSearchGUI.Events.CustomEventArgs;
 using AutoJobSearchShared.Enums;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System;

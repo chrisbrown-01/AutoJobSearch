@@ -1,6 +1,6 @@
 ﻿using AutoJobSearchGUI.Data;
 using AutoJobSearchGUI.Models;
-using AutoJobSearchShared.EventAggregator;
+using AutoJobSearchGUI.Services;
 using AutoJobSearchShared.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Serilog;
@@ -11,6 +11,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+// TODO: run format and code cleanup
 
 namespace AutoJobSearchGUI.ViewModels
 {
@@ -23,7 +24,6 @@ namespace AutoJobSearchGUI.ViewModels
         private JobSearchProfileModel _selectedSearchProfile = new();
 
         private readonly IDbContext _dbContext;
-        private readonly EventAggregator _eventAggregator;
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         public JobSearchViewModel() // For View previewer only
@@ -33,18 +33,16 @@ namespace AutoJobSearchGUI.ViewModels
             SelectedSearchProfile = new();
         }
 
-        public JobSearchViewModel(IDbContext dbContext, EventAggregator eventAggregator)
+        public JobSearchViewModel(IDbContext dbContext)
         {
             _dbContext = dbContext;
-            _eventAggregator = eventAggregator;
-
             RenderDefaultJobSearchView();
         }
 
         public void ExecuteJobSearch()
         {
             Log.Information("Executing job search for job search profile {@id}", SelectedSearchProfile.Id);
-            _eventAggregator.StartJobScraper(SelectedSearchProfile.Id);
+            JobScraperService.StartJobScraper(SelectedSearchProfile.Id);
         }
 
         private async void RenderDefaultJobSearchView()

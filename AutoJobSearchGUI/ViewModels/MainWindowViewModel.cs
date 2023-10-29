@@ -1,6 +1,5 @@
 ﻿using AutoJobSearchGUI.Data;
 using AutoJobSearchGUI.Models;
-using AutoJobSearchShared.EventAggregator;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Serilog;
 using Serilog.Formatting.Json;
@@ -19,7 +18,6 @@ namespace AutoJobSearchGUI.ViewModels
         private JobListingViewModel jobListingViewModel;
         private HelpViewModel helpViewModel;
         private readonly DbContext dbContext;
-        private readonly EventAggregator eventAggregator;
 
         [ObservableProperty]
         private ViewModelBase _contentViewModel;
@@ -28,10 +26,9 @@ namespace AutoJobSearchGUI.ViewModels
         {
             ConfigureSerilog();
 
-            eventAggregator = new EventAggregator();
             dbContext = new DbContext();
             jobBoardViewModel = new JobBoardViewModel(dbContext);
-            jobSearchViewModel = new JobSearchViewModel(dbContext, eventAggregator);
+            jobSearchViewModel = new JobSearchViewModel(dbContext);
             jobListingViewModel = new JobListingViewModel(dbContext);
             helpViewModel = new HelpViewModel();
             ContentViewModel = jobBoardViewModel;

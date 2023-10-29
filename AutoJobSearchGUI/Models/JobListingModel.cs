@@ -1,5 +1,5 @@
 ﻿using AutoJobSearchGUI.Data;
-using AutoJobSearchGUI.Events;
+using AutoJobSearchGUI.Events.CustomEventArgs;
 using AutoJobSearchShared;
 using AutoJobSearchShared.Enums;
 using CommunityToolkit.Mvvm.ComponentModel;

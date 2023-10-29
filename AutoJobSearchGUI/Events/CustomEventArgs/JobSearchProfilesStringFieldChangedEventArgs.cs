@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AutoJobSearchGUI.Events
+namespace AutoJobSearchGUI.Events.CustomEventArgs
 {
     public class JobSearchProfilesStringFieldChangedEventArgs : EventArgs
     {

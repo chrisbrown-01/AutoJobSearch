@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AutoJobSearchGUI.Events
+namespace AutoJobSearchGUI.Events.CustomEventArgs
 {
     public class JobListingsBoolFieldChangedEventArgs : EventArgs // Needs to be public for delegates to work
     {
