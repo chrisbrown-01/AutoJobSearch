@@ -35,5 +35,13 @@ namespace AutoJobSearchShared.Tests.Helpers
             // Assert
             result.Should().BeEquivalentTo(expected);
         }
+
+        [Fact]
+        public void testFailing()
+        {
+            var test = 1;
+
+            test.Should().Be(2);
+        }
     }
 }
