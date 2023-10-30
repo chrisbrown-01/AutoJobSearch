@@ -28,13 +28,33 @@ jobs:
       run: dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
     - name: List coverage files
       run: find . -name 'coverage.opencover.xml'
-    - name: Upload coverage reports to Codecov
+    - name: Upload coverage reports to Codecov for AutoJobSearchShared.Tests
       uses: codecov/codecov-action@v3
       with:
-        file: './**/*.Tests/coverage.opencover.xml'
+        file: './AutoJobSearchShared.Tests/coverage.opencover.xml'
         flags: unittests
         env_vars: OS,ARCHITECTURE
-        name: codecov-umbrella
+        name: codecov-umbrella-shared-tests
+        fail_ci_if_error: true
+      env:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+    - name: Upload coverage reports to Codecov for AutoJobSearchJobScraper.Tests
+      uses: codecov/codecov-action@v3
+      with:
+        file: './AutoJobSearchJobScraper.Tests/coverage.opencover.xml'
+        flags: unittests
+        env_vars: OS,ARCHITECTURE
+        name: codecov-umbrella-jobscraper-tests
+        fail_ci_if_error: true
+      env:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+    - name: Upload coverage reports to Codecov for AutoJobSearchGUI.Tests
+      uses: codecov/codecov-action@v3
+      with:
+        file: './AutoJobSearchGUI.Tests/coverage.opencover.xml'
+        flags: unittests
+        env_vars: OS,ARCHITECTURE
+        name: codecov-umbrella-gui-tests
         fail_ci_if_error: true
       env:
         CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
