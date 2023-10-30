@@ -35,5 +35,6 @@ namespace AutoJobSearchShared.Tests.Helpers
             // Assert
             result.Should().BeEquivalentTo(expected);
         }
+
     }
 }
