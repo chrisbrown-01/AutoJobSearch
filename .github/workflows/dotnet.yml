@@ -24,9 +24,15 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build --no-restore
-    - name: Test
-      run: dotnet test --no-build --verbosity normal
-    - name: Upload coverage reports to Codecov # This line was indented incorrectly.
+    - name: Test with coverage
+      run: dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+    - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v3
+      with:
+        file: './**/coverage.opencover.xml'
+        flags: unittests
+        env_vars: OS,ARCHITECTURE
+        name: codecov-umbrella
+        fail_ci_if_error: true
       env:
         CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
