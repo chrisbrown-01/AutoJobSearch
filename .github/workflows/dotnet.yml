@@ -26,6 +26,8 @@ jobs:
       run: dotnet build --no-restore
     - name: Test with coverage
       run: dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+    - name: List coverage files
+      run: find . -name 'coverage.opencover.xml'
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v3
       with:
