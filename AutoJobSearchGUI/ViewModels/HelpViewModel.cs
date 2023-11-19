@@ -17,7 +17,7 @@ namespace AutoJobSearchGUI.ViewModels
 
         public static string AboutJobBoard => "The Job Board tab displays the scraped job listings in a table format. Select a job and press the " +
             "\"Open Selected Job\" button to view the full job description and weblinks to apply at.\r\n\r\n" +
-            "After executing the job scraper, you will need to use the Advanced Query \"Clear All Filters\" button or the Options \"Go To Default View\"" +
+            "After executing the job scraper, you will need to use the Advanced Query \"Clear All Filters\" button or the Options \"Go To Default View\" " +
             "button to see the new jobs. Note that it may take a couple of minutes before the new jobs are available for display.\r\n\r\n" +
             "The user can resize the width of columns " +
             "and sort the displayed job listings by clicking the column headers. Use the \"Previous/Next Page\" buttons to navigate through the " +
