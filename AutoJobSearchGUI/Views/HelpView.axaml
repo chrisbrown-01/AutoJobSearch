@@ -16,7 +16,7 @@
 	<TabControl 
 		FontSize="16"
 		FontWeight="Light">
-		<TabItem Header="Project">
+		<TabItem Header="Overview">
 			<TextBlock Text="{Binding AboutThisProject}"
 					   TextWrapping="Wrap"
 					   Margin="30"/>

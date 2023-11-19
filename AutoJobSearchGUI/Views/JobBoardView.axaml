@@ -102,7 +102,7 @@
 			</Menu>
 			<Menu>
 				<MenuItem Header="Options">
-					<MenuItem Header="Refresh View" Command="{Binding RenderDefaultJobBoardView}" />
+					<MenuItem Header="Go To Default View" Command="{Binding RenderDefaultJobBoardView}" />
 					<MenuItem Header="Delete All Records" Command="{Binding DeleteAllRecords}" />
 				</MenuItem>
 			</Menu>
