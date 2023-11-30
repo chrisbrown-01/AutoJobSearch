@@ -8,7 +8,7 @@ namespace AutoJobSearchShared.Database
         Task<JobSearchProfile> CreateJobSearchProfileAsync(JobSearchProfile profile);
         Task DeleteAllJobListingsAsync();
         Task DeleteJobSearchProfileAsync(int id);
-        Task<IQueryable<JobListing>> ExecuteJobListingQueryAsync(bool isAppliedTo, bool isInterviewing, bool isRejected, bool isFavourite);
+        Task<IQueryable<JobListing>> ExecuteJobListingQueryAsync(bool columnFiltersEnabled, bool isAppliedTo, bool isInterviewing, bool isRejected, bool isFavourite);
         Task<IEnumerable<string>> GetAllApplicationLinksAsync();
         Task<IEnumerable<JobListing>> GetAllJobListingsAsync();
         Task<IEnumerable<JobSearchProfile>> GetAllJobSearchProfilesAsync();

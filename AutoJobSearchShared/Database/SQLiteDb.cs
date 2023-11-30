@@ -186,12 +186,15 @@ namespace AutoJobSearchShared.Database
         }
 
         public async Task<IQueryable<JobListing>> ExecuteJobListingQueryAsync(
+            bool columnFiltersEnabled,
             bool isAppliedTo,
             bool isInterviewing,
             bool isRejected,
             bool isFavourite)
         {
-            const string sql =
+            if (columnFiltersEnabled)
+            {
+                const string sql =
                 "SELECT Id, " +
                 "SearchTerm, " +
                 "CreatedAt, " +
@@ -209,7 +212,7 @@ namespace AutoJobSearchShared.Database
                 "AND IsFavourite = @IsFavourite " +
                 "AND IsHidden = False;";
 
-            var jobListings = await connection.QueryAsync<JobListing>(
+                var jobListings = await connection.QueryAsync<JobListing>(
                 sql,
                 new
                 {
@@ -219,9 +222,29 @@ namespace AutoJobSearchShared.Database
                     IsFavourite = isFavourite
                 }).ConfigureAwait(false);
 
-            return jobListings.AsQueryable();
-        }
+                return jobListings.AsQueryable();
+            }
+            else
+            {
+                const string sql =
+                "SELECT Id, " +
+                "SearchTerm, " +
+                "CreatedAt, " +
+                "Description, " +
+                "Score, " +
+                "IsAppliedTo, " +
+                "IsInterviewing, " +
+                "IsRejected, " +
+                "IsFavourite, " +
+                "IsHidden, " +
+                "Notes FROM JobListings " +
+                "WHERE IsHidden = False;";
 
+                var jobListings = await connection.QueryAsync<JobListing>(sql).ConfigureAwait(false);
+
+                return jobListings.AsQueryable();
+            }         
+        }
 
         public async Task<IEnumerable<JobListing>> GetHiddenJobListingsAsync()
         {
@@ -281,6 +304,26 @@ namespace AutoJobSearchShared.Database
                 "ORDER BY Id DESC;";
 
             return await connection.QueryAsync<JobListing>(sql).ConfigureAwait(false); 
+        }
+
+        public async Task<IEnumerable<JobListing>> GetAllJobListingsWithFullDescriptionAsync()
+        {
+            const string sql =
+                "SELECT Id, " +
+                "SearchTerm, " +
+                "CreatedAt, " +
+                "Description, " +
+                "Score, " +
+                "IsAppliedTo, " +
+                "IsInterviewing, " +
+                "IsRejected, " +
+                "IsFavourite, " +
+                "IsHidden " +
+                "FROM JobListings " +
+                "WHERE IsHidden = False " +
+                "ORDER BY Id DESC;";
+
+            return await connection.QueryAsync<JobListing>(sql).ConfigureAwait(false);
         }
 
         public async Task<JobListing> GetJobListingDetailsByIdAsync(int id)

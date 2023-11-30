@@ -145,18 +145,19 @@ namespace AutoJobSearchGUI.Tests.Data
         public async Task ExecuteJobListingQueryAsync_Should_ReturnIQueryable()
         {
             // Arrange
+            bool columnFiltersEnabled = _fixture.Create<bool>();
             bool isAppliedTo = _fixture.Create<bool>();
             bool isInterviewing = _fixture.Create<bool>();
             bool isRejected = _fixture.Create<bool>();
             bool isFavourite = _fixture.Create<bool>();
             var expectedResult = _fixture.Create<IQueryable<JobListing>>();
-            _dbContext.ExecuteJobListingQueryAsync(isAppliedTo, isInterviewing, isRejected, isFavourite).Returns(expectedResult);
+            _dbContext.ExecuteJobListingQueryAsync(columnFiltersEnabled, isAppliedTo, isInterviewing, isRejected, isFavourite).Returns(expectedResult);
 
             // Act
-            var actualResult = await _dbContext.ExecuteJobListingQueryAsync(isAppliedTo, isInterviewing, isRejected, isFavourite);
+            var actualResult = await _dbContext.ExecuteJobListingQueryAsync(columnFiltersEnabled, isAppliedTo, isInterviewing, isRejected, isFavourite);
 
             // Assert
-            await _dbContext.Received().ExecuteJobListingQueryAsync(isAppliedTo, isInterviewing, isRejected, isFavourite);
+            await _dbContext.Received().ExecuteJobListingQueryAsync(columnFiltersEnabled, isAppliedTo, isInterviewing, isRejected, isFavourite);
             actualResult.Should().BeEquivalentTo(expectedResult);
             actualResult.Should().NotBeNull();
         }

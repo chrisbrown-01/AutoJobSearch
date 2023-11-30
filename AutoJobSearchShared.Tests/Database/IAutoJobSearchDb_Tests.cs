@@ -79,31 +79,33 @@ namespace AutoJobSearchShared.Tests.Database
         public async Task ExecuteJobListingQueryAsync_Should_BeCalled()
         {
             // Arrange
+            bool columnFiltersEnabled = _fixture.Create<bool>();
             bool isAppliedTo = _fixture.Create<bool>();
             bool isInterviewing = _fixture.Create<bool>();
             bool isRejected = _fixture.Create<bool>();
             bool isFavourite = _fixture.Create<bool>();
 
             // Act
-            await _db.ExecuteJobListingQueryAsync(isAppliedTo, isInterviewing, isRejected, isFavourite);
+            await _db.ExecuteJobListingQueryAsync(columnFiltersEnabled, isAppliedTo, isInterviewing, isRejected, isFavourite);
 
             // Assert
-            await _db.Received().ExecuteJobListingQueryAsync(isAppliedTo, isInterviewing, isRejected, isFavourite);
+            await _db.Received().ExecuteJobListingQueryAsync(columnFiltersEnabled, isAppliedTo, isInterviewing, isRejected, isFavourite);
         }
 
         [Fact]
         public async Task ExecuteJobListingQueryAsync_Should_ReturnIQueryable()
         {
             // Arrange
+            bool columnFiltersEnabled = _fixture.Create<bool>();
             bool isAppliedTo = _fixture.Create<bool>();
             bool isInterviewing = _fixture.Create<bool>();
             bool isRejected = _fixture.Create<bool>();
             bool isFavourite = _fixture.Create<bool>();
             var expectedResult = _fixture.Create<IQueryable<JobListing>>();
-            _db.ExecuteJobListingQueryAsync(isAppliedTo, isInterviewing, isRejected, isFavourite).Returns(expectedResult);
+            _db.ExecuteJobListingQueryAsync(columnFiltersEnabled, isAppliedTo, isInterviewing, isRejected, isFavourite).Returns(expectedResult);
 
             // Act
-            var actualResult = await _db.ExecuteJobListingQueryAsync(isAppliedTo, isInterviewing, isRejected, isFavourite);
+            var actualResult = await _db.ExecuteJobListingQueryAsync(columnFiltersEnabled, isAppliedTo, isInterviewing, isRejected, isFavourite);
 
             // Assert
             actualResult.Should().BeEquivalentTo(expectedResult);
@@ -149,7 +151,7 @@ namespace AutoJobSearchShared.Tests.Database
             result.Should().BeEmpty();
         }
 
-        [Fact]
+        [Fact] 
         public async Task GetAllJobListingsAsync_Should_BeCalled()
         {
             await _db.GetAllJobListingsAsync();

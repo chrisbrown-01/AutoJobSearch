@@ -101,14 +101,13 @@ namespace AutoJobSearchGUI.ViewModels
 
         public async void ExecuteQuery()
         {
-            // Try to get some performance improvement by doing the initial simple query directly within the SQLite database
-            var result = await _dbContext.ExecuteJobListingQueryAsync(
+             var result = await _dbContext.ExecuteJobListingQueryAsync(
+                JobBoardQueryModel.ColumnFiltersEnabled,
                 JobBoardQueryModel.IsAppliedTo,
                 JobBoardQueryModel.IsInterviewing,
                 JobBoardQueryModel.IsRejected,
                 JobBoardQueryModel.IsFavourite);
 
-            // Easiest solution is to then do the rest of the querying within .NET on the previous result
             if (JobBoardQueryModel.SearchTermQueryStringEnabled)
             {
                 result = result.Where(x => x.SearchTerm.Contains(JobBoardQueryModel.SearchTermQueryString, StringComparison.OrdinalIgnoreCase));

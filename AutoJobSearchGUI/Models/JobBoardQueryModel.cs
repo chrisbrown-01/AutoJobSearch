@@ -40,6 +40,9 @@ namespace AutoJobSearchGUI.Models
         private DateTimeOffset _searchedOnDate = DateTime.Today;
 
         [ObservableProperty]
+        private bool _columnFiltersEnabled;
+
+        [ObservableProperty]
         private bool _searchedOnDateEnabled;
 
         [ObservableProperty]

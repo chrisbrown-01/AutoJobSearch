@@ -21,30 +21,33 @@
 			<Menu>
 				<MenuItem Header="Advanced Query">
 					<MenuItem Header="Column Filters">
+						<CheckBox Content="Enable Query Filter" FontWeight="ExtraBold" IsChecked="{Binding JobBoardQueryModel.ColumnFiltersEnabled}" />
 						<CheckBox Content="Applied" IsChecked="{Binding JobBoardQueryModel.IsAppliedTo}" />
 						<CheckBox Content="Interviewing" IsChecked="{Binding JobBoardQueryModel.IsInterviewing}" />
 						<CheckBox Content="Rejected" IsChecked="{Binding JobBoardQueryModel.IsRejected}" />
 						<CheckBox Content="Favourite" IsChecked="{Binding JobBoardQueryModel.IsFavourite}" />
 					</MenuItem>
 					<MenuItem Header="Search Term Query String">
-						<CheckBox Content="Enable" IsChecked="{Binding JobBoardQueryModel.SearchTermQueryStringEnabled}" />
+						<CheckBox Content="Enable Query Filter" FontWeight="ExtraBold" IsChecked="{Binding JobBoardQueryModel.SearchTermQueryStringEnabled}" />
 						<TextBox Text="{Binding JobBoardQueryModel.SearchTermQueryString}" IsReadOnly="False" MaxWidth="250" />
 					</MenuItem>
 					<MenuItem Header="Job Description Query String">
-						<CheckBox Content="Enable" IsChecked="{Binding JobBoardQueryModel.JobDescriptionQueryStringEnabled}" />
+						<CheckBox Content="Enable Query Filter" FontWeight="ExtraBold" IsChecked="{Binding JobBoardQueryModel.JobDescriptionQueryStringEnabled}" />
 						<TextBox Text="{Binding JobBoardQueryModel.JobDescriptionQueryString}" IsReadOnly="False" MaxWidth="250" />
 					</MenuItem>
 					<MenuItem Header="Notes Query String">
-						<CheckBox Content="Enable" IsChecked="{Binding JobBoardQueryModel.NotesQueryStringEnabled}" />
+						<CheckBox Content="Enable Query Filter" FontWeight="ExtraBold" IsChecked="{Binding JobBoardQueryModel.NotesQueryStringEnabled}" />
 						<TextBox Text="{Binding JobBoardQueryModel.NotesQueryString}" IsReadOnly="False" MaxWidth="250" />
 					</MenuItem>
 					<MenuItem Header="Search Date">
 						<CheckBox 
-								Content="Enable Searched On Date"
+								Content="Enable Searched On Date" 
+								FontWeight="ExtraBold"
 								IsChecked="{Binding JobBoardQueryModel.SearchedOnDateEnabled}"
 								IsEnabled="{Binding !JobBoardQueryModel.SearchedBetweenDatesEnabled}" />
 						<CheckBox 
-								Content="Enable Search Between Dates"
+								Content="Enable Search Between Dates" 
+								FontWeight="ExtraBold"
 								IsChecked="{Binding JobBoardQueryModel.SearchedBetweenDatesEnabled}"
 								IsEnabled="{Binding !JobBoardQueryModel.SearchedOnDateEnabled}" />
 						<MenuItem Header="Searched On Date">
@@ -58,10 +61,12 @@
 					<MenuItem Header="Score">
 						<CheckBox
 							   Content="Enable Equals"
+							   FontWeight="ExtraBold"
 							   IsChecked="{Binding JobBoardQueryModel.ScoreEqualsEnabled}"
 							   IsEnabled="{Binding !JobBoardQueryModel.ScoreRangeEnabled}" />
 						<CheckBox
 							   Content="Enable Range"
+							   FontWeight="ExtraBold"
 							   IsChecked="{Binding JobBoardQueryModel.ScoreRangeEnabled}"
 							   IsEnabled="{Binding !JobBoardQueryModel.ScoreEqualsEnabled}" />
 						<MenuItem Header="Equals">

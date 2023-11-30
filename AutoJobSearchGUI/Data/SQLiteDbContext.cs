@@ -41,12 +41,13 @@ namespace AutoJobSearchGUI.Data
         }
 
         public async Task<IQueryable<JobListing>> ExecuteJobListingQueryAsync(
+            bool columnFiltersEnabled,
             bool isAppliedTo, 
             bool isInterviewing, 
             bool isRejected, 
             bool isFavourite)
         {
-            return await _sqliteDb.ExecuteJobListingQueryAsync(isAppliedTo, isInterviewing, isRejected, isFavourite);
+            return await _sqliteDb.ExecuteJobListingQueryAsync(columnFiltersEnabled, isAppliedTo, isInterviewing, isRejected, isFavourite);
         }
 
         public async Task<IEnumerable<JobListing>> GetAllJobListingsAsync()

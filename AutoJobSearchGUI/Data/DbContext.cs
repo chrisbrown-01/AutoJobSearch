@@ -52,18 +52,19 @@ namespace AutoJobSearchGUI.Data
         }
 
         public async Task<IQueryable<JobListing>> ExecuteJobListingQueryAsync(
+            bool columnFiltersEnabled,
             bool isAppliedTo,
             bool isInterviewing,
             bool isRejected,
             bool isFavourite)
         {
             Log.Information("Executing job board advanced query against database.");
-            return await _dbContext.ExecuteJobListingQueryAsync(isAppliedTo, isInterviewing, isRejected, isFavourite);
+            return await _dbContext.ExecuteJobListingQueryAsync(columnFiltersEnabled, isAppliedTo, isInterviewing, isRejected, isFavourite);
         }
 
         public async Task<IEnumerable<JobListing>> GetAllJobListingsAsync()
         {
-            Log.Information("Getting all job listings from database.");
+            Log.Information("Getting all job listings (shortened description) from database.");
             return await _dbContext.GetAllJobListingsAsync();
         }
 

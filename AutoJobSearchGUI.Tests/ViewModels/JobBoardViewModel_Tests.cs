@@ -123,11 +123,12 @@ namespace AutoJobSearchGUI.Tests.ViewModels
             var pageSize = _viewModel.PageSize;
             var jobListings = _fixture.CreateMany<JobListing>(10000);
             foreach(var job in jobListings)
-            {
+            {               
                 job.IsHidden = false;
             }
 
             var jobBoardQueryModel = _fixture.Create<JobBoardQueryModel>();
+            jobBoardQueryModel.ColumnFiltersEnabled = true;
             jobBoardQueryModel.SearchTermQueryStringEnabled = false;
             jobBoardQueryModel.JobDescriptionQueryStringEnabled = false;
             jobBoardQueryModel.NotesQueryStringEnabled = false;
@@ -139,6 +140,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
             _viewModel.JobBoardQueryModel = jobBoardQueryModel;
 
             _dbContext.ExecuteJobListingQueryAsync(
+                _viewModel.JobBoardQueryModel.ColumnFiltersEnabled,
                 _viewModel.JobBoardQueryModel.IsAppliedTo,
                 _viewModel.JobBoardQueryModel.IsInterviewing,
                 _viewModel.JobBoardQueryModel.IsRejected,
@@ -150,6 +152,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
 
             // Assert
             await _dbContext.Received().ExecuteJobListingQueryAsync(
+                _viewModel.JobBoardQueryModel.ColumnFiltersEnabled,
                 _viewModel.JobBoardQueryModel.IsAppliedTo,
                 _viewModel.JobBoardQueryModel.IsInterviewing,
                 _viewModel.JobBoardQueryModel.IsRejected,
