@@ -92,7 +92,7 @@ namespace AutoJobSearchJobScraper.WebScraper
                                     "{@searchTerm} {@iterationValue} {@MAX_JOB_LISTING_INDEX}",
                                     searchTerm, i, MAX_JOB_LISTING_INDEX);
 
-                                continue;
+                                break;
                             }
 
                             jobListings.AddRange(ExtractJobListingsFromLiElements(liElements, searchTerm));
