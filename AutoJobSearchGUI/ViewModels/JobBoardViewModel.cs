@@ -81,6 +81,8 @@ namespace AutoJobSearchGUI.ViewModels
             JobListings = await GetAllJobListings();
             JobListingsDisplayed = JobListings.Skip(PageIndex * PageSize).Take(PageSize).ToList();
             EnableOnChangedEvents(JobListingsDisplayed);
+
+            JobBoardQueryModel = new();
         }
 
         public async void RenderHiddenJobs()
