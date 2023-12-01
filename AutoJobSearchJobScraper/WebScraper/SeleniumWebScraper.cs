@@ -71,42 +71,43 @@ namespace AutoJobSearchJobScraper.WebScraper
             var doc = new HtmlDocument();
             var driver = new ChromeDriver();
 
-            foreach (var searchTerm in searchTerms)
+            try
             {
-                try
+                foreach (var searchTerm in searchTerms)
                 {
-                    // Parse through the amount of jobs specified by MAX_PAGE_INDEX. Increment the start index by 10 every iteration.
-                    for (int i = 0; i < MAX_JOB_LISTING_INDEX + 1; i += 10)
-                    {
-                        driver.Navigate().GoToUrl($"https://www.google.com/search?q={WebUtility.UrlEncode(searchTerm)}&sourceid=chrome&ie=UTF-8&ibp=htl;jobs&start={i}");
-                        doc!.LoadHtml(driver.PageSource);
-
-                        CheckForCaptcha(doc, driver);
-
-                        var liElements = doc?.DocumentNode?.SelectNodes("//li")?.AsEnumerable();
-
-                        if (liElements == null)
+                        // Parse through the amount of jobs specified by MAX_PAGE_INDEX. Increment the start index by 10 every iteration.
+                        for (int i = 0; i < MAX_JOB_LISTING_INDEX + 1; i += 10)
                         {
-                            _logger.LogWarning(
-                                "No li elements detected during job scraping. " +
-                                "{@searchTerm} {@iterationValue} {@MAX_JOB_LISTING_INDEX}",
-                                searchTerm, i, MAX_JOB_LISTING_INDEX);
+                            driver.Navigate().GoToUrl($"https://www.google.com/search?q={WebUtility.UrlEncode(searchTerm)}&sourceid=chrome&ie=UTF-8&ibp=htl;jobs&start={i}");
+                            doc!.LoadHtml(driver.PageSource);
 
-                            continue;
-                        }
+                            CheckForCaptcha(doc, driver);
 
-                        jobListings.AddRange(ExtractJobListingsFromLiElements(liElements, searchTerm));
-                    }
-                }
-                catch (Exception ex) // TODO: final - try and see what exceptions would actually get thrown then handle them
-                {
-                    _logger.LogError("Exception thrown during job scraping. {@Exception}", ex);
-                    throw;
+                            var liElements = doc?.DocumentNode?.SelectNodes("//li")?.AsEnumerable();
+
+                            if (liElements == null)
+                            {
+                                _logger.LogWarning(
+                                    "No li elements detected during job scraping. " +
+                                    "{@searchTerm} {@iterationValue} {@MAX_JOB_LISTING_INDEX}",
+                                    searchTerm, i, MAX_JOB_LISTING_INDEX);
+
+                                continue;
+                            }
+
+                            jobListings.AddRange(ExtractJobListingsFromLiElements(liElements, searchTerm));
+                        }              
                 }
             }
+            catch (Exception ex) 
+            {
+                _logger.LogError("Exception thrown during job scraping. {@Exception}", ex);
+            }
+            finally
+            {
+                driver.Quit();
+            }
 
-            driver.Close();
-            driver.Quit();
             await Task.CompletedTask;
 
             _logger.LogInformation("Finished scraping jobs. {@jobListings.Count} job listings returned.", jobListings.Count);
