@@ -65,24 +65,24 @@ namespace AutoJobSearchJobScraper.Utility
         }
 
         public async Task<IEnumerable<JobListing>> FilterDuplicatesAsync(
-            IEnumerable<JobListing> jobListingsPossibleDuplicates, 
+            IEnumerable<JobListing> jobListingsPossibleDuplicates,
             HashSet<string> existingApplicationLinks)
         {
             _logger.LogInformation("Filtering duplicate job listings. " +
                                    "{@jobListingsPossibleDuplicates.Count}, " +
-                                   "{@existingApplicationLinks.Count}", 
+                                   "{@existingApplicationLinks.Count}",
                                     jobListingsPossibleDuplicates.Count(),
                                     existingApplicationLinks.Count);
 
             var cleanedJobListings = jobListingsPossibleDuplicates.ToList();
 
-            foreach(var jobListing in jobListingsPossibleDuplicates)
+            foreach (var jobListing in jobListingsPossibleDuplicates)
             {
                 bool isJobDuplicate = false;
 
-                foreach(var link in jobListing.ApplicationLinks)
+                foreach (var link in jobListing.ApplicationLinks)
                 {
-                    if(existingApplicationLinks.Contains(link.Link))
+                    if (existingApplicationLinks.Contains(link.Link))
                     {
                         cleanedJobListings.Remove(jobListing);
                         isJobDuplicate = true;
@@ -92,7 +92,7 @@ namespace AutoJobSearchJobScraper.Utility
 
                 if (isJobDuplicate) continue;
 
-                foreach(var link in jobListing.ApplicationLinks)
+                foreach (var link in jobListing.ApplicationLinks)
                 {
                     existingApplicationLinks.Add(link.Link);
                 }
@@ -102,18 +102,18 @@ namespace AutoJobSearchJobScraper.Utility
 
             _logger.LogInformation(
                 "Completed filtering for duplicate job listings. " +
-                "Returning {@cleanedJobListings.Count} unique job listings.", 
+                "Returning {@cleanedJobListings.Count} unique job listings.",
                 cleanedJobListings.Count);
 
             return cleanedJobListings;
         }
 
         public async Task<IEnumerable<JobListing>> ApplyScoringsAsync(
-            IEnumerable<JobListing> jobListingsUnscored, 
+            IEnumerable<JobListing> jobListingsUnscored,
             IEnumerable<string> keywordsPositive,
             IEnumerable<string> keywordsNegative,
             IEnumerable<string> sentimentsPositive,
-            IEnumerable<string> sentimentsNegative) 
+            IEnumerable<string> sentimentsNegative)
         {
             _logger.LogInformation("Applying scorings to job listings. " +
                               "{@jobListingsUnscored.Count}, " +

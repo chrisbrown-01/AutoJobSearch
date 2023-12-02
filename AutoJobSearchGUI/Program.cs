@@ -29,7 +29,7 @@ namespace AutoJobSearchGUI
             finally
             {
                 Log.Information("Application closed.");
-                Log.CloseAndFlush(); 
+                Log.CloseAndFlush();
             }
         }
 

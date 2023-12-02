@@ -75,31 +75,31 @@ namespace AutoJobSearchJobScraper.WebScraper
             {
                 foreach (var searchTerm in searchTerms)
                 {
-                        // Parse through the amount of jobs specified by MAX_PAGE_INDEX. Increment the start index by 10 every iteration.
-                        for (int i = 0; i < MAX_JOB_LISTING_INDEX + 1; i += 10)
+                    // Parse through the amount of jobs specified by MAX_PAGE_INDEX. Increment the start index by 10 every iteration.
+                    for (int i = 0; i < MAX_JOB_LISTING_INDEX + 1; i += 10)
+                    {
+                        driver.Navigate().GoToUrl($"https://www.google.com/search?q={WebUtility.UrlEncode(searchTerm)}&sourceid=chrome&ie=UTF-8&ibp=htl;jobs&start={i}");
+                        doc!.LoadHtml(driver.PageSource);
+
+                        CheckForCaptcha(doc, driver);
+
+                        var liElements = doc?.DocumentNode?.SelectNodes("//li")?.AsEnumerable();
+
+                        if (liElements == null)
                         {
-                            driver.Navigate().GoToUrl($"https://www.google.com/search?q={WebUtility.UrlEncode(searchTerm)}&sourceid=chrome&ie=UTF-8&ibp=htl;jobs&start={i}");
-                            doc!.LoadHtml(driver.PageSource);
+                            _logger.LogWarning(
+                                "No li elements detected during job scraping. " +
+                                "{@searchTerm} {@iterationValue} {@MAX_JOB_LISTING_INDEX}",
+                                searchTerm, i, MAX_JOB_LISTING_INDEX);
 
-                            CheckForCaptcha(doc, driver);
+                            break;
+                        }
 
-                            var liElements = doc?.DocumentNode?.SelectNodes("//li")?.AsEnumerable();
-
-                            if (liElements == null)
-                            {
-                                _logger.LogWarning(
-                                    "No li elements detected during job scraping. " +
-                                    "{@searchTerm} {@iterationValue} {@MAX_JOB_LISTING_INDEX}",
-                                    searchTerm, i, MAX_JOB_LISTING_INDEX);
-
-                                break;
-                            }
-
-                            jobListings.AddRange(ExtractJobListingsFromLiElements(liElements, searchTerm));
-                        }              
+                        jobListings.AddRange(ExtractJobListingsFromLiElements(liElements, searchTerm));
+                    }
                 }
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 _logger.LogError("Exception thrown during job scraping. {@Exception}", ex);
             }

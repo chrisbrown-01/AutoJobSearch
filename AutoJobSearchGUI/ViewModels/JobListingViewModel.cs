@@ -57,7 +57,7 @@ namespace AutoJobSearchGUI.ViewModels
             if (currentIndex < 0) return;
 
             var nextIndex = currentIndex + 1;
-            if(nextIndex >= JobListings.Count) return;
+            if (nextIndex >= JobListings.Count) return;
 
             DisableOnChangedEvents(JobListing);
 
@@ -66,7 +66,7 @@ namespace AutoJobSearchGUI.ViewModels
 
         public async void OpenJobListing(JobListingModel jobListing)
         {
-            if(!jobListing.DetailsPopulated)
+            if (!jobListing.DetailsPopulated)
             {
                 var jobListingDetails = await _dbContext.GetJobListingDetailsByIdAsync(jobListing.Id);
                 jobListing.Description = jobListingDetails.Description;

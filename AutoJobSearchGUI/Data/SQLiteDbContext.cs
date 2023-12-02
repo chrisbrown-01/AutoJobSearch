@@ -16,7 +16,7 @@ namespace AutoJobSearchGUI.Data
 
         public SQLiteDbContext()
         {
-            _sqliteDb = new SQLiteDb(); 
+            _sqliteDb = new SQLiteDb();
         }
 
         public async Task<JobSearchProfile> CreateJobSearchProfileAsync(JobSearchProfile profile)
@@ -42,9 +42,9 @@ namespace AutoJobSearchGUI.Data
 
         public async Task<IQueryable<JobListing>> ExecuteJobListingQueryAsync(
             bool columnFiltersEnabled,
-            bool isAppliedTo, 
-            bool isInterviewing, 
-            bool isRejected, 
+            bool isAppliedTo,
+            bool isInterviewing,
+            bool isRejected,
             bool isFavourite)
         {
             return await _sqliteDb.ExecuteJobListingQueryAsync(columnFiltersEnabled, isAppliedTo, isInterviewing, isRejected, isFavourite);
@@ -70,7 +70,7 @@ namespace AutoJobSearchGUI.Data
             return await _sqliteDb.GetHiddenJobListingsAsync();
         }
 
-        public async Task<JobListing> GetJobListingDetailsByIdAsync(int id) 
+        public async Task<JobListing> GetJobListingDetailsByIdAsync(int id)
         {
             return await _sqliteDb.GetJobListingDetailsByIdAsync(id);
         }

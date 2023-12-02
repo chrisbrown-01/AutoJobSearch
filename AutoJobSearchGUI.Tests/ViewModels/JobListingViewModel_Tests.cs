@@ -48,7 +48,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
             _viewModel.JobListing.CreatedAt.Should().Be(jobListingWithoutDetails.CreatedAt);
             _viewModel.JobListing.Description.Should().Be(jobListingWithDetails.Description);
             _viewModel.JobListing.ApplicationLinks.Should().Be(jobListingWithDetails.ApplicationLinksString);
-            _viewModel.JobListing.Score.Should().Be(jobListingWithoutDetails.Score);         
+            _viewModel.JobListing.Score.Should().Be(jobListingWithoutDetails.Score);
             _viewModel.JobListing.DetailsPopulated.Should().BeTrue();
             _viewModel.JobListing.EnableEvents.Should().BeTrue();
             _viewModel.JobListing.IsAppliedTo.Should().Be(jobListingWithoutDetails.IsAppliedTo);

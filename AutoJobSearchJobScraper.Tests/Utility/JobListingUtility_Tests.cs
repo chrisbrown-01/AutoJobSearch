@@ -34,11 +34,11 @@ namespace AutoJobSearchJobScraper.Tests.Utility
             var jobListingsPossibleDuplicates = _fixture.CreateMany<JobListing>().ToList();
             var existingApplicationLinks = _fixture.CreateMany<string>();
 
-            foreach(var test in jobListingsPossibleDuplicates)
+            foreach (var test in jobListingsPossibleDuplicates)
             {
                 test.ApplicationLinks = new List<ApplicationLink>();
 
-                foreach(var existingLink in existingApplicationLinks)
+                foreach (var existingLink in existingApplicationLinks)
                 {
                     test.ApplicationLinks.Add(new ApplicationLink { Link = existingLink });
                 }
@@ -100,7 +100,7 @@ namespace AutoJobSearchJobScraper.Tests.Utility
 
             var resultsList = results.ToList();
 
-            for(int i = 0; i < jobListingsUnscored.Count(); i++)
+            for (int i = 0; i < jobListingsUnscored.Count(); i++)
             {
                 jobListingsUnscored[i].Id.Should().Be(resultsList[i].Id);
                 jobListingsUnscored[i].SearchTerm.Should().Be(resultsList[i].SearchTerm);

@@ -14,7 +14,7 @@ namespace AutoJobSearchGUI.Models
         public int Id { get; set; }
 
         // This property prevents events from unnecessarily firing when the view model is simply instantiating new models.
-        public bool EnableEvents { get; set; } = false; 
+        public bool EnableEvents { get; set; } = false;
 
         [ObservableProperty]
         private string _profileName = string.Empty;

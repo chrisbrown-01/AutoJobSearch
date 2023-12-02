@@ -37,7 +37,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
             var pageSize = _viewModel.PageSize;
             var jobListings = _fixture.CreateMany<JobListing>();
 
-            foreach(var job in jobListings)
+            foreach (var job in jobListings)
             {
                 job.IsHidden = false;
             }
@@ -122,8 +122,8 @@ namespace AutoJobSearchGUI.Tests.ViewModels
             // Arrange
             var pageSize = _viewModel.PageSize;
             var jobListings = _fixture.CreateMany<JobListing>(10000);
-            foreach(var job in jobListings)
-            {               
+            foreach (var job in jobListings)
+            {
                 job.IsHidden = false;
             }
 
@@ -163,7 +163,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
             _viewModel.JobListingsDisplayed.Should().BeOfType<List<JobListingModel>>();
             _viewModel.JobListingsDisplayed.Count.Should().BeLessThanOrEqualTo(_viewModel.PageSize);
 
-            if(_viewModel.JobListingsDisplayed.Any())
+            if (_viewModel.JobListingsDisplayed.Any())
             {
                 _viewModel.JobListingsDisplayed.Should().AllSatisfy(x => x.EnableEvents.Should().BeTrue());
                 _viewModel.JobListingsDisplayed.Should().AllSatisfy(x => x.IsHidden.Should().BeFalse());
@@ -175,7 +175,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
         {
             // Arrange
             _viewModel.JobListingsDisplayed = _fixture.CreateMany<JobListingModel>().ToList();
-            foreach(var job in _viewModel.JobListingsDisplayed)
+            foreach (var job in _viewModel.JobListingsDisplayed)
             {
                 job.EnableEvents = true;
             }
@@ -196,7 +196,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
         public void OpenJobListing_SelectedJobListingIsNotNull_InvokesEvent()
         {
             // Arrange
-            _viewModel.JobListingsDisplayed = _fixture.CreateMany<JobListingModel>().ToList();   
+            _viewModel.JobListingsDisplayed = _fixture.CreateMany<JobListingModel>().ToList();
             _viewModel.SelectedJobListing = _fixture.Create<JobListingModel>();
             bool wasCalled = false;
             _viewModel.OpenJobListingViewRequest += (job, jobs) => wasCalled = true;

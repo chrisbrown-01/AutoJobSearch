@@ -151,7 +151,7 @@ namespace AutoJobSearchShared.Tests.Database
             result.Should().BeEmpty();
         }
 
-        [Fact] 
+        [Fact]
         public async Task GetAllJobListingsAsync_Should_BeCalled()
         {
             await _db.GetAllJobListingsAsync();

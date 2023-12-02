@@ -18,7 +18,7 @@ namespace AutoJobSearchJobScraper
         {
             ConfigureLogger();
 
-            if (args.Length < 1) throw new ArgumentException("No arguments provided."); 
+            if (args.Length < 1) throw new ArgumentException("No arguments provided.");
 
             var serviceProvider = new ServiceCollection()
                 .AddLogging(builder => builder.AddSerilog(Log.Logger, true))
@@ -35,7 +35,7 @@ namespace AutoJobSearchJobScraper
             else
             {
                 Log.Information("Starting application with {@args.Count} string arguments.", args.Count());
-                RunProgram(serviceProvider, args.AsEnumerable()).Wait();            
+                RunProgram(serviceProvider, args.AsEnumerable()).Wait();
             }
 
             Log.Information("Job scraper application finished executing.");
@@ -48,8 +48,8 @@ namespace AutoJobSearchJobScraper
             var scraper = serviceProvider.GetRequiredService<IWebScraper>();
             var utility = serviceProvider.GetRequiredService<JobListingUtility>();
 
-            var jobSearchProfile = await db.GetJobSearchProfileByIdAsync(jobSearchProfileId) ?? 
-                throw new NullReferenceException($"Job search profile ID {jobSearchProfileId} not found in database."); 
+            var jobSearchProfile = await db.GetJobSearchProfileByIdAsync(jobSearchProfileId) ??
+                throw new NullReferenceException($"Job search profile ID {jobSearchProfileId} not found in database.");
 
             var scrapedJobs = await scraper.ScrapeJobsAsync(StringHelpers.ConvertCommaSeperatedStringsToIEnumerable(jobSearchProfile.Searches));
 

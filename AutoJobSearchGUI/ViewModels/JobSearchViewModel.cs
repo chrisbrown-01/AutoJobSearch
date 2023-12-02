@@ -51,7 +51,7 @@ namespace AutoJobSearchGUI.ViewModels
 
             if (!allProfiles.Any())
             {
-                CreateNewProfile(); 
+                CreateNewProfile();
                 return;
             }
 
@@ -96,17 +96,17 @@ namespace AutoJobSearchGUI.ViewModels
         /// <param name="profiles"></param>
         private void EnableOnChangedEvents(IEnumerable<JobSearchProfileModel> profiles)
         {
-            foreach(var profile in profiles)
+            foreach (var profile in profiles)
             {
                 profile.EnableEvents = true;
-            }  
+            }
         }
 
         private List<JobSearchProfileModel> ConvertProfilesToMvvmModel(IEnumerable<JobSearchProfile> profiles)
         {
-            var profilesMvvm = new List<JobSearchProfileModel>();   
+            var profilesMvvm = new List<JobSearchProfileModel>();
 
-            foreach(var profile in profiles)
+            foreach (var profile in profiles)
             {
                 profilesMvvm.Add(ConvertProfileToMvvmModel(profile));
             }

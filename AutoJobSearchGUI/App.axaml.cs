@@ -32,7 +32,7 @@ namespace AutoJobSearchGUI
                 {
                     DataContext = new MainWindowViewModel(),
                     WindowStartupLocation = Avalonia.Controls.WindowStartupLocation.CenterScreen,
-                    WindowState = Avalonia.Controls.WindowState.Maximized                    
+                    WindowState = Avalonia.Controls.WindowState.Maximized
                 };
 
                 desktopLifetime.MainWindow.Closing += CloseConnections;
@@ -46,7 +46,7 @@ namespace AutoJobSearchGUI
             Log.Information("Closing all connections for application shutdown.");
 
             if (desktop?.MainWindow?.DataContext is MainWindowViewModel viewModel)
-            {              
+            {
                 viewModel.Dispose();
             }
         }

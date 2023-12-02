@@ -13,7 +13,7 @@ namespace AutoJobSearchJobScraper.Data
         public SQLiteDbContext(ILogger<SQLiteDbContext> logger)
         {
             _logger = logger;
-            _sqliteDb = new SQLiteDb(); 
+            _sqliteDb = new SQLiteDb();
         }
 
         public void Dispose()

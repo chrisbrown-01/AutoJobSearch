@@ -54,7 +54,7 @@ namespace AutoJobSearchGUI.ViewModels
             _dbContext = dbContext;
 
             PageIndex = 0;
-            PageSize = 50; 
+            PageSize = 50;
 
             RenderDefaultJobBoardView();
         }
@@ -62,14 +62,14 @@ namespace AutoJobSearchGUI.ViewModels
         public async void DeleteAllRecords()
         {
             var box = MessageBoxManager.GetMessageBoxStandard(
-                "Confirm Delete All Records", 
-                "Are you sure you want to delete all job listings from the database? This action cannot be reversed.", 
-                MsBox.Avalonia.Enums.ButtonEnum.OkAbort, 
+                "Confirm Delete All Records",
+                "Are you sure you want to delete all job listings from the database? This action cannot be reversed.",
+                MsBox.Avalonia.Enums.ButtonEnum.OkAbort,
                 MsBox.Avalonia.Enums.Icon.Warning);
 
             var result = await box.ShowAsync();
 
-            if(result == MsBox.Avalonia.Enums.ButtonResult.Ok)
+            if (result == MsBox.Avalonia.Enums.ButtonResult.Ok)
             {
                 await _dbContext.DeleteAllJobListingsAsync();
             }
@@ -103,12 +103,12 @@ namespace AutoJobSearchGUI.ViewModels
 
         public async void ExecuteQuery()
         {
-             var result = await _dbContext.ExecuteJobListingQueryAsync(
-                JobBoardQueryModel.ColumnFiltersEnabled,
-                JobBoardQueryModel.IsAppliedTo,
-                JobBoardQueryModel.IsInterviewing,
-                JobBoardQueryModel.IsRejected,
-                JobBoardQueryModel.IsFavourite);
+            var result = await _dbContext.ExecuteJobListingQueryAsync(
+               JobBoardQueryModel.ColumnFiltersEnabled,
+               JobBoardQueryModel.IsAppliedTo,
+               JobBoardQueryModel.IsInterviewing,
+               JobBoardQueryModel.IsRejected,
+               JobBoardQueryModel.IsFavourite);
 
             if (JobBoardQueryModel.SearchTermQueryStringEnabled)
             {
@@ -172,7 +172,7 @@ namespace AutoJobSearchGUI.ViewModels
                     result = result.OrderByDescending(x => x.SearchTerm);
                 }
             }
-            else if(JobBoardQueryModel.SortByCreatedAt)
+            else if (JobBoardQueryModel.SortByCreatedAt)
             {
                 if (JobBoardQueryModel.OrderByAscending)
                 {
@@ -201,7 +201,7 @@ namespace AutoJobSearchGUI.ViewModels
             EnableOnChangedEvents(JobListingsDisplayed);
         }
 
-        public void OpenJobListing() 
+        public void OpenJobListing()
         {
             if (SelectedJobListing == null) return;
             DisableOnChangedEvents(JobListingsDisplayed);
@@ -243,7 +243,7 @@ namespace AutoJobSearchGUI.ViewModels
         /// <param name="jobListingModels"></param>
         private void EnableOnChangedEvents(IEnumerable<JobListingModel> jobListingModels)
         {
-            foreach(var jobListingModel in jobListingModels)
+            foreach (var jobListingModel in jobListingModels)
             {
                 jobListingModel.EnableEvents = true;
             }
@@ -261,9 +261,9 @@ namespace AutoJobSearchGUI.ViewModels
             }
         }
 
-        private async Task<List<JobListingModel>> GetFavouriteJobListings() 
+        private async Task<List<JobListingModel>> GetFavouriteJobListings()
         {
-            var jobs = await _dbContext.GetFavouriteJobListingsAsync(); 
+            var jobs = await _dbContext.GetFavouriteJobListingsAsync();
             return ConvertJobListingsToJobListingModels(jobs);
         }
 
@@ -273,7 +273,7 @@ namespace AutoJobSearchGUI.ViewModels
             return ConvertJobListingsToJobListingModels(jobs);
         }
 
-        private List<JobListingModel> ConvertJobListingsToJobListingModels(IEnumerable<JobListing> jobs) 
+        private List<JobListingModel> ConvertJobListingsToJobListingModels(IEnumerable<JobListing> jobs)
         {
             var jobListings = new List<JobListingModel>();
 

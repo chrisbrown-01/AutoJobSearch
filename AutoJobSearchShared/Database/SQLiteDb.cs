@@ -1,7 +1,7 @@
 ﻿using AutoJobSearchShared.Enums;
 using AutoJobSearchShared.Models;
 using Dapper;
-using Microsoft.Data.Sqlite; 
+using Microsoft.Data.Sqlite;
 using System.Diagnostics;
 using System.Text;
 
@@ -83,7 +83,7 @@ namespace AutoJobSearchShared.Database
         public async Task<IEnumerable<string>> GetAllApplicationLinksAsync()
         {
             const string sql = "SELECT Link FROM ApplicationLinks;";
-            return await connection.QueryAsync<string>(sql).ConfigureAwait(false); 
+            return await connection.QueryAsync<string>(sql).ConfigureAwait(false);
         }
 
         public async Task SaveJobListingsAsync(IEnumerable<JobListing> jobListings)
@@ -160,7 +160,7 @@ namespace AutoJobSearchShared.Database
         public async Task<IEnumerable<JobSearchProfile>> GetAllJobSearchProfilesAsync()
         {
             const string sql = "SELECT * FROM JobSearchProfiles";
-            return await connection.QueryAsync<JobSearchProfile>(sql).ConfigureAwait(false); 
+            return await connection.QueryAsync<JobSearchProfile>(sql).ConfigureAwait(false);
         }
 
         public async Task<JobSearchProfile> CreateJobSearchProfileAsync(JobSearchProfile profile)
@@ -243,7 +243,7 @@ namespace AutoJobSearchShared.Database
                 var jobListings = await connection.QueryAsync<JobListing>(sql).ConfigureAwait(false);
 
                 return jobListings.AsQueryable();
-            }         
+            }
         }
 
         public async Task<IEnumerable<JobListing>> GetHiddenJobListingsAsync()
@@ -263,7 +263,7 @@ namespace AutoJobSearchShared.Database
                 "WHERE IsHidden = True " +
                 "ORDER BY Id DESC;";
 
-            return await connection.QueryAsync<JobListing>(sql).ConfigureAwait(false); 
+            return await connection.QueryAsync<JobListing>(sql).ConfigureAwait(false);
         }
 
         public async Task<IEnumerable<JobListing>> GetFavouriteJobListingsAsync()
@@ -283,7 +283,7 @@ namespace AutoJobSearchShared.Database
                 "WHERE IsFavourite = True " +
                 "ORDER BY Id DESC;";
 
-            return await connection.QueryAsync<JobListing>(sql).ConfigureAwait(false); 
+            return await connection.QueryAsync<JobListing>(sql).ConfigureAwait(false);
         }
 
         public async Task<IEnumerable<JobListing>> GetAllJobListingsAsync()
@@ -303,7 +303,7 @@ namespace AutoJobSearchShared.Database
                 "WHERE IsHidden = False " +
                 "ORDER BY Id DESC;";
 
-            return await connection.QueryAsync<JobListing>(sql).ConfigureAwait(false); 
+            return await connection.QueryAsync<JobListing>(sql).ConfigureAwait(false);
         }
 
         public async Task<IEnumerable<JobListing>> GetAllJobListingsWithFullDescriptionAsync()
@@ -332,7 +332,7 @@ namespace AutoJobSearchShared.Database
             var jobListing = await connection.QuerySingleAsync<JobListing>(jobListingSQL, new { Id = id }).ConfigureAwait(false);
 
             const string applicationLinksSQL = "SELECT Link FROM ApplicationLinks Where JobListingId = @Id;";
-            var applicationLinks = await connection.QueryAsync<string>(applicationLinksSQL, new { Id = id }).ConfigureAwait(false); 
+            var applicationLinks = await connection.QueryAsync<string>(applicationLinksSQL, new { Id = id }).ConfigureAwait(false);
 
             if (applicationLinks != null && applicationLinks.Any())
             {

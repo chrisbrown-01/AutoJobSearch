@@ -62,7 +62,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
         public async void DeleteCurrentProfile_SelectedSearchProfileIdIsLessThanOne_DoesNotDeleteProfile()
         {
             // Arrange
-            _viewModel.SelectedSearchProfile = new JobSearchProfileModel(){ Id = 0 };
+            _viewModel.SelectedSearchProfile = new JobSearchProfileModel() { Id = 0 };
 
             // Act
             _viewModel.DeleteCurrentProfile();

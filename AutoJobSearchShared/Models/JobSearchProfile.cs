@@ -10,7 +10,7 @@ namespace AutoJobSearchShared.Models
     {
         public JobSearchProfile()
         {
-            
+
         }
 
         public int Id { get; }

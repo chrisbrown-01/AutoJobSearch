@@ -10,10 +10,10 @@ namespace AutoJobSearchShared.Models
     {
         public JobListing()
         {
-            
+
         }
         public int Id { get; }
-        public string SearchTerm { get; set; } = string.Empty;  
+        public string SearchTerm { get; set; } = string.Empty;
 
         public DateTime CreatedAt { get; } = DateTime.Now;
 
