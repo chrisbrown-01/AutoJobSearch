@@ -40,7 +40,27 @@ Download the zip file for your operating system (Windows, Linux or Mac) from the
 6. After the job search has concluded, the Chrome browser will close automatically. Navigate back to the **Job Board** tab.
 7. Newly downloaded jobs will not be shown until you refresh the page. Click *Options* → *Go To Default View* to refresh the page. This should now show all job listings, starting with the most recently downloaded.
 8. To view a job description, click on a job listing then press the *Open Selected Job* button.
-9. To apply filters and sorting, apply the appropriate *Advanced Query* options then press the *Execute Query* button. 
+9. To apply filters and sorting, apply the appropriate *Advanced Query* options then press the *Execute Query* button.
+
+---
+***Job Board***
+
+![Job Board](/Images/JobBoard.png)
+
+---
+***Job Listing & Description***
+
+![Job Listing](/Images/JobListing.png)
+
+---
+***Job Search***
+
+![Job Search](/Images/JobSearch.png)
+
+---
+***Job Board Query Options***
+
+![Job Board Query Options](/Images/AdvancedQuery.png)
 
 ## How It Works
 
