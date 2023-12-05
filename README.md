@@ -32,6 +32,15 @@ Download the zip file for your operating system (Windows, Linux or Mac) from the
 
 ## How To Use
 
+1. Navigate to the **Job Search** tab.
+2. Start typing in the jobs you want to search for in the *Search Terms* box. To search for multiple jobs/search terms, seperate each of them with a comma (example: job to search #1, job to search #2).
+3. If you wish to apply scoring to the job listings, enter your keywords and sentiments into the appropriate boxes. Keywords and sentiments are not case sensitive. Sentiments should only be about 1 sentence.
+4. Click *Execute Job Search*. This will open a Chrome browser and begin the automated job search - no user interaction is required.
+5. Sometimes Google will detect that an automated program is using their services and will throw captchas at the Chrome browser to make it prove a human is controlling it. AutoJobSearch will automatically detect if this has happened and will pause the job search until the user solves the captcha. Simply solve the captcha in the Chrome browser, and once the page is back to rendering the Google Job Search page with listings, type `CONTINUE` into the terminal console and press enter to resume the automated search.
+6. After the job search has concluded, the Chrome browser will close automatically. Navigate back to the **Job Board** tab.
+7. Newly downloaded jobs will not be shown until you refresh the page. Click *Options* → *Go To Default View* to refresh the page. This should now show all job listings, starting with the most recently downloaded.
+8. To view a job description, click on a job listing then press the *Open Selected Job* button.
+9. To apply filters and sorting, apply the appropriate *Advanced Query* options then press the *Execute Query* button. 
 
 ## How It Works
 
