@@ -1,4 +1,4 @@
-  ![AutoJobSearch](Logo.png)
+  ![AutoJobSearch](/Images/Logo.png)
 
 Use AutoJobSearch to help automate your job search! AutoJobSearch is a free desktop application that automatically finds jobs according to your search terms and provides an optimal platform for managing your job search experience. Key features of this tool includes:
 
