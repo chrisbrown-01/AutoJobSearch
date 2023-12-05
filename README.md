@@ -64,7 +64,7 @@ Download the zip file for your operating system (Windows, Linux or Mac) from the
 
 ## How It Works
 
-AutoJobSearch is built with .NET 7 and AvaloniaUI. The tool uses a Selenium Chrome browser to search for jobs defined by the user then downloads all listings indexed by the Google Job Search tool. After filtering out any duplicate jobs or listings that have been previously downloaded, each job description is parsed for keywords and scored for each positive/negative keyword that is found. Fuzzy string matching is also used to apply scoring for sentiments using the FuzzySharp library. The scored jobs then get saved to a local SQLite database on the user's computer. The GUI displays all job listings saved in the database and provides options to filter and sort the displayed listings. 
+AutoJobSearch is built with .NET 7 and AvaloniaUI. The tool uses a Selenium Chrome browser to search for jobs defined by the user then downloads all listings indexed by the Google Job Search tool. After filtering out any duplicate jobs or listings that have been previously downloaded, each job description is parsed for keywords and scored for each positive/negative keyword that is found. Fuzzy string matching is also used to apply scoring for sentiments using the FuzzySharp library. The scored jobs then get saved to a local SQLite database on the user's computer. The GUI displays all job listings saved in the database and provides options to filter and sort the displayed listings. All database interactions are performed using the Dapper micro ORM. 
 
 ## Misc. Comments
 
