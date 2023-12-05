@@ -9,6 +9,8 @@ Use AutoJobSearch to help automate your job search! AutoJobSearch is a free desk
 - Save multiple search profiles so you can apply different keyword/sentiment scorings to different search terms
 - Cross-platform: download for Windows, Linux or MacOS
 
+![Screen recording gif](/Images/AutoJobSearchDemo.gif)
+
 ## How To Run
 
 Download the zip file for your operating system (Windows, Linux or Mac) from the Releases section. Unzip the folder. 
