@@ -13,7 +13,7 @@ Use AutoJobSearch to help automate your job search! AutoJobSearch is a free desk
 
 ## How To Run
 
-Download the zip file for your operating system (Windows, Linux or Mac) from the Releases section. Unzip the folder. 
+Download the zip file for your operating system (Windows, Linux or Mac) from the [Releases](https://github.com/chrisbrown-01/AutoJobSearch/releases) page. Unzip the folder. 
 
 *Windows*:
 - Run the `AutoJobSearchGUI.exe` executable found in the AutoJobSearchGUI folder
