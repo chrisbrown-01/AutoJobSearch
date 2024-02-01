@@ -78,6 +78,7 @@ namespace AutoJobSearchJobScraper.WebScraper
                     // Parse through the amount of jobs specified by MAX_PAGE_INDEX. Increment the start index by 10 every iteration.
                     for (int i = 0; i < MAX_JOB_LISTING_INDEX + 1; i += 10)
                     {
+                        // Google Scraping
                         driver.Navigate().GoToUrl($"https://www.google.com/search?q={WebUtility.UrlEncode(searchTerm)}&sourceid=chrome&ie=UTF-8&ibp=htl;jobs&start={i}");
                         doc!.LoadHtml(driver.PageSource);
 
@@ -92,10 +93,35 @@ namespace AutoJobSearchJobScraper.WebScraper
                                 "{@searchTerm} {@iterationValue} {@MAX_JOB_LISTING_INDEX}",
                                 searchTerm, i, MAX_JOB_LISTING_INDEX);
 
-                            break;
+                            break; // TODO: need to basically remove this
                         }
 
                         jobListings.AddRange(ExtractJobListingsFromLiElements(liElements, searchTerm));
+
+                        // Indeed Scraping
+                        driver.Navigate().GoToUrl($"https://ca.indeed.com/jobs?q={WebUtility.UrlEncode(searchTerm)}&start={{i}}");
+                        doc!.LoadHtml(driver.PageSource);
+
+                        var aElemList = new List<string>();
+                        var aElements = doc?.DocumentNode?.SelectNodes("//a")?.AsEnumerable();
+
+                        foreach (var aElement in aElements!)
+                        {
+                            string hrefValue = aElement.GetAttributeValue("data-jk", string.Empty); // /pagead/clk
+
+                            if (!String.IsNullOrWhiteSpace(hrefValue))
+                            {
+                                aElemList.Add(hrefValue);
+                            }
+                        }
+
+                        foreach (var al in aElemList)
+                        {
+                            driver.Navigate().GoToUrl($"https://www.indeed.com/viewjob?jk={al}");
+                            doc!.LoadHtml(driver.PageSource);
+
+                            var divs = doc?.DocumentNode?.SelectNodes("//div")?.AsEnumerable();
+                        }
                     }
                 }
             }
