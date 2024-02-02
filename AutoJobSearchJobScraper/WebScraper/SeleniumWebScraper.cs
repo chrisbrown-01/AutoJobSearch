@@ -5,6 +5,7 @@ using HtmlAgilityPack;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using Serilog;
 using System;
@@ -76,9 +77,12 @@ namespace AutoJobSearchJobScraper.WebScraper
                 foreach (var searchTerm in searchTerms)
                 {
                     // Parse through the amount of jobs specified by MAX_PAGE_INDEX. Increment the start index by 10 every iteration.
-                    for (int i = 0; i < MAX_JOB_LISTING_INDEX + 1; i += 10)
+                    // TODO: uncomment
+                    //for (int i = 0; i < MAX_JOB_LISTING_INDEX + 1; i += 10)
+                    for (int i = 0; i < 200 + 1; i += 10)
                     {
                         // Google Scraping
+                        // TODO: uncomment
                         driver.Navigate().GoToUrl($"https://www.google.com/search?q={WebUtility.UrlEncode(searchTerm)}&sourceid=chrome&ie=UTF-8&ibp=htl;jobs&start={i}");
                         doc!.LoadHtml(driver.PageSource);
 
@@ -98,29 +102,79 @@ namespace AutoJobSearchJobScraper.WebScraper
 
                         jobListings.AddRange(ExtractJobListingsFromLiElements(liElements, searchTerm));
 
+
+
+
+
+
+
                         // Indeed Scraping
-                        driver.Navigate().GoToUrl($"https://ca.indeed.com/jobs?q={WebUtility.UrlEncode(searchTerm)}&start={{i}}");
+                        // TODO: need to account for US and CA subdomains
+                        driver.Navigate().GoToUrl($"https://www.indeed.com/jobs?q={WebUtility.UrlEncode(searchTerm)}&start={i}");
+                        //driver.Navigate().GoToUrl($"https://ca.indeed.com/jobs?q={WebUtility.UrlEncode(searchTerm)}&start={i}");
                         doc!.LoadHtml(driver.PageSource);
 
-                        var aElemList = new List<string>();
-                        var aElements = doc?.DocumentNode?.SelectNodes("//a")?.AsEnumerable();
+                        var checkForCaptcha = doc?.DocumentNode?.InnerText;
 
-                        foreach (var aElement in aElements!)
+                        // TODO: make captcha key phrases part of appsettings.json
+                        // TODO: make into a callable method with URL argument
+                        if (checkForCaptcha != null && checkForCaptcha.Contains("needs to review the security of your connection before proceeding", StringComparison.OrdinalIgnoreCase))
                         {
-                            string hrefValue = aElement.GetAttributeValue("data-jk", string.Empty); // /pagead/clk
-
-                            if (!String.IsNullOrWhiteSpace(hrefValue))
-                            {
-                                aElemList.Add(hrefValue);
-                            }
+                            driver.Quit();
+                            driver = new ChromeDriver();
+                            driver.Navigate().GoToUrl($"https://www.indeed.com/jobs?q={WebUtility.UrlEncode(searchTerm)}&start={i}");
+                            //driver.Navigate().GoToUrl($"https://ca.indeed.com/jobs?q={WebUtility.UrlEncode(searchTerm)}&start={i}");
+                            doc!.LoadHtml(driver.PageSource); // Reload the page now that captcha has been bypassed.
                         }
 
-                        foreach (var al in aElemList)
+                        var aElements = doc?.DocumentNode?.SelectNodes("//a")?.AsEnumerable().Where(x => x.GetAttributeValue("data-jk", null) != null);
+
+                        Console.WriteLine(aElements?.Count() + " num of elements in aElements"); // TODO: delete
+
+                        if (aElements is null) continue;
+
+                        foreach (var aElementShort in aElements!)
                         {
-                            driver.Navigate().GoToUrl($"https://www.indeed.com/viewjob?jk={al}");
+                            // TODO: delete
+                            // await Task.Delay(Random.Shared.Next(100, 300));
+
+                            var id = aElementShort.GetAttributeValue("data-jk", null);
+
+                            if (id is null) continue;
+
+                            var applicationLink_Indeed = $"https://www.indeed.com/viewjob?jk={id}";
+                            //var applicationLink_Indeed = $"https://ca.indeed.com/viewjob?jk={id}";
+
+                            driver.Navigate().GoToUrl(applicationLink_Indeed);
                             doc!.LoadHtml(driver.PageSource);
 
-                            var divs = doc?.DocumentNode?.SelectNodes("//div")?.AsEnumerable();
+
+                            var checkForCaptcha2 = doc?.DocumentNode?.InnerText;
+
+                            // TODO: make captcha key phrases part of appsettings.json
+                            if (checkForCaptcha2 != null && checkForCaptcha2.Contains("needs to review the security of your connection before proceeding", StringComparison.OrdinalIgnoreCase))
+                            {
+                                driver.Quit();
+                                driver = new ChromeDriver();
+                                driver.Navigate().GoToUrl(applicationLink_Indeed);
+                                doc!.LoadHtml(driver.PageSource); // Reload the page now that captcha has been bypassed.
+
+                                var innerTextTest = doc?.DocumentNode?.InnerText;
+                            }
+
+
+
+
+                            var listing_indeed = new JobListing
+                            {
+                                SearchTerm = searchTerm,
+                                Description_Raw = WebUtility.HtmlDecode(doc!.DocumentNode.InnerText)
+                            };
+
+                            listing_indeed.ApplicationLinks.Add(new ApplicationLink { Link = applicationLink_Indeed });
+                            listing_indeed.Description = GetDescription_Indeed(listing_indeed); // TODO: combine with regular GetDescription method
+
+                            jobListings.Add(listing_indeed);
                         }
                     }
                 }
@@ -206,6 +260,44 @@ namespace AutoJobSearchJobScraper.WebScraper
             // The raw job descriptions contain a lot of unhelpful and boilerplate text that Google applies to present the job on their website.
             // Usually the main job description can be found as a substring between two keywords that Google generally applies at the beginning and
             // end of the raw HTML job description.
+
+            var startingIndex = listing.Description_Raw.IndexOf(STARTING_INDEX_KEYWORD);
+            var endingIndex = listing.Description_Raw.IndexOf(ENDING_INDEX_KEYWORD);
+
+            // If the raw description doesn't contain the keywords in the correct order, don't attempt to extract the substring description.
+            if (startingIndex != -1 && endingIndex != -1 && (endingIndex > startingIndex))
+            {
+                try
+                {
+                    var description = listing.Description_Raw.Substring(startingIndex + STARTING_INDEX_KEYWORD.Length, endingIndex - (startingIndex + STARTING_INDEX_KEYWORD.Length));
+                    return StringHelpers.AddNewLinesToMisformedString(description);
+                }
+                catch
+                {
+                    _logger.LogError("Error extracting Description from Description_Raw. " +
+                        "Variable values: " +
+                        "{@startingIndex}, " +
+                        "{@endingIndex}, " +
+                        "@{STARTING_INDEX_KEY}, " +
+                        "@{STARTING_INDEX_KEY.Length}",
+                        startingIndex,
+                        endingIndex,
+                        STARTING_INDEX_KEYWORD,
+                        STARTING_INDEX_KEYWORD.Length);
+
+                    return StringHelpers.AddNewLinesToMisformedString(listing.Description_Raw);
+                }
+            }
+            else
+            {
+                return StringHelpers.AddNewLinesToMisformedString(listing.Description_Raw);
+            }
+        }
+
+        private string GetDescription_Indeed(JobListing listing)
+        {
+            const string STARTING_INDEX_KEYWORD = "WhatWhereFind Jobs";
+            const string ENDING_INDEX_KEYWORD = "Report job"; // "Report job" or "Hiring LabCareer"
 
             var startingIndex = listing.Description_Raw.IndexOf(STARTING_INDEX_KEYWORD);
             var endingIndex = listing.Description_Raw.IndexOf(ENDING_INDEX_KEYWORD);
