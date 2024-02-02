@@ -1,4 +1,5 @@
 ﻿using AutoJobSearchJobScraper.Exceptions;
+using AutoJobSearchShared.Enums;
 using AutoJobSearchShared.Helpers;
 using AutoJobSearchShared.Models;
 using HtmlAgilityPack;
@@ -26,8 +27,13 @@ namespace AutoJobSearchJobScraper.WebScraper
         private const string REGEX_URL_PATTERN = @"https?://[^\s""]+";
 
         private readonly int MAX_JOB_LISTING_INDEX;
-        private readonly string STARTING_INDEX_KEYWORD;
-        private readonly string ENDING_INDEX_KEYWORD;
+        private readonly string STARTING_INDEX_KEYWORD_GOOGLE;
+        private readonly string ENDING_INDEX_KEYWORD_GOOGLE;
+        private readonly string STARTING_INDEX_KEYWORD_INDEED;
+        private readonly string ENDING_INDEX_KEYWORD_INDEED;
+        private readonly string CAPTCHA_MESSAGE_GOOGLE;
+        private readonly string CAPTCHA_MESSAGE_INDEED;
+        private readonly string INDEED_JOB_DESCRIPTION_HTML_DIV_ID_ATTRIBUTE;
 
         private readonly ILogger<SeleniumWebScraper> _logger;
 
@@ -59,21 +65,53 @@ namespace AutoJobSearchJobScraper.WebScraper
                     $"Ensure that {nameof(MAX_JOB_LISTING_INDEX)} has a value greater than 0.");
             }
 
-            STARTING_INDEX_KEYWORD = config.GetValue<string>(nameof(STARTING_INDEX_KEYWORD)) ??
-                throw new AppSettingsFileArgumentException($"Failed to read {nameof(STARTING_INDEX_KEYWORD)} from appsettings.json config file.");
+            STARTING_INDEX_KEYWORD_GOOGLE = config.GetValue<string>(nameof(STARTING_INDEX_KEYWORD_GOOGLE)) ??
+                throw new AppSettingsFileArgumentException($"Failed to read {nameof(STARTING_INDEX_KEYWORD_GOOGLE)} from appsettings.json config file.");
 
-            ENDING_INDEX_KEYWORD = config.GetValue<string>(nameof(ENDING_INDEX_KEYWORD)) ??
-                throw new AppSettingsFileArgumentException($"Failed to read {nameof(ENDING_INDEX_KEYWORD)} from appsettings.json config file.");
+            ENDING_INDEX_KEYWORD_GOOGLE = config.GetValue<string>(nameof(ENDING_INDEX_KEYWORD_GOOGLE)) ??
+                throw new AppSettingsFileArgumentException($"Failed to read {nameof(ENDING_INDEX_KEYWORD_GOOGLE)} from appsettings.json config file.");
+
+            STARTING_INDEX_KEYWORD_INDEED = config.GetValue<string>(nameof(STARTING_INDEX_KEYWORD_INDEED)) ??
+                throw new AppSettingsFileArgumentException($"Failed to read {nameof(STARTING_INDEX_KEYWORD_INDEED)} from appsettings.json config file.");
+
+            ENDING_INDEX_KEYWORD_INDEED = config.GetValue<string>(nameof(ENDING_INDEX_KEYWORD_INDEED)) ??
+                throw new AppSettingsFileArgumentException($"Failed to read {nameof(ENDING_INDEX_KEYWORD_INDEED)} from appsettings.json config file.");
+
+            CAPTCHA_MESSAGE_GOOGLE = config.GetValue<string>(nameof(CAPTCHA_MESSAGE_GOOGLE)) ??
+                throw new AppSettingsFileArgumentException($"Failed to read {nameof(CAPTCHA_MESSAGE_GOOGLE)} from appsettings.json config file.");
+
+            CAPTCHA_MESSAGE_INDEED = config.GetValue<string>(nameof(CAPTCHA_MESSAGE_INDEED)) ??
+                throw new AppSettingsFileArgumentException($"Failed to read {nameof(CAPTCHA_MESSAGE_INDEED)} from appsettings.json config file.");
+
+            INDEED_JOB_DESCRIPTION_HTML_DIV_ID_ATTRIBUTE = config.GetValue<string>(nameof(INDEED_JOB_DESCRIPTION_HTML_DIV_ID_ATTRIBUTE)) ??
+                throw new AppSettingsFileArgumentException($"Failed to read {nameof(INDEED_JOB_DESCRIPTION_HTML_DIV_ID_ATTRIBUTE)} from appsettings.json config file.");
         }
 
         private void ProcessJobs_Google(List<JobListing> jobListings, IEnumerable<HtmlNode>? jobListingNodes, string searchTerm)
         {
             if (jobListingNodes is null) return;
 
-            jobListings.AddRange(ExtractJobListingsFromLiElements(jobListingNodes, searchTerm)); // TODO: rename methods or extract to seperate class
+            foreach (var node in jobListingNodes)
+            {
+                // Get all <a> html elements that contain the word "apply". These will contain the direct web links to the job application.
+                var anchorElements = node.Descendants("a").Where(a => a.InnerText.Contains("apply", StringComparison.OrdinalIgnoreCase));
+
+                // Skip the job listing if no anchor elements found.
+                if (!anchorElements.Any()) continue;
+
+                var jobListing = new JobListing
+                {
+                    SearchTerm = searchTerm,
+                    Description_Raw = WebUtility.HtmlDecode(node.InnerText)
+                };
+
+                jobListing.ApplicationLinks = GetApplicationLinks(anchorElements);
+                jobListing.Description = GetDescription(jobListing, JobBoards.GoogleJobSearch);
+
+                jobListings.Add(jobListing);
+            }
         }
 
-        // TODO: ref keywords required?
         private void ProcessJobs_Indeed(
             List<JobListing> jobListings,
             IEnumerable<HtmlNode>? jobListingNodes,
@@ -85,11 +123,9 @@ namespace AutoJobSearchJobScraper.WebScraper
 
             if (jobListingNodes is null) return;
 
-            const string JOB_DESCRIPTION_HTML_DIV_ID_ATTRIBUTE = "data-jk"; // TODO: move outside of method
-
             foreach (var node in jobListingNodes)
             {
-                var jobId = node.GetAttributeValue(JOB_DESCRIPTION_HTML_DIV_ID_ATTRIBUTE, null);
+                var jobId = node.GetAttributeValue(INDEED_JOB_DESCRIPTION_HTML_DIV_ID_ATTRIBUTE, null);
 
                 if (String.IsNullOrWhiteSpace(jobId)) continue;
 
@@ -100,16 +136,16 @@ namespace AutoJobSearchJobScraper.WebScraper
 
                 CheckForCaptcha(ref doc, ref driver, url);
 
-                var listing_indeed = new JobListing
+                var jobListing = new JobListing
                 {
                     SearchTerm = searchTerm,
                     Description_Raw = WebUtility.HtmlDecode(doc.DocumentNode.InnerText)
                 };
 
-                listing_indeed.ApplicationLinks.Add(new ApplicationLink { Link = url });
-                listing_indeed.Description = GetDescription_Indeed(listing_indeed); // TODO: combine with regular GetDescription method
+                jobListing.ApplicationLinks.Add(new ApplicationLink { Link = url });
+                jobListing.Description = GetDescription(jobListing, JobBoards.Indeed);
 
-                jobListings.Add(listing_indeed);
+                jobListings.Add(jobListing);
             }
         }
 
@@ -156,7 +192,7 @@ namespace AutoJobSearchJobScraper.WebScraper
                             break;
                         }
 
-                        ProcessJobs_Google(jobListings, jobListingNodes_Google, searchTerm);
+                        //ProcessJobs_Google(jobListings, jobListingNodes_Google, searchTerm);
                         ProcessJobs_Indeed(jobListings, jobListingNodes_Indeed, searchTerm, ref driver, ref htmlDocument_Indeed!);
                     }
                 }
@@ -183,15 +219,12 @@ namespace AutoJobSearchJobScraper.WebScraper
         /// <param name="doc"></param>
         /// <param name="driver"></param>
         /// <param name="url"></param>
-        private static void CheckForCaptcha(ref HtmlDocument doc, ref ChromeDriver driver, string url)
+        private void CheckForCaptcha(ref HtmlDocument doc, ref ChromeDriver driver, string url)
         {
             var innerText = doc.DocumentNode.InnerText;
-            // TODO: move to appsettings.json
-            const string GOOGLE_CAPTCHA_MESSAGE = "detected unusual traffic";
-            const string INDEED_CAPTCHA_MESSAGE = "needs to review the security of your connection before proceeding";
 
-            if (innerText.Contains(GOOGLE_CAPTCHA_MESSAGE, StringComparison.OrdinalIgnoreCase) ||
-                innerText.Contains(INDEED_CAPTCHA_MESSAGE, StringComparison.OrdinalIgnoreCase))
+            if (innerText.Contains(CAPTCHA_MESSAGE_GOOGLE, StringComparison.OrdinalIgnoreCase) ||
+                innerText.Contains(CAPTCHA_MESSAGE_INDEED, StringComparison.OrdinalIgnoreCase))
             {
                 driver.Quit();
                 driver = new ChromeDriver();
@@ -259,21 +292,45 @@ namespace AutoJobSearchJobScraper.WebScraper
         /// This method attempts to extract only the important portions of the scraped job listing description.
         /// </summary>
         /// <param name="listing"></param>
-        private string GetDescription(JobListing listing)
+        private string GetDescription(JobListing listing, JobBoards jobBoardOption)
         {
-            // The raw job descriptions contain a lot of unhelpful and boilerplate text that Google applies to present the job on their website.
-            // Usually the main job description can be found as a substring between two keywords that Google generally applies at the beginning and
-            // end of the raw HTML job description.
+            // The raw job descriptions contain a lot of unhelpful and boilerplate text to present the job on their website.
+            // Usually, the main job description can be found as a substring between two keywords that are applied
+            // at the beginning and end of the raw HTML job description.
 
-            var startingIndex = listing.Description_Raw.IndexOf(STARTING_INDEX_KEYWORD);
-            var endingIndex = listing.Description_Raw.IndexOf(ENDING_INDEX_KEYWORD);
+            string startingIndexKeyword = String.Empty;
+            int startingIndex = -1;
+            int endingIndex = -1;
+            int startingIndexKeywordLength = -1;
+
+            if (jobBoardOption == JobBoards.GoogleJobSearch)
+            {
+                startingIndex = listing.Description_Raw.IndexOf(STARTING_INDEX_KEYWORD_GOOGLE);
+                endingIndex = listing.Description_Raw.IndexOf(ENDING_INDEX_KEYWORD_GOOGLE);
+                startingIndexKeywordLength = STARTING_INDEX_KEYWORD_GOOGLE.Length;
+                startingIndexKeyword = STARTING_INDEX_KEYWORD_GOOGLE;
+            }
+            else if (jobBoardOption == JobBoards.Indeed)
+            {
+                startingIndex = listing.Description_Raw.IndexOf(STARTING_INDEX_KEYWORD_INDEED);
+                endingIndex = listing.Description_Raw.IndexOf(ENDING_INDEX_KEYWORD_INDEED);
+                startingIndexKeywordLength = STARTING_INDEX_KEYWORD_INDEED.Length;
+                startingIndexKeyword = STARTING_INDEX_KEYWORD_INDEED;
+            }
+            else
+            {
+                throw new ArgumentException("JobBoards enum selection is not valid.");
+            }
 
             // If the raw description doesn't contain the keywords in the correct order, don't attempt to extract the substring description.
-            if (startingIndex != -1 && endingIndex != -1 && (endingIndex > startingIndex))
+            if (startingIndexKeywordLength != -1 && 
+                startingIndex != -1 && 
+                endingIndex != -1 && 
+                endingIndex > startingIndex)
             {
                 try
                 {
-                    var description = listing.Description_Raw.Substring(startingIndex + STARTING_INDEX_KEYWORD.Length, endingIndex - (startingIndex + STARTING_INDEX_KEYWORD.Length));
+                    var description = listing.Description_Raw.Substring(startingIndex + startingIndexKeywordLength, endingIndex - (startingIndex + startingIndexKeywordLength));
                     return StringHelpers.AddNewLinesToMisformedString(description);
                 }
                 catch
@@ -286,8 +343,8 @@ namespace AutoJobSearchJobScraper.WebScraper
                         "@{STARTING_INDEX_KEY.Length}",
                         startingIndex,
                         endingIndex,
-                        STARTING_INDEX_KEYWORD,
-                        STARTING_INDEX_KEYWORD.Length);
+                        startingIndexKeyword,
+                        startingIndexKeywordLength);
 
                     return StringHelpers.AddNewLinesToMisformedString(listing.Description_Raw);
                 }
@@ -296,77 +353,6 @@ namespace AutoJobSearchJobScraper.WebScraper
             {
                 return StringHelpers.AddNewLinesToMisformedString(listing.Description_Raw);
             }
-        }
-
-        private string GetDescription_Indeed(JobListing listing)
-        {
-            const string STARTING_INDEX_KEYWORD = "WhatWhereFind Jobs";
-            const string ENDING_INDEX_KEYWORD = "Report job"; // "Report job" or "Hiring LabCareer"
-
-            var startingIndex = listing.Description_Raw.IndexOf(STARTING_INDEX_KEYWORD);
-            var endingIndex = listing.Description_Raw.IndexOf(ENDING_INDEX_KEYWORD);
-
-            // If the raw description doesn't contain the keywords in the correct order, don't attempt to extract the substring description.
-            if (startingIndex != -1 && endingIndex != -1 && (endingIndex > startingIndex))
-            {
-                try
-                {
-                    var description = listing.Description_Raw.Substring(startingIndex + STARTING_INDEX_KEYWORD.Length, endingIndex - (startingIndex + STARTING_INDEX_KEYWORD.Length));
-                    return StringHelpers.AddNewLinesToMisformedString(description);
-                }
-                catch
-                {
-                    _logger.LogError("Error extracting Description from Description_Raw. " +
-                        "Variable values: " +
-                        "{@startingIndex}, " +
-                        "{@endingIndex}, " +
-                        "@{STARTING_INDEX_KEY}, " +
-                        "@{STARTING_INDEX_KEY.Length}",
-                        startingIndex,
-                        endingIndex,
-                        STARTING_INDEX_KEYWORD,
-                        STARTING_INDEX_KEYWORD.Length);
-
-                    return StringHelpers.AddNewLinesToMisformedString(listing.Description_Raw);
-                }
-            }
-            else
-            {
-                return StringHelpers.AddNewLinesToMisformedString(listing.Description_Raw);
-            }
-        }
-
-        /// <summary>
-        /// Extracts the job listing description and application links from each raw HTML list item element.
-        /// </summary>
-        /// <param name="liElements">HTML <li> elements.</param>
-        /// <param name="searchTerm">The search term that the web scraper used to find the HTML list item.</param>
-        /// <returns></returns>
-        private IEnumerable<JobListing> ExtractJobListingsFromLiElements(IEnumerable<HtmlNode> liElements, string searchTerm)
-        {
-            var jobList = new List<JobListing>();
-
-            foreach (var li in liElements)
-            {
-                // Get all <a> html elements that contain the word "apply". These will contain the direct web links to the job application.
-                var anchorElements = li.Descendants("a").Where(a => a.InnerText.Contains("apply", StringComparison.OrdinalIgnoreCase));
-
-                // Skip the job listing if no anchor elements found.
-                if (!anchorElements.Any()) continue;
-
-                var listing = new JobListing
-                {
-                    SearchTerm = searchTerm,
-                    Description_Raw = WebUtility.HtmlDecode(li.InnerText)
-                };
-
-                listing.ApplicationLinks = GetApplicationLinks(anchorElements);
-                listing.Description = GetDescription(listing);
-
-                jobList.Add(listing);
-            }
-
-            return jobList;
         }
     }
 }
