@@ -22,7 +22,7 @@ namespace AutoJobSearchJobScraper
             // if (args.Length < 1) throw new ArgumentException("No arguments provided.");
 
             // TODO: remove
-            args = new string[] { "programming jobs los angeles" };
+            args = new string[] { "programming jobs toronto" };
 
             var serviceProvider = new ServiceCollection()
                 .AddLogging(builder => builder.AddSerilog(Log.Logger, true))

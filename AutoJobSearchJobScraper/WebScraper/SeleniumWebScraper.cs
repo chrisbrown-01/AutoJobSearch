@@ -13,9 +13,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Reflection;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace AutoJobSearchJobScraper.WebScraper
 {
@@ -64,12 +66,60 @@ namespace AutoJobSearchJobScraper.WebScraper
                 throw new AppSettingsFileArgumentException($"Failed to read {nameof(ENDING_INDEX_KEYWORD)} from appsettings.json config file.");
         }
 
+        private void ProcessJobs_Google(List<JobListing> jobListings, IEnumerable<HtmlNode>? jobListingNodes, string searchTerm)
+        {
+            if (jobListingNodes is null) return;
+
+            jobListings.AddRange(ExtractJobListingsFromLiElements(jobListingNodes, searchTerm)); // TODO: rename methods or extract to seperate class
+        }
+
+        // TODO: ref keywords required?
+        private void ProcessJobs_Indeed(
+            List<JobListing> jobListings,
+            IEnumerable<HtmlNode>? jobListingNodes,
+            string searchTerm,
+            ref ChromeDriver driver,
+            ref HtmlDocument doc)
+        {
+            // TODO: need to account for US (www.indeed.com) and CA (ca.indeed.com) subdomains
+
+            if (jobListingNodes is null) return;
+
+            const string JOB_DESCRIPTION_HTML_DIV_ID_ATTRIBUTE = "data-jk"; // TODO: move outside of method
+
+            foreach (var node in jobListingNodes)
+            {
+                var jobId = node.GetAttributeValue(JOB_DESCRIPTION_HTML_DIV_ID_ATTRIBUTE, null);
+
+                if (String.IsNullOrWhiteSpace(jobId)) continue;
+
+                var url = $"https://ca.indeed.com/viewjob?jk={jobId}";
+
+                driver.Navigate().GoToUrl(url);
+                doc.LoadHtml(driver.PageSource);
+
+                CheckForCaptcha(ref doc, ref driver, url);
+
+                var listing_indeed = new JobListing
+                {
+                    SearchTerm = searchTerm,
+                    Description_Raw = WebUtility.HtmlDecode(doc.DocumentNode.InnerText)
+                };
+
+                listing_indeed.ApplicationLinks.Add(new ApplicationLink { Link = url });
+                listing_indeed.Description = GetDescription_Indeed(listing_indeed); // TODO: combine with regular GetDescription method
+
+                jobListings.Add(listing_indeed);
+            }
+        }
+
         public async Task<IEnumerable<JobListing>> ScrapeJobsAsync(IEnumerable<string> searchTerms)
         {
             _logger.LogInformation("Begin scraping jobs. Number of members in searchTerms argument: {@searchTerms.Count}", searchTerms.Count());
 
             var jobListings = new List<JobListing>();
-            var doc = new HtmlDocument();
+            var htmlDocument_Google = new HtmlDocument();
+            var htmlDocument_Indeed = new HtmlDocument();
             var driver = new ChromeDriver();
 
             try
@@ -77,105 +127,37 @@ namespace AutoJobSearchJobScraper.WebScraper
                 foreach (var searchTerm in searchTerms)
                 {
                     // Parse through the amount of jobs specified by MAX_PAGE_INDEX. Increment the start index by 10 every iteration.
-                    // TODO: uncomment
-                    //for (int i = 0; i < MAX_JOB_LISTING_INDEX + 1; i += 10)
-                    for (int i = 0; i < 200 + 1; i += 10)
+                    for (int i = 0; i < MAX_JOB_LISTING_INDEX + 1; i += 10)
                     {
-                        // Google Scraping
-                        // TODO: uncomment
-                        driver.Navigate().GoToUrl($"https://www.google.com/search?q={WebUtility.UrlEncode(searchTerm)}&sourceid=chrome&ie=UTF-8&ibp=htl;jobs&start={i}");
-                        doc!.LoadHtml(driver.PageSource);
+                        var googleJobsBoardURL = $"https://www.google.com/search?q={WebUtility.UrlEncode(searchTerm)}&sourceid=chrome&ie=UTF-8&ibp=htl;jobs&start={i}";
+                        var indeedJobsBoardURL = $"https://ca.indeed.com/jobs?q={WebUtility.UrlEncode(searchTerm)}&start={i}";
+                        // TODO: need to account for US (www.indeed.com) and CA (ca.indeed.com) subdomains
 
-                        CheckForCaptcha(doc, driver);
+                        // Scrape Google jobs board
+                        driver.Navigate().GoToUrl(googleJobsBoardURL);
+                        htmlDocument_Google!.LoadHtml(driver.PageSource);
+                        CheckForCaptcha(ref htmlDocument_Google, ref driver, googleJobsBoardURL);
+                        var jobListingNodes_Google = htmlDocument_Google?.DocumentNode?.SelectNodes("//li")?.ToList();
 
-                        var liElements = doc?.DocumentNode?.SelectNodes("//li")?.AsEnumerable();
+                        // Scrape Indeed jobs board
+                        driver.Navigate().GoToUrl(indeedJobsBoardURL);
+                        htmlDocument_Indeed!.LoadHtml(driver.PageSource);
+                        CheckForCaptcha(ref htmlDocument_Indeed, ref driver, indeedJobsBoardURL);
+                        var jobListingNodes_Indeed = htmlDocument_Indeed?.DocumentNode?.SelectNodes("//a").Where(x => x.GetAttributeValue("data-jk", null) != null).ToList();
 
-                        if (liElements == null)
+                        if ((jobListingNodes_Google is null || !jobListingNodes_Google.Any()) &&
+                            (jobListingNodes_Indeed is null || !jobListingNodes_Indeed.Any()))
                         {
                             _logger.LogWarning(
-                                "No li elements detected during job scraping. " +
+                                "No jobs detected during job scraping. " +
                                 "{@searchTerm} {@iterationValue} {@MAX_JOB_LISTING_INDEX}",
                                 searchTerm, i, MAX_JOB_LISTING_INDEX);
 
-                            break; // TODO: need to basically remove this
+                            break;
                         }
 
-                        jobListings.AddRange(ExtractJobListingsFromLiElements(liElements, searchTerm));
-
-
-
-
-
-
-
-                        // Indeed Scraping
-                        // TODO: need to account for US and CA subdomains
-                        driver.Navigate().GoToUrl($"https://www.indeed.com/jobs?q={WebUtility.UrlEncode(searchTerm)}&start={i}");
-                        //driver.Navigate().GoToUrl($"https://ca.indeed.com/jobs?q={WebUtility.UrlEncode(searchTerm)}&start={i}");
-                        doc!.LoadHtml(driver.PageSource);
-
-                        var checkForCaptcha = doc?.DocumentNode?.InnerText;
-
-                        // TODO: make captcha key phrases part of appsettings.json
-                        // TODO: make into a callable method with URL argument
-                        if (checkForCaptcha != null && checkForCaptcha.Contains("needs to review the security of your connection before proceeding", StringComparison.OrdinalIgnoreCase))
-                        {
-                            driver.Quit();
-                            driver = new ChromeDriver();
-                            driver.Navigate().GoToUrl($"https://www.indeed.com/jobs?q={WebUtility.UrlEncode(searchTerm)}&start={i}");
-                            //driver.Navigate().GoToUrl($"https://ca.indeed.com/jobs?q={WebUtility.UrlEncode(searchTerm)}&start={i}");
-                            doc!.LoadHtml(driver.PageSource); // Reload the page now that captcha has been bypassed.
-                        }
-
-                        var aElements = doc?.DocumentNode?.SelectNodes("//a")?.AsEnumerable().Where(x => x.GetAttributeValue("data-jk", null) != null);
-
-                        Console.WriteLine(aElements?.Count() + " num of elements in aElements"); // TODO: delete
-
-                        if (aElements is null) continue;
-
-                        foreach (var aElementShort in aElements!)
-                        {
-                            // TODO: delete
-                            // await Task.Delay(Random.Shared.Next(100, 300));
-
-                            var id = aElementShort.GetAttributeValue("data-jk", null);
-
-                            if (id is null) continue;
-
-                            var applicationLink_Indeed = $"https://www.indeed.com/viewjob?jk={id}";
-                            //var applicationLink_Indeed = $"https://ca.indeed.com/viewjob?jk={id}";
-
-                            driver.Navigate().GoToUrl(applicationLink_Indeed);
-                            doc!.LoadHtml(driver.PageSource);
-
-
-                            var checkForCaptcha2 = doc?.DocumentNode?.InnerText;
-
-                            // TODO: make captcha key phrases part of appsettings.json
-                            if (checkForCaptcha2 != null && checkForCaptcha2.Contains("needs to review the security of your connection before proceeding", StringComparison.OrdinalIgnoreCase))
-                            {
-                                driver.Quit();
-                                driver = new ChromeDriver();
-                                driver.Navigate().GoToUrl(applicationLink_Indeed);
-                                doc!.LoadHtml(driver.PageSource); // Reload the page now that captcha has been bypassed.
-
-                                var innerTextTest = doc?.DocumentNode?.InnerText;
-                            }
-
-
-
-
-                            var listing_indeed = new JobListing
-                            {
-                                SearchTerm = searchTerm,
-                                Description_Raw = WebUtility.HtmlDecode(doc!.DocumentNode.InnerText)
-                            };
-
-                            listing_indeed.ApplicationLinks.Add(new ApplicationLink { Link = applicationLink_Indeed });
-                            listing_indeed.Description = GetDescription_Indeed(listing_indeed); // TODO: combine with regular GetDescription method
-
-                            jobListings.Add(listing_indeed);
-                        }
+                        ProcessJobs_Google(jobListings, jobListingNodes_Google, searchTerm);
+                        ProcessJobs_Indeed(jobListings, jobListingNodes_Indeed, searchTerm, ref driver, ref htmlDocument_Indeed!);
                     }
                 }
             }
@@ -194,28 +176,50 @@ namespace AutoJobSearchJobScraper.WebScraper
             return jobListings;
         }
 
+
         /// <summary>
-        /// If Google captcha is detected, pause the script until the user solves the captcha and manually continues the script.
+        /// If captcha is detected, close the browser and open a new browser to the same URL. This should allow scraping to continue.
         /// </summary>
         /// <param name="doc"></param>
         /// <param name="driver"></param>
-        private void CheckForCaptcha(HtmlDocument doc, ChromeDriver driver)
+        /// <param name="url"></param>
+        private static void CheckForCaptcha(ref HtmlDocument doc, ref ChromeDriver driver, string url)
         {
-            var checkForCaptcha = doc?.DocumentNode?.InnerText;
+            var innerText = doc.DocumentNode.InnerText;
+            // TODO: move to appsettings.json
+            const string GOOGLE_CAPTCHA_MESSAGE = "detected unusual traffic";
+            const string INDEED_CAPTCHA_MESSAGE = "needs to review the security of your connection before proceeding";
 
-            if (checkForCaptcha != null && checkForCaptcha.Contains("detected unusual traffic", StringComparison.OrdinalIgnoreCase))
+            if (innerText.Contains(GOOGLE_CAPTCHA_MESSAGE, StringComparison.OrdinalIgnoreCase) ||
+                innerText.Contains(INDEED_CAPTCHA_MESSAGE, StringComparison.OrdinalIgnoreCase))
             {
-                var input = "";
-
-                while (input != "CONTINUE")
-                {
-                    Console.WriteLine("Solve the Google Chrome captcha then type in 'CONTINUE' to continue scraping: ");
-                    input = Console.ReadLine();
-                }
-
-                doc!.LoadHtml(driver.PageSource); // Reload the page now that captcha has been bypassed.
+                driver.Quit();
+                driver = new ChromeDriver();
+                driver.Navigate().GoToUrl(url);
+                doc.LoadHtml(driver.PageSource); // Reload the page now that captcha has been bypassed.
             }
         }
+
+
+        // TODO: delete
+        //private void CheckForCaptcha(HtmlDocument doc, ChromeDriver driver)
+        //{
+        //    var checkForCaptcha = doc?.DocumentNode?.InnerText;
+
+        //    if (checkForCaptcha != null && checkForCaptcha.Contains("detected unusual traffic", StringComparison.OrdinalIgnoreCase))
+        //    {
+        //        var input = "";
+
+        //        while (input != "CONTINUE")
+        //        {
+        //            Console.WriteLine("Solve the Google Chrome captcha then type in 'CONTINUE' to continue scraping: ");
+        //            input = Console.ReadLine();
+        //        }
+
+        //        doc!.LoadHtml(driver.PageSource); // Reload the page now that captcha has been bypassed.
+        //    }
+        //}
+
 
         /// <summary>
         /// Get the direct hyperlinks to the job listing.
