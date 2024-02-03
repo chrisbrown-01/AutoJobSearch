@@ -18,11 +18,7 @@ namespace AutoJobSearchJobScraper
         {
             ConfigureLogger();
 
-            // TODO: uncomment
-            // if (args.Length < 1) throw new ArgumentException("No arguments provided.");
-
-            // TODO: remove
-            args = new string[] { "programming jobs toronto" };
+            if (args.Length < 1) throw new ArgumentException("No arguments provided.");
 
             var serviceProvider = new ServiceCollection()
                 .AddLogging(builder => builder.AddSerilog(Log.Logger, true))

@@ -4,22 +4,10 @@ using AutoJobSearchShared.Helpers;
 using AutoJobSearchShared.Models;
 using HtmlAgilityPack;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
-using Serilog;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Reflection;
-using System.Security.Cryptography;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Xml.Linq;
-
 namespace AutoJobSearchJobScraper.WebScraper
 {
     internal class SeleniumWebScraper : IWebScraper
@@ -87,9 +75,18 @@ namespace AutoJobSearchJobScraper.WebScraper
                 throw new AppSettingsFileArgumentException($"Failed to read {nameof(INDEED_JOB_DESCRIPTION_HTML_DIV_ID_ATTRIBUTE)} from appsettings.json config file.");
         }
 
-        private void ProcessJobs_Google(List<JobListing> jobListings, IEnumerable<HtmlNode>? jobListingNodes, string searchTerm)
+        /// <summary>
+        /// Extract job listings for the Google job board.
+        /// </summary>
+        /// <param name="jobListingNodes">The HTML nodes that contain the job listing descriptions.</param>
+        /// <param name="searchTerm"></param>
+        /// <returns></returns>        
+        private List<JobListing> ScrapeJobs_Google(IEnumerable<HtmlNode>? jobListingNodes, string searchTerm)
         {
-            if (jobListingNodes is null) return;
+            var jobListings = new List<JobListing>();
+
+            if (jobListingNodes is null || !jobListingNodes.Any()) 
+                return jobListings;    
 
             foreach (var node in jobListingNodes)
             {
@@ -110,26 +107,49 @@ namespace AutoJobSearchJobScraper.WebScraper
 
                 jobListings.Add(jobListing);
             }
+
+            return jobListings;
         }
 
-        private void ProcessJobs_Indeed(
-            List<JobListing> jobListings,
+        /// <summary>
+        /// Extract job listings for the Indeed job board.
+        /// </summary>
+        /// <param name="jobListingNodes">The HTML nodes that contain the job listing descriptions.</param>
+        /// <param name="searchTerm"></param>
+        /// <param name="driver"></param>
+        /// <returns></returns>
+        private List<JobListing> ScrapeJobs_Indeed(
             IEnumerable<HtmlNode>? jobListingNodes,
             string searchTerm,
-            ref ChromeDriver driver,
-            ref HtmlDocument doc)
+            Country country,
+            ref ChromeDriver driver)
         {
-            // TODO: need to account for US (www.indeed.com) and CA (ca.indeed.com) subdomains
+            var jobListings = new List<JobListing>();
 
-            if (jobListingNodes is null) return;
+            if (jobListingNodes is null || !jobListingNodes.Any())
+                return jobListings;
+
+            var doc = new HtmlDocument();
 
             foreach (var node in jobListingNodes)
             {
+                // Indeed applies an id attribute to the HTML div element containing the job description. 
+                // The value of the id attribute is the Indeed job id, which we need in order to navigate to the job's URL.
                 var jobId = node.GetAttributeValue(INDEED_JOB_DESCRIPTION_HTML_DIV_ID_ATTRIBUTE, null);
 
+                // Skip over this job if the id cannot be determined.
                 if (String.IsNullOrWhiteSpace(jobId)) continue;
 
-                var url = $"https://ca.indeed.com/viewjob?jk={jobId}";
+                string url;
+
+                if(country == Country.Canada)
+                {
+                    url = $"https://ca.indeed.com/viewjob?jk={jobId}";
+                }
+                else
+                {
+                    url = $"https://www.indeed.com/viewjob?jk={jobId}";
+                }
 
                 driver.Navigate().GoToUrl(url);
                 doc.LoadHtml(driver.PageSource);
@@ -147,6 +167,8 @@ namespace AutoJobSearchJobScraper.WebScraper
 
                 jobListings.Add(jobListing);
             }
+
+            return jobListings;
         }
 
         public async Task<IEnumerable<JobListing>> ScrapeJobsAsync(IEnumerable<string> searchTerms)
@@ -154,33 +176,24 @@ namespace AutoJobSearchJobScraper.WebScraper
             _logger.LogInformation("Begin scraping jobs. Number of members in searchTerms argument: {@searchTerms.Count}", searchTerms.Count());
 
             var jobListings = new List<JobListing>();
-            var htmlDocument_Google = new HtmlDocument();
-            var htmlDocument_Indeed = new HtmlDocument();
             var driver = new ChromeDriver();
 
             try
             {
                 foreach (var searchTerm in searchTerms)
                 {
+                    var country = DetermineSearchCountry(searchTerm);
+
                     // Parse through the amount of jobs specified by MAX_PAGE_INDEX. Increment the start index by 10 every iteration.
                     for (int i = 0; i < MAX_JOB_LISTING_INDEX + 1; i += 10)
                     {
                         var googleJobsBoardURL = $"https://www.google.com/search?q={WebUtility.UrlEncode(searchTerm)}&sourceid=chrome&ie=UTF-8&ibp=htl;jobs&start={i}";
-                        var indeedJobsBoardURL = $"https://ca.indeed.com/jobs?q={WebUtility.UrlEncode(searchTerm)}&start={i}";
-                        // TODO: need to account for US (www.indeed.com) and CA (ca.indeed.com) subdomains
+                        var indeedJobsBoardURL = DetermineIndeedUrlAndSubdomain(searchTerm, country, i);
 
-                        // Scrape Google jobs board
-                        driver.Navigate().GoToUrl(googleJobsBoardURL);
-                        htmlDocument_Google!.LoadHtml(driver.PageSource);
-                        CheckForCaptcha(ref htmlDocument_Google, ref driver, googleJobsBoardURL);
-                        var jobListingNodes_Google = htmlDocument_Google?.DocumentNode?.SelectNodes("//li")?.ToList();
+                        var jobListingNodes_Google = ScrapeJobNodes_Google(ref driver, googleJobsBoardURL);
+                        var jobListingNodes_Indeed = ScrapeJobNodes_Indeed(ref driver, indeedJobsBoardURL);
 
-                        // Scrape Indeed jobs board
-                        driver.Navigate().GoToUrl(indeedJobsBoardURL);
-                        htmlDocument_Indeed!.LoadHtml(driver.PageSource);
-                        CheckForCaptcha(ref htmlDocument_Indeed, ref driver, indeedJobsBoardURL);
-                        var jobListingNodes_Indeed = htmlDocument_Indeed?.DocumentNode?.SelectNodes("//a").Where(x => x.GetAttributeValue("data-jk", null) != null).ToList();
-
+                        // If there are no jobs found on any of the job boards, break the loop and start scraping with the next search term
                         if ((jobListingNodes_Google is null || !jobListingNodes_Google.Any()) &&
                             (jobListingNodes_Indeed is null || !jobListingNodes_Indeed.Any()))
                         {
@@ -192,8 +205,8 @@ namespace AutoJobSearchJobScraper.WebScraper
                             break;
                         }
 
-                        //ProcessJobs_Google(jobListings, jobListingNodes_Google, searchTerm);
-                        ProcessJobs_Indeed(jobListings, jobListingNodes_Indeed, searchTerm, ref driver, ref htmlDocument_Indeed!);
+                        jobListings.AddRange(ScrapeJobs_Google(jobListingNodes_Google, searchTerm));
+                        jobListings.AddRange(ScrapeJobs_Indeed(jobListingNodes_Indeed, searchTerm, country, ref driver));
                     }
                 }
             }
@@ -210,6 +223,60 @@ namespace AutoJobSearchJobScraper.WebScraper
 
             _logger.LogInformation("Finished scraping jobs. {@jobListings.Count} job listings returned.", jobListings.Count);
             return jobListings;
+        }
+
+        private IEnumerable<HtmlNode>? ScrapeJobNodes_Indeed(ref ChromeDriver driver, string indeedJobsBoardURL)
+        {
+            var htmlDocument = new HtmlDocument();
+
+            driver.Navigate().GoToUrl(indeedJobsBoardURL);
+            htmlDocument!.LoadHtml(driver.PageSource);
+            CheckForCaptcha(ref htmlDocument, ref driver, indeedJobsBoardURL);
+
+            // Get all a (anchor) HTML elements that have the correct job id attribute
+            var jobListingNodes = htmlDocument?
+                .DocumentNode?
+                .SelectNodes("//a")
+                .Where(x => x.GetAttributeValue(INDEED_JOB_DESCRIPTION_HTML_DIV_ID_ATTRIBUTE, null) != null);
+
+            return jobListingNodes;
+        }
+
+        private IEnumerable<HtmlNode>? ScrapeJobNodes_Google(ref ChromeDriver driver, string googleJobsBoardURL)
+        {
+            var htmlDocument = new HtmlDocument();
+
+            driver.Navigate().GoToUrl(googleJobsBoardURL);
+            htmlDocument!.LoadHtml(driver.PageSource);
+            CheckForCaptcha(ref htmlDocument, ref driver, googleJobsBoardURL);
+
+            var jobListingNodes = htmlDocument?.DocumentNode?.SelectNodes("//li")?.AsEnumerable(); // Get all li (list item) HTML elements
+
+            return jobListingNodes;
+        }
+
+        private static string DetermineIndeedUrlAndSubdomain(string searchTerm, Country country, int i)
+        {
+            if (country == Country.Canada)
+            {
+                return $"https://ca.indeed.com/jobs?q={WebUtility.UrlEncode(searchTerm)}&start={i}";
+            }
+            else
+            {
+                return $"https://www.indeed.com/jobs?q={WebUtility.UrlEncode(searchTerm)}&start={i}";
+            }
+        }
+
+        private static Country DetermineSearchCountry(string searchTerm)
+        {
+            if (searchTerm.Contains("canada", StringComparison.OrdinalIgnoreCase))
+            {
+                return Country.Canada;
+            }
+            else
+            {
+                return Country.USA;
+            }
         }
 
 
@@ -232,27 +299,6 @@ namespace AutoJobSearchJobScraper.WebScraper
                 doc.LoadHtml(driver.PageSource); // Reload the page now that captcha has been bypassed.
             }
         }
-
-
-        // TODO: delete
-        //private void CheckForCaptcha(HtmlDocument doc, ChromeDriver driver)
-        //{
-        //    var checkForCaptcha = doc?.DocumentNode?.InnerText;
-
-        //    if (checkForCaptcha != null && checkForCaptcha.Contains("detected unusual traffic", StringComparison.OrdinalIgnoreCase))
-        //    {
-        //        var input = "";
-
-        //        while (input != "CONTINUE")
-        //        {
-        //            Console.WriteLine("Solve the Google Chrome captcha then type in 'CONTINUE' to continue scraping: ");
-        //            input = Console.ReadLine();
-        //        }
-
-        //        doc!.LoadHtml(driver.PageSource); // Reload the page now that captcha has been bypassed.
-        //    }
-        //}
-
 
         /// <summary>
         /// Get the direct hyperlinks to the job listing.
