@@ -13,6 +13,7 @@ namespace AutoJobSearchJobScraper.WebScraper
     internal class SeleniumWebScraper : IWebScraper
     {
         private const string REGEX_URL_PATTERN = @"https?://[^\s""]+";
+        private const int CHROME_DRIVER_DELAY_IN_MS = 75;
 
         private readonly int MAX_JOB_LISTING_INDEX;
         private readonly string STARTING_INDEX_KEYWORD_GOOGLE;
@@ -152,6 +153,12 @@ namespace AutoJobSearchJobScraper.WebScraper
                 }
 
                 driver.Navigate().GoToUrl(url);
+
+                // Need to provide a short delay or the Selenium browser will randomly throw exceptions.
+                // Hacky solution but you can't use "ref" keywords for async method arguments.
+                // Exception details for if they start occurring again: "OpenQA.Selenium.WebDriverException - unknown error: session deleted because of page crash"
+                Task.Delay(CHROME_DRIVER_DELAY_IN_MS).Wait(); 
+
                 doc.LoadHtml(driver.PageSource);
 
                 CheckForCaptcha(ref doc, ref driver, url);
@@ -210,7 +217,7 @@ namespace AutoJobSearchJobScraper.WebScraper
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception ex) 
             {
                 _logger.LogError("Exception thrown during job scraping. {@Exception}", ex);
             }
