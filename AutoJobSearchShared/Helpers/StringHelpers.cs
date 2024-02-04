@@ -22,8 +22,7 @@ namespace AutoJobSearchShared.Helpers
         {
             return commaSeperatedStrings.Split(',')
                                         .Select(s => s.Replace("\r\n", string.Empty)) // Remove newline sequences
-                                        .Where(s => !string.IsNullOrWhiteSpace(s) && s.Length >= 2) // Filter out null, whitespace, or strings with less than 2 characters
-                                        .ToList();
+                                        .Where(s => !string.IsNullOrWhiteSpace(s) && s.Length >= 2); // Filter out null, whitespace, or strings with less than 2 characters
         }
     }
 }

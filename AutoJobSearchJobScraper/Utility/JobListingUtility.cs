@@ -127,6 +127,9 @@ namespace AutoJobSearchJobScraper.Utility
 
             var jobList = jobListingsUnscored.ToList();
 
+            var counter = 0;
+            var lockObj = new object();
+
             Parallel.ForEach(jobList, job =>
             {
                 foreach (var keyword in keywordsPositive)
@@ -162,6 +165,12 @@ namespace AutoJobSearchJobScraper.Utility
                     {
                         job.Score--;
                     }
+                }
+
+                lock (lockObj)
+                {
+                    int progress = ++counter;
+                    Console.WriteLine("{0} of {1} processed...", progress, jobList.Count);
                 }
             });
 
