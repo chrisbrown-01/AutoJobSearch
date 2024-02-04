@@ -13,7 +13,7 @@ namespace AutoJobSearchJobScraper.WebScraper
     internal class SeleniumWebScraper : IWebScraper
     {
         private const string REGEX_URL_PATTERN = @"https?://[^\s""]+";
-        private const int CHROME_DRIVER_DELAY_IN_MS = 75;
+        private const int CHROME_DRIVER_DELAY_IN_MS = 100;
 
         private readonly int MAX_JOB_LISTING_INDEX;
         private readonly string STARTING_INDEX_KEYWORD_GOOGLE;
