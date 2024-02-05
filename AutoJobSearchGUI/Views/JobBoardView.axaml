@@ -3,6 +3,8 @@
 			 xmlns:vm="using:AutoJobSearchGUI.ViewModels"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+			 xmlns:ia="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
              x:Class="AutoJobSearchGUI.Views.JobBoardView"
 			 x:DataType="vm:JobBoardViewModel">
@@ -118,6 +120,11 @@
 	 	ItemsSource="{Binding JobListingsDisplayed}"
 		SelectedItem="{Binding SelectedJobListing}"
 		RowHeight="150">
+			<i:Interaction.Behaviors>
+				<ia:EventTriggerBehavior EventName="DoubleTapped">
+					<ia:InvokeCommandAction Command="{Binding DoubleClickedCommand}"/>
+				</ia:EventTriggerBehavior>
+			</i:Interaction.Behaviors>
 			<DataGrid.ContextMenu>
 				<ContextMenu>
 					<MenuItem Header="Hide Job" Command="{Binding HideJob}" />

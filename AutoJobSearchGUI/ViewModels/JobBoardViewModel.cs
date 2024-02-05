@@ -59,6 +59,12 @@ namespace AutoJobSearchGUI.ViewModels
             RenderDefaultJobBoardView();
         }
 
+        [RelayCommand]
+        private void DoubleClicked()
+        {
+            Console.WriteLine("test");
+        }
+
         public async void DeleteAllRecords()
         {
             var box = MessageBoxManager.GetMessageBoxStandard(
