@@ -3,6 +3,7 @@ using AutoJobSearchGUI.Models;
 using AutoJobSearchGUI.Services;
 using AutoJobSearchShared.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using Serilog;
 using System;
 using System.Collections;
@@ -36,22 +37,24 @@ namespace AutoJobSearchGUI.ViewModels
         public JobSearchViewModel(IDbContext dbContext)
         {
             _dbContext = dbContext;
-            RenderDefaultJobSearchView();
+            RenderDefaultJobSearchViewCommand.Execute(null);
         }
 
-        public void ExecuteJobSearch()
+        [RelayCommand]
+        private void ExecuteJobSearch()
         {
-            Log.Information("Executing job search for job search profile {@id}", SelectedSearchProfile.Id);
+            Log.Information("Executing job search for job search profile {@id}", SelectedSearchProfile!.Id);
             JobScraperService.StartJobScraper(SelectedSearchProfile.Id);
         }
 
-        private async void RenderDefaultJobSearchView()
+        [RelayCommand]
+        private async Task RenderDefaultJobSearchViewAsync()
         {
             var allProfiles = await _dbContext.GetAllJobSearchProfilesAsync();
 
             if (!allProfiles.Any())
             {
-                CreateNewProfile();
+                await CreateNewProfileAsync();
                 return;
             }
 
@@ -67,7 +70,8 @@ namespace AutoJobSearchGUI.ViewModels
             EnableOnChangedEvents(SearchProfiles);
         }
 
-        public async void CreateNewProfile()
+        [RelayCommand]
+        private async Task CreateNewProfileAsync()
         {
             await _dbContext.CreateJobSearchProfileAsync(new JobSearchProfile());
 
@@ -82,12 +86,13 @@ namespace AutoJobSearchGUI.ViewModels
             EnableOnChangedEvents(SearchProfiles);
         }
 
-        public async void DeleteCurrentProfile()
+        [RelayCommand]
+        private async Task DeleteCurrentProfileAsync()
         {
             if (SelectedSearchProfile == null || SelectedSearchProfile.Id < 1) return;
 
             await _dbContext.DeleteJobSearchProfileAsync(SelectedSearchProfile.Id);
-            RenderDefaultJobSearchView();
+            await RenderDefaultJobSearchViewCommand.ExecuteAsync(null);
         }
 
         /// <summary>

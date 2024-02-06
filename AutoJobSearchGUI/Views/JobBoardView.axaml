@@ -3,6 +3,8 @@
 			 xmlns:vm="using:AutoJobSearchGUI.ViewModels"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+			 xmlns:ia="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
              x:Class="AutoJobSearchGUI.Views.JobBoardView"
 			 x:DataType="vm:JobBoardViewModel">
@@ -15,9 +17,9 @@
 
 	<DockPanel>
 		<StackPanel DockPanel.Dock="Top" Orientation="Horizontal" HorizontalAlignment="Center" >
-			<Button Command="{Binding OpenJobListing}" Content="Open Selected Job" />
-			<Button Command="{Binding GoToPreviousPage}" Content="Previous Page" />
-			<Button Command="{Binding GoToNextPage}" Content="Next Page" />
+			<Button Command="{Binding OpenJobListingCommand}" Content="Open Selected Job" />
+			<Button Command="{Binding GoToPreviousPageCommand}" Content="Previous Page" />
+			<Button Command="{Binding GoToNextPageCommand}" Content="Next Page" />
 			<Menu>
 				<MenuItem Header="Advanced Query">
 					<MenuItem Header="Column Filters">
@@ -90,25 +92,25 @@
 					<Button
 						Content="Execute Query"
 						HorizontalAlignment="Center"
-						Command="{Binding ExecuteQuery}"/>
+						Command="{Binding ExecuteQueryCommand}"/>
 					<Button
 						Content="Get Hidden Jobs"
 						HorizontalAlignment="Center"
-						Command="{Binding RenderHiddenJobs}"/>
+						Command="{Binding RenderHiddenJobsCommand}"/>
 					<Button
 						Content="Get Favourite Jobs"
 						HorizontalAlignment="Center"
-						Command="{Binding RenderFavouriteJobs}"/>
+						Command="{Binding RenderFavouriteJobsCommand}"/>
 					<Button
 						Content="Clear All Filters"
 						HorizontalAlignment="Center"
-						Command="{Binding RenderDefaultJobBoardView}"/>
+						Command="{Binding RenderDefaultJobBoardViewCommand}"/>
 				</MenuItem>
 			</Menu>
 			<Menu>
 				<MenuItem Header="Options">
-					<MenuItem Header="Go To Default View" Command="{Binding RenderDefaultJobBoardView}" />
-					<MenuItem Header="Delete All Records" Command="{Binding DeleteAllRecords}" />
+					<MenuItem Header="Go To Default View" Command="{Binding RenderDefaultJobBoardViewCommand}" />
+					<MenuItem Header="Delete All Records" Command="{Binding DeleteAllRecordsCommand}" />
 				</MenuItem>
 			</Menu>
 		</StackPanel>
@@ -118,9 +120,14 @@
 	 	ItemsSource="{Binding JobListingsDisplayed}"
 		SelectedItem="{Binding SelectedJobListing}"
 		RowHeight="150">
+			<i:Interaction.Behaviors>
+				<ia:EventTriggerBehavior EventName="DoubleTapped">
+					<ia:InvokeCommandAction Command="{Binding OpenJobListingCommand}"/>
+				</ia:EventTriggerBehavior>
+			</i:Interaction.Behaviors>
 			<DataGrid.ContextMenu>
 				<ContextMenu>
-					<MenuItem Header="Hide Job" Command="{Binding HideJob}" />
+					<MenuItem Header="Hide Job" Command="{Binding HideJobCommand}" />
 				</ContextMenu>
 			</DataGrid.ContextMenu>
 			<DataGrid.Columns>

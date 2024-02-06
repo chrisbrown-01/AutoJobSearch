@@ -1,6 +1,7 @@
 ﻿using AutoJobSearchGUI.Data;
 using AutoJobSearchGUI.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using Serilog;
 using Serilog.Formatting.Json;
 using System;
@@ -58,8 +59,8 @@ namespace AutoJobSearchGUI.ViewModels
 
         public void ChangeViewToJobListing(JobListingModel jobListing, IEnumerable<JobListingModel> jobListings)
         {
-            jobListingViewModel.PopulateJobListings(jobListings);
-            jobListingViewModel.OpenJobListing(jobListing);
+            jobListingViewModel.PopulateJobListingsCommand.Execute(jobListings);
+            jobListingViewModel.OpenJobListingCommand.ExecuteAsync(jobListing).Wait();
             ContentViewModel = jobListingViewModel;
         }
 

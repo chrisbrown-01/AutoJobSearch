@@ -45,7 +45,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
             _dbContext.GetAllJobListingsAsync().Returns(jobListings);
 
             // Act
-            _viewModel.RenderDefaultJobBoardView();
+            await _viewModel.RenderDefaultJobBoardViewCommand.ExecuteAsync(null);
 
             // Assert
             await _dbContext.Received().GetAllJobListingsAsync();
@@ -73,7 +73,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
             _dbContext.GetHiddenJobListingsAsync().Returns(jobListings);
 
             // Act
-            _viewModel.RenderHiddenJobs();
+            await _viewModel.RenderHiddenJobsCommand.ExecuteAsync(null);
 
             // Assert
             await _dbContext.Received().GetHiddenJobListingsAsync();
@@ -102,7 +102,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
             _dbContext.GetFavouriteJobListingsAsync().Returns(jobListings);
 
             // Act
-            _viewModel.RenderFavouriteJobs();
+            await _viewModel.RenderFavouriteJobsCommand.ExecuteAsync(null);
 
             // Assert
             await _dbContext.Received().GetFavouriteJobListingsAsync();
@@ -148,7 +148,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
                 Returns(jobListings.AsQueryable());
 
             // Act
-            _viewModel.ExecuteQuery();
+            await _viewModel.ExecuteQueryCommand.ExecuteAsync(null);
 
             // Assert
             await _dbContext.Received().ExecuteJobListingQueryAsync(
@@ -185,7 +185,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
             _viewModel.OpenJobListingViewRequest += (job, jobs) => wasCalled = true;
 
             // Act
-            _viewModel.OpenJobListing();
+            _viewModel.OpenJobListingCommand.Execute(null);
 
             // Assert
             wasCalled.Should().BeFalse();
@@ -202,7 +202,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
             _viewModel.OpenJobListingViewRequest += (job, jobs) => wasCalled = true;
 
             // Act
-            _viewModel.OpenJobListing();
+            _viewModel.OpenJobListingCommand.Execute(null);
 
             // Assert
             wasCalled.Should().BeTrue();
@@ -218,7 +218,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
             _viewModel.JobListingsDisplayed = initialJobListingsDisplayed;
 
             // Act
-            _viewModel.HideJob();
+            _viewModel.HideJobCommand.Execute(null);
 
             // Assert
             _viewModel.JobListingsDisplayed.Should().BeEquivalentTo(initialJobListingsDisplayed);
@@ -237,7 +237,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
             JobListingModel.BoolFieldChanged += (sender, args) => wasCalled = true;
 
             // Act
-            _viewModel.HideJob();
+            _viewModel.HideJobCommand.Execute(null);
 
             // Assert
             selectedJobListing.IsHidden.Should().BeTrue();
@@ -256,7 +256,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
             _viewModel.JobListingsDisplayed = initialJobListingsDisplayed;
 
             // Act
-            _viewModel.GoToNextPage();
+            _viewModel.GoToNextPageCommand.Execute(null);
 
             // Assert
             _viewModel.PageIndex.Should().Be(initialPageIndex);
@@ -273,7 +273,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
             _viewModel.JobListingsDisplayed = initialJobListingsDisplayed;
 
             // Act
-            _viewModel.GoToPreviousPage();
+            _viewModel.GoToPreviousPageCommand.Execute(null);
 
             // Assert
             _viewModel.PageIndex.Should().Be(initialPageIndex);
@@ -290,7 +290,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
             _viewModel.JobListingsDisplayed = initialJobListingsDisplayed;
 
             // Act
-            _viewModel.GoToPreviousPage();
+            _viewModel.GoToPreviousPageCommand.Execute(null);
 
             // Assert
             _viewModel.PageIndex.Should().Be(initialPageIndex - 1);

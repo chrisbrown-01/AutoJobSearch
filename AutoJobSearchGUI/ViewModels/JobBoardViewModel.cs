@@ -56,10 +56,11 @@ namespace AutoJobSearchGUI.ViewModels
             PageIndex = 0;
             PageSize = 50;
 
-            RenderDefaultJobBoardView();
+            RenderDefaultJobBoardViewAsync().Wait();
         }
 
-        public async void DeleteAllRecords()
+        [RelayCommand]
+        private async Task DeleteAllRecordsAsync()
         {
             var box = MessageBoxManager.GetMessageBoxStandard(
                 "Confirm Delete All Records",
@@ -73,9 +74,12 @@ namespace AutoJobSearchGUI.ViewModels
             {
                 await _dbContext.DeleteAllJobListingsAsync();
             }
+
+            await RenderDefaultJobBoardViewAsync();
         }
 
-        public async void RenderDefaultJobBoardView()
+        [RelayCommand]
+        private async Task RenderDefaultJobBoardViewAsync()
         {
             PageIndex = 0;
             JobListings = await GetAllJobListings();
@@ -85,7 +89,8 @@ namespace AutoJobSearchGUI.ViewModels
             JobBoardQueryModel = new();
         }
 
-        public async void RenderHiddenJobs()
+        [RelayCommand]
+        private async Task RenderHiddenJobsAsync()
         {
             PageIndex = 0;
             JobListings = await GetHiddenJobListings();
@@ -93,7 +98,8 @@ namespace AutoJobSearchGUI.ViewModels
             EnableOnChangedEvents(JobListingsDisplayed);
         }
 
-        public async void RenderFavouriteJobs()
+        [RelayCommand]
+        private async Task RenderFavouriteJobsAsync()
         {
             PageIndex = 0;
             JobListings = await GetFavouriteJobListings();
@@ -101,7 +107,8 @@ namespace AutoJobSearchGUI.ViewModels
             EnableOnChangedEvents(JobListingsDisplayed);
         }
 
-        public async void ExecuteQuery()
+        [RelayCommand]
+        private async Task ExecuteQueryAsync()
         {
             var result = await _dbContext.ExecuteJobListingQueryAsync(
                JobBoardQueryModel.ColumnFiltersEnabled,
@@ -201,14 +208,16 @@ namespace AutoJobSearchGUI.ViewModels
             EnableOnChangedEvents(JobListingsDisplayed);
         }
 
-        public void OpenJobListing()
+        [RelayCommand]
+        private void OpenJobListing()
         {
             if (SelectedJobListing == null) return;
             DisableOnChangedEvents(JobListingsDisplayed);
             OpenJobListingViewRequest?.Invoke(SelectedJobListing, JobListings);
         }
 
-        public void HideJob()
+        [RelayCommand]
+        private void HideJob()
         {
             if (SelectedJobListing == null) return;
             SelectedJobListing.IsHidden = true;
@@ -216,7 +225,8 @@ namespace AutoJobSearchGUI.ViewModels
             JobListingsDisplayed.Remove(SelectedJobListing);
         }
 
-        public void GoToNextPage()
+        [RelayCommand]
+        private void GoToNextPage()
         {
             var jobListings = JobListings.Skip((PageIndex + 1) * PageSize).Take(PageSize);
             if (!jobListings.Any()) return;
@@ -227,7 +237,8 @@ namespace AutoJobSearchGUI.ViewModels
             EnableOnChangedEvents(JobListingsDisplayed);
         }
 
-        public void GoToPreviousPage()
+        [RelayCommand]
+        private void GoToPreviousPage()
         {
             if (PageIndex - 1 < 0) return;
 

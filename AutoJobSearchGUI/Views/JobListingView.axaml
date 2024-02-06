@@ -18,8 +18,8 @@
 			DockPanel.Dock="Top" 
 			Orientation="Horizontal"
 			HorizontalAlignment="Center">
-			<Button Content="Previous Job" Margin="5 0" Command="{Binding GoToPreviousJob}" />
-			<Button Content="Next Job" Command="{Binding GoToNextJob}" />
+			<Button Content="Previous Job" Margin="5 0" Command="{Binding GoToPreviousJobCommand}" />
+			<Button Content="Next Job" Command="{Binding GoToNextJobCommand}" />
 		</StackPanel>
 		<Grid>
 			<Grid.ColumnDefinitions>
