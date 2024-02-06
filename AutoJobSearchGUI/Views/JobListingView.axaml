@@ -101,9 +101,12 @@
 				Grid.Row="7"
 				Grid.Column="1"
 				Text="{Binding JobListing.Notes}"
+				Watermark="Enter your notes here."
 				TextWrapping="Wrap"
 				AcceptsReturn="True"
-				AcceptsTab="True" 
+				AcceptsTab="True"
+				IsUndoEnabled="True"
+				UndoLimit="1000"
 				Margin="0 1"/>
 		</Grid>
 	</DockPanel>

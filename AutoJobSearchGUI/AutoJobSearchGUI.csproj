@@ -34,4 +34,11 @@
   <ItemGroup>
     <ProjectReference Include="..\AutoJobSearchShared\AutoJobSearchShared.csproj" />
   </ItemGroup>
+
+
+  <ItemGroup>
+    <Compile Update="Views\ContactsView.axaml.cs">
+      <DependentUpon>ContactsView.axaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
 </Project>

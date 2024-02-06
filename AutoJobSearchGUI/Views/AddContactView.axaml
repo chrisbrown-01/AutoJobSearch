@@ -1,0 +1,210 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:vm="using:AutoJobSearchGUI.ViewModels"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+             x:Class="AutoJobSearchGUI.Views.AddContactView"
+			 x:DataType="vm:AddContactViewModel">
+
+	<DockPanel>
+
+		<StackPanel
+			DockPanel.Dock="Top"
+			Orientation="Horizontal"
+			HorizontalAlignment="Center">
+			<Button Content="Previous Contact" Margin="5 0" Command="" />
+			<Button Content="Next Contact" Command="" />
+		</StackPanel>
+		
+		<Grid>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="*" />
+			</Grid.ColumnDefinitions>
+
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="3*" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+			</Grid.RowDefinitions>
+
+			<TextBlock
+				Grid.Row="0"
+				Grid.Column="0"
+				VerticalAlignment="Center"
+				HorizontalAlignment="Center"
+				Text="Company"
+				Margin="20 10"/>
+			<TextBox
+				Grid.Row="0"
+				Grid.Column="1"
+				Text=""
+				IsReadOnly="False"
+				IsUndoEnabled="True"
+				TextWrapping="NoWrap"
+				Watermark="Apple"
+				Margin="0 10 15 10"/>
+
+			<TextBlock
+				Grid.Row="1"
+				Grid.Column="0"
+				VerticalAlignment="Center"
+				HorizontalAlignment="Center"
+				Text="Location"
+				Margin="20 10"/>
+			<TextBox
+				Grid.Row="1"
+				Grid.Column="1"
+				Text=""
+				IsReadOnly="False"
+				IsUndoEnabled="True"
+				TextWrapping="NoWrap"
+				Watermark="Cupertino, California"
+				Margin="0 10 15 10"/>
+
+			<TextBlock
+				Grid.Row="2"
+				Grid.Column="0"
+				VerticalAlignment="Center"
+				HorizontalAlignment="Center"
+				Text="Name"
+				Margin="20 10"/>
+			<TextBox
+				Grid.Row="2"
+				Grid.Column="1"
+				Text=""
+				IsReadOnly="False"
+				IsUndoEnabled="True"
+				TextWrapping="NoWrap"
+				Watermark="John Smith"
+				Margin="0 10 15 10"/>
+
+			<TextBlock
+				Grid.Row="3"
+				Grid.Column="0"
+				VerticalAlignment="Center"
+				HorizontalAlignment="Center"
+				Text="Title"
+				Margin="20 10"/>
+			<TextBox
+				Grid.Row="3"
+				Grid.Column="1"
+				Text=""
+				IsReadOnly="False"
+				IsUndoEnabled="True"
+				TextWrapping="NoWrap"
+				Watermark="Senior Hiring Manager"
+				Margin="0 10 15 10"/>
+
+			<TextBlock
+				Grid.Row="4"
+				Grid.Column="0"
+				VerticalAlignment="Center"
+				HorizontalAlignment="Center"
+				Text="Email"
+				Margin="20 10"/>
+			<TextBox
+				Grid.Row="4"
+				Grid.Column="1"
+				Text=""
+				IsReadOnly="False"
+				IsUndoEnabled="True"
+				TextWrapping="NoWrap"
+				Watermark="example@example.com"
+				Margin="0 10 15 10"/>
+
+			<TextBlock
+				Grid.Row="5"
+				Grid.Column="0"
+				VerticalAlignment="Center"
+				HorizontalAlignment="Center"
+				Text="Phone"
+				Margin="20 10"/>
+			<TextBox
+				Grid.Row="5"
+				Grid.Column="1"
+				Text=""
+				IsReadOnly="False"
+				IsUndoEnabled="True"
+				TextWrapping="NoWrap"
+				Watermark="555-555-5555"
+				Margin="0 10 15 10"/>
+
+			<TextBlock
+				Grid.Row="6"
+				Grid.Column="0"
+				VerticalAlignment="Center"
+				HorizontalAlignment="Center"
+				Text="LinkedIn"
+				Margin="20 10"/>
+			<TextBox
+				Grid.Row="6"
+				Grid.Column="1"
+				Text=""
+				IsReadOnly="False"
+				IsUndoEnabled="True"
+				TextWrapping="NoWrap"
+				Watermark="www.linkedin.com/in/example"
+				Margin="0 10 15 10"/>
+
+			<TextBlock
+				Grid.Row="7"
+				Grid.Column="0"
+				VerticalAlignment="Center"
+				HorizontalAlignment="Center"
+				Text="Notes"
+				Margin="20 10"/>
+			
+			<TextBox
+				Grid.Row="7"
+				Grid.Column="1"
+				Text=""
+				Watermark="Enter your notes here."
+				IsReadOnly="False"
+				TextWrapping="Wrap"
+				AcceptsReturn="True"
+				AcceptsTab="True"
+				IsUndoEnabled="True"
+				UndoLimit="1000"
+				Margin="0 10 15 5"/>
+
+			<TextBlock
+				Grid.Row="8"
+				Grid.Column="0"
+				VerticalAlignment="Center"
+				HorizontalAlignment="Center"
+				Text="Associated Jobs"
+				Margin="20 10"/>
+
+			<TextBox
+				Grid.Row="8"
+				Grid.Column="1"
+				Text=""
+				IsReadOnly="True"
+				TextWrapping="NoWrap"
+				Margin="0 10 15 5"/>
+
+
+			<StackPanel Grid.Row="9" Grid.ColumnSpan="2"
+				Orientation="Horizontal"
+				HorizontalAlignment="Center">
+				<Button Content="Save Contact" Margin="5 5" Command="" />
+				<Button Content="Delete Contact" Margin="5 5" Command="" />
+				<Button Content="Create New Contact" Margin="5 5" Command="" />
+				<Button Content="Cancel" Margin="5 5" Command="" />
+			</StackPanel>
+		
+		</Grid>
+		
+		
+
+	</DockPanel>
+</UserControl>

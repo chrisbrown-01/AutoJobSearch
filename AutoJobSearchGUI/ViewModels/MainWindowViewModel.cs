@@ -18,6 +18,8 @@ namespace AutoJobSearchGUI.ViewModels
         private JobSearchViewModel jobSearchViewModel;
         private JobListingViewModel jobListingViewModel;
         private HelpViewModel helpViewModel;
+        private AddContactViewModel addContactViewModel;
+        private ContactsViewModel contactsViewModel;
         private readonly DbContext dbContext;
 
         [ObservableProperty]
@@ -31,6 +33,8 @@ namespace AutoJobSearchGUI.ViewModels
             jobBoardViewModel = new JobBoardViewModel(dbContext);
             jobSearchViewModel = new JobSearchViewModel(dbContext);
             jobListingViewModel = new JobListingViewModel(dbContext);
+            addContactViewModel = new AddContactViewModel(dbContext);
+            contactsViewModel = new ContactsViewModel(dbContext);
             helpViewModel = new HelpViewModel();
             ContentViewModel = jobBoardViewModel;
 
@@ -40,6 +44,13 @@ namespace AutoJobSearchGUI.ViewModels
         public void Dispose()
         {
             dbContext.Dispose();
+        }
+
+        public void ChangeViewToContacts()
+        {
+            // TODO: cleanup
+            // ContentViewModel = addContactViewModel;
+            ContentViewModel = contactsViewModel;
         }
 
         public void ChangeViewToJobBoard()
