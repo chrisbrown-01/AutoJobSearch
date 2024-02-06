@@ -30,9 +30,9 @@
 		</Grid.RowDefinitions>
 
 		<StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center">
-			<Button Content="Execute Job Search" Command="{Binding ExecuteJobSearch}" Background="LightGray" />
-			<Button Content="Create New Search Profile" Command="{Binding CreateNewProfile}" Background="LightGray" />
-			<Button Content="Delete Current Search Profile" Command="{Binding DeleteCurrentProfile}" Background="LightGray" />
+			<Button Content="Execute Job Search" Command="{Binding ExecuteJobSearchCommand}" Background="LightGray" />
+			<Button Content="Create New Search Profile" Command="{Binding CreateNewProfileCommand}" Background="LightGray" />
+			<Button Content="Delete Current Search Profile" Command="{Binding DeleteCurrentProfileCommand}" Background="LightGray" />
 			<ComboBox
 				IsTextSearchEnabled="True"
 				PlaceholderText="Select Profile"

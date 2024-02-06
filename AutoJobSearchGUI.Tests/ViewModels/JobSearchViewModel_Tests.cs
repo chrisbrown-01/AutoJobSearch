@@ -36,7 +36,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
             _dbContext.GetAllJobSearchProfilesAsync().Returns(profiles);
 
             // Act
-            _viewModel.CreateNewProfile();
+            await _viewModel.CreateNewProfileCommand.ExecuteAsync(null);
 
             // Assert
             await _dbContext.Received().CreateJobSearchProfileAsync(Arg.Any<JobSearchProfile>());
@@ -49,10 +49,10 @@ namespace AutoJobSearchGUI.Tests.ViewModels
         public async void DeleteCurrentProfile_SelectedSearchProfileIsNull_DoesNotDeleteProfile()
         {
             // Arrange
-            _viewModel.SelectedSearchProfile = null;
+            _viewModel.SelectedSearchProfile = null!;
 
             // Act
-            _viewModel.DeleteCurrentProfile();
+            await _viewModel.DeleteCurrentProfileCommand.ExecuteAsync(null);
 
             // Assert
             await _dbContext.DidNotReceive().DeleteJobSearchProfileAsync(Arg.Any<int>());
@@ -65,7 +65,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
             _viewModel.SelectedSearchProfile = new JobSearchProfileModel() { Id = 0 };
 
             // Act
-            _viewModel.DeleteCurrentProfile();
+            await _viewModel.DeleteCurrentProfileCommand.ExecuteAsync(null);
 
             // Assert
             await _dbContext.DidNotReceive().DeleteJobSearchProfileAsync(Arg.Any<int>());
@@ -80,7 +80,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
             _dbContext.GetAllJobSearchProfilesAsync().Returns(_fixture.CreateMany<JobSearchProfile>());
 
             // Act
-            _viewModel.DeleteCurrentProfile();
+            await _viewModel.DeleteCurrentProfileCommand.ExecuteAsync(null);
 
             // Assert
             await _dbContext.Received().DeleteJobSearchProfileAsync(selectedSearchProfile.Id);
