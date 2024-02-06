@@ -100,7 +100,7 @@
 					<Button
 						Content="Get Favourite Jobs"
 						HorizontalAlignment="Center"
-						Command="{Binding RenderFavouriteJobs}"/>
+						Command="{Binding RenderFavouriteJobsCommand}"/>
 					<Button
 						Content="Clear All Filters"
 						HorizontalAlignment="Center"

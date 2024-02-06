@@ -102,7 +102,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
             _dbContext.GetFavouriteJobListingsAsync().Returns(jobListings);
 
             // Act
-            _viewModel.RenderFavouriteJobs();
+            await _viewModel.RenderFavouriteJobsCommand.ExecuteAsync(null);
 
             // Assert
             await _dbContext.Received().GetFavouriteJobListingsAsync();

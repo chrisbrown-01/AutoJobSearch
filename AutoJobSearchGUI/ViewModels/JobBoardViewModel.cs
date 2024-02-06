@@ -98,7 +98,8 @@ namespace AutoJobSearchGUI.ViewModels
             EnableOnChangedEvents(JobListingsDisplayed);
         }
 
-        public async void RenderFavouriteJobs()
+        [RelayCommand]
+        private async Task RenderFavouriteJobsAsync()
         {
             PageIndex = 0;
             JobListings = await GetFavouriteJobListings();
