@@ -110,7 +110,7 @@
 			<Menu>
 				<MenuItem Header="Options">
 					<MenuItem Header="Go To Default View" Command="{Binding RenderDefaultJobBoardViewCommand}" />
-					<MenuItem Header="Delete All Records" Command="{Binding DeleteAllRecords}" />
+					<MenuItem Header="Delete All Records" Command="{Binding DeleteAllRecordsCommand}" />
 				</MenuItem>
 			</Menu>
 		</StackPanel>

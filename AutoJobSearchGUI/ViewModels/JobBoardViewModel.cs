@@ -59,7 +59,8 @@ namespace AutoJobSearchGUI.ViewModels
             RenderDefaultJobBoardViewAsync().Wait();
         }
 
-        public async void DeleteAllRecords()
+        [RelayCommand]
+        public async Task DeleteAllRecordsAsync()
         {
             var box = MessageBoxManager.GetMessageBoxStandard(
                 "Confirm Delete All Records",
@@ -73,6 +74,8 @@ namespace AutoJobSearchGUI.ViewModels
             {
                 await _dbContext.DeleteAllJobListingsAsync();
             }
+
+            await RenderDefaultJobBoardViewAsync();
         }
 
         [RelayCommand]
