@@ -273,7 +273,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
             _viewModel.JobListingsDisplayed = initialJobListingsDisplayed;
 
             // Act
-            _viewModel.GoToPreviousPage();
+            _viewModel.GoToPreviousPageCommand.Execute(null);
 
             // Assert
             _viewModel.PageIndex.Should().Be(initialPageIndex);
@@ -290,7 +290,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
             _viewModel.JobListingsDisplayed = initialJobListingsDisplayed;
 
             // Act
-            _viewModel.GoToPreviousPage();
+            _viewModel.GoToPreviousPageCommand.Execute(null);
 
             // Assert
             _viewModel.PageIndex.Should().Be(initialPageIndex - 1);

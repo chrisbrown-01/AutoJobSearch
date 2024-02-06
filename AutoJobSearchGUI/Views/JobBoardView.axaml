@@ -18,7 +18,7 @@
 	<DockPanel>
 		<StackPanel DockPanel.Dock="Top" Orientation="Horizontal" HorizontalAlignment="Center" >
 			<Button Command="{Binding OpenJobListingCommand}" Content="Open Selected Job" />
-			<Button Command="{Binding GoToPreviousPage}" Content="Previous Page" />
+			<Button Command="{Binding GoToPreviousPageCommand}" Content="Previous Page" />
 			<Button Command="{Binding GoToNextPageCommand}" Content="Next Page" />
 			<Menu>
 				<MenuItem Header="Advanced Query">

@@ -237,7 +237,8 @@ namespace AutoJobSearchGUI.ViewModels
             EnableOnChangedEvents(JobListingsDisplayed);
         }
 
-        public void GoToPreviousPage()
+        [RelayCommand]
+        private void GoToPreviousPage()
         {
             if (PageIndex - 1 < 0) return;
 
