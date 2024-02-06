@@ -2,6 +2,7 @@
 using AutoJobSearchGUI.Models;
 using AutoJobSearchShared;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -33,12 +34,14 @@ namespace AutoJobSearchGUI.ViewModels
             _dbContext = dbContext;
         }
 
-        public void PopulateJobListings(IEnumerable<JobListingModel> jobListings)
+        [RelayCommand]
+        private void PopulateJobListings(IEnumerable<JobListingModel> jobListings)
         {
             JobListings = jobListings.ToList();
         }
 
-        public void GoToPreviousJob()
+        [RelayCommand]
+        private async Task GoToPreviousJobAsync()
         {
             var currentIndex = JobListings.IndexOf(JobListing);
             if (currentIndex < 0) return;
@@ -48,10 +51,11 @@ namespace AutoJobSearchGUI.ViewModels
 
             DisableOnChangedEvents(JobListing);
 
-            OpenJobListing(JobListings[previousIndex]);
+            await OpenJobListingAsync(JobListings[previousIndex]);
         }
 
-        public void GoToNextJob()
+        [RelayCommand]
+        private async Task GoToNextJobAsync()
         {
             var currentIndex = JobListings.IndexOf(JobListing);
             if (currentIndex < 0) return;
@@ -61,10 +65,11 @@ namespace AutoJobSearchGUI.ViewModels
 
             DisableOnChangedEvents(JobListing);
 
-            OpenJobListing(JobListings[nextIndex]);
+            await OpenJobListingAsync(JobListings[nextIndex]);
         }
 
-        public async void OpenJobListing(JobListingModel jobListing)
+        [RelayCommand]
+        private async Task OpenJobListingAsync(JobListingModel jobListing)
         {
             if (!jobListing.DetailsPopulated)
             {

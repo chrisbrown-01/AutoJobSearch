@@ -39,7 +39,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
             _dbContext.GetJobListingDetailsByIdAsync(jobListingWithoutDetails.Id).Returns(jobListingWithDetails);
 
             // Act
-            _viewModel.OpenJobListing(jobListingWithoutDetails);
+            await _viewModel.OpenJobListingCommand.ExecuteAsync(jobListingWithoutDetails);
 
             // Assert
             await _dbContext.Received().GetJobListingDetailsByIdAsync(jobListingWithoutDetails.Id);
@@ -68,7 +68,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
             jobListingWithDetails.EnableEvents = false;
 
             // Act
-            _viewModel.OpenJobListing(jobListingWithDetails);
+            await _viewModel.OpenJobListingCommand.ExecuteAsync(jobListingWithDetails);
 
             // Assert
             await _dbContext.DidNotReceive().GetJobListingDetailsByIdAsync(Arg.Any<int>());
