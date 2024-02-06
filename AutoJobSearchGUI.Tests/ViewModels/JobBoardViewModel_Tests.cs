@@ -256,7 +256,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
             _viewModel.JobListingsDisplayed = initialJobListingsDisplayed;
 
             // Act
-            _viewModel.GoToNextPage();
+            _viewModel.GoToNextPageCommand.Execute(null);
 
             // Assert
             _viewModel.PageIndex.Should().Be(initialPageIndex);

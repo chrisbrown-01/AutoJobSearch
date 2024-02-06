@@ -225,7 +225,8 @@ namespace AutoJobSearchGUI.ViewModels
             JobListingsDisplayed.Remove(SelectedJobListing);
         }
 
-        public void GoToNextPage()
+        [RelayCommand]
+        private void GoToNextPage()
         {
             var jobListings = JobListings.Skip((PageIndex + 1) * PageSize).Take(PageSize);
             if (!jobListings.Any()) return;
