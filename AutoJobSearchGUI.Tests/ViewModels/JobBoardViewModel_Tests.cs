@@ -218,7 +218,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
             _viewModel.JobListingsDisplayed = initialJobListingsDisplayed;
 
             // Act
-            _viewModel.HideJob();
+            _viewModel.HideJobCommand.Execute(null);
 
             // Assert
             _viewModel.JobListingsDisplayed.Should().BeEquivalentTo(initialJobListingsDisplayed);
@@ -237,7 +237,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
             JobListingModel.BoolFieldChanged += (sender, args) => wasCalled = true;
 
             // Act
-            _viewModel.HideJob();
+            _viewModel.HideJobCommand.Execute(null);
 
             // Assert
             selectedJobListing.IsHidden.Should().BeTrue();

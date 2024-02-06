@@ -216,7 +216,8 @@ namespace AutoJobSearchGUI.ViewModels
             OpenJobListingViewRequest?.Invoke(SelectedJobListing, JobListings);
         }
 
-        public void HideJob()
+        [RelayCommand]
+        private void HideJob()
         {
             if (SelectedJobListing == null) return;
             SelectedJobListing.IsHidden = true;

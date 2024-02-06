@@ -127,7 +127,7 @@
 			</i:Interaction.Behaviors>
 			<DataGrid.ContextMenu>
 				<ContextMenu>
-					<MenuItem Header="Hide Job" Command="{Binding HideJob}" />
+					<MenuItem Header="Hide Job" Command="{Binding HideJobCommand}" />
 				</ContextMenu>
 			</DataGrid.ContextMenu>
 			<DataGrid.Columns>
