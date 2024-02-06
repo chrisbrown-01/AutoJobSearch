@@ -107,7 +107,8 @@ namespace AutoJobSearchGUI.ViewModels
             EnableOnChangedEvents(JobListingsDisplayed);
         }
 
-        public async void ExecuteQuery()
+        [RelayCommand]
+        private async Task ExecuteQueryAsync()
         {
             var result = await _dbContext.ExecuteJobListingQueryAsync(
                JobBoardQueryModel.ColumnFiltersEnabled,

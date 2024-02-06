@@ -92,7 +92,7 @@
 					<Button
 						Content="Execute Query"
 						HorizontalAlignment="Center"
-						Command="{Binding ExecuteQuery}"/>
+						Command="{Binding ExecuteQueryCommand}"/>
 					<Button
 						Content="Get Hidden Jobs"
 						HorizontalAlignment="Center"

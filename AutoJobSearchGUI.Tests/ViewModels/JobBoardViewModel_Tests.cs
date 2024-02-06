@@ -148,7 +148,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
                 Returns(jobListings.AsQueryable());
 
             // Act
-            _viewModel.ExecuteQuery();
+            await _viewModel.ExecuteQueryCommand.ExecuteAsync(null);
 
             // Assert
             await _dbContext.Received().ExecuteJobListingQueryAsync(
