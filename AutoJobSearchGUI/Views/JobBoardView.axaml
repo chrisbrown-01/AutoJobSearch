@@ -96,7 +96,7 @@
 					<Button
 						Content="Get Hidden Jobs"
 						HorizontalAlignment="Center"
-						Command="{Binding RenderHiddenJobs}"/>
+						Command="{Binding RenderHiddenJobsCommand}"/>
 					<Button
 						Content="Get Favourite Jobs"
 						HorizontalAlignment="Center"

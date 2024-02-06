@@ -73,7 +73,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
             _dbContext.GetHiddenJobListingsAsync().Returns(jobListings);
 
             // Act
-            _viewModel.RenderHiddenJobs();
+            await _viewModel.RenderHiddenJobsCommand.ExecuteAsync(null);
 
             // Assert
             await _dbContext.Received().GetHiddenJobListingsAsync();

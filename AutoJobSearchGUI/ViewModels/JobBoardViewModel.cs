@@ -60,7 +60,7 @@ namespace AutoJobSearchGUI.ViewModels
         }
 
         [RelayCommand]
-        public async Task DeleteAllRecordsAsync()
+        private async Task DeleteAllRecordsAsync()
         {
             var box = MessageBoxManager.GetMessageBoxStandard(
                 "Confirm Delete All Records",
@@ -89,7 +89,8 @@ namespace AutoJobSearchGUI.ViewModels
             JobBoardQueryModel = new();
         }
 
-        public async void RenderHiddenJobs()
+        [RelayCommand]
+        private async Task RenderHiddenJobsAsync()
         {
             PageIndex = 0;
             JobListings = await GetHiddenJobListings();
