@@ -45,7 +45,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
             _dbContext.GetAllJobListingsAsync().Returns(jobListings);
 
             // Act
-            _viewModel.RenderDefaultJobBoardView();
+            await _viewModel.RenderDefaultJobBoardViewCommand.ExecuteAsync(null);
 
             // Assert
             await _dbContext.Received().GetAllJobListingsAsync();
@@ -185,7 +185,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
             _viewModel.OpenJobListingViewRequest += (job, jobs) => wasCalled = true;
 
             // Act
-            _viewModel.OpenJobListing();
+            _viewModel.OpenJobListingCommand.Execute(null);
 
             // Assert
             wasCalled.Should().BeFalse();
@@ -202,7 +202,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
             _viewModel.OpenJobListingViewRequest += (job, jobs) => wasCalled = true;
 
             // Act
-            _viewModel.OpenJobListing();
+            _viewModel.OpenJobListingCommand.Execute(null);
 
             // Assert
             wasCalled.Should().BeTrue();

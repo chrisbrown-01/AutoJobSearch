@@ -17,7 +17,7 @@
 
 	<DockPanel>
 		<StackPanel DockPanel.Dock="Top" Orientation="Horizontal" HorizontalAlignment="Center" >
-			<Button Command="{Binding OpenJobListing}" Content="Open Selected Job" />
+			<Button Command="{Binding OpenJobListingCommand}" Content="Open Selected Job" />
 			<Button Command="{Binding GoToPreviousPage}" Content="Previous Page" />
 			<Button Command="{Binding GoToNextPage}" Content="Next Page" />
 			<Menu>
@@ -104,12 +104,12 @@
 					<Button
 						Content="Clear All Filters"
 						HorizontalAlignment="Center"
-						Command="{Binding RenderDefaultJobBoardView}"/>
+						Command="{Binding RenderDefaultJobBoardViewCommand}"/>
 				</MenuItem>
 			</Menu>
 			<Menu>
 				<MenuItem Header="Options">
-					<MenuItem Header="Go To Default View" Command="{Binding RenderDefaultJobBoardView}" />
+					<MenuItem Header="Go To Default View" Command="{Binding RenderDefaultJobBoardViewCommand}" />
 					<MenuItem Header="Delete All Records" Command="{Binding DeleteAllRecords}" />
 				</MenuItem>
 			</Menu>
@@ -122,7 +122,7 @@
 		RowHeight="150">
 			<i:Interaction.Behaviors>
 				<ia:EventTriggerBehavior EventName="DoubleTapped">
-					<ia:InvokeCommandAction Command="{Binding DoubleClickedCommand}"/>
+					<ia:InvokeCommandAction Command="{Binding OpenJobListingCommand}"/>
 				</ia:EventTriggerBehavior>
 			</i:Interaction.Behaviors>
 			<DataGrid.ContextMenu>

@@ -56,13 +56,7 @@ namespace AutoJobSearchGUI.ViewModels
             PageIndex = 0;
             PageSize = 50;
 
-            RenderDefaultJobBoardView();
-        }
-
-        [RelayCommand]
-        private void DoubleClicked()
-        {
-            Console.WriteLine("test");
+            RenderDefaultJobBoardViewAsync().Wait();
         }
 
         public async void DeleteAllRecords()
@@ -81,7 +75,8 @@ namespace AutoJobSearchGUI.ViewModels
             }
         }
 
-        public async void RenderDefaultJobBoardView()
+        [RelayCommand]
+        private async Task RenderDefaultJobBoardViewAsync()
         {
             PageIndex = 0;
             JobListings = await GetAllJobListings();
@@ -207,7 +202,8 @@ namespace AutoJobSearchGUI.ViewModels
             EnableOnChangedEvents(JobListingsDisplayed);
         }
 
-        public void OpenJobListing()
+        [RelayCommand]
+        private void OpenJobListing()
         {
             if (SelectedJobListing == null) return;
             DisableOnChangedEvents(JobListingsDisplayed);
