@@ -18,5 +18,6 @@ namespace AutoJobSearchGUI.ViewModels
         }
 
         // TODO: ensure that undo action in text boxes reflects in the SQLite database events and writing
+        // TODO: create tests
     }
 }

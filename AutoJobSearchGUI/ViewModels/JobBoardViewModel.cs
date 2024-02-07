@@ -82,7 +82,7 @@ namespace AutoJobSearchGUI.ViewModels
         private async Task RenderDefaultJobBoardViewAsync()
         {
             PageIndex = 0;
-            JobListings = await GetAllJobListings();
+            JobListings = await GetAllJobListings(); // TODO: rename with async suffix
             JobListingsDisplayed = JobListings.Skip(PageIndex * PageSize).Take(PageSize).ToList();
             EnableOnChangedEvents(JobListingsDisplayed);
 

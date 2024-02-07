@@ -36,5 +36,7 @@ namespace AutoJobSearchGUI.Data
         Task<IEnumerable<JobListing>> GetAllJobListingsAsync();
 
         Task<JobListing> GetJobListingDetailsByIdAsync(int id);
+
+        Task<IEnumerable<Contact>> GetAllContactsAsync();
     }
 }

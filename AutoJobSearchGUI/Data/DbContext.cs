@@ -123,5 +123,11 @@ namespace AutoJobSearchGUI.Data
             Log.Information("Disposing of _dbContext connection.");
             _dbContext.Dispose();
         }
+
+        public async Task<IEnumerable<Contact>> GetAllContactsAsync()
+        {
+            Log.Information("Getting all contacts from database.");
+            return await _dbContext.GetAllContactsAsync();
+        }
     }
 }

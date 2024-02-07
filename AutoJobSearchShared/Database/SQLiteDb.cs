@@ -66,6 +66,21 @@ namespace AutoJobSearchShared.Database
                  "SentimentsNegative TEXT)";
 
             connection.Execute(createJobSearchProfilesTableSQL);
+
+            const string createContactsTableSQL = "CREATE TABLE Contacts (" +
+                "Id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "JobListingId INTEGER," +
+                "CreatedAt TEXT," +
+                "Company TEXT," +
+                "Location TEXT," +
+                "Name TEXT," +
+                "Title TEXT," +
+                "Email TEXT," +
+                "Phone TEXT," +
+                "LinkedIn TEXT," +
+                "Notes TEXT)";
+
+            connection.Execute(createContactsTableSQL);
         }
 
         public async Task DeleteAllJobListingsAsync()
@@ -372,6 +387,13 @@ namespace AutoJobSearchShared.Database
         {
             connection.Close();
             connection.Dispose();
+        }
+
+        public async Task<IEnumerable<Contact>> GetAllContactsAsync()
+        {
+            const string sql = "SELECT * FROM Contacts";
+
+            return await connection.QueryAsync<Contact>(sql).ConfigureAwait(false);
         }
     }
 }

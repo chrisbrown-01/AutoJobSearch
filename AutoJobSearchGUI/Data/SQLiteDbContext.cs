@@ -50,6 +50,11 @@ namespace AutoJobSearchGUI.Data
             return await _sqliteDb.ExecuteJobListingQueryAsync(columnFiltersEnabled, isAppliedTo, isInterviewing, isRejected, isFavourite);
         }
 
+        public async Task<IEnumerable<Contact>> GetAllContactsAsync()
+        {
+            return await _sqliteDb.GetAllContactsAsync();
+        }
+
         public async Task<IEnumerable<JobListing>> GetAllJobListingsAsync()
         {
             return await _sqliteDb.GetAllJobListingsAsync();

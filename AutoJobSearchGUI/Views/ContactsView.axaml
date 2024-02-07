@@ -3,8 +3,79 @@
 			 xmlns:vm="using:AutoJobSearchGUI.ViewModels"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+			 xmlns:ia="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
              x:Class="AutoJobSearchGUI.Views.ContactsView"
 			 x:DataType="vm:ContactsViewModel">
-  Contacts view2
+
+	<DockPanel>
+		<StackPanel DockPanel.Dock="Top" Orientation="Horizontal" HorizontalAlignment="Center" >
+			<Button Command="" Content="Open Selected Contact" />
+			<Button Command="" Content="Previous Page" />
+			<Button Command="" Content="Next Page" />
+			<Menu>
+				<MenuItem Header="Advanced Query">
+					<MenuItem Header="Column Filters">
+					</MenuItem>
+				</MenuItem>
+			</Menu>
+			<Menu>
+				<MenuItem Header="Options">
+					<MenuItem Header="Go To Default View" Command="" />
+					<MenuItem Header="Delete All Contacts" Command="" />
+				</MenuItem>
+			</Menu>
+		</StackPanel>
+
+		<DataGrid
+	 	CanUserResizeColumns="True"
+		CanUserReorderColumns="True"
+	 	ItemsSource="{Binding ContactsDisplayed}"
+		SelectedItem="{Binding SelectedContact}"
+		RowHeight="150">
+			<i:Interaction.Behaviors>
+				<ia:EventTriggerBehavior EventName="DoubleTapped">
+					<ia:InvokeCommandAction Command=""/>
+				</ia:EventTriggerBehavior>
+			</i:Interaction.Behaviors>
+			<DataGrid.Columns>
+				<DataGridTextColumn
+					Header="Company"
+					Binding="{Binding Company}"
+					IsReadOnly="True"
+					Width="*" />
+				<DataGridTextColumn
+					Header="Location"
+					Binding="{Binding Location}"
+					IsReadOnly="True"
+					Width="*" />
+				<DataGridTextColumn
+					Header="Name"
+					Binding="{Binding Name}"
+					IsReadOnly="True"
+					Width="*" />
+				<DataGridTextColumn
+					Header="Title"
+					Binding="{Binding Title}"
+					IsReadOnly="True"
+					Width="*" />
+				<DataGridTextColumn
+					Header="Email"
+					Binding="{Binding Email}"
+					IsReadOnly="True"
+					Width="*" />
+				<DataGridTextColumn
+					Header="Phone"
+					Binding="{Binding Phone}"
+					IsReadOnly="True"
+					Width="*" />
+				<DataGridTextColumn
+					Header="LinkedIn"
+					Binding="{Binding LinkedIn}"
+					IsReadOnly="True"
+					Width="*" />
+			</DataGrid.Columns>
+		</DataGrid>
+	</DockPanel>
 </UserControl>
