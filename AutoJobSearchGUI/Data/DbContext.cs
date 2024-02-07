@@ -129,5 +129,11 @@ namespace AutoJobSearchGUI.Data
             Log.Information("Getting all contacts from database.");
             return await _dbContext.GetAllContactsAsync();
         }
+
+        public async Task<Contact> CreateNewContactAsync(Contact contact)
+        {
+            Log.Information("Creating new contact.");
+            return await _dbContext.CreateNewContactAsync(contact);
+        }
     }
 }

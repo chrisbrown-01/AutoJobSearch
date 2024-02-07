@@ -4,6 +4,7 @@ using Dapper;
 using Microsoft.Data.Sqlite;
 using System.Diagnostics;
 using System.Text;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace AutoJobSearchShared.Database
 {
@@ -394,6 +395,36 @@ namespace AutoJobSearchShared.Database
             const string sql = "SELECT * FROM Contacts";
 
             return await connection.QueryAsync<Contact>(sql).ConfigureAwait(false);
+        }
+
+        public async Task<Contact> CreateNewContactAsync(Contact contact)
+        {
+            const string sql = 
+                "INSERT INTO Contacts (" +
+                "JobListingId, " +
+                "CreatedAt, " +
+                "Company, " +
+                "Location, " +
+                "Name, " +
+                "Title, " +
+                "Email, " +
+                "Phone, " +
+                "LinkedIn, " +
+                "Notes" +
+                ") VALUES (" +
+                "@JobListingId, " +
+                "@CreatedAt, " +
+                "@Company, " +
+                "@Location, " +
+                "@Name, " +
+                "@Title, " +
+                "@Email, " +
+                "@Phone, " +
+                "@LinkedIn, " +
+                "@Notes);" +
+                "SELECT * FROM Contacts WHERE Id = last_insert_rowid();";
+
+            return await connection.QuerySingleAsync<Contact>(sql, contact).ConfigureAwait(false);
         }
     }
 }

@@ -6,8 +6,10 @@ using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace AutoJobSearchGUI.ViewModels
 {
@@ -16,14 +18,13 @@ namespace AutoJobSearchGUI.ViewModels
         private readonly IDbContext _dbContext;
 
         [ObservableProperty]
-        private Contact _contact;
+        private ContactModel _contact = default!;
 
         private List<Contact> Contacts { get; set; } = default!;
 
         public AddContactViewModel(IDbContext dbContext)
         {
             _dbContext = dbContext;
-            Contact = new Contact();
         }
 
         [RelayCommand]
@@ -33,14 +34,35 @@ namespace AutoJobSearchGUI.ViewModels
         }
 
         [RelayCommand]
-        private void OpenContact(Contact? contact)
+        private async Task CreateNewContact()
         {
-            if (contact is not null)
-            {
-                this.Contact = contact;
-            }
+            var newContact = await _dbContext.CreateNewContactAsync(new Contact());
+            this.Contact = ConvertContactToContactModel(newContact);
+        }
 
+        [RelayCommand]
+        private void OpenContact(Contact contact)
+        {
+            this.Contact = ConvertContactToContactModel(contact);
             //EnableOnChangedEvents(Contact);
+        }
+
+        private static ContactModel ConvertContactToContactModel(Contact contact)
+        {
+            return new ContactModel()
+            {
+                Id = contact.Id,
+                JobListingId = contact.JobListingId,
+                CreatedAt = contact.CreatedAt,
+                Company = contact.Company,
+                Location = contact.Location,
+                Name = contact.Name,
+                Title = contact.Title,
+                Email = contact.Email,
+                Phone = contact.Phone,
+                LinkedIn = contact.LinkedIn,
+                Notes = contact.Notes
+            };
         }
 
         // TODO: ensure that undo action in text boxes reflects in the SQLite database events and writing

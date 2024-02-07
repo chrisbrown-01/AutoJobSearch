@@ -56,7 +56,16 @@ namespace AutoJobSearchGUI.ViewModels
         public void ChangeViewToAddContact(Contact? contact, IEnumerable<Contact> contacts)
         {
             addContactViewModel.PopulateContactsCommand.Execute(contacts);
-            addContactViewModel.OpenContactCommand.Execute(contact);
+
+            if(contact is not null)
+            {
+                addContactViewModel.OpenContactCommand.Execute(contact);
+            }
+            else
+            {
+                addContactViewModel.CreateNewContactCommand.Execute(null);
+            }
+
             ContentViewModel = addContactViewModel;
         }
 
