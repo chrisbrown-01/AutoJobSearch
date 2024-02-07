@@ -1,5 +1,6 @@
 ﻿using AutoJobSearchGUI.Data;
 using AutoJobSearchGUI.Models;
+using AutoJobSearchShared.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Serilog;
@@ -39,6 +40,7 @@ namespace AutoJobSearchGUI.ViewModels
             ContentViewModel = jobBoardViewModel;
 
             jobBoardViewModel.OpenJobListingViewRequest += ChangeViewToJobListing;
+            contactsViewModel.OpenAddContactViewRequest += ChangeViewToAddContact;
         }
 
         public void Dispose()
@@ -48,9 +50,14 @@ namespace AutoJobSearchGUI.ViewModels
 
         public void ChangeViewToContacts()
         {
-            // TODO: cleanup
-            // ContentViewModel = addContactViewModel;
             ContentViewModel = contactsViewModel;
+        }
+
+        public void ChangeViewToAddContact(Contact? contact, IEnumerable<Contact> contacts)
+        {
+            addContactViewModel.PopulateContactsCommand.Execute(contacts);
+            addContactViewModel.OpenContactCommand.Execute(contact);
+            ContentViewModel = addContactViewModel;
         }
 
         public void ChangeViewToJobBoard()

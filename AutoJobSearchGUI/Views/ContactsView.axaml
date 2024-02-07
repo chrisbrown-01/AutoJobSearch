@@ -11,7 +11,7 @@
 
 	<DockPanel>
 		<StackPanel DockPanel.Dock="Top" Orientation="Horizontal" HorizontalAlignment="Center" >
-			<Button Command="" Content="Open Selected Contact" />
+			<Button Command="{Binding OpenContactCommand}" Content="Open Selected Contact" />
 			<Button Command="" Content="Previous Page" />
 			<Button Command="" Content="Next Page" />
 			<Menu>
@@ -23,6 +23,7 @@
 			<Menu>
 				<MenuItem Header="Options">
 					<MenuItem Header="Go To Default View" Command="" />
+					<MenuItem Header="Add New Contact" Command="{Binding AddNewContactCommand}" />
 					<MenuItem Header="Delete All Contacts" Command="" />
 				</MenuItem>
 			</Menu>
@@ -36,7 +37,7 @@
 		RowHeight="150">
 			<i:Interaction.Behaviors>
 				<ia:EventTriggerBehavior EventName="DoubleTapped">
-					<ia:InvokeCommandAction Command=""/>
+					<ia:InvokeCommandAction Command="{Binding OpenContactCommand}"/>
 				</ia:EventTriggerBehavior>
 			</i:Interaction.Behaviors>
 			<DataGrid.Columns>

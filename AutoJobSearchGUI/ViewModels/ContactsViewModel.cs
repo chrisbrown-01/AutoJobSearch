@@ -15,9 +15,8 @@ namespace AutoJobSearchGUI.ViewModels
     {
         private readonly IDbContext _dbContext;
 
-        // TODO: implement switching to add contact view
-        //public delegate void OpenJobListingViewHandler(JobListingModel job, IEnumerable<JobListingModel> jobListings);
-        //public event OpenJobListingViewHandler? OpenJobListingViewRequest;
+        public delegate void OpenAddContactViewHandler(Contact? contact, IEnumerable<Contact> contacts);
+        public event OpenAddContactViewHandler? OpenAddContactViewRequest;
 
         private List<Contact> Contacts { get; set; } = default!;
 
@@ -52,6 +51,22 @@ namespace AutoJobSearchGUI.ViewModels
             //EnableOnChangedEvents(JobListingsDisplayed);
 
             //JobBoardQueryModel = new();
+        }
+
+        [RelayCommand]
+        private void OpenContact()
+        {
+            // if (SelectedContact == null) return;
+            // DisableOnChangedEvents(JobListingsDisplayed);
+            OpenAddContactViewRequest?.Invoke(SelectedContact, Contacts);
+        }
+
+        [RelayCommand]
+        private void AddNewContact()
+        {
+            // if (SelectedContact == null) return;
+            // DisableOnChangedEvents(JobListingsDisplayed);
+            OpenAddContactViewRequest?.Invoke(null, Contacts);
         }
 
         private async Task<List<Contact>> GetAllContactsAsync()

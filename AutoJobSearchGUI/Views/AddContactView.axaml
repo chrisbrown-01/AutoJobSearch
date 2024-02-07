@@ -46,7 +46,7 @@
 			<TextBox
 				Grid.Row="0"
 				Grid.Column="1"
-				Text=""
+				Text="{Binding Contact.Company}"
 				IsReadOnly="False"
 				IsUndoEnabled="True"
 				TextWrapping="NoWrap"
@@ -63,7 +63,7 @@
 			<TextBox
 				Grid.Row="1"
 				Grid.Column="1"
-				Text=""
+				Text="{Binding Contact.Location}"
 				IsReadOnly="False"
 				IsUndoEnabled="True"
 				TextWrapping="NoWrap"
@@ -80,7 +80,7 @@
 			<TextBox
 				Grid.Row="2"
 				Grid.Column="1"
-				Text=""
+				Text="{Binding Contact.Name}"
 				IsReadOnly="False"
 				IsUndoEnabled="True"
 				TextWrapping="NoWrap"
@@ -97,7 +97,7 @@
 			<TextBox
 				Grid.Row="3"
 				Grid.Column="1"
-				Text=""
+				Text="{Binding Contact.Title}"
 				IsReadOnly="False"
 				IsUndoEnabled="True"
 				TextWrapping="NoWrap"
@@ -114,7 +114,7 @@
 			<TextBox
 				Grid.Row="4"
 				Grid.Column="1"
-				Text=""
+				Text="{Binding Contact.Email}"
 				IsReadOnly="False"
 				IsUndoEnabled="True"
 				TextWrapping="NoWrap"
@@ -131,7 +131,7 @@
 			<TextBox
 				Grid.Row="5"
 				Grid.Column="1"
-				Text=""
+				Text="{Binding Contact.Phone}"
 				IsReadOnly="False"
 				IsUndoEnabled="True"
 				TextWrapping="NoWrap"
@@ -148,7 +148,7 @@
 			<TextBox
 				Grid.Row="6"
 				Grid.Column="1"
-				Text=""
+				Text="{Binding Contact.LinkedIn}"
 				IsReadOnly="False"
 				IsUndoEnabled="True"
 				TextWrapping="NoWrap"
@@ -166,7 +166,7 @@
 			<TextBox
 				Grid.Row="7"
 				Grid.Column="1"
-				Text=""
+				Text="{Binding Contact.Notes}"
 				Watermark="Enter your notes here."
 				IsReadOnly="False"
 				TextWrapping="Wrap"
@@ -181,13 +181,13 @@
 				Grid.Column="0"
 				VerticalAlignment="Center"
 				HorizontalAlignment="Center"
-				Text="Associated Jobs"
+				Text="Job ID"
 				Margin="20 10"/>
 
 			<TextBox
 				Grid.Row="8"
 				Grid.Column="1"
-				Text=""
+				Text="{Binding Contact.JobListingId}"
 				IsReadOnly="True"
 				TextWrapping="NoWrap"
 				Margin="0 10 15 5"/>
