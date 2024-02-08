@@ -73,9 +73,8 @@ namespace AutoJobSearchGUI.ViewModels
             if (result == MsBox.Avalonia.Enums.ButtonResult.Ok)
             {
                 await _dbContext.DeleteAllJobListingsAsync();
-            }
-
-            await RenderDefaultJobBoardViewAsync();
+                await RenderDefaultJobBoardViewAsync();
+            }           
         }
 
         [RelayCommand]

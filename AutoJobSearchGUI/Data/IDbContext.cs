@@ -30,5 +30,6 @@ namespace AutoJobSearchGUI.Data
         Task<Contact> CreateNewContactAsync(Contact contact);
         Task DeleteContactAsync(int id);
         Task UpdateContactStringPropertyAsync(ContactStringField columnName, string value, int id);
+        Task DeleteAllContactsAsync();
     }
 }

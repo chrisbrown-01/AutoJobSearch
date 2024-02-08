@@ -436,5 +436,11 @@ namespace AutoJobSearchShared.Database
             string sql = $"UPDATE Contacts SET {columnName} = @Value WHERE Id = @Id";
             await connection.ExecuteAsync(sql, new { Value = value, Id = id }).ConfigureAwait(false);
         }
+
+        public async Task DeleteAllContactsAsync()
+        {
+            const string sql = "DELETE FROM Contacts;";
+            await connection.ExecuteAsync(sql).ConfigureAwait(false);
+        }
     }
 }

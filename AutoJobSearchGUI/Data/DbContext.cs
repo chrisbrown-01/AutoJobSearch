@@ -151,5 +151,11 @@ namespace AutoJobSearchGUI.Data
             Log.Information("Deleting contact for {@id}.", id);
             await _dbContext.DeleteContactAsync(id);
         }
+
+        public async Task DeleteAllContactsAsync()
+        {
+            Log.Information("Deleting all contacts from database.");
+            await _dbContext.DeleteAllContactsAsync();
+        }
     }
 }
