@@ -8,7 +8,6 @@ namespace AutoJobSearchShared.Enums
 {
     public enum ContactStringField
     {
-        // TODO: CreatedAt as string field?
         Company,
         Location,
         Name,

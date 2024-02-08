@@ -17,6 +17,9 @@ namespace AutoJobSearchGUI.ViewModels
     {
         private readonly IDbContext _dbContext;
 
+        public delegate void UpdateContactsHandler(IEnumerable<ContactModel> contacts);
+        public event UpdateContactsHandler? UpdateContactsRequest;
+
         public delegate void OpenContactsViewHandler();
         public event OpenContactsViewHandler? OpenContactsViewRequest;
 
@@ -36,6 +39,8 @@ namespace AutoJobSearchGUI.ViewModels
             Contacts = contacts.ToList();
         }
 
+        // TODO: need to be able to call this from within a job listing
+        // TODO: need to be able to navigate back to the job listing after it has been created
         [RelayCommand]
         private async Task CreateNewContactAsync() 
         {
@@ -43,7 +48,8 @@ namespace AutoJobSearchGUI.ViewModels
             var newContactModel = ConvertContactToContactModel(newContact);
 
             Contacts.Add(newContactModel);
-            // TODO: create event that notifies that a new contact has been created and added. might be able to just broadcast the id of new object
+
+            UpdateContactsRequest?.Invoke(Contacts);
 
             OpenContact(newContactModel);
         }
@@ -111,6 +117,8 @@ namespace AutoJobSearchGUI.ViewModels
             await _dbContext.DeleteContactAsync(Contact.Id);
 
             Contacts.Remove(Contact); // TODO: is this propogated to ContactsViewModel?
+
+            UpdateContactsRequest?.Invoke(Contacts);
 
             if (nextContactToDisplay != null)
             {

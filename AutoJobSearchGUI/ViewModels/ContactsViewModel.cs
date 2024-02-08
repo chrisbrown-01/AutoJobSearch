@@ -36,10 +36,16 @@ namespace AutoJobSearchGUI.ViewModels
         {
             _dbContext = dbContext;
 
-            PageIndex = 0;
+            PageIndex = 0; // TODO: implement page switching methods
             PageSize = 50; // TODO: allow customization
 
             RenderDefaultContactsViewAsync().Wait();
+        }
+
+        public void UpdateContacts(IEnumerable<ContactModel> contacts)
+        {
+            Contacts = contacts.ToList();
+            ContactsDisplayed = Contacts.Skip(PageIndex * PageSize).Take(PageSize).ToList();
         }
 
         [RelayCommand]
@@ -48,8 +54,7 @@ namespace AutoJobSearchGUI.ViewModels
             PageIndex = 0;
             Contacts = await GetAllContactsAsync();
             ContactsDisplayed = Contacts.Skip(PageIndex * PageSize).Take(PageSize).ToList();
-            //EnableOnChangedEvents(JobListingsDisplayed);
-            // TODO: delete all unnecessary comments
+
             //JobBoardQueryModel = new();
         }
 
@@ -57,14 +62,12 @@ namespace AutoJobSearchGUI.ViewModels
         private void OpenContact()
         {
             if (SelectedContact == null) return;
-            //DisableOnChangedEvents(JobListingsDisplayed);
             OpenAddContactViewRequest?.Invoke(SelectedContact, Contacts);
         }
 
         [RelayCommand]
         private void AddNewContact()
         {
-            // DisableOnChangedEvents(JobListingsDisplayed);
             OpenAddContactViewRequest?.Invoke(null, Contacts);
         }
 
@@ -74,7 +77,7 @@ namespace AutoJobSearchGUI.ViewModels
             if (SelectedContact == null) return;
 
             await _dbContext.DeleteContactAsync(SelectedContact.Id);
-            Contacts.Remove(SelectedContact); // TODO: does this propogate to the AddContactViewModel?
+            Contacts.Remove(SelectedContact); 
             ContactsDisplayed.Remove(SelectedContact);
         }
 

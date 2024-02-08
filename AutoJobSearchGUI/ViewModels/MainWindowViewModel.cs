@@ -42,6 +42,7 @@ namespace AutoJobSearchGUI.ViewModels
             jobBoardViewModel.OpenJobListingViewRequest += ChangeViewToJobListing;
             contactsViewModel.OpenAddContactViewRequest += ChangeViewToAddContact;
             addContactViewModel.OpenContactsViewRequest += ChangeViewToContacts;
+            addContactViewModel.UpdateContactsRequest += UpdateContacts;
 
             // TODO: Actually should probably always be dealing with ContactModel objects and ensure consistency between Contacts and AddContact view models. or can communicate new/deleted job listings + contacts through events that update the JobBoard and Contacts view models. or could call the total refresh method through an event?
         }
@@ -49,6 +50,11 @@ namespace AutoJobSearchGUI.ViewModels
         public void Dispose()
         {
             dbContext.Dispose();
+        }
+
+        public void UpdateContacts(IEnumerable<ContactModel> contacts)
+        {
+            contactsViewModel.UpdateContacts(contacts);
         }
 
         public void ChangeViewToContacts()
