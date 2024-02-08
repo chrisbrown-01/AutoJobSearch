@@ -21,7 +21,7 @@
 							Content="Enable Query Filter"
 							FontWeight="ExtraBold" 
 							IsChecked="{Binding ContactsQueryModel.CompanyQueryStringEnabled}"
-							Click="CheckBox_Click"/>
+							ClickMode="Press"/>
 						<TextBox Text="{Binding ContactsQueryModel.CompanyQueryString}" IsReadOnly="False" MaxWidth="250" />
 					</MenuItem>
 					<MenuItem Header="Location Query">
@@ -29,13 +29,62 @@
 							Content="Enable Query Filter"
 							FontWeight="ExtraBold" 
 							IsChecked="{Binding ContactsQueryModel.LocationQueryStringEnabled}"
-							Click="CheckBox_Click"/>
+							ClickMode="Press"/>
 						<TextBox Text="{Binding ContactsQueryModel.LocationQueryString}" IsReadOnly="False" MaxWidth="250" />
+					</MenuItem>
+					<MenuItem Header="Name Query">
+						<CheckBox
+							Content="Enable Query Filter"
+							FontWeight="ExtraBold"
+							IsChecked="{Binding ContactsQueryModel.NameQueryStringEnabled}"
+							ClickMode="Press"/>
+						<TextBox Text="{Binding ContactsQueryModel.NameQueryString}" IsReadOnly="False" MaxWidth="250" />
+					</MenuItem>
+					<MenuItem Header="Title Query">
+						<CheckBox
+							Content="Enable Query Filter"
+							FontWeight="ExtraBold"
+							IsChecked="{Binding ContactsQueryModel.TitleQueryStringEnabled}"
+							ClickMode="Press"/>
+						<TextBox Text="{Binding ContactsQueryModel.TitleQueryString}" IsReadOnly="False" MaxWidth="250" />
+					</MenuItem>
+					<MenuItem Header="Email Query">
+						<CheckBox
+							Content="Enable Query Filter"
+							FontWeight="ExtraBold"
+							IsChecked="{Binding ContactsQueryModel.EmailQueryStringEnabled}"
+							ClickMode="Press"/>
+						<TextBox Text="{Binding ContactsQueryModel.EmailQueryString}" IsReadOnly="False" MaxWidth="250" />
+					</MenuItem>
+					<MenuItem Header="Phone Query">
+						<CheckBox
+							Content="Enable Query Filter"
+							FontWeight="ExtraBold"
+							IsChecked="{Binding ContactsQueryModel.PhoneQueryStringEnabled}"
+							ClickMode="Press"/>
+						<TextBox Text="{Binding ContactsQueryModel.PhoneQueryString}" IsReadOnly="False" MaxWidth="250" />
+					</MenuItem>
+					<MenuItem Header="LinkedIn Query">
+						<CheckBox
+							Content="Enable Query Filter"
+							FontWeight="ExtraBold"
+							IsChecked="{Binding ContactsQueryModel.LinkedInQueryStringEnabled}"
+							ClickMode="Press"/>
+						<TextBox Text="{Binding ContactsQueryModel.LinkedInQueryString}" IsReadOnly="False" MaxWidth="250" />
+					</MenuItem>
+					<MenuItem Header="Notes Query">
+						<CheckBox
+							Content="Enable Query Filter"
+							FontWeight="ExtraBold"
+							IsChecked="{Binding ContactsQueryModel.NotesQueryStringEnabled}"
+							ClickMode="Press"/>
+						<TextBox Text="{Binding ContactsQueryModel.NotesQueryString}" IsReadOnly="False" MaxWidth="250" />
 					</MenuItem>
 					<Button
 						Content="Execute Query"
 						HorizontalAlignment="Center"
-						Command="{Binding ExecuteQueryCommand}"/>
+						Command="{Binding ExecuteQueryCommand}"
+						ClickMode="Press"/>
 				</MenuItem>
 			</Menu>
 			<Menu>
