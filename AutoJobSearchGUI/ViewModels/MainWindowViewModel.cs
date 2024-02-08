@@ -41,6 +41,8 @@ namespace AutoJobSearchGUI.ViewModels
 
             jobBoardViewModel.OpenJobListingViewRequest += ChangeViewToJobListing;
             contactsViewModel.OpenAddContactViewRequest += ChangeViewToAddContact;
+
+            // TODO: can communicate new/deleted job listings + contacts through events that update the JobBoard and Contacts view models. or could call the total refresh method through an event?
         }
 
         public void Dispose()

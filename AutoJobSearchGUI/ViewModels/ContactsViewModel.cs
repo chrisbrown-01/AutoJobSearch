@@ -37,7 +37,7 @@ namespace AutoJobSearchGUI.ViewModels
             _dbContext = dbContext;
 
             PageIndex = 0;
-            PageSize = 25;
+            PageSize = 50; // TODO: allow customization
 
             RenderDefaultContactsViewAsync().Wait();
         }
@@ -56,7 +56,7 @@ namespace AutoJobSearchGUI.ViewModels
         [RelayCommand]
         private void OpenContact()
         {
-            // if (SelectedContact == null) return;
+            if (SelectedContact == null) return;
             // DisableOnChangedEvents(JobListingsDisplayed);
             OpenAddContactViewRequest?.Invoke(SelectedContact, Contacts);
         }
@@ -64,7 +64,6 @@ namespace AutoJobSearchGUI.ViewModels
         [RelayCommand]
         private void AddNewContact()
         {
-            // if (SelectedContact == null) return;
             // DisableOnChangedEvents(JobListingsDisplayed);
             OpenAddContactViewRequest?.Invoke(null, Contacts);
         }

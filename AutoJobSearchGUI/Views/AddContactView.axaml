@@ -13,10 +13,10 @@
 			DockPanel.Dock="Top"
 			Orientation="Horizontal"
 			HorizontalAlignment="Center">
-			<Button Content="Previous Contact" Margin="5 0" Command="" />
-			<Button Content="Next Contact" Margin="5 0" Command="" />
+			<Button Content="Previous Contact" Margin="5 0" Command="{Binding GoToPreviousContactCommand}" />
+			<Button Content="Next Contact" Margin="5 0" Command="{Binding GoToNextContactCommand}" />
 			<Button Content="Create New Contact" Margin="5 0" Command="{Binding CreateNewContactCommand}" />
-			<Button Content="Delete Contact" Margin="5 0" Command="" />
+			<Button Content="Delete Contact" Margin="5 0" Command="{Binding DeleteContactCommand}" />
 		</StackPanel>
 		
 		<Grid>
