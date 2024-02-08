@@ -116,7 +116,7 @@ namespace AutoJobSearchGUI.ViewModels
 
             await _dbContext.DeleteContactAsync(Contact.Id);
 
-            Contacts.Remove(Contact); // TODO: is this propogated to ContactsViewModel?
+            Contacts.Remove(Contact); 
 
             UpdateContactsRequest?.Invoke(Contacts);
 

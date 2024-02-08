@@ -12,8 +12,8 @@
 	<DockPanel>
 		<StackPanel DockPanel.Dock="Top" Orientation="Horizontal" HorizontalAlignment="Center" >
 			<Button Command="{Binding OpenContactCommand}" Content="Open Selected Contact" />
-			<Button Command="" Content="Previous Page" />
-			<Button Command="" Content="Next Page" />
+			<Button Command="{Binding GoToPreviousPageCommand}" Content="Previous Page" />
+			<Button Command="{Binding GoToNextPageCommand}" Content="Next Page" />
 			<Menu>
 				<MenuItem Header="Advanced Query">
 					<MenuItem Header="Column Filters">
@@ -22,9 +22,9 @@
 			</Menu>
 			<Menu>
 				<MenuItem Header="Options">
-					<MenuItem Header="Go To Default View" Command="" />
+					<MenuItem Header="Go To Default View" Command="{Binding RenderDefaultContactsViewCommand}" />
 					<MenuItem Header="Add New Contact" Command="{Binding AddNewContactCommand}" />
-					<MenuItem Header="Delete All Contacts" Command="" />
+					<MenuItem Header="Delete All Contacts" Command="{Binding DeleteAllContactsCommand}" />
 				</MenuItem>
 			</Menu>
 		</StackPanel>
@@ -79,6 +79,11 @@
 				<DataGridTextColumn
 					Header="LinkedIn"
 					Binding="{Binding LinkedIn}"
+					IsReadOnly="True"
+					Width="*" />
+				<DataGridTextColumn
+					Header="Notes"
+					Binding="{Binding Notes}"
 					IsReadOnly="True"
 					Width="*" />
 			</DataGrid.Columns>

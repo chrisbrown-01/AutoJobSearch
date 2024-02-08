@@ -3,6 +3,7 @@ using AutoJobSearchGUI.Models;
 using AutoJobSearchShared.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using MsBox.Avalonia;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,7 +37,7 @@ namespace AutoJobSearchGUI.ViewModels
         {
             _dbContext = dbContext;
 
-            PageIndex = 0; // TODO: implement page switching methods
+            PageIndex = 0; 
             PageSize = 50; // TODO: allow customization
 
             RenderDefaultContactsViewAsync().Wait();
@@ -55,10 +56,18 @@ namespace AutoJobSearchGUI.ViewModels
             Contacts = await GetAllContactsAsync();
             ContactsDisplayed = Contacts.Skip(PageIndex * PageSize).Take(PageSize).ToList();
 
+            // TODO: implement
             //JobBoardQueryModel = new();
         }
 
         [RelayCommand]
+        private async Task ExecuteQueryAsync()
+        {
+            // TODO: implement
+            throw new NotImplementedException();
+        }
+
+            [RelayCommand]
         private void OpenContact()
         {
             if (SelectedContact == null) return;
@@ -79,6 +88,45 @@ namespace AutoJobSearchGUI.ViewModels
             await _dbContext.DeleteContactAsync(SelectedContact.Id);
             Contacts.Remove(SelectedContact); 
             ContactsDisplayed.Remove(SelectedContact);
+        }
+
+        [RelayCommand]
+        private async Task DeleteAllContactsAsync()
+        {
+            var box = MessageBoxManager.GetMessageBoxStandard(
+                "Confirm Delete All Contacts",
+                "Are you sure you want to delete all contacts from the database? This action cannot be reversed.",
+                MsBox.Avalonia.Enums.ButtonEnum.OkAbort,
+                MsBox.Avalonia.Enums.Icon.Warning);
+
+            var result = await box.ShowAsync();
+
+            if (result == MsBox.Avalonia.Enums.ButtonResult.Ok)
+            {
+                // TODO: implement
+               // await _dbContext.DeleteAllContactsAsync();
+            }
+
+            await RenderDefaultContactsViewAsync();
+        }
+
+        [RelayCommand]
+        private void GoToNextPage()
+        {
+            var contacts = Contacts.Skip((PageIndex + 1) * PageSize).Take(PageSize);
+            if (!contacts.Any()) return;
+
+            PageIndex++;
+            ContactsDisplayed = contacts.ToList();
+        }
+
+        [RelayCommand]
+        private void GoToPreviousPage()
+        {
+            if (PageIndex - 1 < 0) return;
+
+            PageIndex--;
+            ContactsDisplayed = Contacts.Skip(PageIndex * PageSize).Take(PageSize).ToList();
         }
 
         private async Task<List<ContactModel>> GetAllContactsAsync()

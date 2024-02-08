@@ -42,9 +42,6 @@ namespace AutoJobSearchGUI.Models
         [ObservableProperty]
         private string _notes = string.Empty;
 
-        // This property prevents re-fetching job listing details from the database if they have already been populated.
-        public bool DetailsPopulated { get; set; } = false; // TODO: delete, unnecessary?
-
         // This property prevents events from unnecessarily firing when the view model is simply instantiating new models.
         public bool EnableEvents { get; set; } = false;
 
@@ -53,7 +50,6 @@ namespace AutoJobSearchGUI.Models
         // Note that these methods technically cause an excessive amount of database calls but since there is only a single user
         // interacting with the database, the technical debt is justified to ensure that no data loss occurs if the application
         // unexpectedly crashes before the user can request for the changes to be saved to the database.
-
         partial void OnCompanyChanged(string value)
         {
             if (!this.EnableEvents) return;
