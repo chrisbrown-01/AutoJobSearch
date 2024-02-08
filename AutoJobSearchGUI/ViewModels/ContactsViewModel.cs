@@ -15,16 +15,17 @@ namespace AutoJobSearchGUI.ViewModels
     {
         private readonly IDbContext _dbContext;
 
-        public delegate void OpenAddContactViewHandler(Contact? contact, IEnumerable<Contact> contacts);
+        public delegate void OpenAddContactViewHandler(ContactModel? contact, IEnumerable<ContactModel> contacts);
         public event OpenAddContactViewHandler? OpenAddContactViewRequest;
 
-        private List<Contact> Contacts { get; set; } = default!;
+        // TODO: convert to ContactModel
+        private List<ContactModel> Contacts { get; set; } = default!;
 
         [ObservableProperty]
-        private List<Contact> _contactsDisplayed = default!;
+        private List<ContactModel> _contactsDisplayed = default!;
 
         [ObservableProperty]
-        private Contact? _selectedContact;
+        private ContactModel? _selectedContact;
 
         [ObservableProperty]
         private int _pageIndex;
@@ -68,14 +69,47 @@ namespace AutoJobSearchGUI.ViewModels
             OpenAddContactViewRequest?.Invoke(null, Contacts);
         }
 
-        private async Task<List<Contact>> GetAllContactsAsync()
+        [RelayCommand]
+        private async Task DeleteContactAsync()
         {
-            //var jobs = await _dbContext.GetAllJobListingsAsync();
-            //return ConvertJobListingsToJobListingModels(jobs);
+            if (SelectedContact == null) return;
 
+            await _dbContext.DeleteContactAsync(SelectedContact.Id);
+            Contacts.Remove(SelectedContact); // TODO: does this propogate to the AddContactViewModel?
+            ContactsDisplayed.Remove(SelectedContact);
+        }
+
+        private async Task<List<ContactModel>> GetAllContactsAsync()
+        {
             var allContacts = await _dbContext.GetAllContactsAsync();
+            return ConvertContactsToContactModels(allContacts);
+        }
 
-            return allContacts.ToList(); // TODO: will need to convert to local model with ObservableProperty attributes
+        private static List<ContactModel> ConvertContactsToContactModels(IEnumerable<Contact> contacts)
+        {
+            var contactModels = new List<ContactModel>();
+
+            foreach (var contact in contacts)
+            {
+                var contactModel = new ContactModel
+                {
+                    Id = contact.Id,
+                    JobListingId = contact.JobListingId,
+                    CreatedAt = contact.CreatedAt,
+                    Company = contact.Company,
+                    Location = contact.Location,
+                    Name = contact.Name,
+                    Title = contact.Title,
+                    Email = contact.Email,
+                    Phone = contact.Phone,
+                    LinkedIn = contact.LinkedIn,
+                    Notes = contact.Notes
+                };
+
+                contactModels.Add(contactModel);
+            }
+
+            return contactModels;
         }
     }
 }

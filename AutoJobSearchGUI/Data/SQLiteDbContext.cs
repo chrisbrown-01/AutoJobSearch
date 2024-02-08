@@ -34,6 +34,11 @@ namespace AutoJobSearchGUI.Data
             await _sqliteDb.DeleteAllJobListingsAsync();
         }
 
+        public async Task DeleteContactAsync(int id)
+        {
+            await _sqliteDb.DeleteContactAsync(id);
+        }
+
         public async Task DeleteJobSearchProfileAsync(int id)
         {
             await _sqliteDb.DeleteJobSearchProfileAsync(id);

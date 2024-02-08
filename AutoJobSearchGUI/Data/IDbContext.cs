@@ -40,5 +40,7 @@ namespace AutoJobSearchGUI.Data
         Task<IEnumerable<Contact>> GetAllContactsAsync();
 
         Task<Contact> CreateNewContactAsync(Contact contact);
+
+        Task DeleteContactAsync(int id);
     }
 }

@@ -17,6 +17,9 @@ namespace AutoJobSearchGUI.ViewModels
     {
         private readonly IDbContext _dbContext;
 
+        public delegate void OpenContactsViewHandler();
+        public event OpenContactsViewHandler? OpenContactsViewRequest;
+
         [ObservableProperty]
         private ContactModel _contact = default!;
 
@@ -28,39 +31,36 @@ namespace AutoJobSearchGUI.ViewModels
         }
 
         [RelayCommand]
-        private void PopulateContacts(IEnumerable<Contact> contacts)
+        private void PopulateContacts(IEnumerable<ContactModel> contacts)
         {
-            if (Contacts is not null) return;
-
-            Contacts = new();
-
-            foreach (var contact in contacts)
-            {
-                Contacts.Add(ConvertContactToContactModel(contact));
-            }
+            Contacts = contacts.ToList();
         }
 
         [RelayCommand]
-        private async Task CreateNewContact()
+        private async Task CreateNewContactAsync() 
         {
             var newContact = await _dbContext.CreateNewContactAsync(new Contact());
-            Contacts.Add(ConvertContactToContactModel(newContact));
+            var newContactModel = ConvertContactToContactModel(newContact);
+
+            Contacts.Add(newContactModel);
             // TODO: create event that notifies that a new contact has been created and added. might be able to just broadcast the id of new object
 
-            Contact = ConvertContactToContactModel(newContact);
+            Contact = newContactModel;
         }
 
         [RelayCommand]
-        private void OpenContact(Contact contact)
+        private void OpenContact(ContactModel contact)
         {
-            Contact = ConvertContactToContactModel(contact);
+            Contact = contact;
             //EnableOnChangedEvents(Contact);
         }
 
         [RelayCommand]
         private void GoToPreviousContact()
         {
-            var currentIndex = Contacts.IndexOf(Contacts.Single(contact => contact.Id == this.Contact.Id));
+            // TODO: remove complexity?
+            //var currentIndex = Contacts.IndexOf(Contacts.Single(contact => contact.Id == this.Contact.Id));
+            var currentIndex = Contacts.IndexOf(Contact);
             if (currentIndex < 0) return;
 
             var previousIndex = currentIndex - 1;
@@ -75,7 +75,9 @@ namespace AutoJobSearchGUI.ViewModels
         [RelayCommand]
         private void GoToNextContact()
         {
-            var currentIndex = Contacts.IndexOf(Contacts.Single(contact => contact.Id == this.Contact.Id));
+            // TODO: remove complexity?
+            //var currentIndex = Contacts.IndexOf(Contacts.Single(contact => contact.Id == this.Contact.Id));
+            var currentIndex = Contacts.IndexOf(Contact);
             if (currentIndex < 0) return;
 
             var nextIndex = currentIndex + 1;
@@ -87,12 +89,46 @@ namespace AutoJobSearchGUI.ViewModels
         }
 
         [RelayCommand]
-        private void DeleteContact()
+        private async Task DeleteContactAsync()
         {
+            ContactModel? nextContactToDisplay;
 
+            // TODO: remove complexity?
+            //var currentIndex = Contacts.IndexOf(Contacts.Single(contact => contact.Id == this.Contact.Id));
+            var currentIndex = Contacts.IndexOf(Contact);
+
+            var nextContact = Contacts.ElementAtOrDefault(currentIndex + 1);
+            var previousContact = Contacts.ElementAtOrDefault(currentIndex - 1);
+
+            if (nextContact != null) // Try to choose the next contact as the new one to display.
+            {
+                nextContactToDisplay = nextContact;
+            }
+            else if (previousContact != null) // If next contact is not available, try to choose the previous one.
+            {
+                nextContactToDisplay = previousContact;
+            }
+            else // Otherwise we have no contacts at all to display.
+            {
+                nextContactToDisplay = null;
+            }
+
+            await _dbContext.DeleteContactAsync(Contact.Id);
+
+            Contacts.Remove(Contact); // TODO: is this propogated to ContactsViewModel?
+
+            if (nextContactToDisplay != null)
+            {
+                Contact = nextContactToDisplay;
+            }
+            else
+            {
+                OpenContactsViewRequest?.Invoke(); // Return to Contacts view if no contacts are available to display.
+            }
         }
 
-            private static ContactModel ConvertContactToContactModel(Contact contact)
+        // TODO: delete?, can consolidate with the ContactsViewModel
+        private static ContactModel ConvertContactToContactModel(Contact contact)
         {
             return new ContactModel()
             {

@@ -2,9 +2,7 @@
 using AutoJobSearchShared.Models;
 using Dapper;
 using Microsoft.Data.Sqlite;
-using System.Diagnostics;
 using System.Text;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace AutoJobSearchShared.Database
 {
@@ -425,6 +423,12 @@ namespace AutoJobSearchShared.Database
                 "SELECT * FROM Contacts WHERE Id = last_insert_rowid();";
 
             return await connection.QuerySingleAsync<Contact>(sql, contact).ConfigureAwait(false);
+        }
+
+        public async Task DeleteContactAsync(int id)
+        {
+            const string sql = "DELETE FROM Contacts WHERE Id = @Id;";
+            await connection.ExecuteAsync(sql, new { Id = id }).ConfigureAwait(false);
         }
     }
 }

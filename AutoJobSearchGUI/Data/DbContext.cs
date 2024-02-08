@@ -135,5 +135,11 @@ namespace AutoJobSearchGUI.Data
             Log.Information("Creating new contact.");
             return await _dbContext.CreateNewContactAsync(contact);
         }
+
+        public async Task DeleteContactAsync(int id)
+        {
+            Log.Information("Deleting contact for {@id}.", id);
+            await _dbContext.DeleteContactAsync(id);
+        }
     }
 }

@@ -40,6 +40,11 @@
 					<ia:InvokeCommandAction Command="{Binding OpenContactCommand}"/>
 				</ia:EventTriggerBehavior>
 			</i:Interaction.Behaviors>
+			<DataGrid.ContextMenu>
+				<ContextMenu>
+					<MenuItem Header="Delete Contact" Command="{Binding DeleteContactCommand}" />
+				</ContextMenu>
+			</DataGrid.ContextMenu>
 			<DataGrid.Columns>
 				<DataGridTextColumn
 					Header="Company"
