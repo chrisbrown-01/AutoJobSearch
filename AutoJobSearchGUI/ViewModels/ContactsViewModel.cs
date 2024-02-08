@@ -63,6 +63,7 @@ namespace AutoJobSearchGUI.ViewModels
             ContactsQueryModel = new();
         }
 
+        // TODO: change text box to autocomplete box?
         [RelayCommand]
         private async Task ExecuteQueryAsync()
         {
@@ -70,7 +71,10 @@ namespace AutoJobSearchGUI.ViewModels
 
             if (ContactsQueryModel.JobIdEqualsEnabled)
             {
-                contacts = contacts.Where(x => x.JobListingId == ContactsQueryModel.JobIdEquals);
+                if(ContactsQueryModel.JobIdEquals is not null)
+                {
+                    contacts = contacts.Where(x => x.JobListingId == ContactsQueryModel.JobIdEquals);
+                }           
             }
 
             if (ContactsQueryModel.EmailQueryStringEnabled)
@@ -113,11 +117,112 @@ namespace AutoJobSearchGUI.ViewModels
                 contacts = contacts.Where(x => x.Notes.Contains(ContactsQueryModel.NotesQueryString, StringComparison.OrdinalIgnoreCase));
             }
 
+            if (ContactsQueryModel.SortByCompany)
+            {
+                if (ContactsQueryModel.OrderByDescending)
+                {
+                    contacts = contacts.OrderByDescending(x => x.Company);
+                }
+                else
+                {
+                    contacts = contacts.OrderBy(x => x.Company);
+                }
+            }
+            else if (ContactsQueryModel.SortByLocation)
+            {
+                if (ContactsQueryModel.OrderByDescending)
+                {
+                    contacts = contacts.OrderByDescending(x => x.Location);
+                }
+                else
+                {
+                    contacts = contacts.OrderBy(x => x.Location);
+                }
+            }
+            else if (ContactsQueryModel.SortByName)
+            {
+                if (ContactsQueryModel.OrderByDescending)
+                {
+                    contacts = contacts.OrderByDescending(x => x.Name);
+                }
+                else
+                {
+                    contacts = contacts.OrderBy(x => x.Name);
+                }
+            }
+            else if (ContactsQueryModel.SortByTitle)
+            {
+                if (ContactsQueryModel.OrderByDescending)
+                {
+                    contacts = contacts.OrderByDescending(x => x.Title);
+                }
+                else
+                {
+                    contacts = contacts.OrderBy(x => x.Title);
+                }
+            }
+            else if (ContactsQueryModel.SortByEmail)
+            {
+                if (ContactsQueryModel.OrderByDescending)
+                {
+                    contacts = contacts.OrderByDescending(x => x.Email);
+                }
+                else
+                {
+                    contacts = contacts.OrderBy(x => x.Email);
+                }
+            }
+            else if (ContactsQueryModel.SortByPhone)
+            {
+                if (ContactsQueryModel.OrderByDescending)
+                {
+                    contacts = contacts.OrderByDescending(x => x.Phone);
+                }
+                else
+                {
+                    contacts = contacts.OrderBy(x => x.Phone);
+                }
+            }
+            else if (ContactsQueryModel.SortByLinkedIn)
+            {
+                if (ContactsQueryModel.OrderByDescending)
+                {
+                    contacts = contacts.OrderByDescending(x => x.LinkedIn);
+                }
+                else
+                {
+                    contacts = contacts.OrderBy(x => x.LinkedIn);
+                }
+            }
+            else if (ContactsQueryModel.SortByJobId)
+            {
+                if (ContactsQueryModel.OrderByDescending)
+                {
+                    contacts = contacts.OrderByDescending(x => x.JobListingId);
+                }
+                else
+                {
+                    contacts = contacts.OrderBy(x => x.JobListingId);
+                }
+            }
+            else
+            {
+                if (ContactsQueryModel.OrderByDescending)
+                {
+                    contacts = contacts.OrderByDescending(x => x.Id);
+                }
+                else
+                {
+                    contacts = contacts.OrderBy(x => x.Id);
+                }
+            }
+
+            PageIndex = 0;
             Contacts = ConvertContactsToContactModels(contacts);
             ContactsDisplayed = Contacts.Skip(PageIndex * PageSize).Take(PageSize).ToList();
         }
 
-            [RelayCommand]
+        [RelayCommand]
         private void OpenContact()
         {
             if (SelectedContact == null) return;

@@ -110,6 +110,7 @@ namespace AutoJobSearchGUI.ViewModels
         [RelayCommand]
         private async Task ExecuteQueryAsync()
         {
+            // TODO: change ascending to descending
             var result = await _dbContext.ExecuteJobListingQueryAsync(
                JobBoardQueryModel.ColumnFiltersEnabled,
                JobBoardQueryModel.IsAppliedTo,
@@ -147,7 +148,7 @@ namespace AutoJobSearchGUI.ViewModels
 
             if (JobBoardQueryModel.ScoreEqualsEnabled)
             {
-                result = result.Where(x => x.Score == JobBoardQueryModel.ScoreEquals);
+                result = result.Where(x => x.Score == JobBoardQueryModel.ScoreEquals); // TODO: add nullable and null checking, ClickMode handling in view
             }
 
             if (JobBoardQueryModel.ScoreRangeEnabled)

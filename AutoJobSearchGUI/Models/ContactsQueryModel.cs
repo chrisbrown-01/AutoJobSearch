@@ -10,9 +10,6 @@ namespace AutoJobSearchGUI.Models
     public partial class ContactsQueryModel : ObservableObject // Needs to be public for delegates to work
     {
         [ObservableProperty]
-        private bool _sortByJobId = false;
-
-        [ObservableProperty]
         private bool _sortByCompany = false;
 
         [ObservableProperty]
@@ -34,13 +31,10 @@ namespace AutoJobSearchGUI.Models
         private bool _sortByLinkedIn = false;
 
         [ObservableProperty]
-        private bool _orderByAscending = false;
+        private bool _sortByJobId = false;
 
         [ObservableProperty]
-        private bool _jobIdEqualsEnabled = false;
-
-        [ObservableProperty]
-        private int _jobIdEquals = 1;
+        private bool _orderByDescending = false;
 
         [ObservableProperty]
         private bool _companyQueryStringEnabled = false;
@@ -89,5 +83,11 @@ namespace AutoJobSearchGUI.Models
 
         [ObservableProperty]
         private string _notesQueryString = string.Empty;
+
+        [ObservableProperty]
+        private bool _jobIdEqualsEnabled = false;
+
+        [ObservableProperty]
+        private int? _jobIdEquals = 1;
     }
 }

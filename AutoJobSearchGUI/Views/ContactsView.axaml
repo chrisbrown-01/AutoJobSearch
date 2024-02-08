@@ -80,10 +80,39 @@
 							ClickMode="Press"/>
 						<TextBox Text="{Binding ContactsQueryModel.NotesQueryString}" IsReadOnly="False" MaxWidth="250" />
 					</MenuItem>
+					<MenuItem Header="Job ID Query">
+						<CheckBox
+							   Content="Enable Equals Filter"
+							   FontWeight="ExtraBold"
+							   IsChecked="{Binding ContactsQueryModel.JobIdEqualsEnabled}"
+							   ClickMode="Press" />
+						<NumericUpDown Value="{Binding ContactsQueryModel.JobIdEquals}" FormatString="0"/>
+					</MenuItem>
+					<MenuItem Header="Sort By">
+						<CheckBox Content="Company" IsChecked="{Binding ContactsQueryModel.SortByCompany}" ClickMode="Press" />
+						<CheckBox Content="Location" IsChecked="{Binding ContactsQueryModel.SortByLocation}" ClickMode="Press" />
+						<CheckBox Content="Name" IsChecked="{Binding ContactsQueryModel.SortByName}" ClickMode="Press" />
+						<CheckBox Content="Title" IsChecked="{Binding ContactsQueryModel.SortByTitle}" ClickMode="Press" />
+						<CheckBox Content="Email" IsChecked="{Binding ContactsQueryModel.SortByEmail}" ClickMode="Press" />
+						<CheckBox Content="Phone" IsChecked="{Binding ContactsQueryModel.SortByPhone}" ClickMode="Press" />
+						<CheckBox Content="LinkedIn" IsChecked="{Binding ContactsQueryModel.SortByLinkedIn}" ClickMode="Press" />
+						<CheckBox Content="JobId" IsChecked="{Binding ContactsQueryModel.SortByJobId}" ClickMode="Press" />
+					</MenuItem>
+					<MenuItem Header="Order By">
+						<CheckBox
+							Content="Descending"
+							IsChecked="{Binding ContactsQueryModel.OrderByDescending}"
+							ClickMode="Press"/>
+					</MenuItem>
 					<Button
 						Content="Execute Query"
 						HorizontalAlignment="Center"
 						Command="{Binding ExecuteQueryCommand}"
+						ClickMode="Press"/>
+					<Button
+						Content="Clear All Filters"
+						HorizontalAlignment="Center"
+						Command="{Binding RenderDefaultContactsViewCommand}"
 						ClickMode="Press"/>
 				</MenuItem>
 			</Menu>
