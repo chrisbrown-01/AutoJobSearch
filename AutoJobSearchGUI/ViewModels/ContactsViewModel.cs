@@ -18,7 +18,6 @@ namespace AutoJobSearchGUI.ViewModels
         public delegate void OpenAddContactViewHandler(ContactModel? contact, IEnumerable<ContactModel> contacts);
         public event OpenAddContactViewHandler? OpenAddContactViewRequest;
 
-        // TODO: convert to ContactModel
         private List<ContactModel> Contacts { get; set; } = default!;
 
         [ObservableProperty]
@@ -50,7 +49,7 @@ namespace AutoJobSearchGUI.ViewModels
             Contacts = await GetAllContactsAsync();
             ContactsDisplayed = Contacts.Skip(PageIndex * PageSize).Take(PageSize).ToList();
             //EnableOnChangedEvents(JobListingsDisplayed);
-
+            // TODO: delete all unnecessary comments
             //JobBoardQueryModel = new();
         }
 
@@ -58,7 +57,7 @@ namespace AutoJobSearchGUI.ViewModels
         private void OpenContact()
         {
             if (SelectedContact == null) return;
-            // DisableOnChangedEvents(JobListingsDisplayed);
+            //DisableOnChangedEvents(JobListingsDisplayed);
             OpenAddContactViewRequest?.Invoke(SelectedContact, Contacts);
         }
 

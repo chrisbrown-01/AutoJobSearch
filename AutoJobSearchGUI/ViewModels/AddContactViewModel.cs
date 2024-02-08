@@ -45,56 +45,49 @@ namespace AutoJobSearchGUI.ViewModels
             Contacts.Add(newContactModel);
             // TODO: create event that notifies that a new contact has been created and added. might be able to just broadcast the id of new object
 
-            Contact = newContactModel;
+            OpenContact(newContactModel);
         }
 
         [RelayCommand]
         private void OpenContact(ContactModel contact)
         {
             Contact = contact;
-            //EnableOnChangedEvents(Contact);
+            EnableOnChangedEvents(Contact);
         }
 
         [RelayCommand]
         private void GoToPreviousContact()
         {
-            // TODO: remove complexity?
-            //var currentIndex = Contacts.IndexOf(Contacts.Single(contact => contact.Id == this.Contact.Id));
             var currentIndex = Contacts.IndexOf(Contact);
             if (currentIndex < 0) return;
 
             var previousIndex = currentIndex - 1;
             if (previousIndex < 0) return;
 
-            // DisableOnChangedEvents(JobListing);
+            DisableOnChangedEvents(Contact);
 
-            Contact = Contacts[previousIndex];
+            OpenContact(Contacts[previousIndex]);
         }
 
-        // TODO: test empty list
         [RelayCommand]
         private void GoToNextContact()
         {
-            // TODO: remove complexity?
-            //var currentIndex = Contacts.IndexOf(Contacts.Single(contact => contact.Id == this.Contact.Id));
             var currentIndex = Contacts.IndexOf(Contact);
             if (currentIndex < 0) return;
 
             var nextIndex = currentIndex + 1;
             if (nextIndex >= Contacts.Count) return;
 
-            // DisableOnChangedEvents(JobListing);
+            DisableOnChangedEvents(Contact);
 
-            Contact = Contacts[nextIndex];
+            OpenContact(Contacts[nextIndex]);
         }
 
         [RelayCommand]
         private async Task DeleteContactAsync()
-        {
+        {            
             ContactModel? nextContactToDisplay;
 
-            // TODO: remove complexity?
-            //var currentIndex = Contacts.IndexOf(Contacts.Single(contact => contact.Id == this.Contact.Id));
             var currentIndex = Contacts.IndexOf(Contact);
 
             var nextContact = Contacts.ElementAtOrDefault(currentIndex + 1);
@@ -113,13 +106,15 @@ namespace AutoJobSearchGUI.ViewModels
                 nextContactToDisplay = null;
             }
 
+            DisableOnChangedEvents(Contact);
+
             await _dbContext.DeleteContactAsync(Contact.Id);
 
             Contacts.Remove(Contact); // TODO: is this propogated to ContactsViewModel?
 
             if (nextContactToDisplay != null)
             {
-                Contact = nextContactToDisplay;
+                OpenContact(nextContactToDisplay);
             }
             else
             {
@@ -127,7 +122,6 @@ namespace AutoJobSearchGUI.ViewModels
             }
         }
 
-        // TODO: delete?, can consolidate with the ContactsViewModel
         private static ContactModel ConvertContactToContactModel(Contact contact)
         {
             return new ContactModel()
@@ -148,5 +142,23 @@ namespace AutoJobSearchGUI.ViewModels
 
         // TODO: ensure that undo action in text boxes reflects in the SQLite database events and writing
         // TODO: create tests
+
+        /// <summary>
+        /// Allows events to fire. This method should be called after the view model properties have been fully instantiated.
+        /// </summary>
+        /// <param name="contact"></param>
+        private void EnableOnChangedEvents(ContactModel contact)
+        {
+            contact.EnableEvents = true;
+        }
+
+        /// <summary>
+        /// Prevent events from firing. This method should be called in preparation of instantiating new view model properties.
+        /// </summary>
+        /// <param name="contact"></param>
+        private void DisableOnChangedEvents(ContactModel contact)
+        {
+            contact.EnableEvents = false;
+        }
     }
 }

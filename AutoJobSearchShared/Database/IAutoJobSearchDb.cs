@@ -23,5 +23,6 @@ namespace AutoJobSearchShared.Database
         Task<IEnumerable<Contact>> GetAllContactsAsync();
         Task<Contact> CreateNewContactAsync(Contact contact);
         Task DeleteContactAsync(int id);
+        Task UpdateContactStringPropertyAsync(ContactStringField columnName, string value, int id);
     }
 }

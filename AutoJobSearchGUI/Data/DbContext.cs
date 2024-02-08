@@ -38,6 +38,16 @@ namespace AutoJobSearchGUI.Data
             {
                 await UpdateJobSearchProfileStringPropertyAsync(e.Field, e.Value, e.Id);
             };
+
+            ContactModel.StringFieldChanged += async (sender, e) =>
+            {
+                await UpdateContactStringPropertyAsync(e.Field, e.Value, e.Id);
+            };
+        }
+
+        public async Task UpdateContactStringPropertyAsync(ContactStringField columnName, string value, int id)
+        {
+            await _dbContext.UpdateContactStringPropertyAsync(columnName, value, id);
         }
 
         public async Task UpdateJobSearchProfileStringPropertyAsync(JobSearchProfilesStringField columnName, string value, int id)
