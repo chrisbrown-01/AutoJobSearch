@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using Avalonia.Interactivity;
 
 namespace AutoJobSearchGUI.Views
 {
@@ -7,6 +8,12 @@ namespace AutoJobSearchGUI.Views
         public ContactsView()
         {
             InitializeComponent();
+        }
+
+        // TODO: delete
+        private void CheckBox_Click(object sender, RoutedEventArgs e)
+        {
+           // e.Handled = true;
         }
     }
 }

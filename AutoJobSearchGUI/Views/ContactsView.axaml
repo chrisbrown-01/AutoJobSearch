@@ -16,8 +16,26 @@
 			<Button Command="{Binding GoToNextPageCommand}" Content="Next Page" />
 			<Menu>
 				<MenuItem Header="Advanced Query">
-					<MenuItem Header="Column Filters">
+					<MenuItem Header="Company Query">
+						<CheckBox 
+							Content="Enable Query Filter"
+							FontWeight="ExtraBold" 
+							IsChecked="{Binding ContactsQueryModel.CompanyQueryStringEnabled}"
+							Click="CheckBox_Click"/>
+						<TextBox Text="{Binding ContactsQueryModel.CompanyQueryString}" IsReadOnly="False" MaxWidth="250" />
 					</MenuItem>
+					<MenuItem Header="Location Query">
+						<CheckBox 
+							Content="Enable Query Filter"
+							FontWeight="ExtraBold" 
+							IsChecked="{Binding ContactsQueryModel.LocationQueryStringEnabled}"
+							Click="CheckBox_Click"/>
+						<TextBox Text="{Binding ContactsQueryModel.LocationQueryString}" IsReadOnly="False" MaxWidth="250" />
+					</MenuItem>
+					<Button
+						Content="Execute Query"
+						HorizontalAlignment="Center"
+						Command="{Binding ExecuteQueryCommand}"/>
 				</MenuItem>
 			</Menu>
 			<Menu>

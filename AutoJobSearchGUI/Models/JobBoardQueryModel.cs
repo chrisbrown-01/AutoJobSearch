@@ -9,6 +9,7 @@ namespace AutoJobSearchGUI.Models
 {
     public partial class JobBoardQueryModel : ObservableObject // Needs to be public for delegates to work
     {
+        // TODO: improve weird lack of responsiveness by adding default values?
         [ObservableProperty]
         private bool _isAppliedTo;
 

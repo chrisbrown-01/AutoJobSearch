@@ -19,6 +19,9 @@ namespace AutoJobSearchGUI.ViewModels
         public delegate void OpenAddContactViewHandler(ContactModel? contact, IEnumerable<ContactModel> contacts);
         public event OpenAddContactViewHandler? OpenAddContactViewRequest;
 
+        [ObservableProperty]
+        private ContactsQueryModel _contactsQueryModel;
+
         private List<ContactModel> Contacts { get; set; } = default!;
 
         [ObservableProperty]
@@ -36,6 +39,7 @@ namespace AutoJobSearchGUI.ViewModels
         public ContactsViewModel(IDbContext dbContext)
         {
             _dbContext = dbContext;
+            ContactsQueryModel = new();
 
             PageIndex = 0; 
             PageSize = 50; // TODO: allow customization
@@ -56,15 +60,61 @@ namespace AutoJobSearchGUI.ViewModels
             Contacts = await GetAllContactsAsync();
             ContactsDisplayed = Contacts.Skip(PageIndex * PageSize).Take(PageSize).ToList();
 
-            // TODO: implement
-            //JobBoardQueryModel = new();
+            ContactsQueryModel = new();
         }
 
         [RelayCommand]
         private async Task ExecuteQueryAsync()
         {
-            // TODO: implement
-            throw new NotImplementedException();
+            var contacts = await _dbContext.GetAllContactsAsync();
+
+            if (ContactsQueryModel.JobIdEqualsEnabled)
+            {
+                contacts = contacts.Where(x => x.JobListingId == ContactsQueryModel.JobIdEquals);
+            }
+
+            if (ContactsQueryModel.EmailQueryStringEnabled)
+            {
+                contacts = contacts.Where(x => x.Email.Contains(ContactsQueryModel.EmailQueryString, StringComparison.OrdinalIgnoreCase));
+            }
+
+            if (ContactsQueryModel.PhoneQueryStringEnabled)
+            {
+                contacts = contacts.Where(x => x.Phone.Contains(ContactsQueryModel.PhoneQueryString, StringComparison.OrdinalIgnoreCase));
+            }
+
+            if (ContactsQueryModel.NameQueryStringEnabled)
+            {
+                contacts = contacts.Where(x => x.Name.Contains(ContactsQueryModel.NameQueryString, StringComparison.OrdinalIgnoreCase));
+            }
+
+            if (ContactsQueryModel.LinkedInQueryStringEnabled)
+            {
+                contacts = contacts.Where(x => x.LinkedIn.Contains(ContactsQueryModel.LinkedInQueryString, StringComparison.OrdinalIgnoreCase));
+            }
+
+            if (ContactsQueryModel.LocationQueryStringEnabled)
+            {
+                contacts = contacts.Where(x => x.Location.Contains(ContactsQueryModel.LocationQueryString, StringComparison.OrdinalIgnoreCase));
+            }
+
+            if (ContactsQueryModel.CompanyQueryStringEnabled)
+            {
+                contacts = contacts.Where(x => x.Company.Contains(ContactsQueryModel.CompanyQueryString, StringComparison.OrdinalIgnoreCase));
+            }
+
+            if (ContactsQueryModel.TitleQueryStringEnabled)
+            {
+                contacts = contacts.Where(x => x.Title.Contains(ContactsQueryModel.TitleQueryString, StringComparison.OrdinalIgnoreCase));
+            }
+
+            if (ContactsQueryModel.NotesQueryStringEnabled)
+            {
+                contacts = contacts.Where(x => x.Notes.Contains(ContactsQueryModel.NotesQueryString, StringComparison.OrdinalIgnoreCase));
+            }
+
+            Contacts = ConvertContactsToContactModels(contacts);
+            ContactsDisplayed = Contacts.Skip(PageIndex * PageSize).Take(PageSize).ToList();
         }
 
             [RelayCommand]

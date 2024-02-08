@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 
 namespace AutoJobSearchGUI.ViewModels
 {
+    // TODO: rename view properties so that "string" isn't included
     public partial class JobBoardViewModel : ViewModelBase // Needs to be public for View previewer to work
     {
         public delegate void OpenJobListingViewHandler(JobListingModel job, IEnumerable<JobListingModel> jobListings);
