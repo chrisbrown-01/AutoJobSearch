@@ -19,10 +19,10 @@ namespace AutoJobSearchGUI.ViewModels
         public delegate void OpenAddContactViewHandler(ContactModel? contact, IEnumerable<ContactModel> contacts);
         public event OpenAddContactViewHandler? OpenAddContactViewRequest;
 
+        private List<ContactModel> Contacts { get; set; } = default!;
+
         [ObservableProperty]
         private ContactsQueryModel _contactsQueryModel;
-
-        private List<ContactModel> Contacts { get; set; } = default!;
 
         [ObservableProperty]
         private List<ContactModel> _contactsDisplayed = default!;
@@ -56,41 +56,6 @@ namespace AutoJobSearchGUI.ViewModels
 
         [ObservableProperty]
         private IEnumerable<string> _contacts_LinkedIns = default!;
-
-        //public IEnumerable<string> Contacts_Companies
-        //{
-        //    get => Contacts.Select(x => x.Company);
-        //}
-
-        //public IEnumerable<string> Contacts_Locations
-        //{
-        //    get => Contacts.Select(x => x.Location);
-        //}
-
-        //public IEnumerable<string> Contacts_Names
-        //{
-        //    get => Contacts.Select(x => x.Name);
-        //}
-
-        //public IEnumerable<string> Contacts_Titles
-        //{
-        //    get => Contacts.Select(x => x.Title);
-        //}
-
-        //public IEnumerable<string> Contacts_Emails
-        //{
-        //    get => Contacts.Select(x => x.Email);
-        //}
-
-        //public IEnumerable<string> Contacts_Phones
-        //{
-        //    get => Contacts.Select(x => x.Phone);
-        //}
-
-        //public IEnumerable<string> Contacts_LinkedIns
-        //{
-        //    get => Contacts.Select(x => x.LinkedIn);
-        //}
 
         private void SetAutoCompleteBoxFields()
         {

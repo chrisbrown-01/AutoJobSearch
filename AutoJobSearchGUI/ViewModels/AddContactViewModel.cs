@@ -13,7 +13,7 @@ using System.Xml.Linq;
 
 namespace AutoJobSearchGUI.ViewModels
 {
-    // TODO: autocomplete box for new entries
+    // TODO: create tests
     public partial class AddContactViewModel : ViewModelBase
     {
         private readonly IDbContext _dbContext;
@@ -24,10 +24,10 @@ namespace AutoJobSearchGUI.ViewModels
         public delegate void OpenContactsViewHandler();
         public event OpenContactsViewHandler? OpenContactsViewRequest;
 
+        private List<ContactModel> Contacts { get; set; } = default!;
+
         [ObservableProperty]
         private ContactModel _contact = default!;
-
-        private List<ContactModel> Contacts { get; set; } = default!;
 
         [ObservableProperty]
         private IEnumerable<string> _contacts_Companies = default!;
@@ -161,9 +161,6 @@ namespace AutoJobSearchGUI.ViewModels
                 Notes = contact.Notes
             };
         }
-
-        // TODO: ensure that undo action in text boxes reflects in the SQLite database events and writing
-        // TODO: create tests
 
         /// <summary>
         /// Allows events to fire. This method should be called after the view model properties have been fully instantiated.

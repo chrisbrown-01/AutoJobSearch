@@ -179,7 +179,10 @@
 		CanUserReorderColumns="True"
 	 	ItemsSource="{Binding ContactsDisplayed}"
 		SelectedItem="{Binding SelectedContact}"
-		RowHeight="150">
+		RowHeight="150" 
+		GridLinesVisibility="Horizontal"
+		HorizontalGridLinesBrush="Gray"  
+		IsScrollInertiaEnabled="True">
 			<i:Interaction.Behaviors>
 				<ia:EventTriggerBehavior EventName="DoubleTapped">
 					<ia:InvokeCommandAction Command="{Binding OpenContactCommand}"/>

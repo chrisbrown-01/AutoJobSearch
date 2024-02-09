@@ -119,7 +119,10 @@
 		CanUserReorderColumns="True"
 	 	ItemsSource="{Binding JobListingsDisplayed}"
 		SelectedItem="{Binding SelectedJobListing}"
-		RowHeight="150">
+		RowHeight="150"
+		GridLinesVisibility="Horizontal"
+		HorizontalGridLinesBrush="Gray"  
+		IsScrollInertiaEnabled="True">
 			<i:Interaction.Behaviors>
 				<ia:EventTriggerBehavior EventName="DoubleTapped">
 					<ia:InvokeCommandAction Command="{Binding OpenJobListingCommand}"/>
