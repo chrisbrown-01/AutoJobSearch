@@ -1,4 +1,5 @@
 ﻿using AutoJobSearchGUI.Data;
+using AutoJobSearchGUI.Helpers;
 using AutoJobSearchGUI.Models;
 using AutoJobSearchShared.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -91,7 +92,7 @@ namespace AutoJobSearchGUI.ViewModels
         private async Task RenderDefaultContactsViewAsync()
         {
             PageIndex = 0;
-            Contacts = await GetAllContactsAsync();
+            Contacts = await GetAllContactModelsAsync();
             ContactsDisplayed = Contacts.Skip(PageIndex * PageSize).Take(PageSize).ToList();
 
             ContactsQueryModel = new();
@@ -253,7 +254,7 @@ namespace AutoJobSearchGUI.ViewModels
             }
 
             PageIndex = 0;
-            Contacts = ConvertContactsToContactModels(contacts);
+            Contacts = ContactsHelpers.ConvertContactsToContactModels(contacts);
             ContactsDisplayed = Contacts.Skip(PageIndex * PageSize).Take(PageSize).ToList();
         }
 
@@ -317,37 +318,10 @@ namespace AutoJobSearchGUI.ViewModels
             ContactsDisplayed = Contacts.Skip(PageIndex * PageSize).Take(PageSize).ToList();
         }
 
-        private async Task<List<ContactModel>> GetAllContactsAsync()
+        private async Task<List<ContactModel>> GetAllContactModelsAsync()
         {
             var allContacts = await _dbContext.GetAllContactsAsync();
-            return ConvertContactsToContactModels(allContacts);
-        }
-
-        private static List<ContactModel> ConvertContactsToContactModels(IEnumerable<Contact> contacts)
-        {
-            var contactModels = new List<ContactModel>();
-
-            foreach (var contact in contacts)
-            {
-                var contactModel = new ContactModel
-                {
-                    Id = contact.Id,
-                    JobListingId = contact.JobListingId,
-                    CreatedAt = contact.CreatedAt,
-                    Company = contact.Company,
-                    Location = contact.Location,
-                    Name = contact.Name,
-                    Title = contact.Title,
-                    Email = contact.Email,
-                    Phone = contact.Phone,
-                    LinkedIn = contact.LinkedIn,
-                    Notes = contact.Notes
-                };
-
-                contactModels.Add(contactModel);
-            }
-
-            return contactModels;
+            return ContactsHelpers.ConvertContactsToContactModels(allContacts);
         }
     }
 }

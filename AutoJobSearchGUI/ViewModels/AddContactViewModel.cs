@@ -1,4 +1,5 @@
 ﻿using AutoJobSearchGUI.Data;
+using AutoJobSearchGUI.Helpers;
 using AutoJobSearchGUI.Models;
 using AutoJobSearchShared.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -38,34 +39,64 @@ namespace AutoJobSearchGUI.ViewModels
         [ObservableProperty]
         private IEnumerable<string> _contacts_Titles = default!;
 
+        public List<int> TestIntegerFields => new List<int>() { 1, 2, 3 };
+
         public AddContactViewModel(IDbContext dbContext)
         {
             _dbContext = dbContext;
         }
 
         [RelayCommand]
-        private void PopulateContacts(IEnumerable<ContactModel> contacts)
+        private async Task PopulateContacts(IEnumerable<ContactModel>? contacts)
         {
-            Contacts = contacts.ToList();
+            if(contacts is not null)
+            {
+                Contacts = contacts.ToList();
+            }
+            else
+            {
+                Contacts = await GetAllContactModelsAsync();
+            }            
 
             Contacts_Companies = Contacts.Select(x => x.Company).Distinct();
             Contacts_Locations = Contacts.Select(x => x.Location).Distinct();
             Contacts_Titles = Contacts.Select(x => x.Title).Distinct();
         }
 
-        // TODO: need to be able to call this from within a job listing
         // TODO: need to be able to navigate back to the job listing after it has been created
         [RelayCommand]
-        private async Task CreateNewContactAsync() 
+        private async Task CreateNewContactAsync(int? jobId) 
         {
-            var newContact = await _dbContext.CreateNewContactAsync(new Contact());
-            var newContactModel = ConvertContactToContactModel(newContact);
+            if (jobId is null)
+            {
+                var newContact = await _dbContext.CreateNewContactAsync(new Contact());
+                var newContactModel = ConvertContactToContactModel(newContact);
 
-            Contacts.Add(newContactModel);
+                Contacts.Add(newContactModel);
 
-            UpdateContactsRequest?.Invoke(Contacts);
+                UpdateContactsRequest?.Invoke(Contacts);
 
-            OpenContact(newContactModel);
+                OpenContact(newContactModel);
+            }
+
+            // TODO: consolidate so less code duplication
+            else
+            {
+                var newContact = await _dbContext.CreateNewContactAsync(new Contact() { JobListingId = jobId }); 
+                var newContactModel = ConvertContactToContactModel(newContact);
+
+                Contacts.Add(newContactModel);
+
+                UpdateContactsRequest?.Invoke(Contacts);
+
+                OpenContact(newContactModel);
+            }
+        }
+
+        [RelayCommand]
+        private void OpenJobListing(int jobId)
+        {
+            // TODO: implement
         }
 
         [RelayCommand]
@@ -178,6 +209,12 @@ namespace AutoJobSearchGUI.ViewModels
         private void DisableOnChangedEvents(ContactModel contact)
         {
             contact.EnableEvents = false;
+        }
+
+        private async Task<List<ContactModel>> GetAllContactModelsAsync()
+        {
+            var allContacts = await _dbContext.GetAllContactsAsync();
+            return ContactsHelpers.ConvertContactsToContactModels(allContacts);
         }
     }
 }

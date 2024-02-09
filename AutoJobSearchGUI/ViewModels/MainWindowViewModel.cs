@@ -39,6 +39,7 @@ namespace AutoJobSearchGUI.ViewModels
             helpViewModel = new HelpViewModel();
             ContentViewModel = jobBoardViewModel;
 
+            jobListingViewModel.OpenAddContactViewWithAssociatedJobIdRequest += ChangeViewToAddContact_WithAssociatedJobId;
             jobBoardViewModel.OpenJobListingViewRequest += ChangeViewToJobListing;
             contactsViewModel.OpenAddContactViewRequest += ChangeViewToAddContact;
             addContactViewModel.OpenContactsViewRequest += ChangeViewToContacts;
@@ -72,6 +73,16 @@ namespace AutoJobSearchGUI.ViewModels
             {
                 addContactViewModel.CreateNewContactCommand.Execute(null);
             }
+
+            ContentViewModel = addContactViewModel;
+        }
+
+        public void ChangeViewToAddContact_WithAssociatedJobId(int id)
+        {
+            // TODO: ensure consistency with overall contacts view 
+            addContactViewModel.PopulateContactsCommand.Execute(null);
+
+            addContactViewModel.CreateNewContactCommand.Execute(id);
 
             ContentViewModel = addContactViewModel;
         }

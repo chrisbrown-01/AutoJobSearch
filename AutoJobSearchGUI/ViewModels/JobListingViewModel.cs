@@ -14,12 +14,15 @@ namespace AutoJobSearchGUI.ViewModels
 {
     public partial class JobListingViewModel : ViewModelBase // Needs to be public for View previewer to work
     {
-        [ObservableProperty]
-        private JobListingModel _jobListing;
+        public delegate void OpenAddContactViewWithAssociatedJobIdHandler(int id);
+        public event OpenAddContactViewWithAssociatedJobIdHandler? OpenAddContactViewWithAssociatedJobIdRequest;
 
         private List<JobListingModel> JobListings { get; set; } = default!;
 
         private readonly IDbContext _dbContext;
+
+        [ObservableProperty]
+        private JobListingModel _jobListing;
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         public JobListingViewModel() // For View previewer only
@@ -38,6 +41,13 @@ namespace AutoJobSearchGUI.ViewModels
         private void PopulateJobListings(IEnumerable<JobListingModel> jobListings)
         {
             JobListings = jobListings.ToList();
+        }
+
+        [RelayCommand]
+        private void AddAssociatedContact()
+        {
+            DisableOnChangedEvents(JobListing); // TODO: necessary?
+            OpenAddContactViewWithAssociatedJobIdRequest?.Invoke(JobListing.Id);
         }
 
         [RelayCommand]
