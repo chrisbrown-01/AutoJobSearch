@@ -29,6 +29,15 @@ namespace AutoJobSearchGUI.ViewModels
 
         private List<ContactModel> Contacts { get; set; } = default!;
 
+        [ObservableProperty]
+        private IEnumerable<string> _contacts_Companies = default!;
+
+        [ObservableProperty]
+        private IEnumerable<string> _contacts_Locations = default!;
+
+        [ObservableProperty]
+        private IEnumerable<string> _contacts_Titles = default!;
+
         public AddContactViewModel(IDbContext dbContext)
         {
             _dbContext = dbContext;
@@ -38,6 +47,10 @@ namespace AutoJobSearchGUI.ViewModels
         private void PopulateContacts(IEnumerable<ContactModel> contacts)
         {
             Contacts = contacts.ToList();
+
+            Contacts_Companies = Contacts.Select(x => x.Company).Distinct();
+            Contacts_Locations = Contacts.Select(x => x.Location).Distinct();
+            Contacts_Titles = Contacts.Select(x => x.Title).Distinct();
         }
 
         // TODO: need to be able to call this from within a job listing

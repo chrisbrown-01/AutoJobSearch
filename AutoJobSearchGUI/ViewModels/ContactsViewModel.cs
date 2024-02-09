@@ -36,39 +36,71 @@ namespace AutoJobSearchGUI.ViewModels
         [ObservableProperty]
         private int _pageSize;
 
-        public IEnumerable<string> Contacts_Companies
-        {
-            get => Contacts.Select(x => x.Company);
-        }
+        [ObservableProperty]
+        private IEnumerable<string> _contacts_Companies = default!;
 
-        public IEnumerable<string> Contacts_Locations
-        {
-            get => Contacts.Select(x => x.Location);
-        }
+        [ObservableProperty]
+        private IEnumerable<string> _contacts_Locations = default!;
 
-        public IEnumerable<string> Contacts_Names
-        {
-            get => Contacts.Select(x => x.Name);
-        }
+        [ObservableProperty]
+        private IEnumerable<string> _contacts_Names = default!;
 
-        public IEnumerable<string> Contacts_Titles
-        {
-            get => Contacts.Select(x => x.Title);
-        }
+        [ObservableProperty]
+        private IEnumerable<string> _contacts_Titles = default!;
 
-        public IEnumerable<string> Contacts_Emails
-        {
-            get => Contacts.Select(x => x.Email);
-        }
+        [ObservableProperty]
+        private IEnumerable<string> _contacts_Emails = default!;
 
-        public IEnumerable<string> Contacts_Phones
-        {
-            get => Contacts.Select(x => x.Phone);
-        }
+        [ObservableProperty]
+        private IEnumerable<string> _contacts_Phones = default!;
 
-        public IEnumerable<string> Contacts_LinkedIns
+        [ObservableProperty]
+        private IEnumerable<string> _contacts_LinkedIns = default!;
+
+        //public IEnumerable<string> Contacts_Companies
+        //{
+        //    get => Contacts.Select(x => x.Company);
+        //}
+
+        //public IEnumerable<string> Contacts_Locations
+        //{
+        //    get => Contacts.Select(x => x.Location);
+        //}
+
+        //public IEnumerable<string> Contacts_Names
+        //{
+        //    get => Contacts.Select(x => x.Name);
+        //}
+
+        //public IEnumerable<string> Contacts_Titles
+        //{
+        //    get => Contacts.Select(x => x.Title);
+        //}
+
+        //public IEnumerable<string> Contacts_Emails
+        //{
+        //    get => Contacts.Select(x => x.Email);
+        //}
+
+        //public IEnumerable<string> Contacts_Phones
+        //{
+        //    get => Contacts.Select(x => x.Phone);
+        //}
+
+        //public IEnumerable<string> Contacts_LinkedIns
+        //{
+        //    get => Contacts.Select(x => x.LinkedIn);
+        //}
+
+        private void SetAutoCompleteBoxFields()
         {
-            get => Contacts.Select(x => x.LinkedIn);
+            Contacts_Companies = Contacts.Select(x => x.Company).Distinct();
+            Contacts_Locations = Contacts.Select(x => x.Location).Distinct();
+            Contacts_Names = Contacts.Select(x => x.Name).Distinct();
+            Contacts_Titles = Contacts.Select(x => x.Title).Distinct();
+            Contacts_Emails = Contacts.Select(x => x.Email).Distinct();
+            Contacts_Phones = Contacts.Select(x => x.Phone).Distinct();
+            Contacts_LinkedIns = Contacts.Select(x => x.LinkedIn).Distinct();
         }
 
         public ContactsViewModel(IDbContext dbContext)
@@ -86,6 +118,8 @@ namespace AutoJobSearchGUI.ViewModels
         {
             Contacts = contacts.ToList();
             ContactsDisplayed = Contacts.Skip(PageIndex * PageSize).Take(PageSize).ToList();
+
+            SetAutoCompleteBoxFields();
         }
 
         [RelayCommand]
@@ -96,9 +130,10 @@ namespace AutoJobSearchGUI.ViewModels
             ContactsDisplayed = Contacts.Skip(PageIndex * PageSize).Take(PageSize).ToList();
 
             ContactsQueryModel = new();
+
+            SetAutoCompleteBoxFields();
         }
 
-        // TODO: change text box to autocomplete box?
         [RelayCommand]
         private async Task ExecuteQueryAsync()
         {
