@@ -13,6 +13,7 @@ using System.Xml.Linq;
 
 namespace AutoJobSearchGUI.ViewModels
 {
+    // TODO: autocomplete box for new entries
     public partial class AddContactViewModel : ViewModelBase
     {
         private readonly IDbContext _dbContext;

@@ -9,5 +9,10 @@ namespace AutoJobSearchGUI.Views
         {
             InitializeComponent();
         }
+
+        private void AutoCompleteBox_DropDownClosing(object? sender, System.ComponentModel.CancelEventArgs e)
+        {
+            e.Cancel = true;
+        }
     }
 }

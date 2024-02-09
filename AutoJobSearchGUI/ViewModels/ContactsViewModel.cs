@@ -36,6 +36,41 @@ namespace AutoJobSearchGUI.ViewModels
         [ObservableProperty]
         private int _pageSize;
 
+        public IEnumerable<string> Contacts_Companies
+        {
+            get => Contacts.Select(x => x.Company);
+        }
+
+        public IEnumerable<string> Contacts_Locations
+        {
+            get => Contacts.Select(x => x.Location);
+        }
+
+        public IEnumerable<string> Contacts_Names
+        {
+            get => Contacts.Select(x => x.Name);
+        }
+
+        public IEnumerable<string> Contacts_Titles
+        {
+            get => Contacts.Select(x => x.Title);
+        }
+
+        public IEnumerable<string> Contacts_Emails
+        {
+            get => Contacts.Select(x => x.Email);
+        }
+
+        public IEnumerable<string> Contacts_Phones
+        {
+            get => Contacts.Select(x => x.Phone);
+        }
+
+        public IEnumerable<string> Contacts_LinkedIns
+        {
+            get => Contacts.Select(x => x.LinkedIn);
+        }
+
         public ContactsViewModel(IDbContext dbContext)
         {
             _dbContext = dbContext;

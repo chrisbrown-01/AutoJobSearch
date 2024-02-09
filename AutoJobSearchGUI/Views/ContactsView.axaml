@@ -22,7 +22,14 @@
 							FontWeight="ExtraBold" 
 							IsChecked="{Binding ContactsQueryModel.CompanyQueryStringEnabled}"
 							ClickMode="Press"/>
-						<TextBox Text="{Binding ContactsQueryModel.CompanyQueryString}" IsReadOnly="False" MaxWidth="250" />
+						<AutoCompleteBox 
+							Text="{Binding ContactsQueryModel.CompanyQueryString}"
+							MaxWidth="250"
+							MaxDropDownHeight="250"
+							FilterMode="ContainsOrdinal"
+							ItemsSource="{Binding Contacts_Companies}"
+							IsTextCompletionEnabled="True"
+							DropDownClosing="AutoCompleteBox_DropDownClosing"/>
 					</MenuItem>
 					<MenuItem Header="Location Query">
 						<CheckBox 
@@ -30,7 +37,14 @@
 							FontWeight="ExtraBold" 
 							IsChecked="{Binding ContactsQueryModel.LocationQueryStringEnabled}"
 							ClickMode="Press"/>
-						<TextBox Text="{Binding ContactsQueryModel.LocationQueryString}" IsReadOnly="False" MaxWidth="250" />
+						<AutoCompleteBox
+							Text="{Binding ContactsQueryModel.LocationQueryString}"
+							MaxWidth="250"
+							MaxDropDownHeight="250"
+							FilterMode="ContainsOrdinal"
+							ItemsSource="{Binding Contacts_Locations}"
+							IsTextCompletionEnabled="True"
+							DropDownClosing="AutoCompleteBox_DropDownClosing"/>
 					</MenuItem>
 					<MenuItem Header="Name Query">
 						<CheckBox
@@ -38,7 +52,14 @@
 							FontWeight="ExtraBold"
 							IsChecked="{Binding ContactsQueryModel.NameQueryStringEnabled}"
 							ClickMode="Press"/>
-						<TextBox Text="{Binding ContactsQueryModel.NameQueryString}" IsReadOnly="False" MaxWidth="250" />
+						<AutoCompleteBox
+							Text="{Binding ContactsQueryModel.NameQueryString}"
+							MaxWidth="250"
+							MaxDropDownHeight="250"
+							FilterMode="ContainsOrdinal"
+							ItemsSource="{Binding Contacts_Names}"  
+							IsTextCompletionEnabled="True"
+							DropDownClosing="AutoCompleteBox_DropDownClosing"/>
 					</MenuItem>
 					<MenuItem Header="Title Query">
 						<CheckBox
@@ -46,7 +67,14 @@
 							FontWeight="ExtraBold"
 							IsChecked="{Binding ContactsQueryModel.TitleQueryStringEnabled}"
 							ClickMode="Press"/>
-						<TextBox Text="{Binding ContactsQueryModel.TitleQueryString}" IsReadOnly="False" MaxWidth="250" />
+						<AutoCompleteBox
+							Text="{Binding ContactsQueryModel.TitleQueryString}"
+							MaxWidth="250"
+							MaxDropDownHeight="250"
+							FilterMode="ContainsOrdinal"
+							ItemsSource="{Binding Contacts_Titles}"
+							IsTextCompletionEnabled="True"
+							DropDownClosing="AutoCompleteBox_DropDownClosing"/>
 					</MenuItem>
 					<MenuItem Header="Email Query">
 						<CheckBox
@@ -54,7 +82,14 @@
 							FontWeight="ExtraBold"
 							IsChecked="{Binding ContactsQueryModel.EmailQueryStringEnabled}"
 							ClickMode="Press"/>
-						<TextBox Text="{Binding ContactsQueryModel.EmailQueryString}" IsReadOnly="False" MaxWidth="250" />
+						<AutoCompleteBox
+							Text="{Binding ContactsQueryModel.EmailQueryString}"
+							MaxWidth="250"
+							MaxDropDownHeight="250"
+							FilterMode="ContainsOrdinal"
+							ItemsSource="{Binding Contacts_Emails}"
+							IsTextCompletionEnabled="True"
+							DropDownClosing="AutoCompleteBox_DropDownClosing"/>
 					</MenuItem>
 					<MenuItem Header="Phone Query">
 						<CheckBox
@@ -62,7 +97,14 @@
 							FontWeight="ExtraBold"
 							IsChecked="{Binding ContactsQueryModel.PhoneQueryStringEnabled}"
 							ClickMode="Press"/>
-						<TextBox Text="{Binding ContactsQueryModel.PhoneQueryString}" IsReadOnly="False" MaxWidth="250" />
+						<AutoCompleteBox
+							Text="{Binding ContactsQueryModel.PhoneQueryString}"
+							MaxWidth="250"
+							MaxDropDownHeight="250"
+							FilterMode="ContainsOrdinal"
+							ItemsSource="{Binding Contacts_Phones}"
+							IsTextCompletionEnabled="True"
+							DropDownClosing="AutoCompleteBox_DropDownClosing"/>
 					</MenuItem>
 					<MenuItem Header="LinkedIn Query">
 						<CheckBox
@@ -70,7 +112,14 @@
 							FontWeight="ExtraBold"
 							IsChecked="{Binding ContactsQueryModel.LinkedInQueryStringEnabled}"
 							ClickMode="Press"/>
-						<TextBox Text="{Binding ContactsQueryModel.LinkedInQueryString}" IsReadOnly="False" MaxWidth="250" />
+						<AutoCompleteBox
+							Text="{Binding ContactsQueryModel.LinkedInQueryString}"
+							MaxWidth="250"
+							MaxDropDownHeight="250"
+							FilterMode="ContainsOrdinal"
+							ItemsSource="{Binding Contacts_LinkedIns}"
+							IsTextCompletionEnabled="True"
+							DropDownClosing="AutoCompleteBox_DropDownClosing"/>
 					</MenuItem>
 					<MenuItem Header="Notes Query">
 						<CheckBox
