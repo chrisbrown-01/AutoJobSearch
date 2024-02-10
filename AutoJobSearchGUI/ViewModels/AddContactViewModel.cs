@@ -70,6 +70,36 @@ namespace AutoJobSearchGUI.ViewModels
             Contacts_Titles = Contacts.Select(x => x.Title).Distinct();
         }
 
+        [RelayCommand]
+        private async Task CreateContactAssociatedJobIdAsync(string jobIdTextBoxInput)
+        {
+            if (Int32.TryParse(jobIdTextBoxInput, out int jobId))
+            {
+                if (Contact.JobListingIds.Contains(jobId)) return;
+
+                // Make sure the job ID exists before allowing the user to add it to the database
+                var allJobListings = await _dbContext.GetAllJobListingsAsync();
+                var allJobIds = allJobListings.Select(x => x.Id);
+
+                if (allJobIds is null || !allJobIds.Contains(jobId)) return;
+
+                var associatedJobIdRecord = await _dbContext.CreateContactAssociatedJobIdAsync(Contact.Id, jobId);
+                Contact.JobListingIds.Add(associatedJobIdRecord.JobListingId);
+            }
+        }
+
+        [RelayCommand]
+        private async Task DeleteContactAssociatedJobIdAsync(string jobIdTextBoxInput)
+        {
+            if (Int32.TryParse(jobIdTextBoxInput, out int jobId))
+            {
+                if (!Contact.JobListingIds.Contains(jobId)) return;
+
+                await _dbContext.DeleteContactAssociatedJobIdAsync(Contact.Id, jobId);
+                Contact.JobListingIds.Remove(jobId);
+            }
+        }
+
         // TODO: need to be able to navigate back to the job listing after it has been created
         [RelayCommand]
         private async Task CreateNewContactAsync(int? jobId)
@@ -79,7 +109,7 @@ namespace AutoJobSearchGUI.ViewModels
 
             if (jobId is not null)
             {
-                var associatedJobIdRecord = await _dbContext.CreateContactAssociatedJobId(newContact.Id, jobId.Value);
+                var associatedJobIdRecord = await _dbContext.CreateContactAssociatedJobIdAsync(newContact.Id, jobId.Value);
                 jobIds.Add(associatedJobIdRecord.JobListingId);
             }
 

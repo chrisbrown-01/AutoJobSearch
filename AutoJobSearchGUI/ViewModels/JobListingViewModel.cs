@@ -48,7 +48,7 @@ namespace AutoJobSearchGUI.ViewModels
         [RelayCommand]
         private void AddAssociatedContact()
         {
-            DisableOnChangedEvents(JobListing); // TODO: necessary? need to be able to navigate back to job listing, but this can probably be completed via OpenJobListing command
+            DisableOnChangedEvents(JobListing);
             OpenAddContactViewWithAssociatedJobIdRequest?.Invoke(JobListing.Id);
         }
 

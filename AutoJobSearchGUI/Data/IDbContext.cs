@@ -32,6 +32,7 @@ namespace AutoJobSearchGUI.Data
         Task UpdateContactStringPropertyAsync(ContactStringField columnName, string value, int id);
         Task DeleteAllContactsAsync();
         Task<IEnumerable<ContactAssociatedJobId>> GetAllContactsAssociatedJobIdsAsync();
-        Task<ContactAssociatedJobId> CreateContactAssociatedJobId(int contactId, int jobId);
+        Task<ContactAssociatedJobId> CreateContactAssociatedJobIdAsync(int contactId, int jobId);
+        Task DeleteContactAssociatedJobIdAsync(int contactId, int jobId);
     }
 }

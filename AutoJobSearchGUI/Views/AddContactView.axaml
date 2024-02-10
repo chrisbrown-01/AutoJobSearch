@@ -22,6 +22,7 @@
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="Auto" />
 				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="*" />
 			</Grid.ColumnDefinitions>
 
 			<Grid.RowDefinitions>
@@ -46,6 +47,7 @@
 			<AutoCompleteBox
 				Grid.Row="0"
 				Grid.Column="1"
+				Grid.ColumnSpan="2"
 				Text="{Binding Contact.Company}"
 				Watermark="Apple"
 				FilterMode="ContainsOrdinal"
@@ -63,6 +65,7 @@
 			<AutoCompleteBox
 				Grid.Row="1"
 				Grid.Column="1"
+				Grid.ColumnSpan="2"
 				Text="{Binding Contact.Location}"
 				Watermark="Cupertino, California"
 				FilterMode="ContainsOrdinal"
@@ -80,6 +83,7 @@
 			<TextBox
 				Grid.Row="2"
 				Grid.Column="1"
+				Grid.ColumnSpan="2"
 				Text="{Binding Contact.Name}"
 				IsReadOnly="False"
 				IsUndoEnabled="True"
@@ -97,6 +101,7 @@
 			<AutoCompleteBox
 				Grid.Row="3"
 				Grid.Column="1"
+				Grid.ColumnSpan="2"
 				Text="{Binding Contact.Title}"
 				Watermark="Senior Hiring Manager"
 				FilterMode="ContainsOrdinal"
@@ -114,6 +119,7 @@
 			<TextBox
 				Grid.Row="4"
 				Grid.Column="1"
+				Grid.ColumnSpan="2"
 				Text="{Binding Contact.Email}"
 				IsReadOnly="False"
 				IsUndoEnabled="True"
@@ -131,6 +137,7 @@
 			<TextBox
 				Grid.Row="5"
 				Grid.Column="1"
+				Grid.ColumnSpan="2"
 				Text="{Binding Contact.Phone}"
 				IsReadOnly="False"
 				IsUndoEnabled="True"
@@ -148,6 +155,7 @@
 			<TextBox
 				Grid.Row="6"
 				Grid.Column="1"
+				Grid.ColumnSpan="2"
 				Text="{Binding Contact.LinkedIn}"
 				IsReadOnly="False"
 				IsUndoEnabled="True"
@@ -165,6 +173,7 @@
 			<TextBox
 				Grid.Row="7"
 				Grid.Column="1"
+				Grid.ColumnSpan="2"
 				Text="{Binding Contact.Notes}"
 				Watermark="Enter your notes here."
 				IsReadOnly="False"
@@ -180,10 +189,10 @@
 				Grid.Column="0"
 				VerticalAlignment="Center"
 				HorizontalAlignment="Center"
-				Text="Job ID"
+				Text="Job IDs"
 				Margin="20 10"/>
 			<Menu Grid.Row="8" Grid.Column="1">
-				<MenuItem Header="Navigate to Associated Job IDs">
+				<MenuItem Header="Navigate to Associated Jobs">
 					<ListBox   
 						ItemsSource="{Binding Contact.JobListingIds}"
 						SelectedItem="{Binding SelectedJobListingId}"
@@ -193,6 +202,26 @@
 						Command="{Binding OpenJobListingCommand}"
 						ClickMode="Press"
 						IsEnabled="{Binding IsNavigateToJobButtonEnabled}"/>
+				</MenuItem>
+			</Menu>
+			<Menu Grid.Row="8" Grid.Column="2">
+				<MenuItem Header="Add/Delete Associated Job">
+					<TextBox
+						x:Name="JobIdTextBox" 
+						Watermark="Enter Job ID (integer number)" />
+					<Button
+						Content="Add Job ID"
+						Command="{Binding CreateContactAssociatedJobIdCommand}"
+						CommandParameter="{Binding Text, ElementName=JobIdTextBox}"
+						ClickMode="Press"
+						HorizontalAlignment="Center" 
+						IsEnabled="True"/>
+					<Button
+						Content="Delete Job ID"
+						Command="{Binding DeleteContactAssociatedJobIdCommand}"
+						CommandParameter="{Binding Text, ElementName=JobIdTextBox}"
+						ClickMode="Press" 
+						HorizontalAlignment="Center" />
 				</MenuItem>
 			</Menu>
 

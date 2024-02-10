@@ -164,10 +164,16 @@ namespace AutoJobSearchGUI.Data
             return await _dbContext.GetAllContactsAssociatedJobIdsAsync();
         }
 
-        public async Task<ContactAssociatedJobId> CreateContactAssociatedJobId(int contactId, int jobId)
+        public async Task<ContactAssociatedJobId> CreateContactAssociatedJobIdAsync(int contactId, int jobId)
         {
             Log.Information("Creating contact associated job ID record for contact ID {@contactId} and job ID {@jobId}.", contactId, jobId);
-            return await _dbContext.CreateContactAssociatedJobId(contactId, jobId);
+            return await _dbContext.CreateContactAssociatedJobIdAsync(contactId, jobId);
+        }
+
+        public async Task DeleteContactAssociatedJobIdAsync(int contactId, int jobId)
+        {
+            Log.Information("Deleting contact associated job ID record for contact ID {@contactId} and job ID {@jobId}.", contactId, jobId);
+            await _dbContext.DeleteContactAssociatedJobIdAsync(contactId, jobId);
         }
     }
 }

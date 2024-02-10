@@ -447,7 +447,7 @@ namespace AutoJobSearchShared.Database
 
         public async Task DeleteAllContactsAsync()
         {
-            const string sql = "DELETE FROM Contacts;";
+            const string sql = "DELETE FROM Contacts; DELETE FROM ContactsAssociatedJobIds;";
             await connection.ExecuteAsync(sql).ConfigureAwait(false);
         }
 
@@ -457,7 +457,7 @@ namespace AutoJobSearchShared.Database
             return await connection.QueryAsync<ContactAssociatedJobId>(sql).ConfigureAwait(false);
         }
 
-        public async Task<ContactAssociatedJobId> CreateContactAssociatedJobId(int contactId, int jobId)
+        public async Task<ContactAssociatedJobId> CreateContactAssociatedJobIdAsync(int contactId, int jobId)
         {
             const string sql =
                 "INSERT INTO ContactsAssociatedJobIds (" +
@@ -469,6 +469,12 @@ namespace AutoJobSearchShared.Database
                 "SELECT * FROM ContactsAssociatedJobIds WHERE Id = last_insert_rowid();";
 
             return await connection.QuerySingleAsync<ContactAssociatedJobId>(sql, new { ContactId = contactId, JobListingId = jobId }).ConfigureAwait(false);
+        }
+
+        public async Task DeleteContactAssociatedJobIdAsync(int contactId, int jobId)
+        {
+            const string sql = "DELETE FROM ContactsAssociatedJobIds WHERE ContactId = @ContactId AND JobListingId = @JobListingId;";
+            await connection.ExecuteAsync(sql, new { ContactId = contactId, JobListingId = jobId }).ConfigureAwait(false);
         }
     }
 }
