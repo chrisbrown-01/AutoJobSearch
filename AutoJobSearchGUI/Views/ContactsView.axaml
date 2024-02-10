@@ -1,0 +1,231 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:vm="using:AutoJobSearchGUI.ViewModels"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+			 xmlns:ia="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+             x:Class="AutoJobSearchGUI.Views.ContactsView"
+			 x:DataType="vm:ContactsViewModel">
+
+	<DockPanel>
+		<StackPanel DockPanel.Dock="Top" Orientation="Horizontal" HorizontalAlignment="Center" >
+			<Button Command="{Binding OpenContactCommand}" Content="Open Selected Contact" />
+			<Button Command="{Binding GoToPreviousPageCommand}" Content="Previous Page" />
+			<Button Command="{Binding GoToNextPageCommand}" Content="Next Page" />
+			<Menu>
+				<MenuItem Header="Advanced Query">
+					<MenuItem Header="Company Query">
+						<CheckBox 
+							Content="Enable Query Filter"
+							FontWeight="ExtraBold" 
+							IsChecked="{Binding ContactsQueryModel.CompanyQueryStringEnabled}"
+							ClickMode="Press"/>
+						<AutoCompleteBox 
+							Text="{Binding ContactsQueryModel.CompanyQueryString}"
+							MaxWidth="250"
+							MaxDropDownHeight="250"
+							FilterMode="ContainsOrdinal"
+							ItemsSource="{Binding Contacts_Companies}"
+							IsTextCompletionEnabled="True"
+							DropDownClosing="AutoCompleteBox_DropDownClosing"/>
+					</MenuItem>
+					<MenuItem Header="Location Query">
+						<CheckBox 
+							Content="Enable Query Filter"
+							FontWeight="ExtraBold" 
+							IsChecked="{Binding ContactsQueryModel.LocationQueryStringEnabled}"
+							ClickMode="Press"/>
+						<AutoCompleteBox
+							Text="{Binding ContactsQueryModel.LocationQueryString}"
+							MaxWidth="250"
+							MaxDropDownHeight="250"
+							FilterMode="ContainsOrdinal"
+							ItemsSource="{Binding Contacts_Locations}"
+							IsTextCompletionEnabled="True"
+							DropDownClosing="AutoCompleteBox_DropDownClosing"/>
+					</MenuItem>
+					<MenuItem Header="Name Query">
+						<CheckBox
+							Content="Enable Query Filter"
+							FontWeight="ExtraBold"
+							IsChecked="{Binding ContactsQueryModel.NameQueryStringEnabled}"
+							ClickMode="Press"/>
+						<AutoCompleteBox
+							Text="{Binding ContactsQueryModel.NameQueryString}"
+							MaxWidth="250"
+							MaxDropDownHeight="250"
+							FilterMode="ContainsOrdinal"
+							ItemsSource="{Binding Contacts_Names}"  
+							IsTextCompletionEnabled="True"
+							DropDownClosing="AutoCompleteBox_DropDownClosing"/>
+					</MenuItem>
+					<MenuItem Header="Title Query">
+						<CheckBox
+							Content="Enable Query Filter"
+							FontWeight="ExtraBold"
+							IsChecked="{Binding ContactsQueryModel.TitleQueryStringEnabled}"
+							ClickMode="Press"/>
+						<AutoCompleteBox
+							Text="{Binding ContactsQueryModel.TitleQueryString}"
+							MaxWidth="250"
+							MaxDropDownHeight="250"
+							FilterMode="ContainsOrdinal"
+							ItemsSource="{Binding Contacts_Titles}"
+							IsTextCompletionEnabled="True"
+							DropDownClosing="AutoCompleteBox_DropDownClosing"/>
+					</MenuItem>
+					<MenuItem Header="Email Query">
+						<CheckBox
+							Content="Enable Query Filter"
+							FontWeight="ExtraBold"
+							IsChecked="{Binding ContactsQueryModel.EmailQueryStringEnabled}"
+							ClickMode="Press"/>
+						<AutoCompleteBox
+							Text="{Binding ContactsQueryModel.EmailQueryString}"
+							MaxWidth="250"
+							MaxDropDownHeight="250"
+							FilterMode="ContainsOrdinal"
+							ItemsSource="{Binding Contacts_Emails}"
+							IsTextCompletionEnabled="True"
+							DropDownClosing="AutoCompleteBox_DropDownClosing"/>
+					</MenuItem>
+					<MenuItem Header="Phone Query">
+						<CheckBox
+							Content="Enable Query Filter"
+							FontWeight="ExtraBold"
+							IsChecked="{Binding ContactsQueryModel.PhoneQueryStringEnabled}"
+							ClickMode="Press"/>
+						<AutoCompleteBox
+							Text="{Binding ContactsQueryModel.PhoneQueryString}"
+							MaxWidth="250"
+							MaxDropDownHeight="250"
+							FilterMode="ContainsOrdinal"
+							ItemsSource="{Binding Contacts_Phones}"
+							IsTextCompletionEnabled="True"
+							DropDownClosing="AutoCompleteBox_DropDownClosing"/>
+					</MenuItem>
+					<MenuItem Header="LinkedIn Query">
+						<CheckBox
+							Content="Enable Query Filter"
+							FontWeight="ExtraBold"
+							IsChecked="{Binding ContactsQueryModel.LinkedInQueryStringEnabled}"
+							ClickMode="Press"/>
+						<AutoCompleteBox
+							Text="{Binding ContactsQueryModel.LinkedInQueryString}"
+							MaxWidth="250"
+							MaxDropDownHeight="250"
+							FilterMode="ContainsOrdinal"
+							ItemsSource="{Binding Contacts_LinkedIns}"
+							IsTextCompletionEnabled="True"
+							DropDownClosing="AutoCompleteBox_DropDownClosing"/>
+					</MenuItem>
+					<MenuItem Header="Notes Query">
+						<CheckBox
+							Content="Enable Query Filter"
+							FontWeight="ExtraBold"
+							IsChecked="{Binding ContactsQueryModel.NotesQueryStringEnabled}"
+							ClickMode="Press"/>
+						<TextBox Text="{Binding ContactsQueryModel.NotesQueryString}" IsReadOnly="False" MaxWidth="250" />
+					</MenuItem>
+					<MenuItem Header="Sort By">
+						<CheckBox Content="Company" IsChecked="{Binding ContactsQueryModel.SortByCompany}" ClickMode="Press" />
+						<CheckBox Content="Location" IsChecked="{Binding ContactsQueryModel.SortByLocation}" ClickMode="Press" />
+						<CheckBox Content="Name" IsChecked="{Binding ContactsQueryModel.SortByName}" ClickMode="Press" />
+						<CheckBox Content="Title" IsChecked="{Binding ContactsQueryModel.SortByTitle}" ClickMode="Press" />
+						<CheckBox Content="Email" IsChecked="{Binding ContactsQueryModel.SortByEmail}" ClickMode="Press" />
+						<CheckBox Content="Phone" IsChecked="{Binding ContactsQueryModel.SortByPhone}" ClickMode="Press" />
+						<CheckBox Content="LinkedIn" IsChecked="{Binding ContactsQueryModel.SortByLinkedIn}" ClickMode="Press" />
+					</MenuItem>
+					<MenuItem Header="Order By">
+						<CheckBox
+							Content="Descending"
+							IsChecked="{Binding ContactsQueryModel.OrderByDescending}"
+							ClickMode="Press"/>
+					</MenuItem>
+					<Button
+						Content="Execute Query"
+						HorizontalAlignment="Center"
+						Command="{Binding ExecuteQueryCommand}"
+						ClickMode="Press"/>
+					<Button
+						Content="Clear All Filters"
+						HorizontalAlignment="Center"
+						Command="{Binding RenderDefaultContactsViewCommand}"
+						ClickMode="Press"/>
+				</MenuItem>
+			</Menu>
+			<Menu>
+				<MenuItem Header="Options">
+					<MenuItem Header="Go To Default View" Command="{Binding RenderDefaultContactsViewCommand}" />
+					<MenuItem Header="Add New Contact" Command="{Binding AddNewContactCommand}" />
+					<MenuItem Header="Delete All Contacts" Command="{Binding DeleteAllContactsCommand}" />
+				</MenuItem>
+			</Menu>
+		</StackPanel>
+
+		<DataGrid
+	 	CanUserResizeColumns="True"
+		CanUserReorderColumns="True"
+	 	ItemsSource="{Binding ContactsDisplayed}"
+		SelectedItem="{Binding SelectedContact}"
+		RowHeight="150" 
+		GridLinesVisibility="Horizontal"
+		HorizontalGridLinesBrush="Gray"  
+		IsScrollInertiaEnabled="True">
+			<i:Interaction.Behaviors>
+				<ia:EventTriggerBehavior EventName="DoubleTapped">
+					<ia:InvokeCommandAction Command="{Binding OpenContactCommand}"/>
+				</ia:EventTriggerBehavior>
+			</i:Interaction.Behaviors>
+			<DataGrid.ContextMenu>
+				<ContextMenu>
+					<MenuItem Header="Delete Contact" Command="{Binding DeleteContactCommand}" />
+				</ContextMenu>
+			</DataGrid.ContextMenu>
+			<DataGrid.Columns>
+				<DataGridTextColumn
+					Header="Company"
+					Binding="{Binding Company}"
+					IsReadOnly="True"
+					Width="*" />
+				<DataGridTextColumn
+					Header="Location"
+					Binding="{Binding Location}"
+					IsReadOnly="True"
+					Width="*" />
+				<DataGridTextColumn
+					Header="Name"
+					Binding="{Binding Name}"
+					IsReadOnly="True"
+					Width="*" />
+				<DataGridTextColumn
+					Header="Title"
+					Binding="{Binding Title}"
+					IsReadOnly="True"
+					Width="*" />
+				<DataGridTextColumn
+					Header="Email"
+					Binding="{Binding Email}"
+					IsReadOnly="True"
+					Width="*" />
+				<DataGridTextColumn
+					Header="Phone"
+					Binding="{Binding Phone}"
+					IsReadOnly="True"
+					Width="*" />
+				<DataGridTextColumn
+					Header="LinkedIn"
+					Binding="{Binding LinkedIn}"
+					IsReadOnly="True"
+					Width="*" />
+				<DataGridTextColumn
+					Header="Notes"
+					Binding="{Binding Notes}"
+					IsReadOnly="True"
+					Width="*" />
+			</DataGrid.Columns>
+		</DataGrid>
+	</DockPanel>
+</UserControl>

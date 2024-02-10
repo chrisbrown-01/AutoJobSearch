@@ -38,6 +38,16 @@ namespace AutoJobSearchGUI.Data
             {
                 await UpdateJobSearchProfileStringPropertyAsync(e.Field, e.Value, e.Id);
             };
+
+            ContactModel.StringFieldChanged += async (sender, e) =>
+            {
+                await UpdateContactStringPropertyAsync(e.Field, e.Value, e.Id);
+            };
+        }
+
+        public async Task UpdateContactStringPropertyAsync(ContactStringField columnName, string value, int id)
+        {
+            await _dbContext.UpdateContactStringPropertyAsync(columnName, value, id);
         }
 
         public async Task UpdateJobSearchProfileStringPropertyAsync(JobSearchProfilesStringField columnName, string value, int id)
@@ -122,6 +132,48 @@ namespace AutoJobSearchGUI.Data
         {
             Log.Information("Disposing of _dbContext connection.");
             _dbContext.Dispose();
+        }
+
+        public async Task<IEnumerable<Contact>> GetAllContactsAsync()
+        {
+            Log.Information("Getting all contacts from database.");
+            return await _dbContext.GetAllContactsAsync();
+        }
+
+        public async Task<Contact> CreateNewContactAsync(Contact contact)
+        {
+            Log.Information("Creating new contact.");
+            return await _dbContext.CreateNewContactAsync(contact);
+        }
+
+        public async Task DeleteContactAsync(int id)
+        {
+            Log.Information("Deleting contact for {@id}.", id);
+            await _dbContext.DeleteContactAsync(id);
+        }
+
+        public async Task DeleteAllContactsAsync()
+        {
+            Log.Information("Deleting all contacts from database.");
+            await _dbContext.DeleteAllContactsAsync();
+        }
+
+        public async Task<IEnumerable<ContactAssociatedJobId>> GetAllContactsAssociatedJobIdsAsync()
+        {
+            Log.Information("Getting all contacts associated job IDs from database.");
+            return await _dbContext.GetAllContactsAssociatedJobIdsAsync();
+        }
+
+        public async Task<ContactAssociatedJobId> CreateContactAssociatedJobIdAsync(int contactId, int jobId)
+        {
+            Log.Information("Creating contact associated job ID record for contact ID {@contactId} and job ID {@jobId}.", contactId, jobId);
+            return await _dbContext.CreateContactAssociatedJobIdAsync(contactId, jobId);
+        }
+
+        public async Task DeleteContactAssociatedJobIdAsync(int contactId, int jobId)
+        {
+            Log.Information("Deleting contact associated job ID record for contact ID {@contactId} and job ID {@jobId}.", contactId, jobId);
+            await _dbContext.DeleteContactAssociatedJobIdAsync(contactId, jobId);
         }
     }
 }

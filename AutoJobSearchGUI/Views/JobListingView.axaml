@@ -19,7 +19,8 @@
 			Orientation="Horizontal"
 			HorizontalAlignment="Center">
 			<Button Content="Previous Job" Margin="5 0" Command="{Binding GoToPreviousJobCommand}" />
-			<Button Content="Next Job" Command="{Binding GoToNextJobCommand}" />
+			<Button Content="Next Job" Margin="5 0" Command="{Binding GoToNextJobCommand}" />
+			<Button Content="Add Contact" Margin="5 0" Command="{Binding AddAssociatedContactCommand}" />
 		</StackPanel>
 		<Grid>
 			<Grid.ColumnDefinitions>
@@ -101,9 +102,12 @@
 				Grid.Row="7"
 				Grid.Column="1"
 				Text="{Binding JobListing.Notes}"
+				Watermark="Enter your notes here."
 				TextWrapping="Wrap"
 				AcceptsReturn="True"
-				AcceptsTab="True" 
+				AcceptsTab="True"
+				IsUndoEnabled="True"
+				UndoLimit="1000"
 				Margin="0 1"/>
 		</Grid>
 	</DockPanel>

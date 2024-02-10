@@ -1,4 +1,5 @@
 ﻿using AutoJobSearchGUI.Data;
+using AutoJobSearchGUI.Helpers;
 using AutoJobSearchGUI.Models;
 using AutoJobSearchShared;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -12,14 +13,18 @@ using System.Threading.Tasks;
 
 namespace AutoJobSearchGUI.ViewModels
 {
+    // TODO: add delete listing method. note that you will need to ensure consistency with the contact-job-id records that cascade delete
     public partial class JobListingViewModel : ViewModelBase // Needs to be public for View previewer to work
     {
-        [ObservableProperty]
-        private JobListingModel _jobListing;
+        public delegate void OpenAddContactViewWithAssociatedJobIdHandler(int id);
+        public event OpenAddContactViewWithAssociatedJobIdHandler? OpenAddContactViewWithAssociatedJobIdRequest;
 
         private List<JobListingModel> JobListings { get; set; } = default!;
 
         private readonly IDbContext _dbContext;
+
+        [ObservableProperty]
+        private JobListingModel _jobListing;
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         public JobListingViewModel() // For View previewer only
@@ -38,6 +43,13 @@ namespace AutoJobSearchGUI.ViewModels
         private void PopulateJobListings(IEnumerable<JobListingModel> jobListings)
         {
             JobListings = jobListings.ToList();
+        }
+
+        [RelayCommand]
+        private void AddAssociatedContact()
+        {
+            DisableOnChangedEvents(JobListing);
+            OpenAddContactViewWithAssociatedJobIdRequest?.Invoke(JobListing.Id);
         }
 
         [RelayCommand]
@@ -66,6 +78,18 @@ namespace AutoJobSearchGUI.ViewModels
             DisableOnChangedEvents(JobListing);
 
             await OpenJobListingAsync(JobListings[nextIndex]);
+        }
+
+        [RelayCommand]
+        private async Task OpenJobListingByIdAsync(int jobListingId)
+        {
+            if (JobListings is null || !JobListings.Any())
+            {
+                JobListings = JobListingHelpers.ConvertJobListingsToJobListingModels(await _dbContext.GetAllJobListingsAsync());
+            }
+
+            JobListing = JobListings.Single(x => x.Id == jobListingId);
+            await OpenJobListingCommand.ExecuteAsync(JobListing);
         }
 
         [RelayCommand]

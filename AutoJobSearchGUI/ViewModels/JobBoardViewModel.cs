@@ -1,4 +1,5 @@
 ﻿using AutoJobSearchGUI.Data;
+using AutoJobSearchGUI.Helpers;
 using AutoJobSearchGUI.Models;
 using AutoJobSearchShared;
 using AutoJobSearchShared.Models;
@@ -16,6 +17,7 @@ using System.Threading.Tasks;
 
 namespace AutoJobSearchGUI.ViewModels
 {
+    // TODO: rename view properties so that "string" isn't included
     public partial class JobBoardViewModel : ViewModelBase // Needs to be public for View previewer to work
     {
         public delegate void OpenJobListingViewHandler(JobListingModel job, IEnumerable<JobListingModel> jobListings);
@@ -56,7 +58,7 @@ namespace AutoJobSearchGUI.ViewModels
             PageIndex = 0;
             PageSize = 50;
 
-            RenderDefaultJobBoardViewAsync().Wait();
+            RenderDefaultJobBoardViewCommand.Execute(null);
         }
 
         [RelayCommand]
@@ -73,16 +75,15 @@ namespace AutoJobSearchGUI.ViewModels
             if (result == MsBox.Avalonia.Enums.ButtonResult.Ok)
             {
                 await _dbContext.DeleteAllJobListingsAsync();
-            }
-
-            await RenderDefaultJobBoardViewAsync();
+                await RenderDefaultJobBoardViewAsync();
+            }           
         }
 
         [RelayCommand]
         private async Task RenderDefaultJobBoardViewAsync()
         {
             PageIndex = 0;
-            JobListings = await GetAllJobListings();
+            JobListings = await GetAllJobListings(); // TODO: rename with async suffix
             JobListingsDisplayed = JobListings.Skip(PageIndex * PageSize).Take(PageSize).ToList();
             EnableOnChangedEvents(JobListingsDisplayed);
 
@@ -110,6 +111,7 @@ namespace AutoJobSearchGUI.ViewModels
         [RelayCommand]
         private async Task ExecuteQueryAsync()
         {
+            // TODO: change ascending to descending
             var result = await _dbContext.ExecuteJobListingQueryAsync(
                JobBoardQueryModel.ColumnFiltersEnabled,
                JobBoardQueryModel.IsAppliedTo,
@@ -147,7 +149,7 @@ namespace AutoJobSearchGUI.ViewModels
 
             if (JobBoardQueryModel.ScoreEqualsEnabled)
             {
-                result = result.Where(x => x.Score == JobBoardQueryModel.ScoreEquals);
+                result = result.Where(x => x.Score == JobBoardQueryModel.ScoreEquals); // TODO: add nullable and null checking, ClickMode handling in view
             }
 
             if (JobBoardQueryModel.ScoreRangeEnabled)
@@ -203,7 +205,7 @@ namespace AutoJobSearchGUI.ViewModels
             }
 
             PageIndex = 0;
-            JobListings = ConvertJobListingsToJobListingModels(result);
+            JobListings = JobListingHelpers.ConvertJobListingsToJobListingModels(result);
             JobListingsDisplayed = JobListings.Skip(PageIndex * PageSize).Take(PageSize).ToList();
             EnableOnChangedEvents(JobListingsDisplayed);
         }
@@ -275,45 +277,19 @@ namespace AutoJobSearchGUI.ViewModels
         private async Task<List<JobListingModel>> GetFavouriteJobListings()
         {
             var jobs = await _dbContext.GetFavouriteJobListingsAsync();
-            return ConvertJobListingsToJobListingModels(jobs);
+            return JobListingHelpers.ConvertJobListingsToJobListingModels(jobs);
         }
 
         private async Task<List<JobListingModel>> GetHiddenJobListings()
         {
             var jobs = await _dbContext.GetHiddenJobListingsAsync();
-            return ConvertJobListingsToJobListingModels(jobs);
-        }
-
-        private List<JobListingModel> ConvertJobListingsToJobListingModels(IEnumerable<JobListing> jobs)
-        {
-            var jobListings = new List<JobListingModel>();
-
-            foreach (var job in jobs)
-            {
-                var jobListing = new JobListingModel
-                {
-                    Id = job.Id,
-                    SearchTerm = job.SearchTerm,
-                    CreatedAt = job.CreatedAt,
-                    Description = job.Description,
-                    Score = job.Score,
-                    IsAppliedTo = job.IsAppliedTo,
-                    IsInterviewing = job.IsInterviewing,
-                    IsRejected = job.IsRejected,
-                    IsFavourite = job.IsFavourite,
-                    IsHidden = job.IsHidden
-                };
-
-                jobListings.Add(jobListing);
-            }
-
-            return jobListings;
+            return JobListingHelpers.ConvertJobListingsToJobListingModels(jobs);
         }
 
         private async Task<List<JobListingModel>> GetAllJobListings()
         {
             var jobs = await _dbContext.GetAllJobListingsAsync();
-            return ConvertJobListingsToJobListingModels(jobs);
+            return JobListingHelpers.ConvertJobListingsToJobListingModels(jobs);
         }
     }
 }

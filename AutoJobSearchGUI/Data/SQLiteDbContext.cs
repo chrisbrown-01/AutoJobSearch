@@ -19,14 +19,39 @@ namespace AutoJobSearchGUI.Data
             _sqliteDb = new SQLiteDb();
         }
 
+        public async Task<ContactAssociatedJobId> CreateContactAssociatedJobIdAsync(int contactId, int jobId)
+        {
+            return await _sqliteDb.CreateContactAssociatedJobIdAsync(contactId, jobId);
+        }
+
         public async Task<JobSearchProfile> CreateJobSearchProfileAsync(JobSearchProfile profile)
         {
             return await _sqliteDb.CreateJobSearchProfileAsync(profile);
         }
 
+        public async Task<Contact> CreateNewContactAsync(Contact contact)
+        {
+            return await _sqliteDb.CreateNewContactAsync(contact);
+        }
+
+        public async Task DeleteAllContactsAsync()
+        {
+            await _sqliteDb.DeleteAllContactsAsync();
+        }
+
         public async Task DeleteAllJobListingsAsync()
         {
             await _sqliteDb.DeleteAllJobListingsAsync();
+        }
+
+        public async Task DeleteContactAssociatedJobIdAsync(int contactId, int jobId)
+        {
+            await _sqliteDb.DeleteContactAssociatedJobIdAsync(contactId, jobId);
+        }
+
+        public async Task DeleteContactAsync(int id)
+        {
+            await _sqliteDb.DeleteContactAsync(id);
         }
 
         public async Task DeleteJobSearchProfileAsync(int id)
@@ -48,6 +73,16 @@ namespace AutoJobSearchGUI.Data
             bool isFavourite)
         {
             return await _sqliteDb.ExecuteJobListingQueryAsync(columnFiltersEnabled, isAppliedTo, isInterviewing, isRejected, isFavourite);
+        }
+
+        public async Task<IEnumerable<ContactAssociatedJobId>> GetAllContactsAssociatedJobIdsAsync()
+        {
+            return await _sqliteDb.GetAllContactsAssociatedJobIdsAsync();
+        }
+
+        public async Task<IEnumerable<Contact>> GetAllContactsAsync()
+        {
+            return await _sqliteDb.GetAllContactsAsync();
         }
 
         public async Task<IEnumerable<JobListing>> GetAllJobListingsAsync()
@@ -73,6 +108,11 @@ namespace AutoJobSearchGUI.Data
         public async Task<JobListing> GetJobListingDetailsByIdAsync(int id)
         {
             return await _sqliteDb.GetJobListingDetailsByIdAsync(id);
+        }
+
+        public async Task UpdateContactStringPropertyAsync(ContactStringField columnName, string value, int id)
+        {
+            await _sqliteDb.UpdateContactStringPropertyAsync(columnName, value, id);
         }
 
         public async Task UpdateJobListingBoolPropertyAsync(JobListingsBoolField columnName, bool value, int id)
