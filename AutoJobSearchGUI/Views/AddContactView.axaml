@@ -184,19 +184,15 @@
 				Margin="20 10"/>
 			<Menu Grid.Row="8" Grid.Column="1">
 				<MenuItem Header="Navigate to Associated Job IDs">
-					<ItemsControl ItemsSource="{Binding Contact.JobListingIds}">
-						<ItemsControl.ItemTemplate>
-							<DataTemplate>
-								<Button
-									Width="50"
-									HorizontalContentAlignment="Center"
-									HorizontalAlignment="Stretch"
-									Content="{Binding}"
-									Command=""
-									CommandParameter="{Binding}"/>
-							</DataTemplate>
-						</ItemsControl.ItemTemplate>
-					</ItemsControl>
+					<ListBox   
+						ItemsSource="{Binding Contact.JobListingIds}"
+						SelectedItem="{Binding SelectedJobListingId}"
+						SelectionMode="Single"/>
+					<Button 
+						Content="Navigate to Job"
+						Command="{Binding OpenJobListingCommand}"
+						ClickMode="Press"
+						IsEnabled="{Binding IsNavigateToJobButtonEnabled}"/>
 				</MenuItem>
 			</Menu>
 

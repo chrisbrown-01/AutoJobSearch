@@ -37,6 +37,7 @@ namespace AutoJobSearchGUI.ViewModels
             addContactViewModel = new AddContactViewModel(dbContext);
             contactsViewModel = new ContactsViewModel(dbContext);
             helpViewModel = new HelpViewModel();
+
             ContentViewModel = jobBoardViewModel;
 
             SubscribeToEvents();
@@ -48,6 +49,7 @@ namespace AutoJobSearchGUI.ViewModels
             dbContext.Dispose();
         }
 
+        // TODO: try and convert all to use static singleton objects and eliminate these methods
         public void UpdateContacts(IEnumerable<ContactModel> contacts)
         {
             contactsViewModel.UpdateContacts(contacts);
@@ -96,6 +98,12 @@ namespace AutoJobSearchGUI.ViewModels
             ContentViewModel = jobSearchViewModel;
         }
 
+        public void ChangeViewToJobListing(int jobListingId)
+        {
+            jobListingViewModel.OpenJobListingByIdCommand.ExecuteAsync(jobListingId).Wait(); // TODO: ensure consistency with other views
+            ContentViewModel = jobListingViewModel;
+        }
+
         public void ChangeViewToJobListing(JobListingModel jobListing, IEnumerable<JobListingModel> jobListings)
         {
             jobListingViewModel.PopulateJobListingsCommand.Execute(jobListings);
@@ -109,6 +117,7 @@ namespace AutoJobSearchGUI.ViewModels
             jobBoardViewModel.OpenJobListingViewRequest += ChangeViewToJobListing;
             contactsViewModel.OpenAddContactViewRequest += ChangeViewToAddContact;
             addContactViewModel.OpenContactsViewRequest += ChangeViewToContacts;
+            addContactViewModel.OpenJobListingViewRequest += ChangeViewToJobListing;
             addContactViewModel.UpdateContactsRequest += UpdateContacts;
         }
 

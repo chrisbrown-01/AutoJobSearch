@@ -19,6 +19,9 @@ namespace AutoJobSearchGUI.ViewModels
     {
         private readonly IDbContext _dbContext;
 
+        public delegate void OpenJobListingViewHandler(int jobListingId);
+        public event OpenJobListingViewHandler? OpenJobListingViewRequest;
+
         public delegate void UpdateContactsHandler(IEnumerable<ContactModel> contacts);
         public event UpdateContactsHandler? UpdateContactsRequest;
 
@@ -38,6 +41,12 @@ namespace AutoJobSearchGUI.ViewModels
 
         [ObservableProperty]
         private IEnumerable<string> _contacts_Titles = default!;
+
+        [ObservableProperty]
+        private object _selectedJobListingId = new();
+
+        [ObservableProperty]
+        private bool _isNavigateToJobButtonEnabled;
 
         public AddContactViewModel(IDbContext dbContext)
         {
@@ -81,16 +90,22 @@ namespace AutoJobSearchGUI.ViewModels
         }
 
         [RelayCommand]
-        private void OpenJobListing(int jobId)
+        private void OpenJobListing()
         {
-            var test = jobId;
-            // TODO: implement
+            if (SelectedJobListingId is not int || SelectedJobListingId is null) return;
+            if ((int)SelectedJobListingId < 1) return;
+
+            // TODO: remove?
+            DisableOnChangedEvents(Contact);
+            OpenJobListingViewRequest?.Invoke((int)SelectedJobListingId);
+            SelectedJobListingId = -1; // Set to invalid number so the currently selected integer does not erroneously persist.
         }
 
         [RelayCommand]
         private void OpenContact(ContactModel contact)
         {
             Contact = contact;
+            IsNavigateToJobButtonEnabled = Contact.JobListingIds.Any();
             EnableOnChangedEvents(Contact);
         }
 

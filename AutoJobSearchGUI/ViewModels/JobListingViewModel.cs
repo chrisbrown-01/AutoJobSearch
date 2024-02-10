@@ -1,4 +1,5 @@
 ﻿using AutoJobSearchGUI.Data;
+using AutoJobSearchGUI.Helpers;
 using AutoJobSearchGUI.Models;
 using AutoJobSearchShared;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -79,7 +80,19 @@ namespace AutoJobSearchGUI.ViewModels
             await OpenJobListingAsync(JobListings[nextIndex]);
         }
 
-        // TODO: create another method that takes jobListing.Id argument instead?
+        // TODO: check for all .wait() statements and ensure they are properly used
+        [RelayCommand]
+        private async Task OpenJobListingByIdAsync(int jobListingId)
+        {
+            if (JobListings is null || !JobListings.Any())
+            {
+                JobListings = JobListingHelpers.ConvertJobListingsToJobListingModels(await _dbContext.GetAllJobListingsAsync());
+            }
+
+            JobListing = JobListings.Single(x => x.Id == jobListingId);
+            await OpenJobListingCommand.ExecuteAsync(JobListing);
+        }
+
         [RelayCommand]
         private async Task OpenJobListingAsync(JobListingModel jobListing)
         {
