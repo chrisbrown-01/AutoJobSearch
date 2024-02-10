@@ -100,7 +100,6 @@ namespace AutoJobSearchGUI.ViewModels
             }
         }
 
-        // TODO: need to be able to navigate back to the job listing after it has been created
         [RelayCommand]
         private async Task CreateNewContactAsync(int? jobId)
         {
@@ -125,10 +124,9 @@ namespace AutoJobSearchGUI.ViewModels
             if (SelectedJobListingId is not int || SelectedJobListingId is null) return;
             if ((int)SelectedJobListingId < 1) return;
 
-            // TODO: remove?
             DisableOnChangedEvents(Contact);
             OpenJobListingViewRequest?.Invoke((int)SelectedJobListingId);
-            SelectedJobListingId = -1; // Set to invalid number so the currently selected integer does not erroneously persist.
+            SelectedJobListingId = -1; // Set to invalid number so the currently selected integer does not persist by accident.
         }
 
         [RelayCommand]

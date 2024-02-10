@@ -80,7 +80,6 @@ namespace AutoJobSearchGUI.ViewModels
             await OpenJobListingAsync(JobListings[nextIndex]);
         }
 
-        // TODO: check for all .wait() statements and ensure they are properly used
         [RelayCommand]
         private async Task OpenJobListingByIdAsync(int jobListingId)
         {

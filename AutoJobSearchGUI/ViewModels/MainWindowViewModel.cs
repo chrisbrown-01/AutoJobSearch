@@ -100,7 +100,7 @@ namespace AutoJobSearchGUI.ViewModels
 
         public void ChangeViewToJobListing(int jobListingId)
         {
-            jobListingViewModel.OpenJobListingByIdCommand.ExecuteAsync(jobListingId).Wait(); // TODO: ensure consistency with other views
+            jobListingViewModel.OpenJobListingByIdCommand.ExecuteAsync(jobListingId).Wait();
             ContentViewModel = jobListingViewModel;
         }
 

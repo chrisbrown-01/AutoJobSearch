@@ -16,7 +16,6 @@ namespace AutoJobSearchGUI.Models
 
         public DateTime CreatedAt { get; set; }
 
-        // TODO: sql uppdates when this list changes
         [ObservableProperty]
         private List<int> _jobListingIds = new();
 

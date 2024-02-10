@@ -77,7 +77,7 @@ namespace AutoJobSearchGUI.ViewModels
             PageIndex = 0; 
             PageSize = 50; // TODO: allow customization
 
-            RenderDefaultContactsViewAsync().Wait();
+            RenderDefaultContactsViewCommand.Execute(null);
         }
 
         public void UpdateContacts(IEnumerable<ContactModel> contacts)

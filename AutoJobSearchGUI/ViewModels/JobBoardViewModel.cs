@@ -58,7 +58,7 @@ namespace AutoJobSearchGUI.ViewModels
             PageIndex = 0;
             PageSize = 50;
 
-            RenderDefaultJobBoardViewAsync().Wait();
+            RenderDefaultJobBoardViewCommand.Execute(null);
         }
 
         [RelayCommand]
