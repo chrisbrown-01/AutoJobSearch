@@ -1,4 +1,5 @@
 ﻿using AutoJobSearchGUI.Data;
+using AutoJobSearchGUI.Helpers;
 using AutoJobSearchGUI.Models;
 using AutoJobSearchShared.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -31,6 +32,9 @@ namespace AutoJobSearchGUI.ViewModels
             ConfigureSerilog();
 
             dbContext = new DbContext();
+
+            InitializeSingletons();
+          
             jobBoardViewModel = new JobBoardViewModel(dbContext);
             jobSearchViewModel = new JobSearchViewModel(dbContext);
             jobListingViewModel = new JobListingViewModel(dbContext);
@@ -41,6 +45,17 @@ namespace AutoJobSearchGUI.ViewModels
             ContentViewModel = jobBoardViewModel;
 
             SubscribeToEvents();
+        }
+
+        private void InitializeSingletons()
+        {
+            Singletons.JobListings = GetAllJobListings().Result;
+        }
+
+        private async Task<List<JobListingModel>> GetAllJobListings()
+        {
+            var jobs = await dbContext.GetAllJobListingsAsync();
+            return JobListingHelpers.ConvertJobListingsToJobListingModels(jobs);
         }
 
         public void Dispose()
@@ -104,9 +119,8 @@ namespace AutoJobSearchGUI.ViewModels
             ContentViewModel = jobListingViewModel;
         }
 
-        public void ChangeViewToJobListing(JobListingModel jobListing, IEnumerable<JobListingModel> jobListings)
+        public void ChangeViewToJobListing(JobListingModel jobListing)
         {
-            jobListingViewModel.PopulateJobListingsCommand.Execute(jobListings);
             jobListingViewModel.OpenJobListingCommand.ExecuteAsync(jobListing).Wait();
             ContentViewModel = jobListingViewModel;
         }

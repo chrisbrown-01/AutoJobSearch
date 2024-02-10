@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace AutoJobSearchGUI.ViewModels
 {
+    // TODO: update help contents
     public partial class HelpViewModel : ViewModelBase // Needs to be public for View previewer to work
     {
         public static string AboutThisProject => "This project was built in October 2023 as a tool to help automate my job search. " +
