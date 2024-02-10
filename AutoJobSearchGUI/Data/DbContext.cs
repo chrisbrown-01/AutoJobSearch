@@ -157,5 +157,17 @@ namespace AutoJobSearchGUI.Data
             Log.Information("Deleting all contacts from database.");
             await _dbContext.DeleteAllContactsAsync();
         }
+
+        public async Task<IEnumerable<ContactAssociatedJobId>> GetAllContactsAssociatedJobIdsAsync()
+        {
+            Log.Information("Getting all contacts associated job IDs from database.");
+            return await _dbContext.GetAllContactsAssociatedJobIdsAsync();
+        }
+
+        public async Task<ContactAssociatedJobId> CreateContactAssociatedJobId(int contactId, int jobId)
+        {
+            Log.Information("Creating contact associated job ID record for contact ID {@contactId} and job ID {@jobId}.", contactId, jobId);
+            return await _dbContext.CreateContactAssociatedJobId(contactId, jobId);
+        }
     }
 }

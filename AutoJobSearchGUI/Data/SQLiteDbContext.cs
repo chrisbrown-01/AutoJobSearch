@@ -19,6 +19,11 @@ namespace AutoJobSearchGUI.Data
             _sqliteDb = new SQLiteDb();
         }
 
+        public async Task<ContactAssociatedJobId> CreateContactAssociatedJobId(int contactId, int jobId)
+        {
+            return await _sqliteDb.CreateContactAssociatedJobId(contactId, jobId);
+        }
+
         public async Task<JobSearchProfile> CreateJobSearchProfileAsync(JobSearchProfile profile)
         {
             return await _sqliteDb.CreateJobSearchProfileAsync(profile);
@@ -63,6 +68,11 @@ namespace AutoJobSearchGUI.Data
             bool isFavourite)
         {
             return await _sqliteDb.ExecuteJobListingQueryAsync(columnFiltersEnabled, isAppliedTo, isInterviewing, isRejected, isFavourite);
+        }
+
+        public async Task<IEnumerable<ContactAssociatedJobId>> GetAllContactsAssociatedJobIdsAsync()
+        {
+            return await _sqliteDb.GetAllContactsAssociatedJobIdsAsync();
         }
 
         public async Task<IEnumerable<Contact>> GetAllContactsAsync()

@@ -15,8 +15,6 @@ namespace AutoJobSearchShared.Models
 
         public int Id { get; }
 
-        public int? JobListingId { get; set; } // TODO: figure out multiple linked jobs
-
         public DateTime CreatedAt { get; } = DateTime.Now;
 
         public string Company { get; set; } = string.Empty;

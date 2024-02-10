@@ -3,6 +3,7 @@ using AutoJobSearchShared.Models;
 using Dapper;
 using Microsoft.Data.Sqlite;
 using System.Text;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace AutoJobSearchShared.Database
 {
@@ -30,6 +31,8 @@ namespace AutoJobSearchShared.Database
 
         public void CreateTables()
         {
+            connection.Execute("PRAGMA foreign_keys = ON;");
+
             const string createJobListingsTableSQL = "CREATE TABLE JobListings (" +
                 "Id INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "SearchTerm TEXT," +
@@ -48,10 +51,10 @@ namespace AutoJobSearchShared.Database
 
             const string createApplicationLinksTableSQL = "CREATE TABLE ApplicationLinks (" +
                  "Id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                 "JobListingId INTEGER," +
+                 "JobListingId INTEGER NOT NULL," +
                  "Link TEXT," +
                  "Link_RawHTML TEXT," +
-                 "FOREIGN KEY(JobListingId) REFERENCES JobListings(Id))";
+                 "FOREIGN KEY(JobListingId) REFERENCES JobListings(Id) ON DELETE CASCADE)";
 
             connection.Execute(createApplicationLinksTableSQL);
 
@@ -68,7 +71,6 @@ namespace AutoJobSearchShared.Database
 
             const string createContactsTableSQL = "CREATE TABLE Contacts (" +
                 "Id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "JobListingId INTEGER," +
                 "CreatedAt TEXT," +
                 "Company TEXT," +
                 "Location TEXT," +
@@ -80,6 +82,15 @@ namespace AutoJobSearchShared.Database
                 "Notes TEXT)";
 
             connection.Execute(createContactsTableSQL);
+
+            const string createContactsAssociatedJobIdTableSQL = "CREATE TABLE ContactsAssociatedJobIds (" +
+                "Id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "ContactId INTEGER NOT NULL," +
+                "JobListingId INTEGER NOT NULL," +
+                "FOREIGN KEY (ContactId) REFERENCES Contacts(Id) ON DELETE CASCADE," +
+                "FOREIGN KEY (JobListingId) REFERENCES JobListings(Id) ON DELETE CASCADE)";
+
+            connection.Execute(createContactsAssociatedJobIdTableSQL);
         }
 
         public async Task DeleteAllJobListingsAsync()
@@ -391,7 +402,6 @@ namespace AutoJobSearchShared.Database
         public async Task<IEnumerable<Contact>> GetAllContactsAsync()
         {
             const string sql = "SELECT * FROM Contacts";
-
             return await connection.QueryAsync<Contact>(sql).ConfigureAwait(false);
         }
 
@@ -399,7 +409,6 @@ namespace AutoJobSearchShared.Database
         {
             const string sql = 
                 "INSERT INTO Contacts (" +
-                "JobListingId, " +
                 "CreatedAt, " +
                 "Company, " +
                 "Location, " +
@@ -410,7 +419,6 @@ namespace AutoJobSearchShared.Database
                 "LinkedIn, " +
                 "Notes" +
                 ") VALUES (" +
-                "@JobListingId, " +
                 "@CreatedAt, " +
                 "@Company, " +
                 "@Location, " +
@@ -441,6 +449,26 @@ namespace AutoJobSearchShared.Database
         {
             const string sql = "DELETE FROM Contacts;";
             await connection.ExecuteAsync(sql).ConfigureAwait(false);
+        }
+
+        public async Task<IEnumerable<ContactAssociatedJobId>> GetAllContactsAssociatedJobIdsAsync()
+        {
+            const string sql = "SELECT * FROM ContactsAssociatedJobIds";
+            return await connection.QueryAsync<ContactAssociatedJobId>(sql).ConfigureAwait(false);
+        }
+
+        public async Task<ContactAssociatedJobId> CreateContactAssociatedJobId(int contactId, int jobId)
+        {
+            const string sql =
+                "INSERT INTO ContactsAssociatedJobIds (" +
+                "ContactId, " +
+                "JobListingId " +
+                ") VALUES (" +
+                "@ContactId, " +
+                "@JobListingId);" +
+                "SELECT * FROM ContactsAssociatedJobIds WHERE Id = last_insert_rowid();";
+
+            return await connection.QuerySingleAsync<ContactAssociatedJobId>(sql, new { ContactId = contactId, JobListingId = jobId }).ConfigureAwait(false);
         }
     }
 }

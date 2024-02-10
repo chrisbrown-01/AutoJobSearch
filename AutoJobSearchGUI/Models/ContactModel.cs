@@ -14,9 +14,11 @@ namespace AutoJobSearchGUI.Models
     {
         public int Id { get; set; }
 
-        public int? JobListingId { get; set; } // TODO: figure out multiple linked jobs and how to modify
-
         public DateTime CreatedAt { get; set; }
+
+        // TODO: sql uppdates when this list changes
+        [ObservableProperty]
+        private List<int> _jobListingIds = new();
 
         [ObservableProperty]
         private string _company = string.Empty;

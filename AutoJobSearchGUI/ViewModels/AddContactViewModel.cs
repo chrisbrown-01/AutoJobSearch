@@ -65,30 +65,23 @@ namespace AutoJobSearchGUI.ViewModels
 
         // TODO: need to be able to navigate back to the job listing after it has been created
         [RelayCommand]
-        private async Task CreateNewContactAsync(int? jobId) 
+        private async Task CreateNewContactAsync(int? jobId)
         {
+            var newContact = await _dbContext.CreateNewContactAsync(new Contact());
+
             if (jobId is null)
             {
-                var newContact = await _dbContext.CreateNewContactAsync(new Contact());
                 var newContactModel = ConvertContactToContactModel(newContact);
-
                 Contacts.Add(newContactModel);
-
                 UpdateContactsRequest?.Invoke(Contacts);
-
                 OpenContact(newContactModel);
             }
-
-            // TODO: consolidate so less code duplication
             else
-            {
-                var newContact = await _dbContext.CreateNewContactAsync(new Contact() { JobListingId = jobId }); 
-                var newContactModel = ConvertContactToContactModel(newContact);
-
+            {                              
+                var associatedJobIdRecord = await _dbContext.CreateContactAssociatedJobId(newContact.Id, jobId.Value);               
+                var newContactModel = ConvertContactToContactModel(newContact, new List<int> { associatedJobIdRecord.JobListingId });
                 Contacts.Add(newContactModel);
-
                 UpdateContactsRequest?.Invoke(Contacts);
-
                 OpenContact(newContactModel);
             }
         }
@@ -177,10 +170,28 @@ namespace AutoJobSearchGUI.ViewModels
 
         private static ContactModel ConvertContactToContactModel(Contact contact)
         {
+            // TODO: need to create JobIds list somehow
             return new ContactModel()
             {
                 Id = contact.Id,
-                JobListingId = contact.JobListingId,
+                CreatedAt = contact.CreatedAt,
+                Company = contact.Company,
+                Location = contact.Location,
+                Name = contact.Name,
+                Title = contact.Title,
+                Email = contact.Email,
+                Phone = contact.Phone,
+                LinkedIn = contact.LinkedIn,
+                Notes = contact.Notes
+            };
+        }
+
+        private static ContactModel ConvertContactToContactModel(Contact contact, IEnumerable<int> associatedJobIds)
+        {
+            return new ContactModel()
+            {
+                Id = contact.Id,
+                JobListingIds = associatedJobIds.ToList(),
                 CreatedAt = contact.CreatedAt,
                 Company = contact.Company,
                 Location = contact.Location,
@@ -213,8 +224,9 @@ namespace AutoJobSearchGUI.ViewModels
 
         private async Task<List<ContactModel>> GetAllContactModelsAsync()
         {
-            var allContacts = await _dbContext.GetAllContactsAsync();
-            return ContactsHelpers.ConvertContactsToContactModels(allContacts);
+            var contacts = await _dbContext.GetAllContactsAsync();
+            var contactsAssociatedJobIds = await _dbContext.GetAllContactsAssociatedJobIdsAsync();
+            return ContactsHelpers.ConvertContactsToContactModels(contacts, contactsAssociatedJobIds);
         }
     }
 }

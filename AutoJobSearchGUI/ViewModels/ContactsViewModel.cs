@@ -104,14 +104,7 @@ namespace AutoJobSearchGUI.ViewModels
         private async Task ExecuteQueryAsync()
         {
             var contacts = await _dbContext.GetAllContactsAsync();
-
-            if (ContactsQueryModel.JobIdEqualsEnabled)
-            {
-                if(ContactsQueryModel.JobIdEquals is not null)
-                {
-                    contacts = contacts.Where(x => x.JobListingId == ContactsQueryModel.JobIdEquals);
-                }           
-            }
+            var contactsAssociatedJobIds = await _dbContext.GetAllContactsAssociatedJobIdsAsync();
 
             if (ContactsQueryModel.EmailQueryStringEnabled)
             {
@@ -230,17 +223,6 @@ namespace AutoJobSearchGUI.ViewModels
                     contacts = contacts.OrderBy(x => x.LinkedIn);
                 }
             }
-            else if (ContactsQueryModel.SortByJobId)
-            {
-                if (ContactsQueryModel.OrderByDescending)
-                {
-                    contacts = contacts.OrderByDescending(x => x.JobListingId);
-                }
-                else
-                {
-                    contacts = contacts.OrderBy(x => x.JobListingId);
-                }
-            }
             else
             {
                 if (ContactsQueryModel.OrderByDescending)
@@ -254,7 +236,7 @@ namespace AutoJobSearchGUI.ViewModels
             }
 
             PageIndex = 0;
-            Contacts = ContactsHelpers.ConvertContactsToContactModels(contacts);
+            Contacts = ContactsHelpers.ConvertContactsToContactModels(contacts, contactsAssociatedJobIds);
             ContactsDisplayed = Contacts.Skip(PageIndex * PageSize).Take(PageSize).ToList();
         }
 
@@ -320,8 +302,9 @@ namespace AutoJobSearchGUI.ViewModels
 
         private async Task<List<ContactModel>> GetAllContactModelsAsync()
         {
-            var allContacts = await _dbContext.GetAllContactsAsync();
-            return ContactsHelpers.ConvertContactsToContactModels(allContacts);
+            var contacts = await _dbContext.GetAllContactsAsync();
+            var contactsAssociatedJobIds = await _dbContext.GetAllContactsAssociatedJobIdsAsync();
+            return ContactsHelpers.ConvertContactsToContactModels(contacts, contactsAssociatedJobIds);
         }
     }
 }

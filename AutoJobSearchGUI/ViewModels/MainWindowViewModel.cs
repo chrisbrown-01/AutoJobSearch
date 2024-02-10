@@ -39,6 +39,7 @@ namespace AutoJobSearchGUI.ViewModels
             helpViewModel = new HelpViewModel();
             ContentViewModel = jobBoardViewModel;
 
+            // TODO: unsubscribe in disposal method
             jobListingViewModel.OpenAddContactViewWithAssociatedJobIdRequest += ChangeViewToAddContact_WithAssociatedJobId;
             jobBoardViewModel.OpenJobListingViewRequest += ChangeViewToJobListing;
             contactsViewModel.OpenAddContactViewRequest += ChangeViewToAddContact;
@@ -77,12 +78,12 @@ namespace AutoJobSearchGUI.ViewModels
             ContentViewModel = addContactViewModel;
         }
 
-        public void ChangeViewToAddContact_WithAssociatedJobId(int id)
+        public void ChangeViewToAddContact_WithAssociatedJobId(int jobId)
         {
             // TODO: ensure consistency with overall contacts view 
             addContactViewModel.PopulateContactsCommand.Execute(null);
 
-            addContactViewModel.CreateNewContactCommand.Execute(id);
+            addContactViewModel.CreateNewContactCommand.Execute(jobId);
 
             ContentViewModel = addContactViewModel;
         }

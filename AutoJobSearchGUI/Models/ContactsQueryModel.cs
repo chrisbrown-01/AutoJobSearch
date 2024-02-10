@@ -31,9 +31,6 @@ namespace AutoJobSearchGUI.Models
         private bool _sortByLinkedIn = false;
 
         [ObservableProperty]
-        private bool _sortByJobId = false;
-
-        [ObservableProperty]
         private bool _orderByDescending = false;
 
         [ObservableProperty]
@@ -83,11 +80,5 @@ namespace AutoJobSearchGUI.Models
 
         [ObservableProperty]
         private string _notesQueryString = string.Empty;
-
-        [ObservableProperty]
-        private bool _jobIdEqualsEnabled = false;
-
-        [ObservableProperty]
-        private int? _jobIdEquals = 1;
     }
 }
