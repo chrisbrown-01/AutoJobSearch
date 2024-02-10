@@ -10,7 +10,6 @@ namespace AutoJobSearchGUI.Helpers
 {
     internal static class ContactsHelpers
     {
-        // TODO: add all contactassociatedjobIds enumerable as an argument here?
         internal static List<ContactModel> ConvertContactsToContactModels(
             IEnumerable<Contact> contacts, 
             IEnumerable<ContactAssociatedJobId> contactsAssociatedJobIds)
@@ -33,7 +32,6 @@ namespace AutoJobSearchGUI.Helpers
                     Notes = contact.Notes
                 };
 
-                // TODO: debug
                 contactModel.JobListingIds = contactsAssociatedJobIds.Where(x => x.ContactId == contactModel.Id).Select(x => x.JobListingId).ToList();
 
                 contactModels.Add(contactModel);

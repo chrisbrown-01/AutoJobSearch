@@ -184,7 +184,7 @@
 				Margin="20 10"/>
 			<Menu Grid.Row="8" Grid.Column="1">
 				<MenuItem Header="Navigate to Associated Job IDs">
-					<ItemsControl ItemsSource="{Binding TestIntegerFields}">
+					<ItemsControl ItemsSource="{Binding Contact.JobListingIds}">
 						<ItemsControl.ItemTemplate>
 							<DataTemplate>
 								<Button

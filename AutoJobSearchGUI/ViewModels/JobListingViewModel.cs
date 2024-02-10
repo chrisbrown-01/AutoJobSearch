@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 
 namespace AutoJobSearchGUI.ViewModels
 {
+    // TODO: add delete listing method. note that you will need to ensure consistency with the contact-job-id records that cascade delete
     public partial class JobListingViewModel : ViewModelBase // Needs to be public for View previewer to work
     {
         public delegate void OpenAddContactViewWithAssociatedJobIdHandler(int id);
@@ -46,7 +47,7 @@ namespace AutoJobSearchGUI.ViewModels
         [RelayCommand]
         private void AddAssociatedContact()
         {
-            DisableOnChangedEvents(JobListing); // TODO: necessary?
+            DisableOnChangedEvents(JobListing); // TODO: necessary? need to be able to navigate back to job listing, but this can probably be completed via OpenJobListing command
             OpenAddContactViewWithAssociatedJobIdRequest?.Invoke(JobListing.Id);
         }
 
@@ -78,6 +79,7 @@ namespace AutoJobSearchGUI.ViewModels
             await OpenJobListingAsync(JobListings[nextIndex]);
         }
 
+        // TODO: create another method that takes jobListing.Id argument instead?
         [RelayCommand]
         private async Task OpenJobListingAsync(JobListingModel jobListing)
         {

@@ -39,8 +39,6 @@ namespace AutoJobSearchGUI.ViewModels
         [ObservableProperty]
         private IEnumerable<string> _contacts_Titles = default!;
 
-        public List<int> TestIntegerFields => new List<int>() { 1, 2, 3 };
-
         public AddContactViewModel(IDbContext dbContext)
         {
             _dbContext = dbContext;
@@ -68,27 +66,24 @@ namespace AutoJobSearchGUI.ViewModels
         private async Task CreateNewContactAsync(int? jobId)
         {
             var newContact = await _dbContext.CreateNewContactAsync(new Contact());
+            List<int> jobIds = new();
 
-            if (jobId is null)
+            if (jobId is not null)
             {
-                var newContactModel = ConvertContactToContactModel(newContact);
-                Contacts.Add(newContactModel);
-                UpdateContactsRequest?.Invoke(Contacts);
-                OpenContact(newContactModel);
+                var associatedJobIdRecord = await _dbContext.CreateContactAssociatedJobId(newContact.Id, jobId.Value);
+                jobIds.Add(associatedJobIdRecord.JobListingId);
             }
-            else
-            {                              
-                var associatedJobIdRecord = await _dbContext.CreateContactAssociatedJobId(newContact.Id, jobId.Value);               
-                var newContactModel = ConvertContactToContactModel(newContact, new List<int> { associatedJobIdRecord.JobListingId });
-                Contacts.Add(newContactModel);
-                UpdateContactsRequest?.Invoke(Contacts);
-                OpenContact(newContactModel);
-            }
+
+            var newContactModel = ConvertContactToContactModel(newContact, jobIds);
+            Contacts.Add(newContactModel);
+            UpdateContactsRequest?.Invoke(Contacts);
+            OpenContact(newContactModel);
         }
 
         [RelayCommand]
         private void OpenJobListing(int jobId)
         {
+            var test = jobId;
             // TODO: implement
         }
 
@@ -166,24 +161,6 @@ namespace AutoJobSearchGUI.ViewModels
             {
                 OpenContactsViewRequest?.Invoke(); // Return to Contacts view if no contacts are available to display.
             }
-        }
-
-        private static ContactModel ConvertContactToContactModel(Contact contact)
-        {
-            // TODO: need to create JobIds list somehow
-            return new ContactModel()
-            {
-                Id = contact.Id,
-                CreatedAt = contact.CreatedAt,
-                Company = contact.Company,
-                Location = contact.Location,
-                Name = contact.Name,
-                Title = contact.Title,
-                Email = contact.Email,
-                Phone = contact.Phone,
-                LinkedIn = contact.LinkedIn,
-                Notes = contact.Notes
-            };
         }
 
         private static ContactModel ConvertContactToContactModel(Contact contact, IEnumerable<int> associatedJobIds)

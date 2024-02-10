@@ -39,16 +39,12 @@ namespace AutoJobSearchGUI.ViewModels
             helpViewModel = new HelpViewModel();
             ContentViewModel = jobBoardViewModel;
 
-            // TODO: unsubscribe in disposal method
-            jobListingViewModel.OpenAddContactViewWithAssociatedJobIdRequest += ChangeViewToAddContact_WithAssociatedJobId;
-            jobBoardViewModel.OpenJobListingViewRequest += ChangeViewToJobListing;
-            contactsViewModel.OpenAddContactViewRequest += ChangeViewToAddContact;
-            addContactViewModel.OpenContactsViewRequest += ChangeViewToContacts;
-            addContactViewModel.UpdateContactsRequest += UpdateContacts;
+            SubscribeToEvents();
         }
 
         public void Dispose()
         {
+            UnsubscribeFromEvents();
             dbContext.Dispose();
         }
 
@@ -80,11 +76,8 @@ namespace AutoJobSearchGUI.ViewModels
 
         public void ChangeViewToAddContact_WithAssociatedJobId(int jobId)
         {
-            // TODO: ensure consistency with overall contacts view 
             addContactViewModel.PopulateContactsCommand.Execute(null);
-
             addContactViewModel.CreateNewContactCommand.Execute(jobId);
-
             ContentViewModel = addContactViewModel;
         }
 
@@ -108,6 +101,24 @@ namespace AutoJobSearchGUI.ViewModels
             jobListingViewModel.PopulateJobListingsCommand.Execute(jobListings);
             jobListingViewModel.OpenJobListingCommand.ExecuteAsync(jobListing).Wait();
             ContentViewModel = jobListingViewModel;
+        }
+
+        private void SubscribeToEvents()
+        {
+            jobListingViewModel.OpenAddContactViewWithAssociatedJobIdRequest += ChangeViewToAddContact_WithAssociatedJobId;
+            jobBoardViewModel.OpenJobListingViewRequest += ChangeViewToJobListing;
+            contactsViewModel.OpenAddContactViewRequest += ChangeViewToAddContact;
+            addContactViewModel.OpenContactsViewRequest += ChangeViewToContacts;
+            addContactViewModel.UpdateContactsRequest += UpdateContacts;
+        }
+
+        private void UnsubscribeFromEvents()
+        {
+            jobListingViewModel.OpenAddContactViewWithAssociatedJobIdRequest -= ChangeViewToAddContact_WithAssociatedJobId;
+            jobBoardViewModel.OpenJobListingViewRequest -= ChangeViewToJobListing;
+            contactsViewModel.OpenAddContactViewRequest -= ChangeViewToAddContact;
+            addContactViewModel.OpenContactsViewRequest -= ChangeViewToContacts;
+            addContactViewModel.UpdateContactsRequest -= UpdateContacts;
         }
 
         private void ConfigureSerilog()
