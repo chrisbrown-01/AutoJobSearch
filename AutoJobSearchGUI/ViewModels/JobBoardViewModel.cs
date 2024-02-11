@@ -20,13 +20,11 @@ namespace AutoJobSearchGUI.ViewModels
     // TODO: rename view properties so that "string" isn't included
     public partial class JobBoardViewModel : ViewModelBase // Needs to be public for View previewer to work
     {
-        public delegate void OpenJobListingViewHandler(JobListingModel job, IEnumerable<JobListingModel> jobListings);
+        public delegate void OpenJobListingViewHandler(JobListingModel job);
         public event OpenJobListingViewHandler? OpenJobListingViewRequest;
 
         [ObservableProperty]
         private JobBoardQueryModel _jobBoardQueryModel;
-
-        private List<JobListingModel> JobListings { get; set; } = default!;
 
         [ObservableProperty]
         private List<JobListingModel> _jobListingsDisplayed = default!;
@@ -83,8 +81,8 @@ namespace AutoJobSearchGUI.ViewModels
         private async Task RenderDefaultJobBoardViewAsync()
         {
             PageIndex = 0;
-            JobListings = await GetAllJobListings(); // TODO: rename with async suffix
-            JobListingsDisplayed = JobListings.Skip(PageIndex * PageSize).Take(PageSize).ToList();
+            Singletons.JobListings = await GetAllJobListingsAsync(); 
+            JobListingsDisplayed = Singletons.JobListings.Skip(PageIndex * PageSize).Take(PageSize).ToList();
             EnableOnChangedEvents(JobListingsDisplayed);
 
             JobBoardQueryModel = new();
@@ -94,8 +92,8 @@ namespace AutoJobSearchGUI.ViewModels
         private async Task RenderHiddenJobsAsync()
         {
             PageIndex = 0;
-            JobListings = await GetHiddenJobListings();
-            JobListingsDisplayed = JobListings.Skip(PageIndex * PageSize).Take(PageSize).ToList();
+            Singletons.JobListings = await GetHiddenJobListingsAsync();
+            JobListingsDisplayed = Singletons.JobListings.Skip(PageIndex * PageSize).Take(PageSize).ToList();
             EnableOnChangedEvents(JobListingsDisplayed);
         }
 
@@ -103,8 +101,8 @@ namespace AutoJobSearchGUI.ViewModels
         private async Task RenderFavouriteJobsAsync()
         {
             PageIndex = 0;
-            JobListings = await GetFavouriteJobListings();
-            JobListingsDisplayed = JobListings.Skip(PageIndex * PageSize).Take(PageSize).ToList();
+            Singletons.JobListings = await GetFavouriteJobListingsAsync();
+            JobListingsDisplayed = Singletons.JobListings.Skip(PageIndex * PageSize).Take(PageSize).ToList();
             EnableOnChangedEvents(JobListingsDisplayed);
         }
 
@@ -205,8 +203,8 @@ namespace AutoJobSearchGUI.ViewModels
             }
 
             PageIndex = 0;
-            JobListings = JobListingHelpers.ConvertJobListingsToJobListingModels(result);
-            JobListingsDisplayed = JobListings.Skip(PageIndex * PageSize).Take(PageSize).ToList();
+            Singletons.JobListings = JobListingHelpers.ConvertJobListingsToJobListingModels(result);
+            JobListingsDisplayed = Singletons.JobListings.Skip(PageIndex * PageSize).Take(PageSize).ToList();
             EnableOnChangedEvents(JobListingsDisplayed);
         }
 
@@ -215,7 +213,7 @@ namespace AutoJobSearchGUI.ViewModels
         {
             if (SelectedJobListing == null) return;
             DisableOnChangedEvents(JobListingsDisplayed);
-            OpenJobListingViewRequest?.Invoke(SelectedJobListing, JobListings);
+            OpenJobListingViewRequest?.Invoke(SelectedJobListing);
         }
 
         [RelayCommand]
@@ -223,14 +221,14 @@ namespace AutoJobSearchGUI.ViewModels
         {
             if (SelectedJobListing == null) return;
             SelectedJobListing.IsHidden = true;
-            JobListings.Remove(SelectedJobListing);
+            Singletons.JobListings.Remove(SelectedJobListing);
             JobListingsDisplayed.Remove(SelectedJobListing);
         }
 
         [RelayCommand]
         private void GoToNextPage()
         {
-            var jobListings = JobListings.Skip((PageIndex + 1) * PageSize).Take(PageSize);
+            var jobListings = Singletons.JobListings.Skip((PageIndex + 1) * PageSize).Take(PageSize);
             if (!jobListings.Any()) return;
 
             DisableOnChangedEvents(JobListingsDisplayed);
@@ -246,7 +244,7 @@ namespace AutoJobSearchGUI.ViewModels
 
             DisableOnChangedEvents(JobListingsDisplayed);
             PageIndex--;
-            JobListingsDisplayed = JobListings.Skip(PageIndex * PageSize).Take(PageSize).ToList();
+            JobListingsDisplayed = Singletons.JobListings.Skip(PageIndex * PageSize).Take(PageSize).ToList();
             EnableOnChangedEvents(JobListingsDisplayed);
         }
 
@@ -274,19 +272,19 @@ namespace AutoJobSearchGUI.ViewModels
             }
         }
 
-        private async Task<List<JobListingModel>> GetFavouriteJobListings()
+        private async Task<List<JobListingModel>> GetFavouriteJobListingsAsync()
         {
             var jobs = await _dbContext.GetFavouriteJobListingsAsync();
             return JobListingHelpers.ConvertJobListingsToJobListingModels(jobs);
         }
 
-        private async Task<List<JobListingModel>> GetHiddenJobListings()
+        private async Task<List<JobListingModel>> GetHiddenJobListingsAsync()
         {
             var jobs = await _dbContext.GetHiddenJobListingsAsync();
             return JobListingHelpers.ConvertJobListingsToJobListingModels(jobs);
         }
 
-        private async Task<List<JobListingModel>> GetAllJobListings()
+        private async Task<List<JobListingModel>> GetAllJobListingsAsync()
         {
             var jobs = await _dbContext.GetAllJobListingsAsync();
             return JobListingHelpers.ConvertJobListingsToJobListingModels(jobs);

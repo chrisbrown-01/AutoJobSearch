@@ -19,8 +19,6 @@ namespace AutoJobSearchGUI.ViewModels
         public delegate void OpenAddContactViewWithAssociatedJobIdHandler(int id);
         public event OpenAddContactViewWithAssociatedJobIdHandler? OpenAddContactViewWithAssociatedJobIdRequest;
 
-        private List<JobListingModel> JobListings { get; set; } = default!;
-
         private readonly IDbContext _dbContext;
 
         [ObservableProperty]
@@ -40,12 +38,6 @@ namespace AutoJobSearchGUI.ViewModels
         }
 
         [RelayCommand]
-        private void PopulateJobListings(IEnumerable<JobListingModel> jobListings)
-        {
-            JobListings = jobListings.ToList();
-        }
-
-        [RelayCommand]
         private void AddAssociatedContact()
         {
             DisableOnChangedEvents(JobListing);
@@ -55,7 +47,7 @@ namespace AutoJobSearchGUI.ViewModels
         [RelayCommand]
         private async Task GoToPreviousJobAsync()
         {
-            var currentIndex = JobListings.IndexOf(JobListing);
+            var currentIndex = Singletons.JobListings.IndexOf(JobListing);
             if (currentIndex < 0) return;
 
             var previousIndex = currentIndex - 1;
@@ -63,32 +55,32 @@ namespace AutoJobSearchGUI.ViewModels
 
             DisableOnChangedEvents(JobListing);
 
-            await OpenJobListingAsync(JobListings[previousIndex]);
+            await OpenJobListingAsync(Singletons.JobListings[previousIndex]);
         }
 
         [RelayCommand]
         private async Task GoToNextJobAsync()
         {
-            var currentIndex = JobListings.IndexOf(JobListing);
+            var currentIndex = Singletons.JobListings.IndexOf(JobListing);
             if (currentIndex < 0) return;
 
             var nextIndex = currentIndex + 1;
-            if (nextIndex >= JobListings.Count) return;
+            if (nextIndex >= Singletons.JobListings.Count) return;
 
             DisableOnChangedEvents(JobListing);
 
-            await OpenJobListingAsync(JobListings[nextIndex]);
+            await OpenJobListingAsync(Singletons.JobListings[nextIndex]);
         }
 
         [RelayCommand]
         private async Task OpenJobListingByIdAsync(int jobListingId)
         {
-            if (JobListings is null || !JobListings.Any())
+            if (Singletons.JobListings is null || !Singletons.JobListings.Any())
             {
-                JobListings = JobListingHelpers.ConvertJobListingsToJobListingModels(await _dbContext.GetAllJobListingsAsync());
+                Singletons.JobListings = JobListingHelpers.ConvertJobListingsToJobListingModels(await _dbContext.GetAllJobListingsAsync());
             }
 
-            JobListing = JobListings.Single(x => x.Id == jobListingId);
+            JobListing = Singletons.JobListings.Single(x => x.Id == jobListingId);
             await OpenJobListingCommand.ExecuteAsync(JobListing);
         }
 
