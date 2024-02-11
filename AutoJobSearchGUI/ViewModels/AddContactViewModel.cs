@@ -22,13 +22,11 @@ namespace AutoJobSearchGUI.ViewModels
         public delegate void OpenJobListingViewHandler(int jobListingId);
         public event OpenJobListingViewHandler? OpenJobListingViewRequest;
 
-        public delegate void UpdateContactsHandler(IEnumerable<ContactModel> contacts);
-        public event UpdateContactsHandler? UpdateContactsRequest;
+        public delegate void UpdateContactsViewHandler();
+        public event UpdateContactsViewHandler? UpdateContactsViewRequest;
 
         public delegate void OpenContactsViewHandler();
         public event OpenContactsViewHandler? OpenContactsViewRequest;
-
-        private List<ContactModel> Contacts { get; set; } = default!;
 
         [ObservableProperty]
         private ContactModel _contact = default!;
@@ -54,23 +52,6 @@ namespace AutoJobSearchGUI.ViewModels
         }
 
         [RelayCommand]
-        private async Task PopulateContacts(IEnumerable<ContactModel>? contacts)
-        {
-            if(contacts is not null)
-            {
-                Contacts = contacts.ToList();
-            }
-            else
-            {
-                Contacts = await GetAllContactModelsAsync();
-            }            
-
-            Contacts_Companies = Contacts.Select(x => x.Company).Distinct();
-            Contacts_Locations = Contacts.Select(x => x.Location).Distinct();
-            Contacts_Titles = Contacts.Select(x => x.Title).Distinct();
-        }
-
-        [RelayCommand]
         private async Task CreateContactAssociatedJobIdAsync(string jobIdTextBoxInput)
         {
             if (Int32.TryParse(jobIdTextBoxInput, out int jobId))
@@ -85,6 +66,13 @@ namespace AutoJobSearchGUI.ViewModels
 
                 var associatedJobIdRecord = await _dbContext.CreateContactAssociatedJobIdAsync(Contact.Id, jobId);
                 Contact.JobListingIds.Add(associatedJobIdRecord.JobListingId);
+
+                // Re-open contact to ensure that "Navigate" button in the view functions properly.
+                // This still doesn't fix the bug where the user cannot immediately select a newly added item in the ListBox.
+                // I cannot fix this bug, and it seems the only way to resolve is when the user navigates to a new contact,
+                // which causes the JobIds in the list box to reset.
+                DisableOnChangedEvents(Contact);
+                OpenContact(Contact); 
             }
         }
 
@@ -97,6 +85,13 @@ namespace AutoJobSearchGUI.ViewModels
 
                 await _dbContext.DeleteContactAssociatedJobIdAsync(Contact.Id, jobId);
                 Contact.JobListingIds.Remove(jobId);
+
+                // Re-open contact to ensure that "Navigate" button in the view functions properly.
+                // This still doesn't fix the bug where the user cannot immediately select a newly added item in the ListBox.
+                // I cannot fix this bug, and it seems the only way to resolve is when the user navigates to a new contact,
+                // which causes the JobIds in the list box to reset.
+                DisableOnChangedEvents(Contact);
+                OpenContact(Contact); 
             }
         }
 
@@ -113,8 +108,9 @@ namespace AutoJobSearchGUI.ViewModels
             }
 
             var newContactModel = ConvertContactToContactModel(newContact, jobIds);
-            Contacts.Add(newContactModel);
-            UpdateContactsRequest?.Invoke(Contacts);
+            Singletons.Contacts.Add(newContactModel);
+            UpdateContactsViewRequest?.Invoke();
+
             OpenContact(newContactModel);
         }
 
@@ -133,14 +129,20 @@ namespace AutoJobSearchGUI.ViewModels
         private void OpenContact(ContactModel contact)
         {
             Contact = contact;
+
+            // Ensure controls in the view are up-to-date
             IsNavigateToJobButtonEnabled = Contact.JobListingIds.Any();
+            Contacts_Companies = Singletons.Contacts.Select(x => x.Company).Distinct();
+            Contacts_Locations = Singletons.Contacts.Select(x => x.Location).Distinct();
+            Contacts_Titles = Singletons.Contacts.Select(x => x.Title).Distinct();
+
             EnableOnChangedEvents(Contact);
         }
 
         [RelayCommand]
         private void GoToPreviousContact()
         {
-            var currentIndex = Contacts.IndexOf(Contact);
+            var currentIndex = Singletons.Contacts.IndexOf(Contact);
             if (currentIndex < 0) return;
 
             var previousIndex = currentIndex - 1;
@@ -148,21 +150,21 @@ namespace AutoJobSearchGUI.ViewModels
 
             DisableOnChangedEvents(Contact);
 
-            OpenContact(Contacts[previousIndex]);
+            OpenContact(Singletons.Contacts[previousIndex]);
         }
 
         [RelayCommand]
         private void GoToNextContact()
         {
-            var currentIndex = Contacts.IndexOf(Contact);
+            var currentIndex = Singletons.Contacts.IndexOf(Contact);
             if (currentIndex < 0) return;
 
             var nextIndex = currentIndex + 1;
-            if (nextIndex >= Contacts.Count) return;
+            if (nextIndex >= Singletons.Contacts.Count) return;
 
             DisableOnChangedEvents(Contact);
 
-            OpenContact(Contacts[nextIndex]);
+            OpenContact(Singletons.Contacts[nextIndex]);
         }
 
         [RelayCommand]
@@ -170,10 +172,10 @@ namespace AutoJobSearchGUI.ViewModels
         {            
             ContactModel? nextContactToDisplay;
 
-            var currentIndex = Contacts.IndexOf(Contact);
+            var currentIndex = Singletons.Contacts.IndexOf(Contact);
 
-            var nextContact = Contacts.ElementAtOrDefault(currentIndex + 1);
-            var previousContact = Contacts.ElementAtOrDefault(currentIndex - 1);
+            var nextContact = Singletons.Contacts.ElementAtOrDefault(currentIndex + 1);
+            var previousContact = Singletons.Contacts.ElementAtOrDefault(currentIndex - 1);
 
             if (nextContact != null) // Try to choose the next contact as the new one to display.
             {
@@ -191,10 +193,8 @@ namespace AutoJobSearchGUI.ViewModels
             DisableOnChangedEvents(Contact);
 
             await _dbContext.DeleteContactAsync(Contact.Id);
-
-            Contacts.Remove(Contact); 
-
-            UpdateContactsRequest?.Invoke(Contacts);
+            Singletons.Contacts.Remove(Contact);
+            UpdateContactsViewRequest?.Invoke();
 
             if (nextContactToDisplay != null)
             {
@@ -240,13 +240,6 @@ namespace AutoJobSearchGUI.ViewModels
         private void DisableOnChangedEvents(ContactModel contact)
         {
             contact.EnableEvents = false;
-        }
-
-        private async Task<List<ContactModel>> GetAllContactModelsAsync()
-        {
-            var contacts = await _dbContext.GetAllContactsAsync();
-            var contactsAssociatedJobIds = await _dbContext.GetAllContactsAssociatedJobIdsAsync();
-            return ContactsHelpers.ConvertContactsToContactModels(contacts, contactsAssociatedJobIds);
         }
     }
 }

@@ -7,8 +7,9 @@ using System.Threading.Tasks;
 
 namespace AutoJobSearchGUI
 {
-    internal class Singletons()
+    internal class Singletons
     {
         public static List<JobListingModel> JobListings { get; set; } = default!;
+        public static List<ContactModel> Contacts { get; set; } = default!;
     }
 }

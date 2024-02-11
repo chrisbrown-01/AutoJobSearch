@@ -17,10 +17,8 @@ namespace AutoJobSearchGUI.ViewModels
     {
         private readonly IDbContext _dbContext;
 
-        public delegate void OpenAddContactViewHandler(ContactModel? contact, IEnumerable<ContactModel> contacts);
+        public delegate void OpenAddContactViewHandler(ContactModel? contact);
         public event OpenAddContactViewHandler? OpenAddContactViewRequest;
-
-        private List<ContactModel> Contacts { get; set; } = default!;
 
         [ObservableProperty]
         private ContactsQueryModel _contactsQueryModel;
@@ -60,13 +58,13 @@ namespace AutoJobSearchGUI.ViewModels
 
         private void SetAutoCompleteBoxFields()
         {
-            Contacts_Companies = Contacts.Select(x => x.Company).Distinct();
-            Contacts_Locations = Contacts.Select(x => x.Location).Distinct();
-            Contacts_Names = Contacts.Select(x => x.Name).Distinct();
-            Contacts_Titles = Contacts.Select(x => x.Title).Distinct();
-            Contacts_Emails = Contacts.Select(x => x.Email).Distinct();
-            Contacts_Phones = Contacts.Select(x => x.Phone).Distinct();
-            Contacts_LinkedIns = Contacts.Select(x => x.LinkedIn).Distinct();
+            Contacts_Companies = Singletons.Contacts.Select(x => x.Company).Distinct();
+            Contacts_Locations = Singletons.Contacts.Select(x => x.Location).Distinct();
+            Contacts_Names = Singletons.Contacts.Select(x => x.Name).Distinct();
+            Contacts_Titles = Singletons.Contacts.Select(x => x.Title).Distinct();
+            Contacts_Emails = Singletons.Contacts.Select(x => x.Email).Distinct();
+            Contacts_Phones = Singletons.Contacts.Select(x => x.Phone).Distinct();
+            Contacts_LinkedIns = Singletons.Contacts.Select(x => x.LinkedIn).Distinct();
         }
 
         public ContactsViewModel(IDbContext dbContext)
@@ -80,10 +78,9 @@ namespace AutoJobSearchGUI.ViewModels
             RenderDefaultContactsViewCommand.Execute(null);
         }
 
-        public void UpdateContacts(IEnumerable<ContactModel> contacts)
+        public void UpdateContacts()
         {
-            Contacts = contacts.ToList();
-            ContactsDisplayed = Contacts.Skip(PageIndex * PageSize).Take(PageSize).ToList();
+            ContactsDisplayed = Singletons.Contacts.Skip(PageIndex * PageSize).Take(PageSize).ToList();
 
             SetAutoCompleteBoxFields();
         }
@@ -92,8 +89,8 @@ namespace AutoJobSearchGUI.ViewModels
         private async Task RenderDefaultContactsViewAsync()
         {
             PageIndex = 0;
-            Contacts = await GetAllContactModelsAsync();
-            ContactsDisplayed = Contacts.Skip(PageIndex * PageSize).Take(PageSize).ToList();
+            Singletons.Contacts = await GetAllContactModelsAsync();
+            ContactsDisplayed = Singletons.Contacts.Skip(PageIndex * PageSize).Take(PageSize).ToList();
 
             ContactsQueryModel = new();
 
@@ -236,21 +233,21 @@ namespace AutoJobSearchGUI.ViewModels
             }
 
             PageIndex = 0;
-            Contacts = ContactsHelpers.ConvertContactsToContactModels(contacts, contactsAssociatedJobIds);
-            ContactsDisplayed = Contacts.Skip(PageIndex * PageSize).Take(PageSize).ToList();
+            Singletons.Contacts = ContactsHelpers.ConvertContactsToContactModels(contacts, contactsAssociatedJobIds);
+            ContactsDisplayed = Singletons.Contacts.Skip(PageIndex * PageSize).Take(PageSize).ToList();
         }
 
         [RelayCommand]
         private void OpenContact()
         {
             if (SelectedContact == null) return;
-            OpenAddContactViewRequest?.Invoke(SelectedContact, Contacts);
+            OpenAddContactViewRequest?.Invoke(SelectedContact);
         }
 
         [RelayCommand]
         private void AddNewContact()
         {
-            OpenAddContactViewRequest?.Invoke(null, Contacts);
+            OpenAddContactViewRequest?.Invoke(null);
         }
 
         [RelayCommand]
@@ -259,7 +256,7 @@ namespace AutoJobSearchGUI.ViewModels
             if (SelectedContact == null) return;
 
             await _dbContext.DeleteContactAsync(SelectedContact.Id);
-            Contacts.Remove(SelectedContact); 
+            Singletons.Contacts.Remove(SelectedContact); 
             ContactsDisplayed.Remove(SelectedContact);
         }
 
@@ -284,7 +281,7 @@ namespace AutoJobSearchGUI.ViewModels
         [RelayCommand]
         private void GoToNextPage()
         {
-            var contacts = Contacts.Skip((PageIndex + 1) * PageSize).Take(PageSize);
+            var contacts = Singletons.Contacts.Skip((PageIndex + 1) * PageSize).Take(PageSize);
             if (!contacts.Any()) return;
 
             PageIndex++;
@@ -297,7 +294,7 @@ namespace AutoJobSearchGUI.ViewModels
             if (PageIndex - 1 < 0) return;
 
             PageIndex--;
-            ContactsDisplayed = Contacts.Skip(PageIndex * PageSize).Take(PageSize).ToList();
+            ContactsDisplayed = Singletons.Contacts.Skip(PageIndex * PageSize).Take(PageSize).ToList();
         }
 
         private async Task<List<ContactModel>> GetAllContactModelsAsync()

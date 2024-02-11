@@ -49,10 +49,18 @@ namespace AutoJobSearchGUI.ViewModels
 
         private void InitializeSingletons()
         {
-            Singletons.JobListings = GetAllJobListings().Result;
+            Singletons.JobListings = GetAllJobListingsAsync().Result;
+            Singletons.Contacts = GetAllContactsAsync().Result;
         }
 
-        private async Task<List<JobListingModel>> GetAllJobListings()
+        private async Task<List<ContactModel>> GetAllContactsAsync()
+        {
+            var contacts = await dbContext.GetAllContactsAsync();
+            var contactsAssociatedJobIds = await dbContext.GetAllContactsAssociatedJobIdsAsync();
+            return ContactsHelpers.ConvertContactsToContactModels(contacts, contactsAssociatedJobIds);
+        }
+
+        private async Task<List<JobListingModel>> GetAllJobListingsAsync()
         {
             var jobs = await dbContext.GetAllJobListingsAsync();
             return JobListingHelpers.ConvertJobListingsToJobListingModels(jobs);
@@ -64,10 +72,9 @@ namespace AutoJobSearchGUI.ViewModels
             dbContext.Dispose();
         }
 
-        // TODO: try and convert all to use static singleton objects and eliminate these methods
-        public void UpdateContacts(IEnumerable<ContactModel> contacts)
+        public void UpdateContacts()
         {
-            contactsViewModel.UpdateContacts(contacts);
+            contactsViewModel.UpdateContacts();
         }
 
         public void ChangeViewToContacts()
@@ -75,10 +82,8 @@ namespace AutoJobSearchGUI.ViewModels
             ContentViewModel = contactsViewModel;
         }
 
-        public void ChangeViewToAddContact(ContactModel? contact, IEnumerable<ContactModel> contacts)
+        public void ChangeViewToAddContact(ContactModel? contact)
         {
-            addContactViewModel.PopulateContactsCommand.Execute(contacts);
-
             if(contact is not null)
             {
                 addContactViewModel.OpenContactCommand.Execute(contact);
@@ -91,9 +96,9 @@ namespace AutoJobSearchGUI.ViewModels
             ContentViewModel = addContactViewModel;
         }
 
+        // TODO: convert to overloaded method instead of seperate method
         public void ChangeViewToAddContact_WithAssociatedJobId(int jobId)
         {
-            addContactViewModel.PopulateContactsCommand.Execute(null);
             addContactViewModel.CreateNewContactCommand.Execute(jobId);
             ContentViewModel = addContactViewModel;
         }
@@ -132,7 +137,7 @@ namespace AutoJobSearchGUI.ViewModels
             contactsViewModel.OpenAddContactViewRequest += ChangeViewToAddContact;
             addContactViewModel.OpenContactsViewRequest += ChangeViewToContacts;
             addContactViewModel.OpenJobListingViewRequest += ChangeViewToJobListing;
-            addContactViewModel.UpdateContactsRequest += UpdateContacts;
+            addContactViewModel.UpdateContactsViewRequest += UpdateContacts;
         }
 
         private void UnsubscribeFromEvents()
@@ -141,7 +146,7 @@ namespace AutoJobSearchGUI.ViewModels
             jobBoardViewModel.OpenJobListingViewRequest -= ChangeViewToJobListing;
             contactsViewModel.OpenAddContactViewRequest -= ChangeViewToAddContact;
             addContactViewModel.OpenContactsViewRequest -= ChangeViewToContacts;
-            addContactViewModel.UpdateContactsRequest -= UpdateContacts;
+            addContactViewModel.UpdateContactsViewRequest -= UpdateContacts;
         }
 
         private void ConfigureSerilog()

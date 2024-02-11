@@ -81,7 +81,7 @@ namespace AutoJobSearchGUI.ViewModels
         private async Task RenderDefaultJobBoardViewAsync()
         {
             PageIndex = 0;
-            Singletons.JobListings = await GetAllJobListings(); // TODO: rename with async suffix
+            Singletons.JobListings = await GetAllJobListingsAsync(); 
             JobListingsDisplayed = Singletons.JobListings.Skip(PageIndex * PageSize).Take(PageSize).ToList();
             EnableOnChangedEvents(JobListingsDisplayed);
 
@@ -92,7 +92,7 @@ namespace AutoJobSearchGUI.ViewModels
         private async Task RenderHiddenJobsAsync()
         {
             PageIndex = 0;
-            Singletons.JobListings = await GetHiddenJobListings();
+            Singletons.JobListings = await GetHiddenJobListingsAsync();
             JobListingsDisplayed = Singletons.JobListings.Skip(PageIndex * PageSize).Take(PageSize).ToList();
             EnableOnChangedEvents(JobListingsDisplayed);
         }
@@ -101,7 +101,7 @@ namespace AutoJobSearchGUI.ViewModels
         private async Task RenderFavouriteJobsAsync()
         {
             PageIndex = 0;
-            Singletons.JobListings = await GetFavouriteJobListings();
+            Singletons.JobListings = await GetFavouriteJobListingsAsync();
             JobListingsDisplayed = Singletons.JobListings.Skip(PageIndex * PageSize).Take(PageSize).ToList();
             EnableOnChangedEvents(JobListingsDisplayed);
         }
@@ -272,19 +272,19 @@ namespace AutoJobSearchGUI.ViewModels
             }
         }
 
-        private async Task<List<JobListingModel>> GetFavouriteJobListings()
+        private async Task<List<JobListingModel>> GetFavouriteJobListingsAsync()
         {
             var jobs = await _dbContext.GetFavouriteJobListingsAsync();
             return JobListingHelpers.ConvertJobListingsToJobListingModels(jobs);
         }
 
-        private async Task<List<JobListingModel>> GetHiddenJobListings()
+        private async Task<List<JobListingModel>> GetHiddenJobListingsAsync()
         {
             var jobs = await _dbContext.GetHiddenJobListingsAsync();
             return JobListingHelpers.ConvertJobListingsToJobListingModels(jobs);
         }
 
-        private async Task<List<JobListingModel>> GetAllJobListings()
+        private async Task<List<JobListingModel>> GetAllJobListingsAsync()
         {
             var jobs = await _dbContext.GetAllJobListingsAsync();
             return JobListingHelpers.ConvertJobListingsToJobListingModels(jobs);
