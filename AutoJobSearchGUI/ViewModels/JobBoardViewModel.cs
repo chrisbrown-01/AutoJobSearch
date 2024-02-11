@@ -88,6 +88,11 @@ namespace AutoJobSearchGUI.ViewModels
             JobBoardQueryModel = new();
         }
 
+        public void UpdateJobBoard()
+        {
+            JobListingsDisplayed = Singletons.JobListings.Skip(PageIndex * PageSize).Take(PageSize).ToList();
+        }
+
         [RelayCommand]
         private async Task RenderHiddenJobsAsync()
         {
@@ -215,8 +220,28 @@ namespace AutoJobSearchGUI.ViewModels
             DisableOnChangedEvents(JobListingsDisplayed);
             OpenJobListingViewRequest?.Invoke(SelectedJobListing);
         }
+        
+        [RelayCommand]
+        private async Task DeleteJobAsync()
+        {
+            if (SelectedJobListing == null) return;
+            await _dbContext.DeleteJobAsync(SelectedJobListing.Id);
+            Singletons.JobListings.Remove(SelectedJobListing);
+            JobListingsDisplayed.Remove(SelectedJobListing);
+        }
 
         [RelayCommand]
+        private async Task CreateJobAsync()
+        {
+            var newJob = await _dbContext.CreateJobAsync();
+            var newJobListingModel = JobListingHelpers.ConvertJobListingToJobListingModel(newJob);
+            Singletons.JobListings.Add(newJobListingModel);
+            JobListingsDisplayed.Add(newJobListingModel);
+            SelectedJobListing = newJobListingModel; // TODO: necessary if implement comments below?
+            OpenJobListing(); // TODO: have seperate method that automatically enters into the edit view? also have dropdown option for editing job?
+        }
+
+            [RelayCommand]
         private void HideJob()
         {
             if (SelectedJobListing == null) return;

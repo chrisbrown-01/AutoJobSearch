@@ -19,6 +19,12 @@ namespace AutoJobSearchGUI.ViewModels
         public delegate void OpenAddContactViewWithAssociatedJobIdHandler(int id);
         public event OpenAddContactViewWithAssociatedJobIdHandler? OpenAddContactViewWithAssociatedJobIdRequest;
 
+        public delegate void UpdateJobBoardViewHandler();
+        public event UpdateJobBoardViewHandler? UpdateJobBoardViewRequest;
+
+        public delegate void OpenJobBoardViewHandler();
+        public event OpenJobBoardViewHandler? OpenJobBoardViewRequest;
+
         private readonly IDbContext _dbContext;
 
         [ObservableProperty]
@@ -42,6 +48,57 @@ namespace AutoJobSearchGUI.ViewModels
         {
             DisableOnChangedEvents(JobListing);
             OpenAddContactViewWithAssociatedJobIdRequest?.Invoke(JobListing.Id);
+        }
+
+        [RelayCommand]
+        private async Task CreateJobAsync()
+        {
+            DisableOnChangedEvents(JobListing);
+
+            var newJob = await _dbContext.CreateJobAsync();
+            var newJobListingModel = JobListingHelpers.ConvertJobListingToJobListingModel(newJob);
+            Singletons.JobListings.Add(newJobListingModel);
+            UpdateJobBoardViewRequest?.Invoke();
+            await OpenJobListingAsync(newJobListingModel); 
+        }
+
+        [RelayCommand]
+        private async Task DeleteJobAsync()
+        {
+            JobListingModel? nextJobToDisplay;
+
+            var currentIndex = Singletons.JobListings.IndexOf(JobListing);
+
+            var nextJob = Singletons.JobListings.ElementAtOrDefault(currentIndex + 1);
+            var previousJob = Singletons.JobListings.ElementAtOrDefault(currentIndex - 1);
+
+            if (nextJob != null) // Try to choose the next job as the new one to display.
+            {
+                nextJobToDisplay = nextJob;
+            }
+            else if (previousJob != null) // If next job is not available, try to choose the previous one.
+            {
+                nextJobToDisplay = previousJob;
+            }
+            else // Otherwise we have no job at all to display.
+            {
+                nextJobToDisplay = null;
+            }
+
+            DisableOnChangedEvents(JobListing);
+
+            await _dbContext.DeleteJobAsync(JobListing.Id);
+            Singletons.JobListings.Remove(JobListing);
+            UpdateJobBoardViewRequest?.Invoke();
+
+            if (nextJobToDisplay != null)
+            {
+                await OpenJobListingAsync(nextJobToDisplay);
+            }
+            else
+            {
+                OpenJobBoardViewRequest?.Invoke(); // Return to Job Board view if no jobs are available to display.
+            }
         }
 
         [RelayCommand]

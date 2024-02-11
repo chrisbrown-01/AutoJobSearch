@@ -77,6 +77,11 @@ namespace AutoJobSearchGUI.ViewModels
             contactsViewModel.UpdateContacts();
         }
 
+        public void UpdateJobBoard()
+        {
+            jobBoardViewModel.UpdateJobBoard();
+        }
+
         public void ChangeViewToContacts()
         {
             ContentViewModel = contactsViewModel;
@@ -136,6 +141,10 @@ namespace AutoJobSearchGUI.ViewModels
 
             jobBoardViewModel.OpenJobListingViewRequest += ChangeViewToJobListing;
 
+            jobListingViewModel.OpenJobBoardViewRequest += ChangeViewToJobBoard;
+
+            jobListingViewModel.UpdateJobBoardViewRequest += UpdateJobBoard;
+
             addContactViewModel.OpenContactsViewRequest += ChangeViewToContacts;
 
             addContactViewModel.OpenJobListingViewRequest += ChangeViewToJobListing;
@@ -149,6 +158,10 @@ namespace AutoJobSearchGUI.ViewModels
             contactsViewModel.OpenAddContactViewRequest -= ChangeViewToAddContact;
 
             jobBoardViewModel.OpenJobListingViewRequest -= ChangeViewToJobListing;
+
+            jobListingViewModel.OpenJobBoardViewRequest -= ChangeViewToJobBoard;
+
+            jobListingViewModel.UpdateJobBoardViewRequest -= UpdateJobBoard;
 
             addContactViewModel.OpenContactsViewRequest -= ChangeViewToContacts;
 

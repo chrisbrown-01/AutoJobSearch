@@ -110,6 +110,7 @@
 			<Menu>
 				<MenuItem Header="Options">
 					<MenuItem Header="Go To Default View" Command="{Binding RenderDefaultJobBoardViewCommand}" />
+					<MenuItem Header="Add New Job" Command="{Binding CreateJobCommand}" />
 					<MenuItem Header="Delete All Records" Command="{Binding DeleteAllRecordsCommand}" />
 				</MenuItem>
 			</Menu>
@@ -131,6 +132,7 @@
 			<DataGrid.ContextMenu>
 				<ContextMenu>
 					<MenuItem Header="Hide Job" Command="{Binding HideJobCommand}" />
+					<MenuItem Header="Delete Job" Command="{Binding DeleteJobCommand}" />
 				</ContextMenu>
 			</DataGrid.ContextMenu>
 			<DataGrid.Columns>
