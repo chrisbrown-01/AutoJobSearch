@@ -16,6 +16,9 @@ namespace AutoJobSearchGUI.ViewModels
     // TODO: add delete listing method. note that you will need to ensure consistency with the contact-job-id records that cascade delete
     public partial class JobListingViewModel : ViewModelBase // Needs to be public for View previewer to work
     {
+        private const string EDIT_BUTTON_DEFAULT_COLOUR = "Gray";
+        private const string EDIT_BUTTON_ENABLED_COLOUR = "YellowGreen";
+
         public delegate void OpenAddContactViewWithAssociatedJobIdHandler(int id);
         public event OpenAddContactViewWithAssociatedJobIdHandler? OpenAddContactViewWithAssociatedJobIdRequest;
 
@@ -26,6 +29,12 @@ namespace AutoJobSearchGUI.ViewModels
         public event OpenJobBoardViewHandler? OpenJobBoardViewRequest;
 
         private readonly IDbContext _dbContext;
+
+        [ObservableProperty]
+        private string _editButtonColour = EDIT_BUTTON_DEFAULT_COLOUR;
+
+        [ObservableProperty]
+        private bool _isEditModeEnabled; // TODO: default to false everytime the view changes or new listings are chosen
 
         [ObservableProperty]
         private JobListingModel _jobListing;
@@ -48,6 +57,33 @@ namespace AutoJobSearchGUI.ViewModels
         {
             DisableOnChangedEvents(JobListing);
             OpenAddContactViewWithAssociatedJobIdRequest?.Invoke(JobListing.Id);
+        }
+
+        //ToggleEditMode
+        [RelayCommand]
+        private void ToggleEditButtonColour()
+        {
+            IsEditModeEnabled = !IsEditModeEnabled;
+
+        }
+
+        [RelayCommand]
+        private void ToggleEditMode()
+        {
+            IsEditModeEnabled = !IsEditModeEnabled;
+            SetEditButtonColour();
+        }
+
+        private void SetEditButtonColour()
+        {
+            if (IsEditModeEnabled)
+            {
+                EditButtonColour = EDIT_BUTTON_ENABLED_COLOUR;
+            }
+            else
+            {
+                EditButtonColour = EDIT_BUTTON_DEFAULT_COLOUR;
+            }
         }
 
         [RelayCommand]
@@ -132,6 +168,7 @@ namespace AutoJobSearchGUI.ViewModels
         [RelayCommand]
         private async Task OpenJobListingByIdAsync(int jobListingId)
         {
+            // TODO: remove this logic
             if (Singletons.JobListings is null || !Singletons.JobListings.Any())
             {
                 Singletons.JobListings = JobListingHelpers.ConvertJobListingsToJobListingModels(await _dbContext.GetAllJobListingsAsync());
@@ -144,6 +181,9 @@ namespace AutoJobSearchGUI.ViewModels
         [RelayCommand]
         private async Task OpenJobListingAsync(JobListingModel jobListing)
         {
+            IsEditModeEnabled = false;
+            SetEditButtonColour();
+
             if (!jobListing.DetailsPopulated)
             {
                 var jobListingDetails = await _dbContext.GetJobListingDetailsByIdAsync(jobListing.Id);

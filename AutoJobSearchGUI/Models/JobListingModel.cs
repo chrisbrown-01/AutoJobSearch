@@ -15,21 +15,26 @@ namespace AutoJobSearchGUI.Models
     public partial class JobListingModel : ObservableObject // Needs to be public for delegates to work
     {
         public int Id { get; set; }
-        public string SearchTerm { get; set; } = string.Empty;
 
         public DateTime CreatedAt { get; set; }
-
-        public string Description { get; set; } = string.Empty;
-
-        public string ApplicationLinks { get; set; } = string.Empty;
-
-        public int Score { get; set; }
 
         // This property prevents re-fetching job listing details from the database if they have already been populated.
         public bool DetailsPopulated { get; set; } = false;
 
         // This property prevents events from unnecessarily firing when the view model is simply instantiating new models.
         public bool EnableEvents { get; set; } = false;
+
+        [ObservableProperty]
+        private int _score = 0;
+
+        [ObservableProperty]
+        private string _searchTerm = string.Empty; // TODO: implement on changed methods
+
+        [ObservableProperty]
+        private string _description = string.Empty;
+
+        [ObservableProperty]
+        private string _applicationLinks = string.Empty;
 
         [ObservableProperty]
         private bool _isAppliedTo;
