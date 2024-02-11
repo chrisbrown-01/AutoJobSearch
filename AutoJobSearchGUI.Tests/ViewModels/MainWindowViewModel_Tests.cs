@@ -58,11 +58,10 @@ namespace AutoJobSearchGUI.Tests.ViewModels
         public void ChangeViewToJobListing_SwitchesToCorrectViewModel()
         {
             var listing = _fixture.Create<JobListingModel>();
-            var listings = _fixture.CreateMany<JobListingModel>();
 
             // Act
             //_viewModel.ChangeViewToJobListing(Arg.Any<JobListingModel>(), Arg.Any<IEnumerable<JobListingModel>>());
-            _viewModel.ChangeViewToJobListing(listing, listings);
+            _viewModel.ChangeViewToJobListing(listing);
 
             // Assert
             _viewModel.ContentViewModel.Should().BeOfType<JobListingViewModel>();

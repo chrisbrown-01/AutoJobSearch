@@ -182,7 +182,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
 
             _viewModel.SelectedJobListing = null;
             bool wasCalled = false;
-            _viewModel.OpenJobListingViewRequest += (job, jobs) => wasCalled = true;
+            _viewModel.OpenJobListingViewRequest += (job) => wasCalled = true;
 
             // Act
             _viewModel.OpenJobListingCommand.Execute(null);
@@ -199,7 +199,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
             _viewModel.JobListingsDisplayed = _fixture.CreateMany<JobListingModel>().ToList();
             _viewModel.SelectedJobListing = _fixture.Create<JobListingModel>();
             bool wasCalled = false;
-            _viewModel.OpenJobListingViewRequest += (job, jobs) => wasCalled = true;
+            _viewModel.OpenJobListingViewRequest += (job) => wasCalled = true;
 
             // Act
             _viewModel.OpenJobListingCommand.Execute(null);
@@ -297,6 +297,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
             _viewModel.JobListingsDisplayed.Should().NotBeEquivalentTo(initialJobListingsDisplayed);
         }
 
+        // TODO: Broken due to conversion to use MVVM Toolkit RelayCommand attribute
         //[Fact]
         //public async void DeleteAllRecords_UserConfirms_DeletesAllRecords()
         //{
@@ -311,12 +312,13 @@ namespace AutoJobSearchGUI.Tests.ViewModels
         //        .Returns(box);
 
         //    // Act
-        //    _viewModel.DeleteAllRecords();
+        //    await _viewModel.DeleteAllRecordsCommand.ExecuteAsync(null);
 
         //    // Assert
         //    await _dbContext.Received().DeleteAllJobListingsAsync();
         //}
 
+        // TODO: Broken due to conversion to use MVVM Toolkit RelayCommand attribute
         //[Fact]
         //public void GoToNextPage_HasMorePages_UpdatesPageIndexAndJobListingsDisplayed()
         //{
@@ -327,7 +329,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
         //    _viewModel.JobListingsDisplayed = initialJobListingsDisplayed;
 
         //    // Act
-        //    _viewModel.GoToNextPage();
+        //    _viewModel.GoToNextPageCommand.Execute(null);
 
         //    // Assert
         //    _viewModel.PageIndex.Should().Be(initialPageIndex + 1);
