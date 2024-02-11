@@ -96,8 +96,7 @@ namespace AutoJobSearchGUI.ViewModels
             ContentViewModel = addContactViewModel;
         }
 
-        // TODO: convert to overloaded method instead of seperate method
-        public void ChangeViewToAddContact_WithAssociatedJobId(int jobId)
+        public void ChangeViewToAddContact(int jobId)
         {
             addContactViewModel.CreateNewContactCommand.Execute(jobId);
             ContentViewModel = addContactViewModel;
@@ -132,20 +131,27 @@ namespace AutoJobSearchGUI.ViewModels
 
         private void SubscribeToEvents()
         {
-            jobListingViewModel.OpenAddContactViewWithAssociatedJobIdRequest += ChangeViewToAddContact_WithAssociatedJobId;
-            jobBoardViewModel.OpenJobListingViewRequest += ChangeViewToJobListing;
+            jobListingViewModel.OpenAddContactViewWithAssociatedJobIdRequest += ChangeViewToAddContact;
             contactsViewModel.OpenAddContactViewRequest += ChangeViewToAddContact;
+
+            jobBoardViewModel.OpenJobListingViewRequest += ChangeViewToJobListing;
+
             addContactViewModel.OpenContactsViewRequest += ChangeViewToContacts;
+
             addContactViewModel.OpenJobListingViewRequest += ChangeViewToJobListing;
+
             addContactViewModel.UpdateContactsViewRequest += UpdateContacts;
         }
 
         private void UnsubscribeFromEvents()
         {
-            jobListingViewModel.OpenAddContactViewWithAssociatedJobIdRequest -= ChangeViewToAddContact_WithAssociatedJobId;
-            jobBoardViewModel.OpenJobListingViewRequest -= ChangeViewToJobListing;
+            jobListingViewModel.OpenAddContactViewWithAssociatedJobIdRequest -= ChangeViewToAddContact;
             contactsViewModel.OpenAddContactViewRequest -= ChangeViewToAddContact;
+
+            jobBoardViewModel.OpenJobListingViewRequest -= ChangeViewToJobListing;
+
             addContactViewModel.OpenContactsViewRequest -= ChangeViewToContacts;
+
             addContactViewModel.UpdateContactsViewRequest -= UpdateContacts;
         }
 
