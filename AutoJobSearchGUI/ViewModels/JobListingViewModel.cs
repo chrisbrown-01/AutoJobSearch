@@ -13,7 +13,6 @@ using System.Threading.Tasks;
 
 namespace AutoJobSearchGUI.ViewModels
 {
-    // TODO: add delete listing method. note that you will need to ensure consistency with the contact-job-id records that cascade delete
     public partial class JobListingViewModel : ViewModelBase // Needs to be public for View previewer to work
     {
         private const string EDIT_BUTTON_DEFAULT_COLOUR = "Gray";
@@ -34,7 +33,7 @@ namespace AutoJobSearchGUI.ViewModels
         private string _editButtonColour = EDIT_BUTTON_DEFAULT_COLOUR;
 
         [ObservableProperty]
-        private bool _isEditModeEnabled; // TODO: default to false everytime the view changes or new listings are chosen
+        private bool _isEditModeEnabled;
 
         [ObservableProperty]
         private JobListingModel _jobListing;
@@ -168,12 +167,6 @@ namespace AutoJobSearchGUI.ViewModels
         [RelayCommand]
         private async Task OpenJobListingByIdAsync(int jobListingId)
         {
-            // TODO: remove this logic
-            if (Singletons.JobListings is null || !Singletons.JobListings.Any())
-            {
-                Singletons.JobListings = JobListingHelpers.ConvertJobListingsToJobListingModels(await _dbContext.GetAllJobListingsAsync());
-            }
-
             JobListing = Singletons.JobListings.Single(x => x.Id == jobListingId);
             await OpenJobListingCommand.ExecuteAsync(JobListing);
         }

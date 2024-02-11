@@ -130,6 +130,11 @@ namespace AutoJobSearchGUI.Data
             await _sqliteDb.UpdateJobListingBoolPropertyAsync(columnName, value, id);
         }
 
+        public async Task UpdateJobListingIntPropertyAsync(JobListingsIntField columnName, int value, int id)
+        {
+            await _sqliteDb.UpdateJobListingIntPropertyAsync(columnName, value, id);
+        }
+
         public async Task UpdateJobListingStringPropertyAsync(JobListingsStringField columnName, string value, int id)
         {
             await _sqliteDb.UpdateJobListingStringPropertyAsync(columnName, value, id);

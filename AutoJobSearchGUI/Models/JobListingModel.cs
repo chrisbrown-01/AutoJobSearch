@@ -18,6 +18,8 @@ namespace AutoJobSearchGUI.Models
 
         public DateTime CreatedAt { get; set; }
 
+        public string ApplicationLinks { get; set; } = string.Empty;
+
         // This property prevents re-fetching job listing details from the database if they have already been populated.
         public bool DetailsPopulated { get; set; } = false;
 
@@ -28,13 +30,10 @@ namespace AutoJobSearchGUI.Models
         private int _score = 0;
 
         [ObservableProperty]
-        private string _searchTerm = string.Empty; // TODO: implement on changed methods
+        private string _searchTerm = string.Empty; 
 
         [ObservableProperty]
         private string _description = string.Empty;
-
-        [ObservableProperty]
-        private string _applicationLinks = string.Empty;
 
         [ObservableProperty]
         private bool _isAppliedTo;
@@ -58,9 +57,29 @@ namespace AutoJobSearchGUI.Models
 
         public static event EventHandler<JobListingsBoolFieldChangedEventArgs>? BoolFieldChanged;
 
+        public static event EventHandler<JobListingsIntFieldChangedEventArgs>? IntFieldChanged;
+
         // Note that these methods technically cause an excessive amount of database calls but since there is only a single user
         // interacting with the database, the technical debt is justified to ensure that no data loss occurs if the application
         // unexpectedly crashes before the user can request for the changes to be saved to the database.
+
+        partial void OnSearchTermChanged(string value)
+        {
+            if (!this.EnableEvents) return;
+            StringFieldChanged?.Invoke(this, new JobListingsStringFieldChangedEventArgs { Field = JobListingsStringField.SearchTerm, Value = value, Id = this.Id });
+        }
+
+        partial void OnDescriptionChanged(string value)
+        {
+            if (!this.EnableEvents) return;
+            StringFieldChanged?.Invoke(this, new JobListingsStringFieldChangedEventArgs { Field = JobListingsStringField.Description, Value = value, Id = this.Id });
+        }
+
+        partial void OnScoreChanged(int value)
+        {
+            if (!this.EnableEvents) return;
+            IntFieldChanged?.Invoke(this, new JobListingsIntFieldChangedEventArgs { Field = JobListingsIntField.Score, Value = value, Id = this.Id });
+        }
 
         partial void OnNotesChanged(string value)
         {

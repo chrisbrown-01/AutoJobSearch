@@ -530,5 +530,11 @@ namespace AutoJobSearchShared.Database
                     Notes = newJob.Notes
                 }).ConfigureAwait(false);
         }
+
+        public async Task UpdateJobListingIntPropertyAsync(JobListingsIntField columnName, int value, int id)
+        {
+            string sql = $"UPDATE JobListings SET {columnName} = @Value WHERE Id = @Id";
+            await connection.ExecuteAsync(sql, new { Value = value, Id = id }).ConfigureAwait(false);
+        }
     }
 }

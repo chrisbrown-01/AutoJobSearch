@@ -23,39 +23,41 @@
 			<Menu>
 				<MenuItem Header="Advanced Query">
 					<MenuItem Header="Column Filters">
-						<CheckBox Content="Enable Query Filter" FontWeight="ExtraBold" IsChecked="{Binding JobBoardQueryModel.ColumnFiltersEnabled}" />
-						<CheckBox Content="Applied" IsChecked="{Binding JobBoardQueryModel.IsAppliedTo}" />
-						<CheckBox Content="Interviewing" IsChecked="{Binding JobBoardQueryModel.IsInterviewing}" />
-						<CheckBox Content="Rejected" IsChecked="{Binding JobBoardQueryModel.IsRejected}" />
-						<CheckBox Content="Favourite" IsChecked="{Binding JobBoardQueryModel.IsFavourite}" />
+						<CheckBox Content="Enable Query Filter" FontWeight="ExtraBold" IsChecked="{Binding JobBoardQueryModel.ColumnFiltersEnabled}" ClickMode="Press" />
+						<CheckBox Content="Applied" IsChecked="{Binding JobBoardQueryModel.IsAppliedTo}" ClickMode="Press"/>
+						<CheckBox Content="Interviewing" IsChecked="{Binding JobBoardQueryModel.IsInterviewing}" ClickMode="Press"/>
+						<CheckBox Content="Rejected" IsChecked="{Binding JobBoardQueryModel.IsRejected}" ClickMode="Press"/>
+						<CheckBox Content="Favourite" IsChecked="{Binding JobBoardQueryModel.IsFavourite}" ClickMode="Press"/>
 					</MenuItem>
-					<MenuItem Header="Search Term Query String">
-						<CheckBox Content="Enable Query Filter" FontWeight="ExtraBold" IsChecked="{Binding JobBoardQueryModel.SearchTermQueryStringEnabled}" />
+					<MenuItem Header="Search Term Query">
+						<CheckBox Content="Enable Query Filter" FontWeight="ExtraBold" IsChecked="{Binding JobBoardQueryModel.SearchTermQueryStringEnabled}" ClickMode="Press"/>
 						<TextBox Text="{Binding JobBoardQueryModel.SearchTermQueryString}" IsReadOnly="False" MaxWidth="250" />
 					</MenuItem>
-					<MenuItem Header="Job Description Query String">
-						<CheckBox Content="Enable Query Filter" FontWeight="ExtraBold" IsChecked="{Binding JobBoardQueryModel.JobDescriptionQueryStringEnabled}" />
+					<MenuItem Header="Job Description Query">
+						<CheckBox Content="Enable Query Filter" FontWeight="ExtraBold" IsChecked="{Binding JobBoardQueryModel.JobDescriptionQueryStringEnabled}" ClickMode="Press"/>
 						<TextBox Text="{Binding JobBoardQueryModel.JobDescriptionQueryString}" IsReadOnly="False" MaxWidth="250" />
 					</MenuItem>
-					<MenuItem Header="Notes Query String">
-						<CheckBox Content="Enable Query Filter" FontWeight="ExtraBold" IsChecked="{Binding JobBoardQueryModel.NotesQueryStringEnabled}" />
+					<MenuItem Header="Notes Query">
+						<CheckBox Content="Enable Query Filter" FontWeight="ExtraBold" IsChecked="{Binding JobBoardQueryModel.NotesQueryStringEnabled}" ClickMode="Press"/>
 						<TextBox Text="{Binding JobBoardQueryModel.NotesQueryString}" IsReadOnly="False" MaxWidth="250" />
 					</MenuItem>
 					<MenuItem Header="Search Date">
 						<CheckBox 
-								Content="Enable Searched On Date" 
+								Content="Enable Created On Date" 
 								FontWeight="ExtraBold"
 								IsChecked="{Binding JobBoardQueryModel.SearchedOnDateEnabled}"
-								IsEnabled="{Binding !JobBoardQueryModel.SearchedBetweenDatesEnabled}" />
+								IsEnabled="{Binding !JobBoardQueryModel.SearchedBetweenDatesEnabled}" 
+								ClickMode="Press"/>
 						<CheckBox 
-								Content="Enable Search Between Dates" 
+								Content="Enable Created Between Dates" 
 								FontWeight="ExtraBold"
 								IsChecked="{Binding JobBoardQueryModel.SearchedBetweenDatesEnabled}"
-								IsEnabled="{Binding !JobBoardQueryModel.SearchedOnDateEnabled}" />
-						<MenuItem Header="Searched On Date">
+								IsEnabled="{Binding !JobBoardQueryModel.SearchedOnDateEnabled}" 
+								ClickMode="Press"/>
+						<MenuItem Header="Created On Date">
 							<DatePicker SelectedDate="{Binding JobBoardQueryModel.SearchedOnDate}" />
 						</MenuItem>
-						<MenuItem Header="Searched Between Dates">
+						<MenuItem Header="Created Between Dates">
 							<DatePicker SelectedDate="{Binding JobBoardQueryModel.SearchedOnDateStart}" />
 							<DatePicker SelectedDate="{Binding JobBoardQueryModel.SearchedOnDateEnd}" />
 						</MenuItem>
@@ -65,46 +67,55 @@
 							   Content="Enable Equals"
 							   FontWeight="ExtraBold"
 							   IsChecked="{Binding JobBoardQueryModel.ScoreEqualsEnabled}"
-							   IsEnabled="{Binding !JobBoardQueryModel.ScoreRangeEnabled}" />
+							   IsEnabled="{Binding !JobBoardQueryModel.ScoreRangeEnabled}" 
+							   ClickMode="Press"/>
 						<CheckBox
 							   Content="Enable Range"
 							   FontWeight="ExtraBold"
 							   IsChecked="{Binding JobBoardQueryModel.ScoreRangeEnabled}"
-							   IsEnabled="{Binding !JobBoardQueryModel.ScoreEqualsEnabled}" />
+							   IsEnabled="{Binding !JobBoardQueryModel.ScoreEqualsEnabled}" 
+							   ClickMode="Press"/>
 						<MenuItem Header="Equals">
-							<NumericUpDown Value="{Binding JobBoardQueryModel.ScoreEquals}" FormatString="0"/>
+							<!--Application crashes if user manually deletes all numbers inside these controls
+							(using backspace or delete on keyboard). No way to prevent this.-->
+							<NumericUpDown Value="{Binding JobBoardQueryModel.ScoreEquals}" FormatString="0" />
 						</MenuItem>
 						<MenuItem Header="Within Range">
-							<NumericUpDown Value="{Binding JobBoardQueryModel.ScoreRangeMin}" FormatString="0"/>
-							<NumericUpDown Value="{Binding JobBoardQueryModel.ScoreRangeMax}" FormatString="0"/>
+							<NumericUpDown Value="{Binding JobBoardQueryModel.ScoreRangeMin}" FormatString="0" />
+							<NumericUpDown Value="{Binding JobBoardQueryModel.ScoreRangeMax}" FormatString="0" />
 						</MenuItem>
 					</MenuItem>
 					<MenuItem Header="Sort By">
-						<CheckBox Content="Search Term" IsChecked="{Binding JobBoardQueryModel.SortBySearchTerm}" />
-						<CheckBox Content="Score" IsChecked="{Binding JobBoardQueryModel.SortByScore}" />
-						<CheckBox Content="Date" IsChecked="{Binding JobBoardQueryModel.SortByCreatedAt}" />
+						<CheckBox Content="Search Term" IsChecked="{Binding JobBoardQueryModel.SortBySearchTerm}" ClickMode="Press"/>
+						<CheckBox Content="Score" IsChecked="{Binding JobBoardQueryModel.SortByScore}" ClickMode="Press"/>
+						<CheckBox Content="Date" IsChecked="{Binding JobBoardQueryModel.SortByCreatedAt}" ClickMode="Press"/>
 					</MenuItem>
 					<MenuItem Header="Order By">
 						<CheckBox 
 							Content="Ascending" 
-							IsChecked="{Binding JobBoardQueryModel.OrderByAscending}" />
+							IsChecked="{Binding JobBoardQueryModel.OrderByAscending}" 
+							ClickMode="Press" />
 					</MenuItem>
 					<Button
 						Content="Execute Query"
 						HorizontalAlignment="Center"
-						Command="{Binding ExecuteQueryCommand}"/>
+						Command="{Binding ExecuteQueryCommand}"
+						ClickMode="Press"/>
 					<Button
 						Content="Get Hidden Jobs"
 						HorizontalAlignment="Center"
-						Command="{Binding RenderHiddenJobsCommand}"/>
+						Command="{Binding RenderHiddenJobsCommand}"
+						ClickMode="Press"/>
 					<Button
 						Content="Get Favourite Jobs"
 						HorizontalAlignment="Center"
-						Command="{Binding RenderFavouriteJobsCommand}"/>
+						Command="{Binding RenderFavouriteJobsCommand}"
+						ClickMode="Press"/>
 					<Button
 						Content="Clear All Filters"
 						HorizontalAlignment="Center"
-						Command="{Binding RenderDefaultJobBoardViewCommand}"/>
+						Command="{Binding RenderDefaultJobBoardViewCommand}"
+						ClickMode="Press"/>
 				</MenuItem>
 			</Menu>
 			<Menu>

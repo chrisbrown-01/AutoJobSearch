@@ -124,16 +124,17 @@
 				VerticalAlignment="Top"
 				Text="Application Links" 
 				Margin="0 5"/>
+			<!-- There is no good way of being able to display the ApplicationLinks table records
+			     in a view control such as a ListBox, while also allowing the user to make updates to these
+				 links within the view and have the changes reflected in the database. Therefore editing this
+				 control is always disabled, and if users need to manually add application links then 
+				 it needs to be performed in the Notes text box. -->
 			<TextBox
 				Grid.Row="6"
 				Grid.Column="1"
 				Text="{Binding JobListing.ApplicationLinks}"
-				IsEnabled="{Binding IsEditModeEnabled}"
-				TextWrapping="Wrap"
-				AcceptsReturn="True"
-				AcceptsTab="True"
-				IsUndoEnabled="True"
-				UndoLimit="1000"
+				IsEnabled="True"
+				IsReadOnly="True"
 				Margin="0 5"/>
 
 			<TextBlock

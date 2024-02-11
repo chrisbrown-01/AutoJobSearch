@@ -17,7 +17,6 @@ using System.Threading.Tasks;
 
 namespace AutoJobSearchGUI.ViewModels
 {
-    // TODO: rename view properties so that "string" isn't included
     public partial class JobBoardViewModel : ViewModelBase // Needs to be public for View previewer to work
     {
         public delegate void OpenJobListingViewHandler(JobListingModel job);
@@ -114,7 +113,6 @@ namespace AutoJobSearchGUI.ViewModels
         [RelayCommand]
         private async Task ExecuteQueryAsync()
         {
-            // TODO: change ascending to descending
             var result = await _dbContext.ExecuteJobListingQueryAsync(
                JobBoardQueryModel.ColumnFiltersEnabled,
                JobBoardQueryModel.IsAppliedTo,
@@ -152,7 +150,7 @@ namespace AutoJobSearchGUI.ViewModels
 
             if (JobBoardQueryModel.ScoreEqualsEnabled)
             {
-                result = result.Where(x => x.Score == JobBoardQueryModel.ScoreEquals); // TODO: add nullable and null checking, ClickMode handling in view
+                result = result.Where(x => x.Score == JobBoardQueryModel.ScoreEquals);
             }
 
             if (JobBoardQueryModel.ScoreRangeEnabled)
@@ -237,8 +235,8 @@ namespace AutoJobSearchGUI.ViewModels
             var newJobListingModel = JobListingHelpers.ConvertJobListingToJobListingModel(newJob);
             Singletons.JobListings.Add(newJobListingModel);
             JobListingsDisplayed.Add(newJobListingModel);
-            SelectedJobListing = newJobListingModel; // TODO: necessary if implement comments below?
-            OpenJobListing(); // TODO: have seperate method that automatically enters into the edit view? also have dropdown option for editing job?
+            SelectedJobListing = newJobListingModel;
+            OpenJobListing();
         }
 
             [RelayCommand]

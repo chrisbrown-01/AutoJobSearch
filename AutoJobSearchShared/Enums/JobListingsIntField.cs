@@ -6,11 +6,8 @@ using System.Threading.Tasks;
 
 namespace AutoJobSearchShared.Enums
 {
-    public enum JobListingsStringField
+    public enum JobListingsIntField
     {
-        SearchTerm,
-        Description,
-        Description_Raw,
-        Notes
+        Score
     }
 }

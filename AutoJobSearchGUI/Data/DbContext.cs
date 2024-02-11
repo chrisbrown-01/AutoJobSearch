@@ -34,6 +34,11 @@ namespace AutoJobSearchGUI.Data
                 await UpdateJobListingStringPropertyAsync(e.Field, e.Value, e.Id);
             };
 
+            JobListingModel.IntFieldChanged += async (sender, e) =>
+            {
+                await UpdateJobListingIntPropertyAsync(e.Field, e.Value, e.Id);
+            };
+
             JobSearchProfileModel.StringFieldChanged += async (sender, e) =>
             {
                 await UpdateJobSearchProfileStringPropertyAsync(e.Field, e.Value, e.Id);
@@ -114,6 +119,11 @@ namespace AutoJobSearchGUI.Data
         public async Task UpdateJobListingStringPropertyAsync(JobListingsStringField columnName, string value, int id)
         {
             await _dbContext.UpdateJobListingStringPropertyAsync(columnName, value, id);
+        }
+
+        public async Task UpdateJobListingIntPropertyAsync(JobListingsIntField columnName, int value, int id)
+        {
+            await _dbContext.UpdateJobListingIntPropertyAsync(columnName, value, id);
         }
 
         public async Task DeleteJobSearchProfileAsync(int id)
