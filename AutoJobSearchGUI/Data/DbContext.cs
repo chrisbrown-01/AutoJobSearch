@@ -34,6 +34,11 @@ namespace AutoJobSearchGUI.Data
                 await UpdateJobListingStringPropertyAsync(e.Field, e.Value, e.Id);
             };
 
+            JobListingModel.IntFieldChanged += async (sender, e) =>
+            {
+                await UpdateJobListingIntPropertyAsync(e.Field, e.Value, e.Id);
+            };
+
             JobSearchProfileModel.StringFieldChanged += async (sender, e) =>
             {
                 await UpdateJobSearchProfileStringPropertyAsync(e.Field, e.Value, e.Id);
@@ -116,15 +121,20 @@ namespace AutoJobSearchGUI.Data
             await _dbContext.UpdateJobListingStringPropertyAsync(columnName, value, id);
         }
 
+        public async Task UpdateJobListingIntPropertyAsync(JobListingsIntField columnName, int value, int id)
+        {
+            await _dbContext.UpdateJobListingIntPropertyAsync(columnName, value, id);
+        }
+
         public async Task DeleteJobSearchProfileAsync(int id)
         {
-            Log.Information("Deleting job search profile for {@id}", id);
+            Log.Information("Deleting job search profile for {@id} from database.", id);
             await _dbContext.DeleteJobSearchProfileAsync(id);
         }
 
         public async Task DeleteAllJobListingsAsync()
         {
-            Log.Information("Deleting all job listings and application links.");
+            Log.Information("Deleting all job listings and application links from database.");
             await _dbContext.DeleteAllJobListingsAsync();
         }
 
@@ -142,13 +152,13 @@ namespace AutoJobSearchGUI.Data
 
         public async Task<Contact> CreateNewContactAsync(Contact contact)
         {
-            Log.Information("Creating new contact.");
+            Log.Information("Creating new contact in database.");
             return await _dbContext.CreateNewContactAsync(contact);
         }
 
         public async Task DeleteContactAsync(int id)
         {
-            Log.Information("Deleting contact for {@id}.", id);
+            Log.Information("Deleting contact for {@id} from database.", id);
             await _dbContext.DeleteContactAsync(id);
         }
 
@@ -166,14 +176,26 @@ namespace AutoJobSearchGUI.Data
 
         public async Task<ContactAssociatedJobId> CreateContactAssociatedJobIdAsync(int contactId, int jobId)
         {
-            Log.Information("Creating contact associated job ID record for contact ID {@contactId} and job ID {@jobId}.", contactId, jobId);
+            Log.Information("Creating contact associated job ID record for contact ID {@contactId} and job ID {@jobId} in database.", contactId, jobId);
             return await _dbContext.CreateContactAssociatedJobIdAsync(contactId, jobId);
         }
 
         public async Task DeleteContactAssociatedJobIdAsync(int contactId, int jobId)
         {
-            Log.Information("Deleting contact associated job ID record for contact ID {@contactId} and job ID {@jobId}.", contactId, jobId);
+            Log.Information("Deleting contact associated job ID record for contact ID {@contactId} and job ID {@jobId} in database.", contactId, jobId);
             await _dbContext.DeleteContactAssociatedJobIdAsync(contactId, jobId);
+        }
+
+        public async Task DeleteJobAsync(int id)
+        {
+            Log.Information("Deleting job listing for {@id} from database.", id);
+            await _dbContext.DeleteJobAsync(id);
+        }
+
+        public async Task<JobListing> CreateJobAsync()
+        {
+            Log.Information("Creating new job listing in database.");
+            return await _dbContext.CreateJobAsync();
         }
     }
 }

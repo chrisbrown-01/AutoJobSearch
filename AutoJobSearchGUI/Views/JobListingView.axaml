@@ -20,7 +20,10 @@
 			HorizontalAlignment="Center">
 			<Button Content="Previous Job" Margin="5 0" Command="{Binding GoToPreviousJobCommand}" />
 			<Button Content="Next Job" Margin="5 0" Command="{Binding GoToNextJobCommand}" />
-			<Button Content="Add Contact" Margin="5 0" Command="{Binding AddAssociatedContactCommand}" />
+			<Button Content="Add Job" Margin="5 0" Command="{Binding CreateJobCommand}" />
+			<Button Content="Delete Job" Margin="5 0" Command="{Binding DeleteJobCommand}" />
+			<Button Content="Edit Job" Margin="5 0" Command="{Binding ToggleEditModeCommand}" Background="{Binding EditButtonColour}" />
+			<Button Content="Add Associated Contact" Margin="5 0" Command="{Binding AddAssociatedContactCommand}" />
 		</StackPanel>
 		<Grid>
 			<Grid.ColumnDefinitions>
@@ -39,17 +42,45 @@
 				<RowDefinition Height="2*" />
 			</Grid.RowDefinitions>
 
-			<TextBlock Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center">Id</TextBlock>
-			<TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding JobListing.Id}" />
+			<TextBlock Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center" Margin="0 5">Id</TextBlock>
+			<TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding JobListing.Id}" Margin="0 5"/>
 
-			<TextBlock Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center">Search Term</TextBlock>
-			<TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding JobListing.SearchTerm}" />
+			<TextBlock Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center" Margin="0 5">Created At</TextBlock>
+			<TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding JobListing.CreatedAt}" Margin="0 5"/>
 
-			<TextBlock Grid.Row="2" Grid.Column="0" HorizontalAlignment="Center">Created At</TextBlock>
-			<TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding JobListing.CreatedAt}" />
+			<TextBlock
+				Grid.Row="2"
+				Grid.Column="0"
+				HorizontalAlignment="Center"
+				VerticalAlignment="Center"
+				Text="Search Term"
+				Margin="0 5"/>
+			<TextBox 
+				Grid.Row="2" 
+				Grid.Column="1" 
+				Text="{Binding JobListing.SearchTerm}"
+				IsEnabled="{Binding IsEditModeEnabled}"
+				TextWrapping="NoWrap"
+				AcceptsReturn="False"
+				AcceptsTab="True"
+				IsUndoEnabled="True"
+				UndoLimit="1000"
+				Margin="0 5"/>
 
-			<TextBlock Grid.Row="3" Grid.Column="0" HorizontalAlignment="Center">Score</TextBlock>
-			<TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding JobListing.Score}" />
+			<TextBlock 
+				Grid.Row="3" 				   
+				Grid.Column="0" 
+				HorizontalAlignment="Center" 
+				VerticalAlignment="Center"
+				Text="Score"
+				Margin="0 5"/>
+			<NumericUpDown 
+				Grid.Row="3" 
+				Grid.Column="1" 
+				Value="{Binding JobListing.Score}"
+				IsEnabled="{Binding IsEditModeEnabled}" 
+				FormatString="0"
+				Margin="0 5"/>
 
 			<StackPanel Grid.Row="4"
 			Grid.ColumnSpan="2"
@@ -67,48 +98,63 @@
 				<CheckBox IsChecked="{Binding JobListing.IsHidden}" />
 			</StackPanel>
 
-			<TextBlock 
-				Grid.Row="5" 
-				Grid.Column="0" 
+			<TextBlock
+				Grid.Row="5"
+				Grid.Column="0"
 				HorizontalAlignment="Center"
-				Text="Job Description"/>
+				VerticalAlignment="Top"
+				Text="Job Description"
+				Margin="0 5"/>
 			<TextBox
 				Grid.Row="5"
 				Grid.Column="1"
 				Text="{Binding JobListing.Description}"
-				IsReadOnly="True" 
-				TextWrapping="Wrap"
-				Margin="0 1"/>
-
-			<TextBlock 
-				Grid.Row="6" 
-				Grid.Column="0" 
-				HorizontalAlignment="Center" 
-				Text="Application Links"/>
-			<TextBox
-				Grid.Row="6"
-				Grid.Column="1"
-				Text="{Binding JobListing.ApplicationLinks}"
-				IsReadOnly="True"
-				TextWrapping="Wrap"
-				Margin="0 1"/>
-
-			<TextBlock 
-				Grid.Row="7" 
-				Grid.Column="0" 
-				HorizontalAlignment="Center" 
-				Text="Notes"/>
-			<TextBox
-				Grid.Row="7"
-				Grid.Column="1"
-				Text="{Binding JobListing.Notes}"
-				Watermark="Enter your notes here."
+				IsEnabled="{Binding IsEditModeEnabled}"
 				TextWrapping="Wrap"
 				AcceptsReturn="True"
 				AcceptsTab="True"
 				IsUndoEnabled="True"
 				UndoLimit="1000"
-				Margin="0 1"/>
+				Margin="0 5"/>
+
+			<TextBlock
+				Grid.Row="6"
+				Grid.Column="0"
+				HorizontalAlignment="Center"
+				VerticalAlignment="Top"
+				Text="Application Links" 
+				Margin="0 5"/>
+			<!-- There is no good way of being able to display the ApplicationLinks table records
+			     in a view control such as a ListBox, while also allowing the user to make updates to these
+				 links within the view and have the changes reflected in the database. Therefore editing this
+				 control is always disabled, and if users need to manually add application links then 
+				 it needs to be performed in the Notes text box. -->
+			<TextBox
+				Grid.Row="6"
+				Grid.Column="1"
+				Text="{Binding JobListing.ApplicationLinks}"
+				IsEnabled="True"
+				IsReadOnly="True"
+				Margin="0 5"/>
+
+			<TextBlock
+				Grid.Row="7"
+				Grid.Column="0"
+				HorizontalAlignment="Center"
+				VerticalAlignment="Top"
+				Text="Notes"
+				Margin="0 5"/>
+			<TextBox
+				Grid.Row="7"
+				Grid.Column="1"
+				Text="{Binding JobListing.Notes}"
+				IsEnabled="{Binding IsEditModeEnabled}"
+				TextWrapping="Wrap"
+				AcceptsReturn="True"
+				AcceptsTab="True"
+				IsUndoEnabled="True"
+				UndoLimit="1000"
+				Margin="0 5"/>
 		</Grid>
 	</DockPanel>
 	

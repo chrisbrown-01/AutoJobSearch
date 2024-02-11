@@ -405,6 +405,7 @@ namespace AutoJobSearchShared.Database
             return await connection.QueryAsync<Contact>(sql).ConfigureAwait(false);
         }
 
+        // TODO: rename CreateNewContact to CreateContact
         public async Task<Contact> CreateNewContactAsync(Contact contact)
         {
             const string sql = 
@@ -475,6 +476,65 @@ namespace AutoJobSearchShared.Database
         {
             const string sql = "DELETE FROM ContactsAssociatedJobIds WHERE ContactId = @ContactId AND JobListingId = @JobListingId;";
             await connection.ExecuteAsync(sql, new { ContactId = contactId, JobListingId = jobId }).ConfigureAwait(false);
+        }
+
+        public async Task DeleteJobAsync(int jobId)
+        {
+            const string sql = "DELETE FROM JobListings WHERE Id = @Id;";
+            await connection.ExecuteAsync(sql, new { Id = jobId }).ConfigureAwait(false);
+        }
+
+        public async Task<JobListing> CreateJobAsync()
+        {
+            var newJob = new JobListing();
+
+            const string sql = "INSERT INTO JobListings (" +
+                "SearchTerm, " +
+                "CreatedAt, " +
+                "Description_Raw, " +
+                "Description, " +
+                "Score, " +
+                "IsAppliedTo, " +
+                "IsInterviewing, " +
+                "IsRejected, " +
+                "IsFavourite, " +
+                "IsHidden, " +
+                "Notes) VALUES (" +
+                "@SearchTerm, " +
+                "@CreatedAt, " +
+                "@Description_Raw, " +
+                "@Description, " +
+                "@Score, " +
+                "@IsAppliedTo, " +
+                "@IsInterviewing, " +
+                "@IsRejected, " +
+                "@IsFavourite, " +
+                "@IsHidden, " +
+                "@Notes);" +
+                "SELECT * FROM JobListings WHERE Id = last_insert_rowid();";
+
+            return await connection.QuerySingleAsync<JobListing>(
+                sql, 
+                new 
+                { 
+                    SearchTerm = newJob.SearchTerm, 
+                    CreatedAt = newJob.CreatedAt,
+                    Description_Raw = newJob.Description_Raw,
+                    Description = newJob.Description,
+                    Score = newJob.Score,
+                    IsAppliedTo = newJob.IsAppliedTo,
+                    IsInterviewing = newJob.IsInterviewing,
+                    IsRejected = newJob.IsRejected,
+                    IsFavourite = newJob.IsFavourite,
+                    IsHidden = newJob.IsHidden,
+                    Notes = newJob.Notes
+                }).ConfigureAwait(false);
+        }
+
+        public async Task UpdateJobListingIntPropertyAsync(JobListingsIntField columnName, int value, int id)
+        {
+            string sql = $"UPDATE JobListings SET {columnName} = @Value WHERE Id = @Id";
+            await connection.ExecuteAsync(sql, new { Value = value, Id = id }).ConfigureAwait(false);
         }
     }
 }

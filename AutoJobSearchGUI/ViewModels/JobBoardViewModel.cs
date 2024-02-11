@@ -17,7 +17,6 @@ using System.Threading.Tasks;
 
 namespace AutoJobSearchGUI.ViewModels
 {
-    // TODO: rename view properties so that "string" isn't included
     public partial class JobBoardViewModel : ViewModelBase // Needs to be public for View previewer to work
     {
         public delegate void OpenJobListingViewHandler(JobListingModel job);
@@ -88,6 +87,11 @@ namespace AutoJobSearchGUI.ViewModels
             JobBoardQueryModel = new();
         }
 
+        public void UpdateJobBoard()
+        {
+            JobListingsDisplayed = Singletons.JobListings.Skip(PageIndex * PageSize).Take(PageSize).ToList();
+        }
+
         [RelayCommand]
         private async Task RenderHiddenJobsAsync()
         {
@@ -109,7 +113,6 @@ namespace AutoJobSearchGUI.ViewModels
         [RelayCommand]
         private async Task ExecuteQueryAsync()
         {
-            // TODO: change ascending to descending
             var result = await _dbContext.ExecuteJobListingQueryAsync(
                JobBoardQueryModel.ColumnFiltersEnabled,
                JobBoardQueryModel.IsAppliedTo,
@@ -147,7 +150,7 @@ namespace AutoJobSearchGUI.ViewModels
 
             if (JobBoardQueryModel.ScoreEqualsEnabled)
             {
-                result = result.Where(x => x.Score == JobBoardQueryModel.ScoreEquals); // TODO: add nullable and null checking, ClickMode handling in view
+                result = result.Where(x => x.Score == JobBoardQueryModel.ScoreEquals);
             }
 
             if (JobBoardQueryModel.ScoreRangeEnabled)
@@ -215,8 +218,28 @@ namespace AutoJobSearchGUI.ViewModels
             DisableOnChangedEvents(JobListingsDisplayed);
             OpenJobListingViewRequest?.Invoke(SelectedJobListing);
         }
+        
+        [RelayCommand]
+        private async Task DeleteJobAsync()
+        {
+            if (SelectedJobListing == null) return;
+            await _dbContext.DeleteJobAsync(SelectedJobListing.Id);
+            Singletons.JobListings.Remove(SelectedJobListing);
+            JobListingsDisplayed.Remove(SelectedJobListing);
+        }
 
         [RelayCommand]
+        private async Task CreateJobAsync()
+        {
+            var newJob = await _dbContext.CreateJobAsync();
+            var newJobListingModel = JobListingHelpers.ConvertJobListingToJobListingModel(newJob);
+            Singletons.JobListings.Add(newJobListingModel);
+            JobListingsDisplayed.Add(newJobListingModel);
+            SelectedJobListing = newJobListingModel;
+            OpenJobListing();
+        }
+
+            [RelayCommand]
         private void HideJob()
         {
             if (SelectedJobListing == null) return;
