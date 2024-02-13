@@ -207,6 +207,7 @@ namespace AutoJobSearchGUI.ViewModels
             }
         }
 
+        // TODO: move to ContactHelpers class
         private static ContactModel ConvertContactToContactModel(Contact contact, IEnumerable<int> associatedJobIds)
         {
             return new ContactModel()
