@@ -121,10 +121,11 @@ namespace AutoJobSearchJobScraper.WebScraper
         /// <param name="driver"></param>
         /// <returns></returns>
         private List<JobListing> ScrapeJobs_Indeed(
+            ref EdgeDriver driver,
             IEnumerable<HtmlNode>? jobListingNodes,
             string searchTerm,
-            Country country,
-            ref EdgeDriver driver)
+            Country country
+            )
         {
             var jobListings = new List<JobListing>();
 
@@ -187,10 +188,11 @@ namespace AutoJobSearchJobScraper.WebScraper
         /// <param name="driver"></param>
         /// <returns></returns>
         private List<JobListing> ScrapeJobs_Indeed(
+            ref ChromeDriver driver,
             IEnumerable<HtmlNode>? jobListingNodes,
             string searchTerm,
-            Country country,
-            ref ChromeDriver driver)
+            Country country
+            )
         {
             var jobListings = new List<JobListing>();
 
@@ -264,9 +266,9 @@ namespace AutoJobSearchJobScraper.WebScraper
                     {
                         // Swap scraping duties between browsers to help avoid anti-robot site protections.
                         if ( (i / 10) % 2 == 0)
-                            jobListings.AddRange(ScrapeJobsWithEdgeBrowser(ref driver_Edge, searchTerm, country, i));
+                            jobListings.AddRange(ScrapeJobsWithEdgeBrowser(ref driver_Edge, searchTerm, i, country));
                         else
-                            jobListings.AddRange(ScrapeJobsWithChromeBrowser(ref driver_Chrome, searchTerm, country, i)); 
+                            jobListings.AddRange(ScrapeJobsWithChromeBrowser(ref driver_Chrome, searchTerm, i, country)); 
                     }
                 }
             }
@@ -286,15 +288,12 @@ namespace AutoJobSearchJobScraper.WebScraper
             return jobListings;
         }
 
-        private List<JobListing> ScrapeJobsWithEdgeBrowser(ref EdgeDriver driver, string searchTerm, Country country, int i)
+        private List<JobListing> ScrapeJobsWithEdgeBrowser(ref EdgeDriver driver, string searchTerm, int pageIndex, Country country)
         {
             var jobListings = new List<JobListing>();
 
-            var googleJobsBoardURL = $"https://www.google.com/search?q={WebUtility.UrlEncode(searchTerm)}&sourceid=chrome&ie=UTF-8&ibp=htl;jobs&start={i}"; // TODO: just add search term and country as arguments to ScrapeNodes methods
-            var indeedJobsBoardURL = DetermineIndeedUrlAndSubdomain(searchTerm, country, i);
-
-            var jobListingNodes_Google = ScrapeJobNodes_Google(ref driver, googleJobsBoardURL);
-            var jobListingNodes_Indeed = ScrapeJobNodes_Indeed(ref driver, indeedJobsBoardURL);
+            var jobListingNodes_Google = ScrapeJobNodes_Google(ref driver, searchTerm, pageIndex);
+            var jobListingNodes_Indeed = ScrapeJobNodes_Indeed(ref driver, searchTerm, pageIndex, country);
 
             // If there are no jobs found on any of the job boards, break the loop and start scraping with the next search term
             if ((jobListingNodes_Google is null || !jobListingNodes_Google.Any()) &&
@@ -303,26 +302,23 @@ namespace AutoJobSearchJobScraper.WebScraper
                 _logger.LogWarning(
                     "No jobs detected during job scraping. " +
                     "{@searchTerm} {@iterationValue} {@MAX_JOB_LISTING_INDEX}",
-                    searchTerm, i, MAX_JOB_LISTING_INDEX);
+                    searchTerm, pageIndex, MAX_JOB_LISTING_INDEX);
 
                 return jobListings; 
             }
 
             jobListings.AddRange(ScrapeJobs_Google(jobListingNodes_Google, searchTerm));
-            jobListings.AddRange(ScrapeJobs_Indeed(jobListingNodes_Indeed, searchTerm, country, ref driver));
+            jobListings.AddRange(ScrapeJobs_Indeed(ref driver, jobListingNodes_Indeed, searchTerm, country));
 
             return jobListings;
         }
 
-        private List<JobListing> ScrapeJobsWithChromeBrowser(ref ChromeDriver driver, string searchTerm, Country country, int i)
+        private List<JobListing> ScrapeJobsWithChromeBrowser(ref ChromeDriver driver, string searchTerm, int pageIndex, Country country)
         {
             var jobListings = new List<JobListing>();
 
-            var googleJobsBoardURL = $"https://www.google.com/search?q={WebUtility.UrlEncode(searchTerm)}&sourceid=chrome&ie=UTF-8&ibp=htl;jobs&start={i}"; // TODO: just add search term and country as arguments to ScrapeNodes methods
-            var indeedJobsBoardURL = DetermineIndeedUrlAndSubdomain(searchTerm, country, i);
-
-            var jobListingNodes_Google = ScrapeJobNodes_Google(ref driver, googleJobsBoardURL);
-            var jobListingNodes_Indeed = ScrapeJobNodes_Indeed(ref driver, indeedJobsBoardURL);
+            var jobListingNodes_Google = ScrapeJobNodes_Google(ref driver, searchTerm, pageIndex);
+            var jobListingNodes_Indeed = ScrapeJobNodes_Indeed(ref driver, searchTerm, pageIndex, country);
 
             // If there are no jobs found on any of the job boards, break the loop and start scraping with the next search term
             if ((jobListingNodes_Google is null || !jobListingNodes_Google.Any()) &&
@@ -331,20 +327,21 @@ namespace AutoJobSearchJobScraper.WebScraper
                 _logger.LogWarning(
                     "No jobs detected during job scraping. " +
                     "{@searchTerm} {@iterationValue} {@MAX_JOB_LISTING_INDEX}",
-                    searchTerm, i, MAX_JOB_LISTING_INDEX);
+                    searchTerm, pageIndex, MAX_JOB_LISTING_INDEX);
 
                 return jobListings; 
             }
 
             jobListings.AddRange(ScrapeJobs_Google(jobListingNodes_Google, searchTerm));
-            jobListings.AddRange(ScrapeJobs_Indeed(jobListingNodes_Indeed, searchTerm, country, ref driver));
+            jobListings.AddRange(ScrapeJobs_Indeed(ref driver, jobListingNodes_Indeed, searchTerm, country));
 
             return jobListings;
         }
 
-        private IEnumerable<HtmlNode>? ScrapeJobNodes_Indeed(ref EdgeDriver driver, string indeedJobsBoardURL)
+        private IEnumerable<HtmlNode>? ScrapeJobNodes_Indeed(ref EdgeDriver driver, string searchTerm, int pageIndex, Country country)
         {
             var htmlDocument = new HtmlDocument();
+            var indeedJobsBoardURL = DetermineIndeedUrlAndSubdomain(searchTerm, pageIndex, country);
 
             driver.Navigate().GoToUrl(indeedJobsBoardURL);
             htmlDocument!.LoadHtml(driver.PageSource);
@@ -359,9 +356,10 @@ namespace AutoJobSearchJobScraper.WebScraper
             return jobListingNodes;
         }
 
-        private IEnumerable<HtmlNode>? ScrapeJobNodes_Indeed(ref ChromeDriver driver, string indeedJobsBoardURL)
+        private IEnumerable<HtmlNode>? ScrapeJobNodes_Indeed(ref ChromeDriver driver, string searchTerm, int pageIndex, Country country)
         {
             var htmlDocument = new HtmlDocument();
+            var indeedJobsBoardURL = DetermineIndeedUrlAndSubdomain(searchTerm, pageIndex, country);
 
             driver.Navigate().GoToUrl(indeedJobsBoardURL);
             htmlDocument!.LoadHtml(driver.PageSource);
@@ -376,9 +374,10 @@ namespace AutoJobSearchJobScraper.WebScraper
             return jobListingNodes;
         }
 
-        private IEnumerable<HtmlNode>? ScrapeJobNodes_Google(ref EdgeDriver driver, string googleJobsBoardURL)
+        private IEnumerable<HtmlNode>? ScrapeJobNodes_Google(ref EdgeDriver driver, string searchTerm, int pageIndex)
         {
             var htmlDocument = new HtmlDocument();
+            var googleJobsBoardURL = $"https://www.google.com/search?q={WebUtility.UrlEncode(searchTerm)}&sourceid=chrome&ie=UTF-8&ibp=htl;jobs&start={pageIndex}";
 
             driver.Navigate().GoToUrl(googleJobsBoardURL);
             htmlDocument!.LoadHtml(driver.PageSource);
@@ -389,9 +388,10 @@ namespace AutoJobSearchJobScraper.WebScraper
             return jobListingNodes;
         }
 
-        private IEnumerable<HtmlNode>? ScrapeJobNodes_Google(ref ChromeDriver driver, string googleJobsBoardURL)
+        private IEnumerable<HtmlNode>? ScrapeJobNodes_Google(ref ChromeDriver driver, string searchTerm, int pageIndex)
         {
             var htmlDocument = new HtmlDocument();
+            var googleJobsBoardURL = $"https://www.google.com/search?q={WebUtility.UrlEncode(searchTerm)}&sourceid=chrome&ie=UTF-8&ibp=htl;jobs&start={pageIndex}";
 
             driver.Navigate().GoToUrl(googleJobsBoardURL);
             htmlDocument!.LoadHtml(driver.PageSource);
@@ -402,15 +402,15 @@ namespace AutoJobSearchJobScraper.WebScraper
             return jobListingNodes;
         }
 
-        private static string DetermineIndeedUrlAndSubdomain(string searchTerm, Country country, int i)
+        private static string DetermineIndeedUrlAndSubdomain(string searchTerm, int pageIndex, Country country)
         {
             if (country == Country.Canada)
             {
-                return $"https://ca.indeed.com/jobs?q={WebUtility.UrlEncode(searchTerm)}&start={i}";
+                return $"https://ca.indeed.com/jobs?q={WebUtility.UrlEncode(searchTerm)}&start={pageIndex}";
             }
             else
             {
-                return $"https://www.indeed.com/jobs?q={WebUtility.UrlEncode(searchTerm)}&start={i}";
+                return $"https://www.indeed.com/jobs?q={WebUtility.UrlEncode(searchTerm)}&start={pageIndex}";
             }
         }
 
