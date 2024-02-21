@@ -6,6 +6,7 @@ using HtmlAgilityPack;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Edge;
 using System.Net;
 using System.Text.RegularExpressions;
 namespace AutoJobSearchJobScraper.WebScraper
@@ -123,7 +124,7 @@ namespace AutoJobSearchJobScraper.WebScraper
             IEnumerable<HtmlNode>? jobListingNodes,
             string searchTerm,
             Country country,
-            ref ChromeDriver driver)
+            ref EdgeDriver driver)
         {
             var jobListings = new List<JobListing>();
 
@@ -178,12 +179,79 @@ namespace AutoJobSearchJobScraper.WebScraper
             return jobListings;
         }
 
+        /// <summary>
+        /// Extract job listings for the Indeed job board.
+        /// </summary>
+        /// <param name="jobListingNodes">The HTML nodes that contain the job listing descriptions.</param>
+        /// <param name="searchTerm"></param>
+        /// <param name="driver"></param>
+        /// <returns></returns>
+        private List<JobListing> ScrapeJobs_Indeed(
+            IEnumerable<HtmlNode>? jobListingNodes,
+            string searchTerm,
+            Country country,
+            ref ChromeDriver driver)
+        {
+            var jobListings = new List<JobListing>();
+
+            if (jobListingNodes is null || !jobListingNodes.Any())
+                return jobListings;
+
+            var doc = new HtmlDocument();
+
+            foreach (var node in jobListingNodes)
+            {
+                // Indeed applies an id attribute to the HTML div element containing the job description. 
+                // The value of the id attribute is the Indeed job id, which we need in order to navigate to the job's URL.
+                var jobId = node.GetAttributeValue(INDEED_JOB_DESCRIPTION_HTML_DIV_ID_ATTRIBUTE, null);
+
+                // Skip over this job if the id cannot be determined.
+                if (String.IsNullOrWhiteSpace(jobId)) continue;
+
+                string url;
+
+                if (country == Country.Canada)
+                {
+                    url = $"https://ca.indeed.com/viewjob?jk={jobId}";
+                }
+                else
+                {
+                    url = $"https://www.indeed.com/viewjob?jk={jobId}";
+                }
+
+                driver.Navigate().GoToUrl(url);
+
+                // Need to provide a short delay or the Selenium browser will randomly throw exceptions.
+                // Hacky solution but you can't use "ref" keywords for async method arguments.
+                // Exception details for if they start occurring again: "OpenQA.Selenium.WebDriverException - unknown error: session deleted because of page crash"
+                Task.Delay(CHROME_DRIVER_DELAY_IN_MS).Wait();
+
+                doc.LoadHtml(driver.PageSource);
+
+                CheckForCaptcha(ref doc, ref driver, url);
+
+                var jobListing = new JobListing
+                {
+                    SearchTerm = searchTerm,
+                    Description_Raw = WebUtility.HtmlDecode(doc.DocumentNode.InnerText)
+                };
+
+                jobListing.ApplicationLinks.Add(new ApplicationLink { Link = url });
+                jobListing.Description = GetDescription(jobListing, JobBoards.Indeed);
+
+                jobListings.Add(jobListing);
+            }
+
+            return jobListings;
+        }
+
         public async Task<IEnumerable<JobListing>> ScrapeJobsAsync(IEnumerable<string> searchTerms)
         {
             _logger.LogInformation("Begin scraping jobs. Number of members in searchTerms argument: {@searchTerms.Count}", searchTerms.Count());
 
             var jobListings = new List<JobListing>();
-            var driver = new ChromeDriver();
+            var driver_Edge = new EdgeDriver();
+            var driver_Chrome = new ChromeDriver(); 
 
             try
             {
@@ -194,26 +262,11 @@ namespace AutoJobSearchJobScraper.WebScraper
                     // Parse through the amount of jobs specified by MAX_PAGE_INDEX. Increment the start index by 10 every iteration.
                     for (int i = 0; i < MAX_JOB_LISTING_INDEX + 1; i += 10)
                     {
-                        var googleJobsBoardURL = $"https://www.google.com/search?q={WebUtility.UrlEncode(searchTerm)}&sourceid=chrome&ie=UTF-8&ibp=htl;jobs&start={i}";
-                        var indeedJobsBoardURL = DetermineIndeedUrlAndSubdomain(searchTerm, country, i);
-
-                        var jobListingNodes_Google = ScrapeJobNodes_Google(ref driver, googleJobsBoardURL);
-                        var jobListingNodes_Indeed = ScrapeJobNodes_Indeed(ref driver, indeedJobsBoardURL);
-
-                        // If there are no jobs found on any of the job boards, break the loop and start scraping with the next search term
-                        if ((jobListingNodes_Google is null || !jobListingNodes_Google.Any()) &&
-                            (jobListingNodes_Indeed is null || !jobListingNodes_Indeed.Any()))
-                        {
-                            _logger.LogWarning(
-                                "No jobs detected during job scraping. " +
-                                "{@searchTerm} {@iterationValue} {@MAX_JOB_LISTING_INDEX}",
-                                searchTerm, i, MAX_JOB_LISTING_INDEX);
-
-                            break;
-                        }
-
-                        jobListings.AddRange(ScrapeJobs_Google(jobListingNodes_Google, searchTerm));
-                        jobListings.AddRange(ScrapeJobs_Indeed(jobListingNodes_Indeed, searchTerm, country, ref driver));
+                        // Swap scraping duties between browsers to help avoid anti-robot site protections.
+                        if ( (i / 10) % 2 == 0)
+                            jobListings.AddRange(ScrapeJobsWithEdgeBrowser(ref driver_Edge, searchTerm, country, i));
+                        else
+                            jobListings.AddRange(ScrapeJobsWithChromeBrowser(ref driver_Chrome, searchTerm, country, i)); 
                     }
                 }
             }
@@ -223,13 +276,87 @@ namespace AutoJobSearchJobScraper.WebScraper
             }
             finally
             {
-                driver.Quit();
+                driver_Edge.Quit();
+                driver_Chrome.Quit();
             }
 
             await Task.CompletedTask;
 
             _logger.LogInformation("Finished scraping jobs. {@jobListings.Count} job listings returned.", jobListings.Count);
             return jobListings;
+        }
+
+        private List<JobListing> ScrapeJobsWithEdgeBrowser(ref EdgeDriver driver, string searchTerm, Country country, int i)
+        {
+            var jobListings = new List<JobListing>();
+
+            var googleJobsBoardURL = $"https://www.google.com/search?q={WebUtility.UrlEncode(searchTerm)}&sourceid=chrome&ie=UTF-8&ibp=htl;jobs&start={i}"; // TODO: just add search term and country as arguments to ScrapeNodes methods
+            var indeedJobsBoardURL = DetermineIndeedUrlAndSubdomain(searchTerm, country, i);
+
+            var jobListingNodes_Google = ScrapeJobNodes_Google(ref driver, googleJobsBoardURL);
+            var jobListingNodes_Indeed = ScrapeJobNodes_Indeed(ref driver, indeedJobsBoardURL);
+
+            // If there are no jobs found on any of the job boards, break the loop and start scraping with the next search term
+            if ((jobListingNodes_Google is null || !jobListingNodes_Google.Any()) &&
+                (jobListingNodes_Indeed is null || !jobListingNodes_Indeed.Any()))
+            {
+                _logger.LogWarning(
+                    "No jobs detected during job scraping. " +
+                    "{@searchTerm} {@iterationValue} {@MAX_JOB_LISTING_INDEX}",
+                    searchTerm, i, MAX_JOB_LISTING_INDEX);
+
+                return jobListings; 
+            }
+
+            jobListings.AddRange(ScrapeJobs_Google(jobListingNodes_Google, searchTerm));
+            jobListings.AddRange(ScrapeJobs_Indeed(jobListingNodes_Indeed, searchTerm, country, ref driver));
+
+            return jobListings;
+        }
+
+        private List<JobListing> ScrapeJobsWithChromeBrowser(ref ChromeDriver driver, string searchTerm, Country country, int i)
+        {
+            var jobListings = new List<JobListing>();
+
+            var googleJobsBoardURL = $"https://www.google.com/search?q={WebUtility.UrlEncode(searchTerm)}&sourceid=chrome&ie=UTF-8&ibp=htl;jobs&start={i}"; // TODO: just add search term and country as arguments to ScrapeNodes methods
+            var indeedJobsBoardURL = DetermineIndeedUrlAndSubdomain(searchTerm, country, i);
+
+            var jobListingNodes_Google = ScrapeJobNodes_Google(ref driver, googleJobsBoardURL);
+            var jobListingNodes_Indeed = ScrapeJobNodes_Indeed(ref driver, indeedJobsBoardURL);
+
+            // If there are no jobs found on any of the job boards, break the loop and start scraping with the next search term
+            if ((jobListingNodes_Google is null || !jobListingNodes_Google.Any()) &&
+                (jobListingNodes_Indeed is null || !jobListingNodes_Indeed.Any()))
+            {
+                _logger.LogWarning(
+                    "No jobs detected during job scraping. " +
+                    "{@searchTerm} {@iterationValue} {@MAX_JOB_LISTING_INDEX}",
+                    searchTerm, i, MAX_JOB_LISTING_INDEX);
+
+                return jobListings; 
+            }
+
+            jobListings.AddRange(ScrapeJobs_Google(jobListingNodes_Google, searchTerm));
+            jobListings.AddRange(ScrapeJobs_Indeed(jobListingNodes_Indeed, searchTerm, country, ref driver));
+
+            return jobListings;
+        }
+
+        private IEnumerable<HtmlNode>? ScrapeJobNodes_Indeed(ref EdgeDriver driver, string indeedJobsBoardURL)
+        {
+            var htmlDocument = new HtmlDocument();
+
+            driver.Navigate().GoToUrl(indeedJobsBoardURL);
+            htmlDocument!.LoadHtml(driver.PageSource);
+            CheckForCaptcha(ref htmlDocument, ref driver, indeedJobsBoardURL);
+
+            // Get all a (anchor) HTML elements that have the correct job id attribute
+            var jobListingNodes = htmlDocument?
+                .DocumentNode?
+                .SelectNodes("//a")
+                .Where(x => x.GetAttributeValue(INDEED_JOB_DESCRIPTION_HTML_DIV_ID_ATTRIBUTE, null) != null);
+
+            return jobListingNodes;
         }
 
         private IEnumerable<HtmlNode>? ScrapeJobNodes_Indeed(ref ChromeDriver driver, string indeedJobsBoardURL)
@@ -245,6 +372,19 @@ namespace AutoJobSearchJobScraper.WebScraper
                 .DocumentNode?
                 .SelectNodes("//a")
                 .Where(x => x.GetAttributeValue(INDEED_JOB_DESCRIPTION_HTML_DIV_ID_ATTRIBUTE, null) != null);
+
+            return jobListingNodes;
+        }
+
+        private IEnumerable<HtmlNode>? ScrapeJobNodes_Google(ref EdgeDriver driver, string googleJobsBoardURL)
+        {
+            var htmlDocument = new HtmlDocument();
+
+            driver.Navigate().GoToUrl(googleJobsBoardURL);
+            htmlDocument!.LoadHtml(driver.PageSource);
+            CheckForCaptcha(ref htmlDocument, ref driver, googleJobsBoardURL);
+
+            var jobListingNodes = htmlDocument?.DocumentNode?.SelectNodes("//li")?.AsEnumerable(); // Get all li (list item) HTML elements
 
             return jobListingNodes;
         }
@@ -286,6 +426,26 @@ namespace AutoJobSearchJobScraper.WebScraper
             }
         }
 
+
+        /// <summary>
+        /// If captcha is detected, close the browser and open a new browser to the same URL. This should allow scraping to continue.
+        /// </summary>
+        /// <param name="doc"></param>
+        /// <param name="driver"></param>
+        /// <param name="url"></param>
+        private void CheckForCaptcha(ref HtmlDocument doc, ref EdgeDriver driver, string url)
+        {
+            var innerText = doc.DocumentNode.InnerText;
+
+            if (innerText.Contains(CAPTCHA_MESSAGE_GOOGLE, StringComparison.OrdinalIgnoreCase) ||
+                innerText.Contains(CAPTCHA_MESSAGE_INDEED, StringComparison.OrdinalIgnoreCase))
+            {
+                driver.Quit();
+                driver = new EdgeDriver();
+                driver.Navigate().GoToUrl(url);
+                doc.LoadHtml(driver.PageSource); // Reload the page now that captcha has been bypassed.
+            }
+        }
 
         /// <summary>
         /// If captcha is detected, close the browser and open a new browser to the same URL. This should allow scraping to continue.
