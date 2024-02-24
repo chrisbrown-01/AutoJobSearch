@@ -46,9 +46,22 @@
 			</ComboBox>
 		</StackPanel>
 
-		<StackPanel VerticalAlignment="Center" Orientation="Horizontal" Grid.Row="1" Margin="30 5">
-			<TextBlock Text="Profile Name" Margin="0,0,10,0" />
+		<StackPanel 
+			VerticalAlignment="Center" 
+			HorizontalAlignment="Center" 
+			Orientation="Horizontal" 
+			Grid.Row="1" Margin="30 5">
+			<TextBlock Text="Profile Name" VerticalAlignment="Center" Margin="0,0,10,0" />
 			<TextBox Text="{Binding SelectedSearchProfile.ProfileName}" Width="125" />
+			<TextBlock Text="Max Search Index" VerticalAlignment="Center" Margin="100,0,10,0" />
+			<!--Application displays error if user manually deletes all numbers inside these controls
+			(using backspace or delete on keyboard). No way to prevent this.-->
+			<NumericUpDown 
+				Increment="10"  				  
+				Minimum="1"
+				Maximum="500"
+				FormatString="0"
+				Value="{Binding SelectedSearchProfile.MaxJobListingIndex}"/>
 		</StackPanel>
 
 		<TextBlock Grid.Row="2" Text="Search Terms" Margin="30 0"/>

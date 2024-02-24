@@ -107,6 +107,7 @@ namespace AutoJobSearchGUI.ViewModels
             }
         }
 
+        // TODO: move to static helpers class
         private List<JobSearchProfileModel> ConvertProfilesToMvvmModel(IEnumerable<JobSearchProfile> profiles)
         {
             var profilesMvvm = new List<JobSearchProfileModel>();
@@ -119,11 +120,13 @@ namespace AutoJobSearchGUI.ViewModels
             return profilesMvvm;
         }
 
+        // TODO: move to static helpers class
         private JobSearchProfileModel ConvertProfileToMvvmModel(JobSearchProfile profile)
         {
             var result = new JobSearchProfileModel()
             {
                 Id = profile.Id,
+                MaxJobListingIndex = profile.MaxJobListingIndex,
                 ProfileName = profile.ProfileName,
                 Searches = profile.Searches,
                 KeywordsPositive = profile.KeywordsPositive,

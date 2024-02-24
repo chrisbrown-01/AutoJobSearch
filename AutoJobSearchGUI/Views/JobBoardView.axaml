@@ -76,7 +76,7 @@
 							   IsEnabled="{Binding !JobBoardQueryModel.ScoreEqualsEnabled}" 
 							   ClickMode="Press"/>
 						<MenuItem Header="Equals">
-							<!--Application crashes if user manually deletes all numbers inside these controls
+							<!--Application displays error if user manually deletes all numbers inside these controls
 							(using backspace or delete on keyboard). No way to prevent this.-->
 							<NumericUpDown Value="{Binding JobBoardQueryModel.ScoreEquals}" FormatString="0" />
 						</MenuItem>

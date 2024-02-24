@@ -15,7 +15,7 @@ namespace AutoJobSearchShared.Models
 
         public int Id { get; }
 
-        public int MaxJobListingIndex { get; set; } 
+        public int MaxJobListingIndex { get; set; } = 150;
 
         public string ProfileName { get; set; } = "New Profile";
 

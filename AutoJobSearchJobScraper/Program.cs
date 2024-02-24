@@ -34,7 +34,7 @@ namespace AutoJobSearchJobScraper
             }
             else
             {
-                Log.Information("Starting application with {@args.Count} string arguments.", args.Count());
+                Log.Information("Starting application with {@args.Count} string arguments.", args.Length);
                 RunProgram(serviceProvider, args.AsEnumerable()).Wait();
             }
 
@@ -51,7 +51,9 @@ namespace AutoJobSearchJobScraper
             var jobSearchProfile = await db.GetJobSearchProfileByIdAsync(jobSearchProfileId) ??
                 throw new NullReferenceException($"Job search profile ID {jobSearchProfileId} not found in database.");
 
-            var scrapedJobs = await scraper.ScrapeJobsAsync(StringHelpers.ConvertCommaSeperatedStringsToIEnumerable(jobSearchProfile.Searches));
+            var scrapedJobs = await scraper.ScrapeJobsAsync(
+                StringHelpers.ConvertCommaSeperatedStringsToIEnumerable(jobSearchProfile.Searches),
+                jobSearchProfile.MaxJobListingIndex);
 
             var existingLinks = await db.GetAllApplicationLinksAsync();
 
@@ -74,7 +76,7 @@ namespace AutoJobSearchJobScraper
             var utility = serviceProvider.GetRequiredService<JobListingUtility>();
 
             var existingLinks = await db.GetAllApplicationLinksAsync();
-            var scrapedJobs = await scraper.ScrapeJobsAsync(searchTerms);
+            var scrapedJobs = await scraper.ScrapeJobsAsync(searchTerms, null);
             var filteredJobs = await utility.FilterDuplicatesAsync(scrapedJobs, existingLinks.ToHashSet());
 
             await db.SaveJobListingsAsync(filteredJobs);

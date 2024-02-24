@@ -29,6 +29,7 @@ namespace AutoJobSearchShared.Database
             }
         }
 
+        // TODO: add NOT NULL constraints to tables
         public void CreateTables()
         {
             connection.Execute("PRAGMA foreign_keys = ON;");
@@ -60,6 +61,7 @@ namespace AutoJobSearchShared.Database
 
             const string createJobSearchProfilesTableSQL = "CREATE TABLE JobSearchProfiles (" +
                  "Id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                 "MaxJobListingIndex INTEGER," +
                  "ProfileName TEXT," +
                  "Searches TEXT," +
                  "KeywordsPositive TEXT," +
@@ -192,6 +194,7 @@ namespace AutoJobSearchShared.Database
         {
             const string sql =
                 "INSERT INTO JobSearchProfiles (" +
+                "MaxJobListingIndex, " +
                 "ProfileName, " +
                 "Searches, " +
                 "KeywordsPositive, " +
@@ -199,6 +202,7 @@ namespace AutoJobSearchShared.Database
                 "SentimentsPositive, " +
                 "SentimentsNegative" +
                 ") VALUES (" +
+                "@MaxJobListingIndex, " +
                 "@ProfileName, " +
                 "@Searches, " +
                 "@KeywordsPositive, " +
@@ -534,6 +538,12 @@ namespace AutoJobSearchShared.Database
         public async Task UpdateJobListingIntPropertyAsync(JobListingsIntField columnName, int value, int id)
         {
             string sql = $"UPDATE JobListings SET {columnName} = @Value WHERE Id = @Id";
+            await connection.ExecuteAsync(sql, new { Value = value, Id = id }).ConfigureAwait(false);
+        }
+
+        public async Task UpdateJobSearchProfileIntPropertyAsync(JobSearchProfilesIntField columnName, int value, int id)
+        {
+            string sql = $"UPDATE JobSearchProfiles SET {columnName} = @Value WHERE Id = @Id";
             await connection.ExecuteAsync(sql, new { Value = value, Id = id }).ConfigureAwait(false);
         }
     }
