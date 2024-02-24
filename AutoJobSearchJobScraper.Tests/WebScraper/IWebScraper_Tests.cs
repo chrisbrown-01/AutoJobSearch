@@ -17,6 +17,7 @@ namespace AutoJobSearchJobScraper.Tests.WebScraper
         private readonly IFixture _fixture;
         private readonly IWebScraper _webScraper;
         private readonly IEnumerable<string> _searchTerms;
+        private readonly int? _maxJobListingIndex;
 
         public IWebScraper_Tests()
         {
@@ -24,20 +25,21 @@ namespace AutoJobSearchJobScraper.Tests.WebScraper
             _webScraper = Substitute.For<IWebScraper>();
 
             _searchTerms = _fixture.CreateMany<string>();
+            _maxJobListingIndex = _fixture.Create<int>();
         }
 
         [Fact]
         public async Task ScrapeJobsAsync_Should_BeCalled()
         {
-            await _webScraper.ScrapeJobsAsync(_searchTerms);
+            await _webScraper.ScrapeJobsAsync(_searchTerms, _maxJobListingIndex);
 
-            await _webScraper.Received().ScrapeJobsAsync(_searchTerms);
+            await _webScraper.Received().ScrapeJobsAsync(_searchTerms, _maxJobListingIndex);
         }
 
         [Fact]
         public async Task ScrapeJobsAsync_Should_Return_NonNullResult()
         {
-            var result = await _webScraper.ScrapeJobsAsync(_searchTerms);
+            var result = await _webScraper.ScrapeJobsAsync(_searchTerms, _maxJobListingIndex);
 
             result.Should().NotBeNull();
         }
@@ -47,10 +49,10 @@ namespace AutoJobSearchJobScraper.Tests.WebScraper
         {
             // Arrange
             var expectedResult = _fixture.CreateMany<JobListing>();
-            _webScraper.ScrapeJobsAsync(_searchTerms).Returns(expectedResult);
+            _webScraper.ScrapeJobsAsync(_searchTerms, _maxJobListingIndex).Returns(expectedResult);
 
             // Act
-            var result = await _webScraper.ScrapeJobsAsync(_searchTerms);
+            var result = await _webScraper.ScrapeJobsAsync(_searchTerms, _maxJobListingIndex);
 
             // Assert
             result.Should().BeEquivalentTo(expectedResult);
@@ -62,10 +64,10 @@ namespace AutoJobSearchJobScraper.Tests.WebScraper
         {
             // Arrange
             IEnumerable<JobListing> expectedResult = new List<JobListing>();
-            _webScraper.ScrapeJobsAsync(_searchTerms).Returns(expectedResult);
+            _webScraper.ScrapeJobsAsync(_searchTerms, _maxJobListingIndex).Returns(expectedResult);
 
             // Act
-            var result = await _webScraper.ScrapeJobsAsync(_searchTerms);
+            var result = await _webScraper.ScrapeJobsAsync(_searchTerms, _maxJobListingIndex);
 
             // Assert
             result.Should().BeEquivalentTo(expectedResult);

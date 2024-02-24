@@ -16,6 +16,10 @@ namespace AutoJobSearchGUI.Models
         // This property prevents events from unnecessarily firing when the view model is simply instantiating new models.
         public bool EnableEvents { get; set; } = false;
 
+        // TODO: add notes in Help section that describes what this is for
+        [ObservableProperty]
+        private int _maxJobListingIndex;
+
         [ObservableProperty]
         private string _profileName = string.Empty;
 
@@ -36,9 +40,17 @@ namespace AutoJobSearchGUI.Models
 
         public static event EventHandler<JobSearchProfilesStringFieldChangedEventArgs>? StringFieldChanged;
 
+        public static event EventHandler<JobSearchProfilesIntFieldChangedEventArgs>? IntFieldChanged;
+
         // Note that these methods technically cause an excessive amount of database calls but since there is only a single user
         // interacting with the database, the technical debt is justified to ensure that no data loss occurs if the application
         // unexpectedly crashes before the user can request for the changes to be saved to the database.
+
+        partial void OnMaxJobListingIndexChanged(int value)
+        {
+            if (!this.EnableEvents) return;
+            IntFieldChanged?.Invoke(this, new JobSearchProfilesIntFieldChangedEventArgs { Field = JobSearchProfilesIntField.MaxJobListingIndex, Value = value, Id = this.Id });
+        }
 
         partial void OnProfileNameChanged(string value)
         {

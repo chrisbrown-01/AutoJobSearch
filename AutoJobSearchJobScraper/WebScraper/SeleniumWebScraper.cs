@@ -16,7 +16,7 @@ namespace AutoJobSearchJobScraper.WebScraper
         private const string REGEX_URL_PATTERN = @"https?://[^\s""]+";
         private const int CHROME_DRIVER_DELAY_IN_MS = 100;
 
-        private readonly int MAX_JOB_LISTING_INDEX;
+        private readonly int DEFAULT_MAX_JOB_LISTING_INDEX;
         private readonly string STARTING_INDEX_KEYWORD_GOOGLE;
         private readonly string ENDING_INDEX_KEYWORD_GOOGLE;
         private readonly string STARTING_INDEX_KEYWORD_INDEED;
@@ -39,20 +39,20 @@ namespace AutoJobSearchJobScraper.WebScraper
 
             try
             {
-                MAX_JOB_LISTING_INDEX = config.GetValue<int>(nameof(MAX_JOB_LISTING_INDEX));
+                DEFAULT_MAX_JOB_LISTING_INDEX = config.GetValue<int>(nameof(DEFAULT_MAX_JOB_LISTING_INDEX));
             }
             catch (InvalidOperationException)
             {
                 throw new AppSettingsFileArgumentException(
-                    $"Failed to read {nameof(MAX_JOB_LISTING_INDEX)} from appsettings.json config file. " +
-                    $"Ensure that {nameof(MAX_JOB_LISTING_INDEX)} is an integer.");
+                    $"Failed to read {nameof(DEFAULT_MAX_JOB_LISTING_INDEX)} from appsettings.json config file. " +
+                    $"Ensure that {nameof(DEFAULT_MAX_JOB_LISTING_INDEX)} is an integer.");
             }
 
-            if (MAX_JOB_LISTING_INDEX < 1)
+            if (DEFAULT_MAX_JOB_LISTING_INDEX < 1)
             {
                 throw new AppSettingsFileArgumentException(
-                    $"Failed to read {nameof(MAX_JOB_LISTING_INDEX)} from appsettings.json config file. " +
-                    $"Ensure that {nameof(MAX_JOB_LISTING_INDEX)} has a value greater than 0.");
+                    $"Failed to read {nameof(DEFAULT_MAX_JOB_LISTING_INDEX)} from appsettings.json config file. " +
+                    $"Ensure that {nameof(DEFAULT_MAX_JOB_LISTING_INDEX)} has a value greater than 0.");
             }
 
             STARTING_INDEX_KEYWORD_GOOGLE = config.GetValue<string>(nameof(STARTING_INDEX_KEYWORD_GOOGLE)) ??
@@ -247,9 +247,32 @@ namespace AutoJobSearchJobScraper.WebScraper
             return jobListings;
         }
 
-        public async Task<IEnumerable<JobListing>> ScrapeJobsAsync(IEnumerable<string> searchTerms)
+        public async Task<IEnumerable<JobListing>> ScrapeJobsAsync(IEnumerable<string> searchTerms, int? maxJobListingIndex)
         {
-            _logger.LogInformation("Begin scraping jobs. Number of members in searchTerms argument: {@searchTerms.Count}", searchTerms.Count());
+            int _maxJobListingIndex;
+
+            if (maxJobListingIndex is null || maxJobListingIndex < 1)
+            {
+                _maxJobListingIndex = DEFAULT_MAX_JOB_LISTING_INDEX;
+
+                _logger.LogInformation(
+                    "Begin scraping jobs. " +
+                    "Number of members in searchTerms argument: {@searchTerms.Count}. " +
+                    "Utilizing default max job listing index value: {@_maxJobListingIndex}",
+                    searchTerms.Count(),
+                    _maxJobListingIndex);
+            }
+            else
+            {
+                _maxJobListingIndex = maxJobListingIndex.Value;
+
+                _logger.LogInformation(
+                    "Begin scraping jobs. " +
+                    "Number of members in searchTerms argument: {@searchTerms.Count}. " +
+                    "Utilizing max job listing index value from database MaxJobListingIndex property: {@_maxJobListingIndex}",
+                    searchTerms.Count(),
+                    _maxJobListingIndex);
+            }
 
             var jobListings = new List<JobListing>();
             var driver_Edge = new EdgeDriver();
@@ -262,7 +285,7 @@ namespace AutoJobSearchJobScraper.WebScraper
                     var country = DetermineSearchCountry(searchTerm);
 
                     // Parse through the amount of jobs specified by MAX_PAGE_INDEX. Increment the start index by 10 every iteration.
-                    for (int i = 0; i < MAX_JOB_LISTING_INDEX + 1; i += 10)
+                    for (int i = 0; i < _maxJobListingIndex + 1; i += 10)
                     {
                         // Swap scraping duties between browsers to help avoid anti-robot site protections.
                         if ( (i / 10) % 2 == 0)
@@ -301,8 +324,8 @@ namespace AutoJobSearchJobScraper.WebScraper
             {
                 _logger.LogWarning(
                     "No jobs detected during job scraping. " +
-                    "{@searchTerm} {@iterationValue} {@MAX_JOB_LISTING_INDEX}",
-                    searchTerm, pageIndex, MAX_JOB_LISTING_INDEX);
+                    "{@searchTerm} {@iterationValue}",
+                    searchTerm, pageIndex);
 
                 return jobListings; 
             }
@@ -326,8 +349,8 @@ namespace AutoJobSearchJobScraper.WebScraper
             {
                 _logger.LogWarning(
                     "No jobs detected during job scraping. " +
-                    "{@searchTerm} {@iterationValue} {@MAX_JOB_LISTING_INDEX}",
-                    searchTerm, pageIndex, MAX_JOB_LISTING_INDEX);
+                    "{@searchTerm} {@iterationValue}}",
+                    searchTerm, pageIndex);
 
                 return jobListings; 
             }
