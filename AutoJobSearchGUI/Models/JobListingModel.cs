@@ -30,10 +30,20 @@ namespace AutoJobSearchGUI.Models
         private int _score = 0;
 
         [ObservableProperty]
+        // Keeps track of the most recent time a bool property was changed.
+        private DateTime _statusModifiedAt;
+
+        [ObservableProperty]
         private string _searchTerm = string.Empty; 
 
         [ObservableProperty]
         private string _description = string.Empty;
+
+        [ObservableProperty]
+        private string _notes = string.Empty;
+
+        [ObservableProperty]
+        private bool _isToBeAppliedTo;
 
         [ObservableProperty]
         private bool _isAppliedTo;
@@ -42,16 +52,22 @@ namespace AutoJobSearchGUI.Models
         private bool _isInterviewing;
 
         [ObservableProperty]
+        private bool _isNegotiating;
+
+        [ObservableProperty]
         private bool _isRejected;
+
+        [ObservableProperty]
+        private bool _isDeclinedOffer;
+
+        [ObservableProperty]
+        private bool _isAcceptedOffer;
 
         [ObservableProperty]
         private bool _isFavourite;
 
         [ObservableProperty]
         private bool _isHidden;
-
-        [ObservableProperty]
-        private string _notes = string.Empty;
 
         public static event EventHandler<JobListingsStringFieldChangedEventArgs>? StringFieldChanged;
 
@@ -62,6 +78,12 @@ namespace AutoJobSearchGUI.Models
         // Note that these methods technically cause an excessive amount of database calls but since there is only a single user
         // interacting with the database, the technical debt is justified to ensure that no data loss occurs if the application
         // unexpectedly crashes before the user can request for the changes to be saved to the database.
+
+        partial void OnScoreChanged(int value)
+        {
+            if (!this.EnableEvents) return;
+            IntFieldChanged?.Invoke(this, new JobListingsIntFieldChangedEventArgs { Field = JobListingsIntField.Score, Value = value, Id = this.Id });
+        }
 
         partial void OnSearchTermChanged(string value)
         {
@@ -75,46 +97,163 @@ namespace AutoJobSearchGUI.Models
             StringFieldChanged?.Invoke(this, new JobListingsStringFieldChangedEventArgs { Field = JobListingsStringField.Description, Value = value, Id = this.Id });
         }
 
-        partial void OnScoreChanged(int value)
-        {
-            if (!this.EnableEvents) return;
-            IntFieldChanged?.Invoke(this, new JobListingsIntFieldChangedEventArgs { Field = JobListingsIntField.Score, Value = value, Id = this.Id });
-        }
-
         partial void OnNotesChanged(string value)
         {
             if (!this.EnableEvents) return;
             StringFieldChanged?.Invoke(this, new JobListingsStringFieldChangedEventArgs { Field = JobListingsStringField.Notes, Value = value, Id = this.Id });
         }
 
+        partial void OnIsToBeAppliedToChanged(bool value)
+        {
+            if (!this.EnableEvents) return;
+
+            StatusModifiedAt = DateTime.Now;
+
+            BoolFieldChanged?.Invoke(this,
+                new JobListingsBoolFieldChangedEventArgs
+                {
+                    Field = JobListingsBoolField.IsToBeAppliedTo,
+                    Value = value,
+                    Id =
+                    this.Id,
+                    StatusModifiedAt = this.StatusModifiedAt
+                });
+        }
+
         partial void OnIsAppliedToChanged(bool value)
         {
             if (!this.EnableEvents) return;
-            BoolFieldChanged?.Invoke(this, new JobListingsBoolFieldChangedEventArgs { Field = JobListingsBoolField.IsAppliedTo, Value = value, Id = this.Id });
+
+            StatusModifiedAt = DateTime.Now;
+
+            BoolFieldChanged?.Invoke(this,
+                new JobListingsBoolFieldChangedEventArgs
+                {
+                    Field = JobListingsBoolField.IsAppliedTo,
+                    Value = value,
+                    Id =
+                    this.Id,
+                    StatusModifiedAt = this.StatusModifiedAt
+                });
         }
 
         partial void OnIsInterviewingChanged(bool value)
         {
             if (!this.EnableEvents) return;
-            BoolFieldChanged?.Invoke(this, new JobListingsBoolFieldChangedEventArgs { Field = JobListingsBoolField.IsInterviewing, Value = value, Id = this.Id });
+
+            StatusModifiedAt = DateTime.Now;
+
+            BoolFieldChanged?.Invoke(this,
+                new JobListingsBoolFieldChangedEventArgs
+                {
+                    Field = JobListingsBoolField.IsInterviewing,
+                    Value = value,
+                    Id =
+                    this.Id,
+                    StatusModifiedAt = this.StatusModifiedAt
+                });
+        }
+
+        partial void OnIsNegotiatingChanged(bool value)
+        {
+            if (!this.EnableEvents) return;
+
+            StatusModifiedAt = DateTime.Now;
+
+            BoolFieldChanged?.Invoke(this,
+                new JobListingsBoolFieldChangedEventArgs
+                {
+                    Field = JobListingsBoolField.IsNegotiating,
+                    Value = value,
+                    Id =
+                    this.Id,
+                    StatusModifiedAt = this.StatusModifiedAt
+                });
         }
 
         partial void OnIsRejectedChanged(bool value)
         {
             if (!this.EnableEvents) return;
-            BoolFieldChanged?.Invoke(this, new JobListingsBoolFieldChangedEventArgs { Field = JobListingsBoolField.IsRejected, Value = value, Id = this.Id });
+
+            StatusModifiedAt = DateTime.Now;
+
+            BoolFieldChanged?.Invoke(this,
+                new JobListingsBoolFieldChangedEventArgs
+                {
+                    Field = JobListingsBoolField.IsRejected,
+                    Value = value,
+                    Id =
+                    this.Id,
+                    StatusModifiedAt = this.StatusModifiedAt
+                });
+        }
+
+        partial void OnIsDeclinedOfferChanged(bool value)
+        {
+            if (!this.EnableEvents) return;
+
+            StatusModifiedAt = DateTime.Now;
+
+            BoolFieldChanged?.Invoke(this,
+                new JobListingsBoolFieldChangedEventArgs
+                {
+                    Field = JobListingsBoolField.IsDeclinedOffer,
+                    Value = value,
+                    Id =
+                    this.Id,
+                    StatusModifiedAt = this.StatusModifiedAt
+                });
+        }
+
+        partial void OnIsAcceptedOfferChanged(bool value)
+        {
+            if (!this.EnableEvents) return;
+
+            StatusModifiedAt = DateTime.Now;
+
+            BoolFieldChanged?.Invoke(this,
+                new JobListingsBoolFieldChangedEventArgs
+                {
+                    Field = JobListingsBoolField.IsAcceptedOffer,
+                    Value = value,
+                    Id =
+                    this.Id,
+                    StatusModifiedAt = this.StatusModifiedAt
+                });
         }
 
         partial void OnIsFavouriteChanged(bool value)
         {
             if (!this.EnableEvents) return;
-            BoolFieldChanged?.Invoke(this, new JobListingsBoolFieldChangedEventArgs { Field = JobListingsBoolField.IsFavourite, Value = value, Id = this.Id });
+
+            StatusModifiedAt = DateTime.Now;
+
+            BoolFieldChanged?.Invoke(this,
+                new JobListingsBoolFieldChangedEventArgs
+                {
+                    Field = JobListingsBoolField.IsFavourite,
+                    Value = value,
+                    Id =
+                    this.Id,
+                    StatusModifiedAt = this.StatusModifiedAt
+                });
         }
 
         partial void OnIsHiddenChanged(bool value)
         {
             if (!this.EnableEvents) return;
-            BoolFieldChanged?.Invoke(this, new JobListingsBoolFieldChangedEventArgs { Field = JobListingsBoolField.IsHidden, Value = value, Id = this.Id });
+
+            StatusModifiedAt = DateTime.Now;
+
+            BoolFieldChanged?.Invoke(this,
+                new JobListingsBoolFieldChangedEventArgs
+                {
+                    Field = JobListingsBoolField.IsHidden,
+                    Value = value,
+                    Id =
+                    this.Id,
+                    StatusModifiedAt = this.StatusModifiedAt
+                });
         }
     }
 }

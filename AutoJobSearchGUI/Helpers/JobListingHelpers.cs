@@ -17,11 +17,16 @@ namespace AutoJobSearchGUI.Helpers
                 Id = job.Id,
                 SearchTerm = job.SearchTerm,
                 CreatedAt = job.CreatedAt,
+                StatusModifiedAt = job.StatusModifiedAt,
                 Description = job.Description,
                 Score = job.Score,
+                IsToBeAppliedTo = job.IsAppliedTo,
                 IsAppliedTo = job.IsAppliedTo,
                 IsInterviewing = job.IsInterviewing,
+                IsNegotiating = job.IsNegotiating,
                 IsRejected = job.IsRejected,
+                IsDeclinedOffer = job.IsDeclinedOffer,
+                IsAcceptedOffer = job.IsAcceptedOffer,
                 IsFavourite = job.IsFavourite,
                 IsHidden = job.IsHidden
             };

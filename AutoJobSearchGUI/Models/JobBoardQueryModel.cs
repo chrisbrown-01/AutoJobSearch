@@ -10,13 +10,25 @@ namespace AutoJobSearchGUI.Models
     public partial class JobBoardQueryModel : ObservableObject // Needs to be public for delegates to work
     {
         [ObservableProperty]
+        private bool _isToBeAppliedTo;
+
+        [ObservableProperty]
         private bool _isAppliedTo;
 
         [ObservableProperty]
         private bool _isInterviewing;
 
         [ObservableProperty]
+        private bool _isNegotiating;
+
+        [ObservableProperty]
         private bool _isRejected;
+
+        [ObservableProperty]
+        private bool _isDeclinedOffer;
+
+        [ObservableProperty]
+        private bool _isAcceptedOffer;
 
         [ObservableProperty]
         private bool _isFavourite;
@@ -31,6 +43,9 @@ namespace AutoJobSearchGUI.Models
         private bool _sortByCreatedAt;
 
         [ObservableProperty]
+        private bool _sortByModifiedAt; // TODO: implement
+
+        [ObservableProperty]
         private bool _sortByScore;
 
         [ObservableProperty]
@@ -38,6 +53,9 @@ namespace AutoJobSearchGUI.Models
 
         [ObservableProperty]
         private DateTimeOffset _searchedOnDate = DateTime.Today;
+
+        [ObservableProperty]
+        private DateTimeOffset _modifiedOnDate = DateTime.Today; 
 
         [ObservableProperty]
         private bool _columnFiltersEnabled;
@@ -53,6 +71,18 @@ namespace AutoJobSearchGUI.Models
 
         [ObservableProperty]
         private DateTimeOffset _searchedOnDateEnd = DateTime.Today;
+
+        [ObservableProperty]
+        private bool _modifiedOnDateEnabled; 
+
+        [ObservableProperty]
+        private bool _modifiedBetweenDatesEnabled; 
+
+        [ObservableProperty]
+        private DateTimeOffset _modifiedOnDateStart = DateTime.Today.AddDays(-1); 
+
+        [ObservableProperty]
+        private DateTimeOffset _modifiedOnDateEnd = DateTime.Today; 
 
         [ObservableProperty]
         private bool _scoreEqualsEnabled;

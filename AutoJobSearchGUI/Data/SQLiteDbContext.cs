@@ -77,12 +77,25 @@ namespace AutoJobSearchGUI.Data
 
         public async Task<IQueryable<JobListing>> ExecuteJobListingQueryAsync(
             bool columnFiltersEnabled,
+            bool isToBeAppliedTo,
             bool isAppliedTo,
             bool isInterviewing,
+            bool isNegotiating,
             bool isRejected,
+            bool isDeclinedOffer,
+            bool isAcceptedOffer,
             bool isFavourite)
         {
-            return await _sqliteDb.ExecuteJobListingQueryAsync(columnFiltersEnabled, isAppliedTo, isInterviewing, isRejected, isFavourite);
+            return await _sqliteDb.ExecuteJobListingQueryAsync(
+                columnFiltersEnabled,
+                isToBeAppliedTo,
+                isAppliedTo,
+                isInterviewing,
+                isNegotiating,
+                isRejected,
+                isDeclinedOffer,
+                isAcceptedOffer,
+                isFavourite);
         }
 
         public async Task<IEnumerable<ContactAssociatedJobId>> GetAllContactsAssociatedJobIdsAsync()
@@ -125,9 +138,9 @@ namespace AutoJobSearchGUI.Data
             await _sqliteDb.UpdateContactStringPropertyAsync(columnName, value, id);
         }
 
-        public async Task UpdateJobListingBoolPropertyAsync(JobListingsBoolField columnName, bool value, int id)
+        public async Task UpdateJobListingBoolPropertyAsync(JobListingsBoolField columnName, bool value, int id, DateTime statusModifiedAt)
         {
-            await _sqliteDb.UpdateJobListingBoolPropertyAsync(columnName, value, id);
+            await _sqliteDb.UpdateJobListingBoolPropertyAsync(columnName, value, id, statusModifiedAt);
         }
 
         public async Task UpdateJobListingIntPropertyAsync(JobListingsIntField columnName, int value, int id)

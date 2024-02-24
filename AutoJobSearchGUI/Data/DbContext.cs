@@ -26,7 +26,7 @@ namespace AutoJobSearchGUI.Data
 
             JobListingModel.BoolFieldChanged += async (sender, e) =>
             {
-                await UpdateJobListingBoolPropertyAsync(e.Field, e.Value, e.Id);
+                await UpdateJobListingBoolPropertyAsync(e.Field, e.Value, e.Id, e.StatusModifiedAt);
             };
 
             JobListingModel.StringFieldChanged += async (sender, e) =>
@@ -78,13 +78,27 @@ namespace AutoJobSearchGUI.Data
 
         public async Task<IQueryable<JobListing>> ExecuteJobListingQueryAsync(
             bool columnFiltersEnabled,
+            bool isToBeAppliedTo,
             bool isAppliedTo,
             bool isInterviewing,
+            bool isNegotiating,
             bool isRejected,
+            bool isDeclinedOffer,
+            bool isAcceptedOffer,
             bool isFavourite)
         {
             Log.Information("Executing job board advanced query against database.");
-            return await _dbContext.ExecuteJobListingQueryAsync(columnFiltersEnabled, isAppliedTo, isInterviewing, isRejected, isFavourite);
+
+            return await _dbContext.ExecuteJobListingQueryAsync(
+                 columnFiltersEnabled,
+                 isToBeAppliedTo,
+                 isAppliedTo,
+                 isInterviewing,
+                 isNegotiating,
+                 isRejected,
+                 isDeclinedOffer,
+                 isAcceptedOffer,
+                 isFavourite);
         }
 
         public async Task<IEnumerable<JobListing>> GetAllJobListingsAsync()
@@ -117,13 +131,13 @@ namespace AutoJobSearchGUI.Data
             return await _dbContext.GetJobListingDetailsByIdAsync(id);
         }
 
-        public async Task UpdateJobListingBoolPropertyAsync(JobListingsBoolField columnName, bool value, int id)
+        public async Task UpdateJobListingBoolPropertyAsync(JobListingsBoolField columnName, bool value, int id, DateTime statusModifiedAt)
         {
             Log.Information(
-                "Updating {@columnName} field for job listing {@id} to {@value}.",
-                columnName, id, value);
+                "Updating {@columnName} field for job listing {@id} to {@value} at DateTime {@statusModifiedAt}.",
+                columnName, id, value, statusModifiedAt);
 
-            await _dbContext.UpdateJobListingBoolPropertyAsync(columnName, value, id);
+            await _dbContext.UpdateJobListingBoolPropertyAsync(columnName, value, id, statusModifiedAt);
         }
 
         public async Task UpdateJobListingStringPropertyAsync(JobListingsStringField columnName, string value, int id)

@@ -37,6 +37,7 @@
 				<RowDefinition Height="Auto" />
 				<RowDefinition Height="Auto" />
 				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
 				<RowDefinition Height="5*" />
 				<RowDefinition Height="2*" />
 				<RowDefinition Height="2*" />
@@ -48,15 +49,18 @@
 			<TextBlock Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center" Margin="0 5">Created At</TextBlock>
 			<TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding JobListing.CreatedAt}" Margin="0 5"/>
 
+			<TextBlock Grid.Row="2" Grid.Column="0" HorizontalAlignment="Center" Margin="0 5">Modified At</TextBlock>
+			<TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding JobListing.StatusModifiedAt}" Margin="0 5"/>
+
 			<TextBlock
-				Grid.Row="2"
+				Grid.Row="3"
 				Grid.Column="0"
 				HorizontalAlignment="Center"
 				VerticalAlignment="Center"
 				Text="Search Term"
 				Margin="0 5"/>
 			<TextBox 
-				Grid.Row="2" 
+				Grid.Row="3" 
 				Grid.Column="1" 
 				Text="{Binding JobListing.SearchTerm}"
 				IsEnabled="{Binding IsEditModeEnabled}"
@@ -68,45 +72,54 @@
 				Margin="0 5"/>
 
 			<TextBlock 
-				Grid.Row="3" 				   
+				Grid.Row="4" 				   
 				Grid.Column="0" 
 				HorizontalAlignment="Center" 
 				VerticalAlignment="Center"
 				Text="Score"
 				Margin="0 5"/>
 			<NumericUpDown 
-				Grid.Row="3" 
+				Grid.Row="4" 
 				Grid.Column="1" 
 				Value="{Binding JobListing.Score}"
 				IsEnabled="{Binding IsEditModeEnabled}" 
 				FormatString="0"
 				Margin="0 5"/>
 
-			<StackPanel Grid.Row="4"
+			<StackPanel Grid.Row="5"
 			Grid.ColumnSpan="2"
 			Orientation="Horizontal"
 			HorizontalAlignment="Center">
-				<TextBlock VerticalAlignment="Center" Margin="25 0 5 0">Applied</TextBlock>
+				<TextBlock VerticalAlignment="Center">To Be Applied To</TextBlock>
+				<CheckBox IsChecked="{Binding JobListing.IsToBeAppliedTo}" />
+				<TextBlock VerticalAlignment="Center">Applied</TextBlock>
 				<CheckBox IsChecked="{Binding JobListing.IsAppliedTo}" />
-				<TextBlock VerticalAlignment="Center" Margin="25 0 5 0">Interviewing</TextBlock>
+				<TextBlock VerticalAlignment="Center">Interviewing</TextBlock>
 				<CheckBox IsChecked="{Binding JobListing.IsInterviewing}" />
-				<TextBlock VerticalAlignment="Center" Margin="25 0 5 0">Rejected</TextBlock>
+				<TextBlock VerticalAlignment="Center">Negotiating</TextBlock>
+				<CheckBox IsChecked="{Binding JobListing.IsNegotiating}" />
+				<TextBlock VerticalAlignment="Center">Rejected</TextBlock>
 				<CheckBox IsChecked="{Binding JobListing.IsRejected}" />
-				<TextBlock VerticalAlignment="Center" Margin="25 0 5 0">Favourite</TextBlock>
+				<TextBlock VerticalAlignment="Center">Declined Offer</TextBlock>
+				<CheckBox IsChecked="{Binding JobListing.IsDeclinedOffer}" />
+				<TextBlock VerticalAlignment="Center">Accepted Offer</TextBlock>
+				<CheckBox IsChecked="{Binding JobListing.IsAcceptedOffer}" />
+				<TextBlock VerticalAlignment="Center">Favourite</TextBlock>
 				<CheckBox IsChecked="{Binding JobListing.IsFavourite}" />
-				<TextBlock VerticalAlignment="Center" Margin="25 0 5 0">Hidden</TextBlock>
+				<!--Margin="10 0 5 0"-->
+				<TextBlock VerticalAlignment="Center">Archived/Hidden</TextBlock>
 				<CheckBox IsChecked="{Binding JobListing.IsHidden}" />
 			</StackPanel>
 
 			<TextBlock
-				Grid.Row="5"
+				Grid.Row="6"
 				Grid.Column="0"
 				HorizontalAlignment="Center"
 				VerticalAlignment="Top"
 				Text="Job Description"
 				Margin="0 5"/>
 			<TextBox
-				Grid.Row="5"
+				Grid.Row="6"
 				Grid.Column="1"
 				Text="{Binding JobListing.Description}"
 				IsEnabled="{Binding IsEditModeEnabled}"
@@ -118,7 +131,7 @@
 				Margin="0 5"/>
 
 			<TextBlock
-				Grid.Row="6"
+				Grid.Row="7"
 				Grid.Column="0"
 				HorizontalAlignment="Center"
 				VerticalAlignment="Top"
@@ -130,7 +143,7 @@
 				 control is always disabled, and if users need to manually add application links then 
 				 it needs to be performed in the Notes text box. -->
 			<TextBox
-				Grid.Row="6"
+				Grid.Row="7"
 				Grid.Column="1"
 				Text="{Binding JobListing.ApplicationLinks}"
 				IsEnabled="True"
@@ -138,14 +151,14 @@
 				Margin="0 5"/>
 
 			<TextBlock
-				Grid.Row="7"
+				Grid.Row="8"
 				Grid.Column="0"
 				HorizontalAlignment="Center"
 				VerticalAlignment="Top"
 				Text="Notes"
 				Margin="0 5"/>
 			<TextBox
-				Grid.Row="7"
+				Grid.Row="8"
 				Grid.Column="1"
 				Text="{Binding JobListing.Notes}"
 				IsEnabled="{Binding IsEditModeEnabled}"

@@ -134,6 +134,8 @@ namespace AutoJobSearchGUI.Tests.ViewModels
             jobBoardQueryModel.NotesQueryStringEnabled = false;
             jobBoardQueryModel.SearchedBetweenDatesEnabled = false;
             jobBoardQueryModel.SearchedOnDateEnabled = false;
+            jobBoardQueryModel.ModifiedBetweenDatesEnabled = false;
+            jobBoardQueryModel.ModifiedOnDateEnabled = false;
             jobBoardQueryModel.ScoreEqualsEnabled = false;
             jobBoardQueryModel.ScoreRangeEnabled = false;
 
@@ -141,9 +143,13 @@ namespace AutoJobSearchGUI.Tests.ViewModels
 
             _dbContext.ExecuteJobListingQueryAsync(
                 _viewModel.JobBoardQueryModel.ColumnFiltersEnabled,
+                _viewModel.JobBoardQueryModel.IsToBeAppliedTo,
                 _viewModel.JobBoardQueryModel.IsAppliedTo,
                 _viewModel.JobBoardQueryModel.IsInterviewing,
+                _viewModel.JobBoardQueryModel.IsNegotiating,
                 _viewModel.JobBoardQueryModel.IsRejected,
+                _viewModel.JobBoardQueryModel.IsDeclinedOffer,
+                _viewModel.JobBoardQueryModel.IsAcceptedOffer,
                 _viewModel.JobBoardQueryModel.IsFavourite).
                 Returns(jobListings.AsQueryable());
 
@@ -153,9 +159,13 @@ namespace AutoJobSearchGUI.Tests.ViewModels
             // Assert
             await _dbContext.Received().ExecuteJobListingQueryAsync(
                 _viewModel.JobBoardQueryModel.ColumnFiltersEnabled,
+                _viewModel.JobBoardQueryModel.IsToBeAppliedTo,
                 _viewModel.JobBoardQueryModel.IsAppliedTo,
                 _viewModel.JobBoardQueryModel.IsInterviewing,
+                _viewModel.JobBoardQueryModel.IsNegotiating,
                 _viewModel.JobBoardQueryModel.IsRejected,
+                _viewModel.JobBoardQueryModel.IsDeclinedOffer,
+                _viewModel.JobBoardQueryModel.IsAcceptedOffer,
                 _viewModel.JobBoardQueryModel.IsFavourite);
 
             _viewModel.PageIndex.Should().Be(0);

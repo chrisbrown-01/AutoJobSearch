@@ -8,7 +8,16 @@ namespace AutoJobSearchShared.Database
         Task<JobSearchProfile> CreateJobSearchProfileAsync(JobSearchProfile profile);
         Task DeleteAllJobListingsAsync();
         Task DeleteJobSearchProfileAsync(int id);
-        Task<IQueryable<JobListing>> ExecuteJobListingQueryAsync(bool columnFiltersEnabled, bool isAppliedTo, bool isInterviewing, bool isRejected, bool isFavourite);
+        Task<IQueryable<JobListing>> ExecuteJobListingQueryAsync(
+            bool columnFiltersEnabled,
+            bool isToBeAppliedTo,
+            bool isAppliedTo,
+            bool isInterviewing,
+            bool isNegotiating,
+            bool isRejected,
+            bool isDeclinedOffer,
+            bool isAcceptedOffer,
+            bool isFavourite);
         Task<IEnumerable<string>> GetAllApplicationLinksAsync();
         Task<IEnumerable<JobListing>> GetAllJobListingsAsync();
         Task<IEnumerable<JobSearchProfile>> GetAllJobSearchProfilesAsync();
@@ -17,7 +26,7 @@ namespace AutoJobSearchShared.Database
         Task<JobListing> GetJobListingDetailsByIdAsync(int id);
         Task<JobSearchProfile?> GetJobSearchProfileByIdAsync(int id);
         Task SaveJobListingsAsync(IEnumerable<JobListing> jobListings);
-        Task UpdateJobListingBoolPropertyAsync(JobListingsBoolField columnName, bool value, int id);
+        Task UpdateJobListingBoolPropertyAsync(JobListingsBoolField columnName, bool value, int id, DateTime statusModifiedAt);
         Task UpdateJobListingStringPropertyAsync(JobListingsStringField columnName, string value, int id);
         Task UpdateJobSearchProfileIntPropertyAsync(JobSearchProfilesIntField columnName, int value, int id);
         Task UpdateJobSearchProfileStringPropertyAsync(JobSearchProfilesStringField columnName, string value, int id);
