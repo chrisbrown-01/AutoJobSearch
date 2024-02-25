@@ -103,12 +103,13 @@ namespace AutoJobSearchGUI.Tests.Data
             var columnName = _fixture.Create<JobListingsBoolField>();
             var value = _fixture.Create<bool>();
             var id = _fixture.Create<int>();
+            var statusModifiedAt = _fixture.Create<DateTime>();
 
             // Act
-            await _dbContext.UpdateJobListingBoolPropertyAsync(columnName, value, id);
+            await _dbContext.UpdateJobListingBoolPropertyAsync(columnName, value, id, statusModifiedAt);
 
             // Assert
-            await _dbContext.Received().UpdateJobListingBoolPropertyAsync(columnName, value, id);
+            await _dbContext.Received().UpdateJobListingBoolPropertyAsync(columnName, value, id, statusModifiedAt);
         }
 
         [Fact]
@@ -146,18 +147,52 @@ namespace AutoJobSearchGUI.Tests.Data
         {
             // Arrange
             bool columnFiltersEnabled = _fixture.Create<bool>();
+            bool isToBeAppliedTo = _fixture.Create<bool>();
             bool isAppliedTo = _fixture.Create<bool>();
             bool isInterviewing = _fixture.Create<bool>();
+            bool isNegotiating = _fixture.Create<bool>();
             bool isRejected = _fixture.Create<bool>();
+            bool isDeclinedOffer = _fixture.Create<bool>();
+            bool isAcceptedOffer = _fixture.Create<bool>();
             bool isFavourite = _fixture.Create<bool>();
             var expectedResult = _fixture.Create<IQueryable<JobListing>>();
-            _dbContext.ExecuteJobListingQueryAsync(columnFiltersEnabled, isAppliedTo, isInterviewing, isRejected, isFavourite).Returns(expectedResult);
+
+            _dbContext.ExecuteJobListingQueryAsync(
+                columnFiltersEnabled,
+                 isToBeAppliedTo,
+                 isAppliedTo,
+                 isInterviewing,
+                 isNegotiating,
+                 isRejected,
+                 isDeclinedOffer,
+                 isAcceptedOffer,
+                 isFavourite)
+                .Returns(expectedResult);
 
             // Act
-            var actualResult = await _dbContext.ExecuteJobListingQueryAsync(columnFiltersEnabled, isAppliedTo, isInterviewing, isRejected, isFavourite);
+            var actualResult = await _dbContext.ExecuteJobListingQueryAsync(
+                columnFiltersEnabled,
+                 isToBeAppliedTo,
+                 isAppliedTo,
+                 isInterviewing,
+                 isNegotiating,
+                 isRejected,
+                 isDeclinedOffer,
+                 isAcceptedOffer,
+                 isFavourite);
 
             // Assert
-            await _dbContext.Received().ExecuteJobListingQueryAsync(columnFiltersEnabled, isAppliedTo, isInterviewing, isRejected, isFavourite);
+            await _dbContext.Received().ExecuteJobListingQueryAsync(
+                columnFiltersEnabled,
+                isToBeAppliedTo,
+                isAppliedTo,
+                isInterviewing,
+                isNegotiating,
+                isRejected,
+                isDeclinedOffer,
+                isAcceptedOffer,
+                isFavourite);
+
             actualResult.Should().BeEquivalentTo(expectedResult);
             actualResult.Should().NotBeNull();
         }

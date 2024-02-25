@@ -24,9 +24,13 @@
 				<MenuItem Header="Advanced Query">
 					<MenuItem Header="Column Filters">
 						<CheckBox Content="Enable Query Filter" FontWeight="ExtraBold" IsChecked="{Binding JobBoardQueryModel.ColumnFiltersEnabled}" ClickMode="Press" />
+						<CheckBox Content="To Be Applied To" IsChecked="{Binding JobBoardQueryModel.IsToBeAppliedTo}" ClickMode="Press"/>
 						<CheckBox Content="Applied" IsChecked="{Binding JobBoardQueryModel.IsAppliedTo}" ClickMode="Press"/>
 						<CheckBox Content="Interviewing" IsChecked="{Binding JobBoardQueryModel.IsInterviewing}" ClickMode="Press"/>
+						<CheckBox Content="Negotiating" IsChecked="{Binding JobBoardQueryModel.IsNegotiating}" ClickMode="Press"/>
 						<CheckBox Content="Rejected" IsChecked="{Binding JobBoardQueryModel.IsRejected}" ClickMode="Press"/>
+						<CheckBox Content="Declined Offer" IsChecked="{Binding JobBoardQueryModel.IsDeclinedOffer}" ClickMode="Press"/>
+						<CheckBox Content="Accepted Offer" IsChecked="{Binding JobBoardQueryModel.IsAcceptedOffer}" ClickMode="Press"/>
 						<CheckBox Content="Favourite" IsChecked="{Binding JobBoardQueryModel.IsFavourite}" ClickMode="Press"/>
 					</MenuItem>
 					<MenuItem Header="Search Term Query">
@@ -41,7 +45,7 @@
 						<CheckBox Content="Enable Query Filter" FontWeight="ExtraBold" IsChecked="{Binding JobBoardQueryModel.NotesQueryStringEnabled}" ClickMode="Press"/>
 						<TextBox Text="{Binding JobBoardQueryModel.NotesQueryString}" IsReadOnly="False" MaxWidth="250" />
 					</MenuItem>
-					<MenuItem Header="Search Date">
+					<MenuItem Header="Creation Date">
 						<CheckBox 
 								Content="Enable Created On Date" 
 								FontWeight="ExtraBold"
@@ -60,6 +64,27 @@
 						<MenuItem Header="Created Between Dates">
 							<DatePicker SelectedDate="{Binding JobBoardQueryModel.SearchedOnDateStart}" />
 							<DatePicker SelectedDate="{Binding JobBoardQueryModel.SearchedOnDateEnd}" />
+						</MenuItem>
+					</MenuItem>
+					<MenuItem Header="Status Modified Date">
+						<CheckBox
+								Content="Enable Modified On Date"
+								FontWeight="ExtraBold"
+								IsChecked="{Binding JobBoardQueryModel.ModifiedOnDateEnabled}"
+								IsEnabled="{Binding !JobBoardQueryModel.ModifiedBetweenDatesEnabled}"
+								ClickMode="Press"/>
+						<CheckBox
+								Content="Enable Modified Between Dates"
+								FontWeight="ExtraBold"
+								IsChecked="{Binding JobBoardQueryModel.ModifiedBetweenDatesEnabled}"
+								IsEnabled="{Binding !JobBoardQueryModel.ModifiedOnDateEnabled}"
+								ClickMode="Press"/>
+						<MenuItem Header="Modified On Date">
+							<DatePicker SelectedDate="{Binding JobBoardQueryModel.ModifiedOnDate}" />
+						</MenuItem>
+						<MenuItem Header="Modified Between Dates">
+							<DatePicker SelectedDate="{Binding JobBoardQueryModel.ModifiedOnDateStart}" />
+							<DatePicker SelectedDate="{Binding JobBoardQueryModel.ModifiedOnDateEnd}" />
 						</MenuItem>
 					</MenuItem>
 					<MenuItem Header="Score">
@@ -88,7 +113,8 @@
 					<MenuItem Header="Sort By">
 						<CheckBox Content="Search Term" IsChecked="{Binding JobBoardQueryModel.SortBySearchTerm}" ClickMode="Press"/>
 						<CheckBox Content="Score" IsChecked="{Binding JobBoardQueryModel.SortByScore}" ClickMode="Press"/>
-						<CheckBox Content="Date" IsChecked="{Binding JobBoardQueryModel.SortByCreatedAt}" ClickMode="Press"/>
+						<CheckBox Content="Creation Date" IsChecked="{Binding JobBoardQueryModel.SortByCreatedAt}" ClickMode="Press"/>
+						<CheckBox Content="Status Modified Date" IsChecked="{Binding JobBoardQueryModel.SortByModifiedAt}" ClickMode="Press"/>
 					</MenuItem>
 					<MenuItem Header="Order By">
 						<CheckBox 
@@ -102,7 +128,7 @@
 						Command="{Binding ExecuteQueryCommand}"
 						ClickMode="Press"/>
 					<Button
-						Content="Get Hidden Jobs"
+						Content="Get Archived/Hidden Jobs"
 						HorizontalAlignment="Center"
 						Command="{Binding RenderHiddenJobsCommand}"
 						ClickMode="Press"/>
@@ -142,7 +168,7 @@
 			</i:Interaction.Behaviors>
 			<DataGrid.ContextMenu>
 				<ContextMenu>
-					<MenuItem Header="Hide Job" Command="{Binding HideJobCommand}" />
+					<MenuItem Header="Archive/Hide Job" Command="{Binding HideJobCommand}" />
 					<MenuItem Header="Delete Job" Command="{Binding DeleteJobCommand}" />
 				</ContextMenu>
 			</DataGrid.ContextMenu>
@@ -157,9 +183,14 @@
 					Binding="{Binding CreatedAt}" 
 					IsReadOnly="True"
 					Width="1*" />
+				<DataGridTextColumn
+					Header="Status Modified At"
+					Binding="{Binding StatusModifiedAt}"
+					IsReadOnly="True"
+					Width="1.5*" />
 				<DataGridTemplateColumn 
 					Header="Job Description" 
-					Width="3*">
+					Width="1*">
 					<DataGridTemplateColumn.CellTemplate>
 						<DataTemplate>
 							<TextBlock 
@@ -173,6 +204,10 @@
 					Binding="{Binding Score}" 
 					IsReadOnly="True"
 					Width="0.5*" />
+				<DataGridCheckBoxColumn
+					Header="To Be Applied To"
+					Binding="{Binding IsToBeAppliedTo}"
+					Width="0.5*" />
 				<DataGridCheckBoxColumn 
 					Header="Applied" 
 					Binding="{Binding IsAppliedTo}"
@@ -181,9 +216,21 @@
 					Header="Interviewing" 
 					Binding="{Binding IsInterviewing}"
 					Width="0.5*" />
+				<DataGridCheckBoxColumn
+					Header="Negotiating"
+					Binding="{Binding IsNegotiating}"
+					Width="0.5*" />
 				<DataGridCheckBoxColumn 
 					Header="Rejected" 
 					Binding="{Binding IsRejected}"
+					Width="0.5*" />
+				<DataGridCheckBoxColumn
+					Header="Declined Offer"
+					Binding="{Binding IsDeclinedOffer}"
+					Width="0.5*" />
+				<DataGridCheckBoxColumn
+					Header="Accepted Offer"
+					Binding="{Binding IsAcceptedOffer}"
 					Width="0.5*" />
 				<DataGridCheckBoxColumn 
 					Header="Favourite" 

@@ -53,7 +53,7 @@ namespace AutoJobSearchGUI.ViewModels
             _dbContext = dbContext;
 
             PageIndex = 0;
-            PageSize = 50;
+            PageSize = 50; // TODO: allow customization
 
             RenderDefaultJobBoardViewCommand.Execute(null);
         }
@@ -89,7 +89,9 @@ namespace AutoJobSearchGUI.ViewModels
 
         public void UpdateJobBoard()
         {
+            DisableOnChangedEvents(JobListingsDisplayed);
             JobListingsDisplayed = Singletons.JobListings.Skip(PageIndex * PageSize).Take(PageSize).ToList();
+            EnableOnChangedEvents(JobListingsDisplayed);
         }
 
         [RelayCommand]
@@ -115,9 +117,13 @@ namespace AutoJobSearchGUI.ViewModels
         {
             var result = await _dbContext.ExecuteJobListingQueryAsync(
                JobBoardQueryModel.ColumnFiltersEnabled,
+               JobBoardQueryModel.IsToBeAppliedTo,
                JobBoardQueryModel.IsAppliedTo,
                JobBoardQueryModel.IsInterviewing,
+               JobBoardQueryModel.IsNegotiating,
                JobBoardQueryModel.IsRejected,
+               JobBoardQueryModel.IsDeclinedOffer,
+               JobBoardQueryModel.IsAcceptedOffer,
                JobBoardQueryModel.IsFavourite);
 
             if (JobBoardQueryModel.SearchTermQueryStringEnabled)
@@ -145,6 +151,19 @@ namespace AutoJobSearchGUI.ViewModels
                 result = result.Where(x =>
                 x.CreatedAt.Date >= JobBoardQueryModel.SearchedOnDateStart.Date &&
                 x.CreatedAt.Date <= JobBoardQueryModel.SearchedOnDateEnd.Date
+                );
+            }
+
+            if (JobBoardQueryModel.ModifiedOnDateEnabled)
+            {
+                result = result.Where(x => x.StatusModifiedAt.Date == JobBoardQueryModel.ModifiedOnDate.Date);
+            }
+
+            if (JobBoardQueryModel.ModifiedBetweenDatesEnabled)
+            {
+                result = result.Where(x =>
+                x.StatusModifiedAt.Date >= JobBoardQueryModel.ModifiedOnDateStart.Date &&
+                x.StatusModifiedAt.Date <= JobBoardQueryModel.ModifiedOnDateEnd.Date
                 );
             }
 
@@ -193,6 +212,17 @@ namespace AutoJobSearchGUI.ViewModels
                     result = result.OrderByDescending(x => x.CreatedAt);
                 }
             }
+            else if (JobBoardQueryModel.SortByModifiedAt)
+            {
+                if (JobBoardQueryModel.OrderByAscending)
+                {
+                    result = result.OrderBy(x => x.StatusModifiedAt);
+                }
+                else
+                {
+                    result = result.OrderByDescending(x => x.StatusModifiedAt);
+                }
+            }
             else
             {
                 if (JobBoardQueryModel.OrderByAscending)
@@ -239,7 +269,7 @@ namespace AutoJobSearchGUI.ViewModels
             OpenJobListing();
         }
 
-            [RelayCommand]
+        [RelayCommand]
         private void HideJob()
         {
             if (SelectedJobListing == null) return;

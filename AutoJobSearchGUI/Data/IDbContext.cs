@@ -13,14 +13,18 @@ namespace AutoJobSearchGUI.Data
         Task DeleteJobSearchProfileAsync(int id);
         Task<IEnumerable<JobSearchProfile>> GetAllJobSearchProfilesAsync();
         Task<JobSearchProfile> CreateJobSearchProfileAsync(JobSearchProfile profile);
-        Task UpdateJobListingBoolPropertyAsync(JobListingsBoolField columnName, bool value, int id);
+        Task UpdateJobListingBoolPropertyAsync(JobListingsBoolField columnName, bool value, int id, DateTime statusModifiedAt);
         Task UpdateJobListingStringPropertyAsync(JobListingsStringField columnName, string value, int id);
         Task UpdateJobSearchProfileStringPropertyAsync(JobSearchProfilesStringField columnName, string value, int id);
         Task<IQueryable<JobListing>> ExecuteJobListingQueryAsync(
             bool columnFiltersEnabled,
+            bool isToBeAppliedTo,
             bool isAppliedTo,
             bool isInterviewing,
+            bool isNegotiating,
             bool isRejected,
+            bool isDeclinedOffer,
+            bool isAcceptedOffer,
             bool isFavourite);
         Task<IEnumerable<JobListing>> GetFavouriteJobListingsAsync();
         Task<IEnumerable<JobListing>> GetHiddenJobListingsAsync();

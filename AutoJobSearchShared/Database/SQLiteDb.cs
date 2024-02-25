@@ -38,13 +38,18 @@ namespace AutoJobSearchShared.Database
                 "Id INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "SearchTerm TEXT," +
                 "CreatedAt TEXT," +
+                "StatusModifiedAt TEXT," +
                 "Description_Raw TEXT," +
                 "Description TEXT," +
                 "Notes TEXT," +
                 "Score INTEGER," +
+                "IsToBeAppliedTo INTEGER," +
                 "IsAppliedTo INTEGER," +
                 "IsInterviewing INTEGER," +
+                "IsNegotiating INTEGER," +
                 "IsRejected INTEGER," +
+                "IsDeclinedOffer INTEGER," +
+                "IsAcceptedOffer INTEGER," +
                 "IsFavourite INTEGER," +
                 "IsHidden INTEGER)";
 
@@ -119,24 +124,34 @@ namespace AutoJobSearchShared.Database
                 "INSERT INTO JobListings (" +
                 "SearchTerm, " +
                 "CreatedAt, " +
+                "StatusModifiedAt, " +
                 "Description_Raw, " +
                 "Description, " +
                 "Score, " +
+                "IsToBeAppliedTo, " +
                 "IsAppliedTo, " +
                 "IsInterviewing, " +
+                "IsNegotiating, " +
                 "IsRejected, " +
+                "IsDeclinedOffer, " +
+                "IsAcceptedOffer, " +
                 "IsFavourite," +
                 "IsHidden, " +
                 "Notes" +
                 ") VALUES (" +
                 "@SearchTerm, " +
                 "@CreatedAt, " +
+                "@StatusModifiedAt, " +
                 "@Description_Raw, " +
                 "@Description, " +
                 "@Score, " +
+                "@IsToBeAppliedTo, " +
                 "@IsAppliedTo, " +
                 "@IsInterviewing, " +
+                "@IsNegotiating, " +
                 "@IsRejected, " +
+                "@IsDeclinedOffer, " +
+                "@IsAcceptedOffer, " +
                 "@IsFavourite, " +
                 "@IsHidden, " +
                 "@Notes);";
@@ -216,9 +231,13 @@ namespace AutoJobSearchShared.Database
 
         public async Task<IQueryable<JobListing>> ExecuteJobListingQueryAsync(
             bool columnFiltersEnabled,
+            bool isToBeAppliedTo,
             bool isAppliedTo,
             bool isInterviewing,
+            bool isNegotiating,
             bool isRejected,
+            bool isDeclinedOffer,
+            bool isAcceptedOffer,
             bool isFavourite)
         {
             if (columnFiltersEnabled)
@@ -227,17 +246,26 @@ namespace AutoJobSearchShared.Database
                 "SELECT Id, " +
                 "SearchTerm, " +
                 "CreatedAt, " +
+                "StatusModifiedAt, " +
                 "Description, " +
-                "Score, " +
+                "Score, " +             
                 "IsAppliedTo, " +
+                "IsToBeAppliedTo, " +
                 "IsInterviewing, " +
+                "IsNegotiating, " +
                 "IsRejected, " +
+                "IsDeclinedOffer, " +
+                "IsAcceptedOffer, " +
                 "IsFavourite, " +
                 "IsHidden, " +
                 "Notes FROM JobListings " +
                 "WHERE IsAppliedTo = @IsAppliedTo " +
+                "AND IsToBeAppliedTo = @IsToBeAppliedTo " +
                 "AND IsInterviewing = @IsInterviewing " +
+                "AND IsNegotiating = @IsNegotiating " +
                 "AND IsRejected = @IsRejected " +
+                "AND IsDeclinedOffer = @IsDeclinedOffer " +
+                "AND IsAcceptedOffer = @IsAcceptedOffer " +
                 "AND IsFavourite = @IsFavourite " +
                 "AND IsHidden = False;";
 
@@ -246,8 +274,12 @@ namespace AutoJobSearchShared.Database
                 new
                 {
                     IsAppliedTo = isAppliedTo,
+                    IsToBeAppliedTo = isToBeAppliedTo,
                     IsInterviewing = isInterviewing,
+                    IsNegotiating = isNegotiating,
                     IsRejected = isRejected,
+                    IsDeclinedOffer = isDeclinedOffer,
+                    IsAcceptedOffer = isAcceptedOffer,
                     IsFavourite = isFavourite
                 }).ConfigureAwait(false);
 
@@ -259,11 +291,16 @@ namespace AutoJobSearchShared.Database
                 "SELECT Id, " +
                 "SearchTerm, " +
                 "CreatedAt, " +
+                "StatusModifiedAt, " +
                 "Description, " +
                 "Score, " +
                 "IsAppliedTo, " +
+                "IsToBeAppliedTo, " +
                 "IsInterviewing, " +
+                "IsNegotiating, " +
                 "IsRejected, " +
+                "IsDeclinedOffer, " +
+                "IsAcceptedOffer, " +
                 "IsFavourite, " +
                 "IsHidden, " +
                 "Notes FROM JobListings " +
@@ -281,11 +318,16 @@ namespace AutoJobSearchShared.Database
                 "SELECT Id, " +
                 "SearchTerm, " +
                 "CreatedAt, " +
+                "StatusModifiedAt, " +
                 "SUBSTR(Description, 1, 200) AS Description, " +
                 "Score, " +
                 "IsAppliedTo, " +
+                "IsToBeAppliedTo, " +
                 "IsInterviewing, " +
+                "IsNegotiating, " +
                 "IsRejected, " +
+                "IsDeclinedOffer, " +
+                "IsAcceptedOffer, " +
                 "IsFavourite, " +
                 "IsHidden " +
                 "FROM JobListings " +
@@ -301,11 +343,16 @@ namespace AutoJobSearchShared.Database
                 "SELECT Id, " +
                 "SearchTerm, " +
                 "CreatedAt, " +
+                "StatusModifiedAt, " +
                 "SUBSTR(Description, 1, 200) AS Description, " +
                 "Score, " +
+                "IsToBeAppliedTo, " +
                 "IsAppliedTo, " +
                 "IsInterviewing, " +
+                "IsNegotiating, " +
                 "IsRejected, " +
+                "IsDeclinedOffer, " +
+                "IsAcceptedOffer, " +
                 "IsFavourite, " +
                 "IsHidden " +
                 "FROM JobListings " +
@@ -321,31 +368,16 @@ namespace AutoJobSearchShared.Database
                 "SELECT Id, " +
                 "SearchTerm, " +
                 "CreatedAt, " +
+                "StatusModifiedAt, " +
                 "SUBSTR(Description, 1, 200) AS Description, " +
                 "Score, " +
+                "IsToBeAppliedTo, " +
                 "IsAppliedTo, " +
                 "IsInterviewing, " +
+                "IsNegotiating, " +
                 "IsRejected, " +
-                "IsFavourite, " +
-                "IsHidden " +
-                "FROM JobListings " +
-                "WHERE IsHidden = False " +
-                "ORDER BY Id DESC;";
-
-            return await connection.QueryAsync<JobListing>(sql).ConfigureAwait(false);
-        }
-
-        public async Task<IEnumerable<JobListing>> GetAllJobListingsWithFullDescriptionAsync()
-        {
-            const string sql =
-                "SELECT Id, " +
-                "SearchTerm, " +
-                "CreatedAt, " +
-                "Description, " +
-                "Score, " +
-                "IsAppliedTo, " +
-                "IsInterviewing, " +
-                "IsRejected, " +
+                "IsDeclinedOffer, " +
+                "IsAcceptedOffer, " +
                 "IsFavourite, " +
                 "IsHidden " +
                 "FROM JobListings " +
@@ -379,10 +411,10 @@ namespace AutoJobSearchShared.Database
             return jobListing;
         }
 
-        public async Task UpdateJobListingBoolPropertyAsync(JobListingsBoolField columnName, bool value, int id)
+        public async Task UpdateJobListingBoolPropertyAsync(JobListingsBoolField columnName, bool value, int id, DateTime statusModifiedAt)
         {
-            string sql = $"UPDATE JobListings SET {columnName} = @Value WHERE Id = @Id";
-            await connection.ExecuteAsync(sql, new { Value = value, Id = id }).ConfigureAwait(false);
+            string sql = $"UPDATE JobListings SET {columnName} = @Value, StatusModifiedAt = @StatusModifiedAt WHERE Id = @Id";
+            await connection.ExecuteAsync(sql, new { Value = value, Id = id, StatusModifiedAt = statusModifiedAt }).ConfigureAwait(false);
         }
 
         public async Task UpdateJobSearchProfileStringPropertyAsync(JobSearchProfilesStringField columnName, string value, int id)
@@ -495,23 +527,33 @@ namespace AutoJobSearchShared.Database
             const string sql = "INSERT INTO JobListings (" +
                 "SearchTerm, " +
                 "CreatedAt, " +
+                "StatusModifiedAt, " +
                 "Description_Raw, " +
                 "Description, " +
                 "Score, " +
+                "IsToBeAppliedTo, " +
                 "IsAppliedTo, " +
                 "IsInterviewing, " +
+                "IsNegotiating, " +
                 "IsRejected, " +
+                "IsDeclinedOffer, " +
+                "IsAcceptedOffer, " +
                 "IsFavourite, " +
                 "IsHidden, " +
                 "Notes) VALUES (" +
                 "@SearchTerm, " +
                 "@CreatedAt, " +
+                "@StatusModifiedAt, " +
                 "@Description_Raw, " +
                 "@Description, " +
                 "@Score, " +
+                "@IsToBeAppliedTo, " +
                 "@IsAppliedTo, " +
                 "@IsInterviewing, " +
+                "@IsNegotiating, " +
                 "@IsRejected, " +
+                "@IsDeclinedOffer, " +
+                "@IsAcceptedOffer, " +
                 "@IsFavourite, " +
                 "@IsHidden, " +
                 "@Notes);" +
@@ -523,12 +565,17 @@ namespace AutoJobSearchShared.Database
                 { 
                     SearchTerm = newJob.SearchTerm, 
                     CreatedAt = newJob.CreatedAt,
+                    StatusModifiedAt = newJob.StatusModifiedAt,
                     Description_Raw = newJob.Description_Raw,
                     Description = newJob.Description,
                     Score = newJob.Score,
+                    IsToBeAppliedTo = newJob.IsToBeAppliedTo,
                     IsAppliedTo = newJob.IsAppliedTo,
                     IsInterviewing = newJob.IsInterviewing,
+                    IsNegotiating = newJob.IsNegotiating,
                     IsRejected = newJob.IsRejected,
+                    IsDeclinedOffer = newJob.IsDeclinedOffer,
+                    IsAcceptedOffer = newJob.IsAcceptedOffer,
                     IsFavourite = newJob.IsFavourite,
                     IsHidden = newJob.IsHidden,
                     Notes = newJob.Notes

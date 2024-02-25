@@ -80,16 +80,38 @@ namespace AutoJobSearchShared.Tests.Database
         {
             // Arrange
             bool columnFiltersEnabled = _fixture.Create<bool>();
+            bool isToBeAppliedTo = _fixture.Create<bool>();
             bool isAppliedTo = _fixture.Create<bool>();
             bool isInterviewing = _fixture.Create<bool>();
+            bool isNegotiating = _fixture.Create<bool>();
             bool isRejected = _fixture.Create<bool>();
+            bool isDeclinedOffer = _fixture.Create<bool>();
+            bool isAcceptedOffer = _fixture.Create<bool>();
             bool isFavourite = _fixture.Create<bool>();
 
             // Act
-            await _db.ExecuteJobListingQueryAsync(columnFiltersEnabled, isAppliedTo, isInterviewing, isRejected, isFavourite);
+            await _db.ExecuteJobListingQueryAsync(
+                columnFiltersEnabled, 
+                isToBeAppliedTo,
+                isAppliedTo, 
+                isInterviewing, 
+                isNegotiating,
+                isRejected, 
+                isDeclinedOffer,
+                isAcceptedOffer,
+                isFavourite);
 
             // Assert
-            await _db.Received().ExecuteJobListingQueryAsync(columnFiltersEnabled, isAppliedTo, isInterviewing, isRejected, isFavourite);
+            await _db.Received().ExecuteJobListingQueryAsync(
+                columnFiltersEnabled,
+                isToBeAppliedTo,
+                isAppliedTo,
+                isInterviewing,
+                isNegotiating,
+                isRejected,
+                isDeclinedOffer,
+                isAcceptedOffer,
+                isFavourite);
         }
 
         [Fact]
@@ -97,15 +119,39 @@ namespace AutoJobSearchShared.Tests.Database
         {
             // Arrange
             bool columnFiltersEnabled = _fixture.Create<bool>();
+            bool isToBeAppliedTo = _fixture.Create<bool>();
             bool isAppliedTo = _fixture.Create<bool>();
             bool isInterviewing = _fixture.Create<bool>();
+            bool isNegotiating = _fixture.Create<bool>();
             bool isRejected = _fixture.Create<bool>();
+            bool isDeclinedOffer = _fixture.Create<bool>();
+            bool isAcceptedOffer = _fixture.Create<bool>();
             bool isFavourite = _fixture.Create<bool>();
             var expectedResult = _fixture.Create<IQueryable<JobListing>>();
-            _db.ExecuteJobListingQueryAsync(columnFiltersEnabled, isAppliedTo, isInterviewing, isRejected, isFavourite).Returns(expectedResult);
+
+            _db.ExecuteJobListingQueryAsync(
+                columnFiltersEnabled,
+                isToBeAppliedTo,
+                isAppliedTo,
+                isInterviewing,
+                isNegotiating,
+                isRejected,
+                isDeclinedOffer,
+                isAcceptedOffer,
+                isFavourite)
+                .Returns(expectedResult);
 
             // Act
-            var actualResult = await _db.ExecuteJobListingQueryAsync(columnFiltersEnabled, isAppliedTo, isInterviewing, isRejected, isFavourite);
+            var actualResult = await _db.ExecuteJobListingQueryAsync(
+                columnFiltersEnabled,
+                isToBeAppliedTo,
+                isAppliedTo,
+                isInterviewing,
+                isNegotiating,
+                isRejected,
+                isDeclinedOffer,
+                isAcceptedOffer,
+                isFavourite);
 
             // Assert
             actualResult.Should().BeEquivalentTo(expectedResult);
@@ -371,12 +417,13 @@ namespace AutoJobSearchShared.Tests.Database
             var columnName = _fixture.Create<JobListingsBoolField>();
             bool value = _fixture.Create<bool>();
             int id = _fixture.Create<int>();
+            var statusModifiedAt = _fixture.Create<DateTime>();
 
             // Act
-            await _db.UpdateJobListingBoolPropertyAsync(columnName, value, id);
+            await _db.UpdateJobListingBoolPropertyAsync(columnName, value, id, statusModifiedAt);
 
             // Assert
-            await _db.Received().UpdateJobListingBoolPropertyAsync(columnName, value, id);
+            await _db.Received().UpdateJobListingBoolPropertyAsync(columnName, value, id, statusModifiedAt);
         }
 
         [Fact]

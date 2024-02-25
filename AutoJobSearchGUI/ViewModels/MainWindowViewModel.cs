@@ -109,6 +109,7 @@ namespace AutoJobSearchGUI.ViewModels
 
         public void ChangeViewToJobBoard()
         {
+            UpdateJobBoard();
             ContentViewModel = jobBoardViewModel;
         }
 

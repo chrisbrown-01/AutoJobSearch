@@ -12,5 +12,6 @@ namespace AutoJobSearchGUI.Events.CustomEventArgs
         public bool Value { get; set; }
         public int Id { get; set; }
         public JobListingsBoolField Field { get; set; }
+        public DateTime StatusModifiedAt { get; set; }
     }
 }
