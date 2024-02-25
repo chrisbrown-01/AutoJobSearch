@@ -43,7 +43,7 @@ namespace AutoJobSearchGUI.Models
         private bool _sortByCreatedAt;
 
         [ObservableProperty]
-        private bool _sortByModifiedAt; // TODO: implement
+        private bool _sortByModifiedAt; 
 
         [ObservableProperty]
         private bool _sortByScore;

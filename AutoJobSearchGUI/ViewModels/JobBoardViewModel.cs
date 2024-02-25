@@ -89,7 +89,9 @@ namespace AutoJobSearchGUI.ViewModels
 
         public void UpdateJobBoard()
         {
+            DisableOnChangedEvents(JobListingsDisplayed);
             JobListingsDisplayed = Singletons.JobListings.Skip(PageIndex * PageSize).Take(PageSize).ToList();
+            EnableOnChangedEvents(JobListingsDisplayed);
         }
 
         [RelayCommand]

@@ -118,7 +118,6 @@ namespace AutoJobSearchShared.Database
             return await connection.QueryAsync<string>(sql).ConfigureAwait(false);
         }
 
-        // TODO: test
         public async Task SaveJobListingsAsync(IEnumerable<JobListing> jobListings)
         {
             const string insertJobListingSQL =
@@ -230,7 +229,6 @@ namespace AutoJobSearchShared.Database
             return await connection.QuerySingleAsync<JobSearchProfile>(sql, profile).ConfigureAwait(false);
         }
 
-        // TODO: test
         public async Task<IQueryable<JobListing>> ExecuteJobListingQueryAsync(
             bool columnFiltersEnabled,
             bool isToBeAppliedTo,
@@ -250,9 +248,9 @@ namespace AutoJobSearchShared.Database
                 "CreatedAt, " +
                 "StatusModifiedAt, " +
                 "Description, " +
-                "Score, " +
-                "IsToBeAppliedTo, " +
+                "Score, " +             
                 "IsAppliedTo, " +
+                "IsToBeAppliedTo, " +
                 "IsInterviewing, " +
                 "IsNegotiating, " +
                 "IsRejected, " +
@@ -262,7 +260,7 @@ namespace AutoJobSearchShared.Database
                 "IsHidden, " +
                 "Notes FROM JobListings " +
                 "WHERE IsAppliedTo = @IsAppliedTo " +
-                "AND IsToBeAppliedTo = @IsInterviewing " +
+                "AND IsToBeAppliedTo = @IsToBeAppliedTo " +
                 "AND IsInterviewing = @IsInterviewing " +
                 "AND IsNegotiating = @IsNegotiating " +
                 "AND IsRejected = @IsRejected " +
@@ -275,8 +273,8 @@ namespace AutoJobSearchShared.Database
                 sql,
                 new
                 {
-                    IsToBeAppliedTo = isToBeAppliedTo,
                     IsAppliedTo = isAppliedTo,
+                    IsToBeAppliedTo = isToBeAppliedTo,
                     IsInterviewing = isInterviewing,
                     IsNegotiating = isNegotiating,
                     IsRejected = isRejected,
@@ -296,8 +294,8 @@ namespace AutoJobSearchShared.Database
                 "StatusModifiedAt, " +
                 "Description, " +
                 "Score, " +
-                "IsToBeAppliedTo, " +
                 "IsAppliedTo, " +
+                "IsToBeAppliedTo, " +
                 "IsInterviewing, " +
                 "IsNegotiating, " +
                 "IsRejected, " +
@@ -323,8 +321,8 @@ namespace AutoJobSearchShared.Database
                 "StatusModifiedAt, " +
                 "SUBSTR(Description, 1, 200) AS Description, " +
                 "Score, " +
-                "IsToBeAppliedTo, " +
                 "IsAppliedTo, " +
+                "IsToBeAppliedTo, " +
                 "IsInterviewing, " +
                 "IsNegotiating, " +
                 "IsRejected, " +

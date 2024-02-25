@@ -122,7 +122,7 @@
 				Grid.Row="6"
 				Grid.Column="1"
 				Text="{Binding JobListing.Description}"
-				IsEnabled="{Binding IsEditModeEnabled}"
+				IsReadOnly="{Binding !IsEditModeEnabled}"
 				TextWrapping="Wrap"
 				AcceptsReturn="True"
 				AcceptsTab="True"
