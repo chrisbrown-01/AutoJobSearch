@@ -1,13 +1,21 @@
 ﻿using AutoJobSearchGUI.Data;
 using AutoJobSearchGUI.Helpers;
 using AutoJobSearchGUI.Models;
+using AutoJobSearchGUI.Services;
+using AutoJobSearchGUI.Views;
 using AutoJobSearchShared;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -64,6 +72,36 @@ namespace AutoJobSearchGUI.ViewModels
         }
 
         [RelayCommand]
+        private async Task UploadResumeAsync() // TODO: try/catch, const strings, linux testing
+        {
+            var filesService = App.Current?.Services?.GetService<IFilesService>();
+            if (filesService is null) return;
+
+            var file = await filesService.OpenFileAsync();
+            if (file is null) return;
+
+            var filePath = file.TryGetLocalPath();
+
+            if (String.IsNullOrEmpty(filePath)) return;
+
+            var fileExtension = Path.GetExtension(filePath);
+
+            if (String.IsNullOrEmpty(fileExtension)) return;
+
+            var jobListingAssociatedFilesDirectoryPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "JobListingAssociatedFiles");
+            Directory.CreateDirectory(jobListingAssociatedFilesDirectoryPath);
+       
+            using var stream = File.OpenRead(filePath);
+            using var md5 = MD5.Create();
+            var hash = await md5.ComputeHashAsync(stream);
+            var hashString = Convert.ToHexString(hash);
+
+            var hashedFilePath = Path.Join(jobListingAssociatedFilesDirectoryPath, $"{hashString}{fileExtension}");
+
+            File.Copy(filePath, hashedFilePath, true);
+        }
+
+        [RelayCommand]
         private void ViewContact()
         {
             if (SelectedContactId < 1) return;
@@ -79,7 +117,6 @@ namespace AutoJobSearchGUI.ViewModels
             CreateNewContactWithAssociatedJobIdRequest?.Invoke(JobListing.Id);
         }
 
-        //ToggleEditMode
         [RelayCommand]
         private void ToggleEditButtonColour()
         {

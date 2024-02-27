@@ -24,6 +24,7 @@
 			<Button Content="Delete Job" Margin="5 0" Command="{Binding DeleteJobCommand}" />
 			<Button Content="Edit Job" Margin="5 0" Command="{Binding ToggleEditModeCommand}" Background="{Binding EditButtonColour}" />
 			<Button Content="Add Associated Contact" Margin="5 0" Command="{Binding AddAssociatedContactCommand}" />
+			<Button Content="Upload Resume" Margin="5 0" Command="{Binding UploadResumeCommand}" />
 			<Menu>
 				<MenuItem Header="Navigate to Associated Contacts">
 					<ListBox
