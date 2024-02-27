@@ -10,6 +10,7 @@ using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
+using MsBox.Avalonia;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -72,7 +73,13 @@ namespace AutoJobSearchGUI.ViewModels
         }
 
         [RelayCommand]
-        private async Task UploadResumeAsync() // TODO: try/catch, const strings, linux testing
+        private async Task ViewFileAsync()
+        {
+            //Process.Start(new ProcessStartInfo(hashedFilePath) { UseShellExecute = true }); // TODO: test for linux & mac
+        }
+
+        [RelayCommand]
+        private async Task UploadFileAsync() // TODO: try/catch, const strings, linux testing
         {
             var filesService = App.Current?.Services?.GetService<IFilesService>();
             if (filesService is null) return;
@@ -96,9 +103,13 @@ namespace AutoJobSearchGUI.ViewModels
             var hash = await md5.ComputeHashAsync(stream);
             var hashString = Convert.ToHexString(hash);
 
-            var hashedFilePath = Path.Join(jobListingAssociatedFilesDirectoryPath, $"{hashString}{fileExtension}");
+            var hashedFileNameAndExtension = $"{hashString}{fileExtension}";
+
+            var hashedFilePath = Path.Join(jobListingAssociatedFilesDirectoryPath, hashedFileNameAndExtension);
 
             File.Copy(filePath, hashedFilePath, true);
+
+            // TODO: dialog box for file description
         }
 
         [RelayCommand]
