@@ -10,6 +10,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace AutoJobSearchGUI.ViewModels
@@ -101,6 +102,12 @@ namespace AutoJobSearchGUI.ViewModels
             ContentViewModel = addContactViewModel;
         }
 
+        public void ChangeViewToContact(int contactId)
+        {
+            addContactViewModel.OpenContactCommand.Execute(Singletons.Contacts.Where(x => x.Id == contactId).Single());
+            ContentViewModel = addContactViewModel;
+        }
+
         public void ChangeViewToAddContact(int jobId)
         {
             addContactViewModel.CreateNewContactCommand.Execute(jobId);
@@ -137,12 +144,14 @@ namespace AutoJobSearchGUI.ViewModels
 
         private void SubscribeToEvents()
         {
-            jobListingViewModel.OpenAddContactViewWithAssociatedJobIdRequest += ChangeViewToAddContact;
+            jobListingViewModel.CreateNewContactWithAssociatedJobIdRequest += ChangeViewToAddContact;
             contactsViewModel.OpenAddContactViewRequest += ChangeViewToAddContact;
 
             jobBoardViewModel.OpenJobListingViewRequest += ChangeViewToJobListing;
 
             jobListingViewModel.OpenJobBoardViewRequest += ChangeViewToJobBoard;
+
+            jobListingViewModel.ChangeViewToContactRequest += ChangeViewToContact;
 
             jobListingViewModel.UpdateJobBoardViewRequest += UpdateJobBoard;
 
@@ -155,12 +164,14 @@ namespace AutoJobSearchGUI.ViewModels
 
         private void UnsubscribeFromEvents()
         {
-            jobListingViewModel.OpenAddContactViewWithAssociatedJobIdRequest -= ChangeViewToAddContact;
+            jobListingViewModel.CreateNewContactWithAssociatedJobIdRequest -= ChangeViewToAddContact;
             contactsViewModel.OpenAddContactViewRequest -= ChangeViewToAddContact;
 
             jobBoardViewModel.OpenJobListingViewRequest -= ChangeViewToJobListing;
 
             jobListingViewModel.OpenJobBoardViewRequest -= ChangeViewToJobBoard;
+
+            jobListingViewModel.ChangeViewToContactRequest -= ChangeViewToContact;
 
             jobListingViewModel.UpdateJobBoardViewRequest -= UpdateJobBoard;
 

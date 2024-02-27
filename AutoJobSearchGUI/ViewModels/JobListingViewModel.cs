@@ -18,8 +18,11 @@ namespace AutoJobSearchGUI.ViewModels
         private const string EDIT_BUTTON_DEFAULT_COLOUR = "Gray";
         private const string EDIT_BUTTON_ENABLED_COLOUR = "YellowGreen";
 
-        public delegate void OpenAddContactViewWithAssociatedJobIdHandler(int id);
-        public event OpenAddContactViewWithAssociatedJobIdHandler? OpenAddContactViewWithAssociatedJobIdRequest;
+        public delegate void CreateNewContactWithAssociatedJobIdHandler(int jobId);
+        public event CreateNewContactWithAssociatedJobIdHandler? CreateNewContactWithAssociatedJobIdRequest;
+
+        public delegate void ChangeViewToContactHandler(int contactId);
+        public event ChangeViewToContactHandler? ChangeViewToContactRequest;
 
         public delegate void UpdateJobBoardViewHandler();
         public event UpdateJobBoardViewHandler? UpdateJobBoardViewRequest;
@@ -38,6 +41,15 @@ namespace AutoJobSearchGUI.ViewModels
         [ObservableProperty]
         private JobListingModel _jobListing;
 
+        [ObservableProperty]
+        private IEnumerable<int> _associatedContactIds = new List<int>();
+
+        [ObservableProperty]
+        private bool _isNavigateToContactButtonEnabled;
+
+        [ObservableProperty]
+        private int _selectedContactId;
+
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         public JobListingViewModel() // For View previewer only
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
@@ -52,10 +64,19 @@ namespace AutoJobSearchGUI.ViewModels
         }
 
         [RelayCommand]
+        private void ViewContact()
+        {
+            if (SelectedContactId < 1) return;
+
+            DisableOnChangedEvents(JobListing);
+            ChangeViewToContactRequest?.Invoke(SelectedContactId);
+        }
+
+        [RelayCommand]
         private void AddAssociatedContact()
         {
             DisableOnChangedEvents(JobListing);
-            OpenAddContactViewWithAssociatedJobIdRequest?.Invoke(JobListing.Id);
+            CreateNewContactWithAssociatedJobIdRequest?.Invoke(JobListing.Id);
         }
 
         //ToggleEditMode
@@ -146,7 +167,6 @@ namespace AutoJobSearchGUI.ViewModels
             if (previousIndex < 0) return;
 
             DisableOnChangedEvents(JobListing);
-
             await OpenJobListingAsync(Singletons.JobListings[previousIndex]);
         }
 
@@ -160,7 +180,6 @@ namespace AutoJobSearchGUI.ViewModels
             if (nextIndex >= Singletons.JobListings.Count) return;
 
             DisableOnChangedEvents(JobListing);
-
             await OpenJobListingAsync(Singletons.JobListings[nextIndex]);
         }
 
@@ -174,6 +193,7 @@ namespace AutoJobSearchGUI.ViewModels
         [RelayCommand]
         private async Task OpenJobListingAsync(JobListingModel jobListing)
         {
+            SelectedContactId = -1; // Prevent erroneous navigations to contact when updating the view model.
             IsEditModeEnabled = false;
             SetEditButtonColour();
 
@@ -183,8 +203,12 @@ namespace AutoJobSearchGUI.ViewModels
                 jobListing.Description = jobListingDetails.Description;
                 jobListing.ApplicationLinks = jobListingDetails.ApplicationLinksString;
                 jobListing.Notes = jobListingDetails.Notes;
+
                 jobListing.DetailsPopulated = true;
             }
+
+            AssociatedContactIds = Singletons.Contacts.Where(x => x.JobListingIds.Contains(jobListing.Id)).Select(x => x.Id);
+            IsNavigateToContactButtonEnabled = AssociatedContactIds.Any();
 
             JobListing = jobListing;
             EnableOnChangedEvents(JobListing);
