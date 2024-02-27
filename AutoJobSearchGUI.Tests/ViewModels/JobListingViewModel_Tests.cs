@@ -36,6 +36,8 @@ namespace AutoJobSearchGUI.Tests.ViewModels
 
             var jobListingWithDetails = _fixture.Create<JobListing>();
 
+            Singletons.Contacts = new List<ContactModel>();
+
             _dbContext.GetJobListingDetailsByIdAsync(jobListingWithoutDetails.Id).Returns(jobListingWithDetails);
 
             // Act
@@ -64,6 +66,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
         {
             // Arrange
             var jobListingWithDetails = _fixture.Create<JobListingModel>();
+            Singletons.Contacts = new List<ContactModel>();
             jobListingWithDetails.DetailsPopulated = true;
             jobListingWithDetails.EnableEvents = false;
 
