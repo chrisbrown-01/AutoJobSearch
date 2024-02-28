@@ -56,6 +56,24 @@ namespace AutoJobSearchGUI.ViewModels
         private bool _isEditModeEnabled;
 
         [ObservableProperty]
+        private bool _isViewFilesEnabled;
+
+        [ObservableProperty]
+        private bool _isViewResumeEnabled;
+
+        [ObservableProperty]
+        private bool _isViewCoverLetterEnabled;
+
+        [ObservableProperty]
+        private bool _isViewFile1Enabled;
+
+        [ObservableProperty]
+        private bool _isViewFile2Enabled;
+
+        [ObservableProperty]
+        private bool _isViewFile3Enabled;
+
+        [ObservableProperty]
         private JobListingModel _jobListing;
 
         [ObservableProperty]
@@ -81,14 +99,14 @@ namespace AutoJobSearchGUI.ViewModels
         }
 
         [RelayCommand]
-        private async Task ViewFileAsync()
+        private async Task ViewFileAsync(JobListingsAssociatedFilesStringField fileField)
         {
             // TODO: test for linux & mac
             //Process.Start(new ProcessStartInfo(hashedFilePath) { UseShellExecute = true }); 
         }
 
         [RelayCommand]
-        private async Task UploadFileAsync(JobListingsAssociatedFilesStringField fileField) // TODO: try/catch, const strings, linux testing
+        private async Task UploadFileAsync(JobListingsAssociatedFilesStringField fileField) // TODO: try/catch, linux testing, cancellation handling
         {
             var filesService = App.Current?.Services?.GetService<IFilesService>();
             if (filesService is null) return;
@@ -104,6 +122,7 @@ namespace AutoJobSearchGUI.ViewModels
 
             if (String.IsNullOrEmpty(fileExtension)) return;
 
+            // TODO: move outside of this method, use const strings
             var jobListingAssociatedFilesDirectoryPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "JobListingAssociatedFiles");
             Directory.CreateDirectory(jobListingAssociatedFilesDirectoryPath);
        
@@ -118,13 +137,32 @@ namespace AutoJobSearchGUI.ViewModels
 
             File.Copy(filePath, hashedFilePath, true);
 
-            // TODO: customize for specific file. currently only handles resumes.
             if(JobListing.JobListingAssociatedFiles == null)
             {
                 var jobListingAssociatedFiles = new JobListingAssociatedFiles();
 
                 jobListingAssociatedFiles.Id = JobListing.Id;
-                jobListingAssociatedFiles.Resume = hashedFileNameAndExtension;
+
+                switch (fileField)
+                {
+                    case JobListingsAssociatedFilesStringField.Resume:
+                        jobListingAssociatedFiles.Resume = hashedFileNameAndExtension;
+                        break;
+                    case JobListingsAssociatedFilesStringField.CoverLetter:
+                        jobListingAssociatedFiles.CoverLetter = hashedFileNameAndExtension;
+                        break;
+                    case JobListingsAssociatedFilesStringField.File1:
+                        jobListingAssociatedFiles.File1 = hashedFileNameAndExtension;
+                        break;
+                    case JobListingsAssociatedFilesStringField.File2:
+                        jobListingAssociatedFiles.File2 = hashedFileNameAndExtension;
+                        break;
+                    case JobListingsAssociatedFilesStringField.File3:
+                        jobListingAssociatedFiles.File3 = hashedFileNameAndExtension;
+                        break;
+                    default:
+                        throw new ArgumentException($"{nameof(fileField)} enum type could not be resolved");
+                }
 
                 JobListing.JobListingAssociatedFiles = jobListingAssociatedFiles;
 
@@ -132,10 +170,31 @@ namespace AutoJobSearchGUI.ViewModels
             }
             else
             {
-                JobListing.JobListingAssociatedFiles.Resume = hashedFileNameAndExtension;
+                switch (fileField)
+                {
+                    case JobListingsAssociatedFilesStringField.Resume:
+                        JobListing.JobListingAssociatedFiles.Resume = hashedFileNameAndExtension;
+                        break;
+                    case JobListingsAssociatedFilesStringField.CoverLetter:
+                        JobListing.JobListingAssociatedFiles.CoverLetter = hashedFileNameAndExtension;
+                        break;
+                    case JobListingsAssociatedFilesStringField.File1:
+                        JobListing.JobListingAssociatedFiles.File1 = hashedFileNameAndExtension;
+                        break;
+                    case JobListingsAssociatedFilesStringField.File2:
+                        JobListing.JobListingAssociatedFiles.File2 = hashedFileNameAndExtension;
+                        break;
+                    case JobListingsAssociatedFilesStringField.File3:
+                        JobListing.JobListingAssociatedFiles.File3 = hashedFileNameAndExtension;
+                        break;
+                    default:
+                        throw new ArgumentException($"{nameof(fileField)} enum type could not be resolved");
+                }
 
                 await _dbContext.UpdateJobListingAssociatedFilesAsync(JobListing.JobListingAssociatedFiles);
             }
+
+            UpdateViewModelInteractivityStates();
         }
 
         [RelayCommand]
@@ -267,10 +326,6 @@ namespace AutoJobSearchGUI.ViewModels
         [RelayCommand]
         private async Task OpenJobListingAsync(JobListingModel jobListing)
         {
-            SelectedContactId = -1; // Prevent erroneous navigations to contact when updating the view model.
-            IsEditModeEnabled = false;
-            SetEditButtonColour();
-
             if (!jobListing.DetailsPopulated)
             {
                 var jobListingDetails = await _dbContext.GetJobListingDetailsByIdAsync(jobListing.Id);
@@ -283,10 +338,39 @@ namespace AutoJobSearchGUI.ViewModels
             }
 
             AssociatedContactIds = Singletons.Contacts.Where(x => x.JobListingIds.Contains(jobListing.Id)).Select(x => x.Id);
-            IsNavigateToContactButtonEnabled = AssociatedContactIds.Any();
 
             JobListing = jobListing;
             EnableOnChangedEvents(JobListing);
+
+            UpdateViewModelInteractivityStates();
+        }
+
+        private void UpdateViewModelInteractivityStates()
+        {
+            SelectedContactId = -1; // Prevent erroneous navigations to contact when updating the view model.
+            IsEditModeEnabled = false;
+            SetEditButtonColour();
+
+            IsNavigateToContactButtonEnabled = AssociatedContactIds.Any();
+
+            IsViewFilesEnabled = JobListing?.JobListingAssociatedFiles is not null;
+
+            if(!IsViewFilesEnabled)
+            {
+                IsViewResumeEnabled = false;
+                IsViewCoverLetterEnabled = false;
+                IsViewFile1Enabled = false;
+                IsViewFile2Enabled = false;
+                IsViewFile3Enabled = false;
+            }
+            else
+            {
+                IsViewResumeEnabled = !string.IsNullOrWhiteSpace(JobListing?.JobListingAssociatedFiles?.Resume);
+                IsViewCoverLetterEnabled = !string.IsNullOrWhiteSpace(JobListing?.JobListingAssociatedFiles?.CoverLetter);
+                IsViewFile1Enabled = !string.IsNullOrWhiteSpace(JobListing?.JobListingAssociatedFiles?.File1);
+                IsViewFile2Enabled = !string.IsNullOrWhiteSpace(JobListing?.JobListingAssociatedFiles?.File2);
+                IsViewFile3Enabled = !string.IsNullOrWhiteSpace(JobListing?.JobListingAssociatedFiles?.File3);
+            }
         }
 
         /// <summary>

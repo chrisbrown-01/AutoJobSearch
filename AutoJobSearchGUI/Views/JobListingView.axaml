@@ -26,18 +26,73 @@
 			<Menu>
 				<MenuItem Header="Upload Files">
 					<Button
-						Content="Upload Resume"
+						HorizontalAlignment="Center"
+						Content="Resume"
 						Command="{Binding UploadFileCommand}"
 						CommandParameter="{Binding Resume}"
+						ClickMode="Press"/>
+					<Button
+						HorizontalAlignment="Center"
+						Content="Cover Letter"
+						Command="{Binding UploadFileCommand}"
+						CommandParameter="{Binding CoverLetter}"
+						ClickMode="Press"/>
+					<Button
+						HorizontalAlignment="Center"
+						Content="File 1"
+						Command="{Binding UploadFileCommand}"
+						CommandParameter="{Binding File1}"
+						ClickMode="Press"/>
+					<Button
+						HorizontalAlignment="Center"
+						Content="File 2"
+						Command="{Binding UploadFileCommand}"
+						CommandParameter="{Binding File2}"
+						ClickMode="Press"/>
+					<Button
+						HorizontalAlignment="Center"
+						Content="File 3"
+						Command="{Binding UploadFileCommand}"
+						CommandParameter="{Binding File3}"
 						ClickMode="Press"/>
 				</MenuItem>
 			</Menu>
 			<Menu>
-				<MenuItem Header="View Files">
+				<MenuItem Header="View Files" IsEnabled="{Binding IsViewFilesEnabled}">
 					<Button
-						Content="View Resume"
+						IsEnabled="{Binding IsViewResumeEnabled}"
+						HorizontalAlignment="Center"
+						Content="Resume"
 						Command="{Binding ViewFileCommand}"
-						CommandParameter="Resume"
+						CommandParameter="{Binding Resume}"
+						ClickMode="Press"/>
+					<Button
+						IsEnabled="{Binding IsViewCoverLetterEnabled}"
+						HorizontalAlignment="Center"
+						Content="Cover Letter"
+						Command="{Binding ViewFileCommand}"
+						CommandParameter="{Binding CoverLetter}"
+						ClickMode="Press"/>
+					<Button
+						IsEnabled="{Binding IsViewFile1Enabled}"
+						HorizontalAlignment="Center"
+						Content="File 1"
+						Command="{Binding ViewFileCommand}"
+						CommandParameter="{Binding File1}"
+						ClickMode="Press"/>
+					<Button
+						IsEnabled="{Binding IsViewFile2Enabled}"
+						HorizontalAlignment="Center"
+						Content="File 2"
+						Command="{Binding ViewFileCommand}"
+						CommandParameter="{Binding File2}"
+						ClickMode="Press"/>
+					<Button
+						IsEnabled="{Binding IsViewFile3Enabled}"
+						HorizontalAlignment="Center"
+						Content="File 3"
+						Command="{Binding ViewFileCommand}"
+						CommandParameter="{Binding File3}"
 						ClickMode="Press"/>
 				</MenuItem>
 			</Menu>
