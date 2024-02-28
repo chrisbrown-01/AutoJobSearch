@@ -179,7 +179,7 @@ namespace AutoJobSearchGUI.ViewModels
         }
 
         [RelayCommand]
-        private async Task UploadFileAsync(JobListingsAssociatedFilesStringField fileField) // TODO: test for linux & mac
+        private async Task UploadFileAsync(JobListingsAssociatedFilesStringField fileField) // TODO: test for linux & mac 
         {
             var filesService = App.Current?.Services?.GetService<IFilesService>();
             
