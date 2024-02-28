@@ -221,5 +221,13 @@ namespace AutoJobSearchGUI.Data
             Log.Information("Creating new job listing in database.");
             return await _dbContext.CreateJobAsync();
         }
+
+        public async Task CreateJobListingAssociatedFilesAsync(JobListingAssociatedFiles jobListingAssociatedFiles)
+        {
+            Log.Information("Creating new job listing associated file record in database for job ID {@jobListingAssociatedFiles.Id}.", 
+                jobListingAssociatedFiles.Id);
+
+            await _dbContext.CreateJobListingAssociatedFilesAsync(jobListingAssociatedFiles);
+        }
     }
 }

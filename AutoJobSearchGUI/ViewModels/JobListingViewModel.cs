@@ -4,6 +4,7 @@ using AutoJobSearchGUI.Models;
 using AutoJobSearchGUI.Services;
 using AutoJobSearchGUI.Views;
 using AutoJobSearchShared;
+using AutoJobSearchShared.Models;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Platform.Storage;
@@ -75,7 +76,8 @@ namespace AutoJobSearchGUI.ViewModels
         [RelayCommand]
         private async Task ViewFileAsync()
         {
-            //Process.Start(new ProcessStartInfo(hashedFilePath) { UseShellExecute = true }); // TODO: test for linux & mac
+            // TODO: test for linux & mac
+            //Process.Start(new ProcessStartInfo(hashedFilePath) { UseShellExecute = true }); 
         }
 
         [RelayCommand]
@@ -109,7 +111,18 @@ namespace AutoJobSearchGUI.ViewModels
 
             File.Copy(filePath, hashedFilePath, true);
 
-            // TODO: dialog box for file description
+            // TODO: customize for specific file. currently only handles resumes.
+            if(JobListing.JobListingAssociatedFiles == null)
+            {
+                var jobListingAssociatedFiles = new JobListingAssociatedFiles();
+
+                jobListingAssociatedFiles.Id = JobListing.Id;
+                jobListingAssociatedFiles.Resume = hashedFileNameAndExtension;
+
+                JobListing.JobListingAssociatedFiles = jobListingAssociatedFiles;
+
+                await _dbContext.CreateJobListingAssociatedFilesAsync(jobListingAssociatedFiles);
+            }
         }
 
         [RelayCommand]
@@ -251,6 +264,7 @@ namespace AutoJobSearchGUI.ViewModels
                 jobListing.Description = jobListingDetails.Description;
                 jobListing.ApplicationLinks = jobListingDetails.ApplicationLinksString;
                 jobListing.Notes = jobListingDetails.Notes;
+                jobListing.JobListingAssociatedFiles = jobListingDetails.JobListingAssociatedFiles;
 
                 jobListing.DetailsPopulated = true;
             }

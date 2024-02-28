@@ -29,6 +29,11 @@ namespace AutoJobSearchGUI.Data
             return await _sqliteDb.CreateJobAsync();
         }
 
+        public async Task CreateJobListingAssociatedFilesAsync(JobListingAssociatedFiles jobListingAssociatedFiles)
+        {
+            await _sqliteDb.CreateJobListingAssociatedFilesAsync(jobListingAssociatedFiles);
+        }
+
         public async Task<JobSearchProfile> CreateJobSearchProfileAsync(JobSearchProfile profile)
         {
             return await _sqliteDb.CreateJobSearchProfileAsync(profile);

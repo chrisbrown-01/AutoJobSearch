@@ -28,6 +28,8 @@ namespace AutoJobSearchShared.Models
 
         public List<ApplicationLink> ApplicationLinks { get; set; } = new();
 
+        public JobListingAssociatedFiles? JobListingAssociatedFiles { get; set; }
+
         public string ApplicationLinksString { get; set; } = string.Empty;
 
         public int Score { get; set; } = 0;
