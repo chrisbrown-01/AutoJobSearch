@@ -29,6 +29,11 @@ namespace AutoJobSearchGUI.Data
             return await _sqliteDb.CreateJobAsync();
         }
 
+        public async Task CreateJobListingAssociatedFilesAsync(JobListingAssociatedFiles jobListingAssociatedFiles)
+        {
+            await _sqliteDb.CreateJobListingAssociatedFilesAsync(jobListingAssociatedFiles);
+        }
+
         public async Task<JobSearchProfile> CreateJobSearchProfileAsync(JobSearchProfile profile)
         {
             return await _sqliteDb.CreateJobSearchProfileAsync(profile);
@@ -136,6 +141,11 @@ namespace AutoJobSearchGUI.Data
         public async Task UpdateContactStringPropertyAsync(ContactStringField columnName, string value, int id)
         {
             await _sqliteDb.UpdateContactStringPropertyAsync(columnName, value, id);
+        }
+
+        public async Task UpdateJobListingAssociatedFilesAsync(JobListingAssociatedFiles jobListingAssociatedFiles)
+        {
+            await _sqliteDb.UpdateJobListingAssociatedFilesAsync(jobListingAssociatedFiles);
         }
 
         public async Task UpdateJobListingBoolPropertyAsync(JobListingsBoolField columnName, bool value, int id, DateTime statusModifiedAt)

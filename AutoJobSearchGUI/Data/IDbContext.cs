@@ -42,5 +42,7 @@ namespace AutoJobSearchGUI.Data
         Task<JobListing> CreateJobAsync();
         Task UpdateJobListingIntPropertyAsync(JobListingsIntField columnName, int value, int id);
         Task UpdateJobSearchProfileIntPropertyAsync(JobSearchProfilesIntField columnName, int value, int id);
+        Task CreateJobListingAssociatedFilesAsync(JobListingAssociatedFiles jobListingAssociatedFiles);
+        Task UpdateJobListingAssociatedFilesAsync(JobListingAssociatedFiles jobListingAssociatedFiles);
     }
 }

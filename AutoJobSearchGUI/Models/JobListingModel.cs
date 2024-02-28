@@ -2,6 +2,7 @@
 using AutoJobSearchGUI.Events.CustomEventArgs;
 using AutoJobSearchShared;
 using AutoJobSearchShared.Enums;
+using AutoJobSearchShared.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 using System.Collections.Generic;
@@ -32,6 +33,9 @@ namespace AutoJobSearchGUI.Models
         [ObservableProperty]
         // Keeps track of the most recent time a bool property was changed.
         private DateTime _statusModifiedAt;
+
+        [ObservableProperty]
+        private JobListingAssociatedFiles? _jobListingAssociatedFiles;
 
         [ObservableProperty]
         private string _searchTerm = string.Empty; 

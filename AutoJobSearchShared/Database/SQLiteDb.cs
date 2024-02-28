@@ -64,6 +64,17 @@ namespace AutoJobSearchShared.Database
 
             connection.Execute(createApplicationLinksTableSQL);
 
+            const string createJobListingsAssociatedFilesTableSQL = "CREATE TABLE JobListingsAssociatedFiles (" +
+                "Id INTEGER PRIMARY KEY," +
+                "Resume TEXT NOT NULL," +
+                "CoverLetter TEXT NOT NULL," +
+                "File1 TEXT NOT NULL," +
+                "File2 TEXT NOT NULL," +
+                "File3 TEXT NOT NULL," +
+                "FOREIGN KEY (Id) REFERENCES JobListings (Id) ON DELETE CASCADE)";
+
+            connection.Execute(createJobListingsAssociatedFilesTableSQL);
+
             const string createJobSearchProfilesTableSQL = "CREATE TABLE JobSearchProfiles (" +
                  "Id INTEGER PRIMARY KEY AUTOINCREMENT," +
                  "MaxJobListingIndex INTEGER," +
@@ -408,6 +419,14 @@ namespace AutoJobSearchShared.Database
                 jobListing.ApplicationLinksString = sb.ToString();
             }
 
+            const string associatedFilesSQL = "SELECT * FROM JobListingsAssociatedFiles WHERE Id = @Id;";
+            var associatedFiles = await connection.QuerySingleOrDefaultAsync<JobListingAssociatedFiles>(associatedFilesSQL, new { Id = id }).ConfigureAwait(false);
+
+            if (associatedFiles != null)
+            {
+                jobListing.JobListingAssociatedFiles = associatedFiles;
+            }
+
             return jobListing;
         }
 
@@ -592,6 +611,56 @@ namespace AutoJobSearchShared.Database
         {
             string sql = $"UPDATE JobSearchProfiles SET {columnName} = @Value WHERE Id = @Id";
             await connection.ExecuteAsync(sql, new { Value = value, Id = id }).ConfigureAwait(false);
+        }
+
+        public async Task CreateJobListingAssociatedFilesAsync(JobListingAssociatedFiles jobListingAssociatedFiles)
+        {
+            const string sql = "INSERT INTO JobListingsAssociatedFiles (" +
+                "Id, " +
+                "Resume, " +
+                "CoverLetter, " +
+                "File1, " +
+                "File2, " +
+                "File3)" +
+                "VALUES (" +
+                "@Id, " +
+                "@Resume, " +
+                "@CoverLetter, " +
+                "@File1, " +
+                "@File2, " +
+                "@File3);";
+
+            await connection.ExecuteAsync(sql, 
+                new { 
+                    Id = jobListingAssociatedFiles.Id, 
+                    Resume = jobListingAssociatedFiles.Resume,
+                    CoverLetter = jobListingAssociatedFiles.CoverLetter,
+                    File1 = jobListingAssociatedFiles.File1,
+                    File2 = jobListingAssociatedFiles.File2,
+                    File3 = jobListingAssociatedFiles.File3
+                }).ConfigureAwait(false);
+        }
+
+        public async Task UpdateJobListingAssociatedFilesAsync(JobListingAssociatedFiles jobListingAssociatedFiles)
+        {
+            const string sql = "UPDATE JobListingsAssociatedFiles SET " +
+                "Resume = @Resume, " +
+                "CoverLetter = @CoverLetter, " +
+                "File1 = @File1, " +
+                "File2 = @File2, " +
+                "File3 = @File3 " +
+                "WHERE Id = @Id";
+
+            await connection.ExecuteAsync(sql,
+                new
+                {
+                    Id = jobListingAssociatedFiles.Id,
+                    Resume = jobListingAssociatedFiles.Resume,
+                    CoverLetter = jobListingAssociatedFiles.CoverLetter,
+                    File1 = jobListingAssociatedFiles.File1,
+                    File2 = jobListingAssociatedFiles.File2,
+                    File3 = jobListingAssociatedFiles.File3
+                }).ConfigureAwait(false);
         }
     }
 }
