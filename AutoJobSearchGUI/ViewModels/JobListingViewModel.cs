@@ -107,11 +107,11 @@ namespace AutoJobSearchGUI.ViewModels
         }
 
         [RelayCommand]
-        private async Task ViewFile(JobListingsAssociatedFilesStringField fileField) // TODO: test for linux & mac
+        private async Task ViewFileAsync(JobListingsAssociatedFilesStringField fileField) // TODO: test for linux & mac
         {
             if (JobListing.JobListingAssociatedFiles == null)
             {
-                Log.Warning("The ViewFile method was executed but the JobListing.JobListingAssociatedFiles reference was null.");
+                Log.Warning("The ViewFileAsync method was executed but the JobListing.JobListingAssociatedFiles reference was null.");
                 await DisplayViewFileErrorMessageAsync();
                 return;
             }
@@ -149,7 +149,7 @@ namespace AutoJobSearchGUI.ViewModels
             {
                 if (string.IsNullOrWhiteSpace(fileToOpen))
                 {
-                    Log.Warning("ViewFile method attempted to open a file where the name string was null or whitespace.");
+                    Log.Warning("ViewFileAsync method attempted to open a file where the name string was null or whitespace.");
                     await DisplayViewFileErrorMessageAsync();
                     return;
                 }
@@ -158,7 +158,7 @@ namespace AutoJobSearchGUI.ViewModels
 
                 if (!File.Exists(completePath))
                 {
-                    Log.Warning("ViewFile method attempted to open a file that does not exist.");
+                    Log.Warning("ViewFileAsync method attempted to open a file that does not exist.");
                     await DisplayViewFileErrorMessageAsync();
                     return;
                 }
@@ -179,32 +179,39 @@ namespace AutoJobSearchGUI.ViewModels
         }
 
         [RelayCommand]
-        private async Task UploadFileAsync(JobListingsAssociatedFilesStringField fileField) // TODO: try/catch, linux testing
+        private async Task UploadFileAsync(JobListingsAssociatedFilesStringField fileField) // TODO: test for linux & mac
         {
             var filesService = App.Current?.Services?.GetService<IFilesService>();
-            if (filesService is null) return;
+            
+            if (filesService is null)
+            {
+                Log.Warning("The UploadFileAsync method was executed but the IFilesService reference was null.");
+                await DisplayUploadFileErrorMessageAsync();
+                return;
+            }
 
             var file = await filesService.OpenFileAsync();
             if (file is null) return;
 
             var filePath = file.TryGetLocalPath();
 
-            if (String.IsNullOrEmpty(filePath)) return;
+            if (String.IsNullOrWhiteSpace(filePath))
+            {
+                Log.Warning("The UploadFileAsync method was executed but the file path string was null or white space.");
+                await DisplayUploadFileErrorMessageAsync();
+                return;
+            }
 
             var fileExtension = Path.GetExtension(filePath);
 
-            if (String.IsNullOrEmpty(fileExtension)) return;
+            if (String.IsNullOrWhiteSpace(fileExtension))
+            {
+                Log.Warning("The UploadFileAsync method was executed but the file extension string was null or white space.");
+                await DisplayUploadFileErrorMessageAsync();
+                return;
+            }
 
-            using var stream = File.OpenRead(filePath);
-            using var md5 = MD5.Create();
-            var hash = await md5.ComputeHashAsync(stream);
-            var hashString = Convert.ToHexString(hash);
-
-            var hashedFileNameAndExtension = $"{hashString}{fileExtension}";
-
-            var hashedFilePath = Path.Join(_associatedFilesDirectoryPath, hashedFileNameAndExtension);
-
-            File.Copy(filePath, hashedFilePath, true);
+            var hashedFile = await HashFileAndSaveToLocalDirectoryAsync(filePath, fileExtension);
 
             if (JobListing.JobListingAssociatedFiles == null)
             {
@@ -215,19 +222,19 @@ namespace AutoJobSearchGUI.ViewModels
                 switch (fileField)
                 {
                     case JobListingsAssociatedFilesStringField.Resume:
-                        jobListingAssociatedFiles.Resume = hashedFileNameAndExtension;
+                        jobListingAssociatedFiles.Resume = hashedFile;
                         break;
                     case JobListingsAssociatedFilesStringField.CoverLetter:
-                        jobListingAssociatedFiles.CoverLetter = hashedFileNameAndExtension;
+                        jobListingAssociatedFiles.CoverLetter = hashedFile;
                         break;
                     case JobListingsAssociatedFilesStringField.File1:
-                        jobListingAssociatedFiles.File1 = hashedFileNameAndExtension;
+                        jobListingAssociatedFiles.File1 = hashedFile;
                         break;
                     case JobListingsAssociatedFilesStringField.File2:
-                        jobListingAssociatedFiles.File2 = hashedFileNameAndExtension;
+                        jobListingAssociatedFiles.File2 = hashedFile;
                         break;
                     case JobListingsAssociatedFilesStringField.File3:
-                        jobListingAssociatedFiles.File3 = hashedFileNameAndExtension;
+                        jobListingAssociatedFiles.File3 = hashedFile;
                         break;
                     default:
                         throw new ArgumentException($"{nameof(fileField)} enum type could not be resolved");
@@ -242,19 +249,19 @@ namespace AutoJobSearchGUI.ViewModels
                 switch (fileField)
                 {
                     case JobListingsAssociatedFilesStringField.Resume:
-                        JobListing.JobListingAssociatedFiles.Resume = hashedFileNameAndExtension;
+                        JobListing.JobListingAssociatedFiles.Resume = hashedFile;
                         break;
                     case JobListingsAssociatedFilesStringField.CoverLetter:
-                        JobListing.JobListingAssociatedFiles.CoverLetter = hashedFileNameAndExtension;
+                        JobListing.JobListingAssociatedFiles.CoverLetter = hashedFile;
                         break;
                     case JobListingsAssociatedFilesStringField.File1:
-                        JobListing.JobListingAssociatedFiles.File1 = hashedFileNameAndExtension;
+                        JobListing.JobListingAssociatedFiles.File1 = hashedFile;
                         break;
                     case JobListingsAssociatedFilesStringField.File2:
-                        JobListing.JobListingAssociatedFiles.File2 = hashedFileNameAndExtension;
+                        JobListing.JobListingAssociatedFiles.File2 = hashedFile;
                         break;
                     case JobListingsAssociatedFilesStringField.File3:
-                        JobListing.JobListingAssociatedFiles.File3 = hashedFileNameAndExtension;
+                        JobListing.JobListingAssociatedFiles.File3 = hashedFile;
                         break;
                     default:
                         throw new ArgumentException($"{nameof(fileField)} enum type could not be resolved");
@@ -264,6 +271,40 @@ namespace AutoJobSearchGUI.ViewModels
             }
 
             UpdateViewModelInteractivityStates();
+
+            async Task DisplayUploadFileErrorMessageAsync()
+            {
+                var box = MessageBoxManager.GetMessageBoxStandard(
+                    "File Cannot Be Uploaded",
+                    "An issue was encountered when trying to upload the file.",
+                    MsBox.Avalonia.Enums.ButtonEnum.Ok,
+                    MsBox.Avalonia.Enums.Icon.Error);
+
+                await box.ShowAsync();
+            }
+        }
+
+        /// <summary>
+        /// Computes the MD5 hash of the specified file, creates a duplicate file where the name is the value of the MD5 hash, saves the file within the GUI
+        /// local directory, then returns the hashed file name and extension.
+        /// </summary>
+        /// <param name="originalFilePath"></param>
+        /// <param name="fileExtension"></param>
+        /// <returns>The file name and extension of the hashed file that was saved within the GUI local directory.</returns>
+        private async Task<string> HashFileAndSaveToLocalDirectoryAsync(string originalFilePath, string fileExtension)
+        {
+            using var stream = File.OpenRead(originalFilePath);
+            using var md5 = MD5.Create();
+            var hash = await md5.ComputeHashAsync(stream);
+            var hashString = Convert.ToHexString(hash);
+
+            var hashedFileNameAndExtension = $"{hashString}{fileExtension}";
+
+            var hashedFilePath = Path.Join(_associatedFilesDirectoryPath, hashedFileNameAndExtension);
+
+            File.Copy(originalFilePath, hashedFilePath, true);
+
+            return hashedFileNameAndExtension;
         }
 
         [RelayCommand]
