@@ -13,6 +13,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
 using MsBox.Avalonia;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -48,6 +49,10 @@ namespace AutoJobSearchGUI.ViewModels
         public static JobListingsAssociatedFilesStringField File1 => JobListingsAssociatedFilesStringField.File1;
         public static JobListingsAssociatedFilesStringField File2 => JobListingsAssociatedFilesStringField.File2;
         public static JobListingsAssociatedFilesStringField File3 => JobListingsAssociatedFilesStringField.File3;
+
+        private const string ASSOCIATED_FILES_DIRECTORY_NAME = "JobListingAssociatedFiles";
+
+        private readonly string _associatedFilesDirectoryPath; 
 
         [ObservableProperty]
         private string _editButtonColour = EDIT_BUTTON_DEFAULT_COLOUR;
@@ -96,17 +101,85 @@ namespace AutoJobSearchGUI.ViewModels
         {
             JobListing = new JobListingModel();
             _dbContext = dbContext;
+
+            _associatedFilesDirectoryPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ASSOCIATED_FILES_DIRECTORY_NAME); // TODO: ensure this works properly in the release version.
+            Directory.CreateDirectory(_associatedFilesDirectoryPath); // This method is automatically skipped if the directory already exists.
         }
 
         [RelayCommand]
-        private async Task ViewFileAsync(JobListingsAssociatedFilesStringField fileField)
+        private async Task ViewFile(JobListingsAssociatedFilesStringField fileField) // TODO: test for linux & mac
         {
-            // TODO: test for linux & mac
-            //Process.Start(new ProcessStartInfo(hashedFilePath) { UseShellExecute = true }); 
+            if (JobListing.JobListingAssociatedFiles == null)
+            {
+                Log.Warning("The ViewFile method was executed but the JobListing.JobListingAssociatedFiles reference was null.");
+                await DisplayViewFileErrorMessageAsync();
+                return;
+            }
+
+            string fileToOpen;
+
+            switch (fileField)
+            {
+                case JobListingsAssociatedFilesStringField.Resume:
+                    fileToOpen = JobListing.JobListingAssociatedFiles.Resume;
+                    await AttemptToOpenFileAsync(fileToOpen);
+                    break;
+                case JobListingsAssociatedFilesStringField.CoverLetter:
+                    fileToOpen = JobListing.JobListingAssociatedFiles.CoverLetter;
+                    await AttemptToOpenFileAsync(fileToOpen);
+                    break;
+                case JobListingsAssociatedFilesStringField.File1:
+                    fileToOpen = JobListing.JobListingAssociatedFiles.File1;
+                    await AttemptToOpenFileAsync(fileToOpen);
+                    break;
+                case JobListingsAssociatedFilesStringField.File2:
+                    fileToOpen = JobListing.JobListingAssociatedFiles.File2;
+                    await AttemptToOpenFileAsync(fileToOpen);
+                    break;
+                case JobListingsAssociatedFilesStringField.File3:
+                    fileToOpen = JobListing.JobListingAssociatedFiles.File3;
+                    await AttemptToOpenFileAsync(fileToOpen);
+                    break;
+                default:
+                    Log.Warning($"{nameof(fileField)} enum type could not be resolved when attempting to open file for viewing.");
+                    break;
+            }
+
+            async Task AttemptToOpenFileAsync(string fileToOpen)
+            {
+                if (string.IsNullOrWhiteSpace(fileToOpen))
+                {
+                    Log.Warning("ViewFile method attempted to open a file where the name string was null or whitespace.");
+                    await DisplayViewFileErrorMessageAsync();
+                    return;
+                }
+
+                var completePath = Path.Combine(_associatedFilesDirectoryPath, fileToOpen);
+
+                if (!File.Exists(completePath))
+                {
+                    Log.Warning("ViewFile method attempted to open a file that does not exist.");
+                    await DisplayViewFileErrorMessageAsync();
+                    return;
+                }
+
+                Process.Start(new ProcessStartInfo(completePath) { UseShellExecute = true });
+            }
+
+            async Task DisplayViewFileErrorMessageAsync()
+            {
+                var box = MessageBoxManager.GetMessageBoxStandard(
+                    "File Cannot Be Viewed",
+                    "An issue was encountered when trying to view the file.",
+                    MsBox.Avalonia.Enums.ButtonEnum.Ok,
+                    MsBox.Avalonia.Enums.Icon.Error);
+
+                await box.ShowAsync();
+            }
         }
 
         [RelayCommand]
-        private async Task UploadFileAsync(JobListingsAssociatedFilesStringField fileField) // TODO: try/catch, linux testing, cancellation handling
+        private async Task UploadFileAsync(JobListingsAssociatedFilesStringField fileField) // TODO: try/catch, linux testing
         {
             var filesService = App.Current?.Services?.GetService<IFilesService>();
             if (filesService is null) return;
@@ -122,10 +195,6 @@ namespace AutoJobSearchGUI.ViewModels
 
             if (String.IsNullOrEmpty(fileExtension)) return;
 
-            // TODO: move outside of this method, use const strings
-            var jobListingAssociatedFilesDirectoryPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "JobListingAssociatedFiles");
-            Directory.CreateDirectory(jobListingAssociatedFilesDirectoryPath);
-       
             using var stream = File.OpenRead(filePath);
             using var md5 = MD5.Create();
             var hash = await md5.ComputeHashAsync(stream);
@@ -133,11 +202,11 @@ namespace AutoJobSearchGUI.ViewModels
 
             var hashedFileNameAndExtension = $"{hashString}{fileExtension}";
 
-            var hashedFilePath = Path.Join(jobListingAssociatedFilesDirectoryPath, hashedFileNameAndExtension);
+            var hashedFilePath = Path.Join(_associatedFilesDirectoryPath, hashedFileNameAndExtension);
 
             File.Copy(filePath, hashedFilePath, true);
 
-            if(JobListing.JobListingAssociatedFiles == null)
+            if (JobListing.JobListingAssociatedFiles == null)
             {
                 var jobListingAssociatedFiles = new JobListingAssociatedFiles();
 
@@ -248,7 +317,7 @@ namespace AutoJobSearchGUI.ViewModels
             var newJobListingModel = JobListingHelpers.ConvertJobListingToJobListingModel(newJob);
             Singletons.JobListings.Add(newJobListingModel);
             UpdateJobBoardViewRequest?.Invoke();
-            await OpenJobListingAsync(newJobListingModel); 
+            await OpenJobListingAsync(newJobListingModel);
         }
 
         [RelayCommand]
@@ -355,7 +424,7 @@ namespace AutoJobSearchGUI.ViewModels
 
             IsViewFilesEnabled = JobListing?.JobListingAssociatedFiles is not null;
 
-            if(!IsViewFilesEnabled)
+            if (!IsViewFilesEnabled)
             {
                 IsViewResumeEnabled = false;
                 IsViewCoverLetterEnabled = false;
