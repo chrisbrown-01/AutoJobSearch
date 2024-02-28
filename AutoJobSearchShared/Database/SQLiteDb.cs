@@ -640,5 +640,27 @@ namespace AutoJobSearchShared.Database
                     File3 = jobListingAssociatedFiles.File3
                 }).ConfigureAwait(false);
         }
+
+        public async Task UpdateJobListingAssociatedFilesAsync(JobListingAssociatedFiles jobListingAssociatedFiles)
+        {
+            const string sql = "UPDATE JobListingsAssociatedFiles SET " +
+                "Resume = @Resume, " +
+                "CoverLetter = @CoverLetter, " +
+                "File1 = @File1, " +
+                "File2 = @File2, " +
+                "File3 = @File3 " +
+                "WHERE Id = @Id";
+
+            await connection.ExecuteAsync(sql,
+                new
+                {
+                    Id = jobListingAssociatedFiles.Id,
+                    Resume = jobListingAssociatedFiles.Resume,
+                    CoverLetter = jobListingAssociatedFiles.CoverLetter,
+                    File1 = jobListingAssociatedFiles.File1,
+                    File2 = jobListingAssociatedFiles.File2,
+                    File3 = jobListingAssociatedFiles.File3
+                }).ConfigureAwait(false);
+        }
     }
 }

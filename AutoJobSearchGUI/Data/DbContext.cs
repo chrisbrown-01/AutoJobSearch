@@ -229,5 +229,13 @@ namespace AutoJobSearchGUI.Data
 
             await _dbContext.CreateJobListingAssociatedFilesAsync(jobListingAssociatedFiles);
         }
+
+        public async Task UpdateJobListingAssociatedFilesAsync(JobListingAssociatedFiles jobListingAssociatedFiles)
+        {
+            Log.Information("Updating job listing associated file record in database for job ID {@jobListingAssociatedFiles.Id}.",
+                jobListingAssociatedFiles.Id);
+
+            await _dbContext.UpdateJobListingAssociatedFilesAsync(jobListingAssociatedFiles);
+        }
     }
 }

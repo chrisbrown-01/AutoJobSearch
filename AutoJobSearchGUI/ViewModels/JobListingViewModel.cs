@@ -4,6 +4,7 @@ using AutoJobSearchGUI.Models;
 using AutoJobSearchGUI.Services;
 using AutoJobSearchGUI.Views;
 using AutoJobSearchShared;
+using AutoJobSearchShared.Enums;
 using AutoJobSearchShared.Models;
 using Avalonia;
 using Avalonia.Controls;
@@ -41,6 +42,12 @@ namespace AutoJobSearchGUI.ViewModels
         public event OpenJobBoardViewHandler? OpenJobBoardViewRequest;
 
         private readonly IDbContext _dbContext;
+
+        public static JobListingsAssociatedFilesStringField Resume => JobListingsAssociatedFilesStringField.Resume;
+        public static JobListingsAssociatedFilesStringField CoverLetter => JobListingsAssociatedFilesStringField.CoverLetter;
+        public static JobListingsAssociatedFilesStringField File1 => JobListingsAssociatedFilesStringField.File1;
+        public static JobListingsAssociatedFilesStringField File2 => JobListingsAssociatedFilesStringField.File2;
+        public static JobListingsAssociatedFilesStringField File3 => JobListingsAssociatedFilesStringField.File3;
 
         [ObservableProperty]
         private string _editButtonColour = EDIT_BUTTON_DEFAULT_COLOUR;
@@ -81,7 +88,7 @@ namespace AutoJobSearchGUI.ViewModels
         }
 
         [RelayCommand]
-        private async Task UploadFileAsync() // TODO: try/catch, const strings, linux testing
+        private async Task UploadFileAsync(JobListingsAssociatedFilesStringField fileField) // TODO: try/catch, const strings, linux testing
         {
             var filesService = App.Current?.Services?.GetService<IFilesService>();
             if (filesService is null) return;
@@ -122,6 +129,12 @@ namespace AutoJobSearchGUI.ViewModels
                 JobListing.JobListingAssociatedFiles = jobListingAssociatedFiles;
 
                 await _dbContext.CreateJobListingAssociatedFilesAsync(jobListingAssociatedFiles);
+            }
+            else
+            {
+                JobListing.JobListingAssociatedFiles.Resume = hashedFileNameAndExtension;
+
+                await _dbContext.UpdateJobListingAssociatedFilesAsync(JobListing.JobListingAssociatedFiles);
             }
         }
 
