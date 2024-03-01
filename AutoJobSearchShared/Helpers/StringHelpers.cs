@@ -83,7 +83,8 @@ namespace AutoJobSearchShared.Helpers
             "write", "writing", "type", "typing", "Skills:", "group", "platform", "Creating", "features", 
             "looking", "look", "north", "south", "east", "west", "use", "using", "useful", "save", 
             "sign", "years’", "create", "change", "ago", "share", "Strong", "ad", "advertisement", 
-            "issues", "Markets", "initiatives", "ongoing", "plan"
+            "issues", "Markets", "initiatives", "ongoing", "plan", "world", "compatible", "life", "live", 
+            "including", "Assist", "term", "cases"
         };
 
     }
