@@ -29,6 +29,7 @@ namespace AutoJobSearchGUI.ViewModels
 {
     public partial class JobListingViewModel : ViewModelBase // Needs to be public for View previewer to work
     {
+        private const int NUMBER_OF_MOST_COMMON_WORDS_TO_DISPLAY = 20;
         private const string EDIT_BUTTON_DEFAULT_COLOUR = "Gray";
         private const string EDIT_BUTTON_ENABLED_COLOUR = "YellowGreen";
 
@@ -111,7 +112,7 @@ namespace AutoJobSearchGUI.ViewModels
         [RelayCommand]
         private async Task DisplayMostCommonWordsAsync()
         {
-            var mostCommonWords = StringHelpers.HighestFrequencyWordsInString(JobListing.Description, StringHelpers.CommonWords, 20);
+            var mostCommonWords = StringHelpers.HighestFrequencyWordsInString(JobListing.Description, StringHelpers.CommonWords, NUMBER_OF_MOST_COMMON_WORDS_TO_DISPLAY);
 
             var box = MessageBoxManager.GetMessageBoxStandard(
                     "Most Common Words In Job Description",
