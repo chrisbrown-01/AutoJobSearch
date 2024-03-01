@@ -5,6 +5,7 @@ using AutoJobSearchGUI.Services;
 using AutoJobSearchGUI.Views;
 using AutoJobSearchShared;
 using AutoJobSearchShared.Enums;
+using AutoJobSearchShared.Helpers;
 using AutoJobSearchShared.Models;
 using Avalonia;
 using Avalonia.Controls;
@@ -13,6 +14,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
 using MsBox.Avalonia;
+using MsBox.Avalonia.Base;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -104,6 +106,19 @@ namespace AutoJobSearchGUI.ViewModels
 
             _associatedFilesDirectoryPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ASSOCIATED_FILES_DIRECTORY_NAME); // TODO: ensure this works properly in the release version.
             Directory.CreateDirectory(_associatedFilesDirectoryPath); // This method is automatically skipped if the directory already exists.
+        }
+
+        [RelayCommand]
+        private async Task DisplayMostCommonWordsAsync()
+        {
+            var mostCommonWords = StringHelpers.HighestFrequencyWordsInString(JobListing.Description, StringHelpers.CommonWords, 20);
+
+            var box = MessageBoxManager.GetMessageBoxStandard(
+                    "Most Common Words In Job Description",
+                    string.Join(Environment.NewLine, mostCommonWords),
+                    MsBox.Avalonia.Enums.ButtonEnum.Ok);
+
+            await box.ShowAsync();
         }
 
         [RelayCommand]

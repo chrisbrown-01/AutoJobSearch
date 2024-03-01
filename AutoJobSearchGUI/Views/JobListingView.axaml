@@ -200,13 +200,21 @@
 				<CheckBox IsChecked="{Binding JobListing.IsHidden}" />
 			</StackPanel>
 
-			<TextBlock
+			<StackPanel
 				Grid.Row="6"
-				Grid.Column="0"
-				HorizontalAlignment="Center"
-				VerticalAlignment="Top"
-				Text="Job Description"
-				Margin="0 5"/>
+				Grid.Column="0">
+				<TextBlock
+					Text="Job Description"
+					Margin="0 5"
+					HorizontalAlignment="Center"
+				VerticalAlignment="Top"/>
+				<Button 
+					HorizontalAlignment="Center"
+					Content="Most Common Words" 
+					ClickMode="Press" 
+					FontSize="8"
+					Command="{Binding DisplayMostCommonWordsCommand}"/>
+			</StackPanel>
 			<TextBox
 				Grid.Row="6"
 				Grid.Column="1"
