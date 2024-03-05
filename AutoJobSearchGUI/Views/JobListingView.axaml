@@ -167,7 +167,7 @@
 			Grid.ColumnSpan="6"
 			Orientation="Horizontal"
 			HorizontalAlignment="Center">
-				<TextBlock VerticalAlignment="Center" Margin="10 0 5 0">To Be Applied To</TextBlock>
+				<TextBlock VerticalAlignment="Center" Margin="11 0 5 0">To Be Applied To</TextBlock>
 				<CheckBox IsChecked="{Binding JobListing.IsToBeAppliedTo}" />
 				<TextBlock VerticalAlignment="Center" Margin="10 0 5 0">Applied</TextBlock>
 				<CheckBox IsChecked="{Binding JobListing.IsAppliedTo}" />
@@ -185,9 +185,9 @@
 			HorizontalAlignment="Center">
 				<TextBlock VerticalAlignment="Center" Margin="25 0 5 0">Declined Offer</TextBlock>
 				<CheckBox IsChecked="{Binding JobListing.IsDeclinedOffer}" />
-				<TextBlock VerticalAlignment="Center" Margin="25 0 5 0">Accepted Offer</TextBlock>
+				<TextBlock VerticalAlignment="Center" Margin="20 0 5 0">Accepted Offer</TextBlock>
 				<CheckBox IsChecked="{Binding JobListing.IsAcceptedOffer}" />
-				<TextBlock VerticalAlignment="Center" Margin="25 0 5 0">Favourite</TextBlock>
+				<TextBlock VerticalAlignment="Center" Margin="20 0 5 0">Favourite</TextBlock>
 				<CheckBox IsChecked="{Binding JobListing.IsFavourite}" />
 				<!--Margin="10 0 5 0"-->
 				<TextBlock VerticalAlignment="Center" Margin="25 0 5 0">Archived/Hidden</TextBlock>
