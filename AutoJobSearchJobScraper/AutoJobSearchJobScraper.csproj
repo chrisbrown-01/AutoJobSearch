@@ -20,8 +20,9 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="7.0.0" />
-    <PackageReference Include="Selenium.WebDriver" Version="4.17.0" />
-    <PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="121.0.6167.8500" />
+    <PackageReference Include="Selenium.WebDriver" Version="4.18.1" />
+    <PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="122.0.6261.9400" />
+    <PackageReference Include="Selenium.WebDriver.GeckoDriver" Version="0.34.0" />
     <PackageReference Include="Selenium.WebDriver.MicrosoftDriver" Version="17.17134.0" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="7.0.0" />
     <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
