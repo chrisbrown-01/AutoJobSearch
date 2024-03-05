@@ -24,6 +24,7 @@ namespace AutoJobSearchJobScraper.WebScraper
         private readonly string CAPTCHA_MESSAGE_GOOGLE;
         private readonly string CAPTCHA_MESSAGE_INDEED;
         private readonly string INDEED_JOB_DESCRIPTION_HTML_DIV_ID_ATTRIBUTE;
+        private readonly bool BROWSER_DEBUG_MODE;
 
         private readonly ILogger<SeleniumWebScraper> _logger;
 
@@ -75,6 +76,72 @@ namespace AutoJobSearchJobScraper.WebScraper
 
             INDEED_JOB_DESCRIPTION_HTML_DIV_ID_ATTRIBUTE = config.GetValue<string>(nameof(INDEED_JOB_DESCRIPTION_HTML_DIV_ID_ATTRIBUTE)) ??
                 throw new AppSettingsFileArgumentException($"Failed to read {nameof(INDEED_JOB_DESCRIPTION_HTML_DIV_ID_ATTRIBUTE)} from appsettings.json config file.");
+
+            BROWSER_DEBUG_MODE = config.GetValue<bool>(nameof(BROWSER_DEBUG_MODE));
+        }
+
+        public async Task<IEnumerable<JobListing>> ScrapeJobsAsync(IEnumerable<string> searchTerms, int? maxJobListingIndex)
+        {
+            int _maxJobListingIndex;
+
+            if (maxJobListingIndex is null || maxJobListingIndex < 1)
+            {
+                _maxJobListingIndex = DEFAULT_MAX_JOB_LISTING_INDEX;
+
+                _logger.LogInformation(
+                    "Begin scraping jobs. " +
+                    "Number of members in searchTerms argument: {@searchTerms.Count}. " +
+                    "Utilizing default max job listing index value: {@_maxJobListingIndex}",
+                    searchTerms.Count(),
+                    _maxJobListingIndex);
+            }
+            else
+            {
+                _maxJobListingIndex = maxJobListingIndex.Value;
+
+                _logger.LogInformation(
+                    "Begin scraping jobs. " +
+                    "Number of members in searchTerms argument: {@searchTerms.Count}. " +
+                    "Utilizing max job listing index value from database MaxJobListingIndex property: {@_maxJobListingIndex}",
+                    searchTerms.Count(),
+                    _maxJobListingIndex);
+            }
+
+            var jobListings = new List<JobListing>();
+            var driver_Edge = new EdgeDriver();
+            var driver_Chrome = new ChromeDriver();
+
+            try
+            {
+                foreach (var searchTerm in searchTerms)
+                {
+                    var country = DetermineSearchCountry(searchTerm);
+
+                    // Parse through the amount of jobs specified by MAX_PAGE_INDEX. Increment the start index by 10 every iteration.
+                    for (int i = 0; i < _maxJobListingIndex + 1; i += 10)
+                    {
+                        // Swap scraping duties between browsers to help avoid anti-robot site protections.
+                        if ((i / 10) % 2 == 0)
+                            jobListings.AddRange(ScrapeJobsWithEdgeBrowser(ref driver_Edge, searchTerm, i, country));
+                        else
+                            jobListings.AddRange(ScrapeJobsWithChromeBrowser(ref driver_Chrome, searchTerm, i, country));
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Exception thrown during job scraping. {@Exception}", ex);
+            }
+            finally
+            {
+                driver_Edge.Quit();
+                driver_Chrome.Quit();
+            }
+
+            await Task.CompletedTask;
+
+            _logger.LogInformation("Finished scraping jobs. {@jobListings.Count} job listings returned.", jobListings.Count);
+            return jobListings;
         }
 
         /// <summary>
@@ -156,6 +223,11 @@ namespace AutoJobSearchJobScraper.WebScraper
 
                 driver.Navigate().GoToUrl(url);
 
+                if (BROWSER_DEBUG_MODE == true)
+                {
+                    PauseBrowserAutomationUntilUserOverrides();
+                }
+
                 // Need to provide a short delay or the Selenium browser will randomly throw exceptions.
                 // Hacky solution but you can't use "ref" keywords for async method arguments.
                 // Exception details for if they start occurring again: "OpenQA.Selenium.WebDriverException - unknown error: session deleted because of page crash"
@@ -223,6 +295,11 @@ namespace AutoJobSearchJobScraper.WebScraper
 
                 driver.Navigate().GoToUrl(url);
 
+                if (BROWSER_DEBUG_MODE == true)
+                {
+                    PauseBrowserAutomationUntilUserOverrides();
+                }
+
                 // Need to provide a short delay or the Selenium browser will randomly throw exceptions.
                 // Hacky solution but you can't use "ref" keywords for async method arguments.
                 // Exception details for if they start occurring again: "OpenQA.Selenium.WebDriverException - unknown error: session deleted because of page crash"
@@ -247,68 +324,16 @@ namespace AutoJobSearchJobScraper.WebScraper
             return jobListings;
         }
 
-        public async Task<IEnumerable<JobListing>> ScrapeJobsAsync(IEnumerable<string> searchTerms, int? maxJobListingIndex)
+        private static void PauseBrowserAutomationUntilUserOverrides()
         {
-            int _maxJobListingIndex;
+            var userInput = "";
+            Console.WriteLine();
 
-            if (maxJobListingIndex is null || maxJobListingIndex < 1)
+            while(userInput != null && userInput != "CONTINUE")
             {
-                _maxJobListingIndex = DEFAULT_MAX_JOB_LISTING_INDEX;
-
-                _logger.LogInformation(
-                    "Begin scraping jobs. " +
-                    "Number of members in searchTerms argument: {@searchTerms.Count}. " +
-                    "Utilizing default max job listing index value: {@_maxJobListingIndex}",
-                    searchTerms.Count(),
-                    _maxJobListingIndex);
+                Console.WriteLine("Browser debug mode is enabled, so browser automation is paused. Type 'CONTINUE' to resume automation: ");
+                userInput = Console.ReadLine();
             }
-            else
-            {
-                _maxJobListingIndex = maxJobListingIndex.Value;
-
-                _logger.LogInformation(
-                    "Begin scraping jobs. " +
-                    "Number of members in searchTerms argument: {@searchTerms.Count}. " +
-                    "Utilizing max job listing index value from database MaxJobListingIndex property: {@_maxJobListingIndex}",
-                    searchTerms.Count(),
-                    _maxJobListingIndex);
-            }
-
-            var jobListings = new List<JobListing>();
-            var driver_Edge = new EdgeDriver();
-            var driver_Chrome = new ChromeDriver(); 
-
-            try
-            {
-                foreach (var searchTerm in searchTerms)
-                {
-                    var country = DetermineSearchCountry(searchTerm);
-
-                    // Parse through the amount of jobs specified by MAX_PAGE_INDEX. Increment the start index by 10 every iteration.
-                    for (int i = 0; i < _maxJobListingIndex + 1; i += 10)
-                    {
-                        // Swap scraping duties between browsers to help avoid anti-robot site protections.
-                        if ( (i / 10) % 2 == 0)
-                            jobListings.AddRange(ScrapeJobsWithEdgeBrowser(ref driver_Edge, searchTerm, i, country));
-                        else
-                            jobListings.AddRange(ScrapeJobsWithChromeBrowser(ref driver_Chrome, searchTerm, i, country)); 
-                    }
-                }
-            }
-            catch (Exception ex) 
-            {
-                _logger.LogError("Exception thrown during job scraping. {@Exception}", ex);
-            }
-            finally
-            {
-                driver_Edge.Quit();
-                driver_Chrome.Quit();
-            }
-
-            await Task.CompletedTask;
-
-            _logger.LogInformation("Finished scraping jobs. {@jobListings.Count} job listings returned.", jobListings.Count);
-            return jobListings;
         }
 
         private List<JobListing> ScrapeJobsWithEdgeBrowser(ref EdgeDriver driver, string searchTerm, int pageIndex, Country country)
@@ -367,6 +392,12 @@ namespace AutoJobSearchJobScraper.WebScraper
             var indeedJobsBoardURL = DetermineIndeedUrlAndSubdomain(searchTerm, pageIndex, country);
 
             driver.Navigate().GoToUrl(indeedJobsBoardURL);
+
+            if (BROWSER_DEBUG_MODE == true)
+            {
+                PauseBrowserAutomationUntilUserOverrides();
+            }
+
             htmlDocument!.LoadHtml(driver.PageSource);
             CheckForCaptcha(ref htmlDocument, ref driver, indeedJobsBoardURL);
 
@@ -385,6 +416,12 @@ namespace AutoJobSearchJobScraper.WebScraper
             var indeedJobsBoardURL = DetermineIndeedUrlAndSubdomain(searchTerm, pageIndex, country);
 
             driver.Navigate().GoToUrl(indeedJobsBoardURL);
+
+            if (BROWSER_DEBUG_MODE == true)
+            {
+                PauseBrowserAutomationUntilUserOverrides();
+            }
+
             htmlDocument!.LoadHtml(driver.PageSource);
             CheckForCaptcha(ref htmlDocument, ref driver, indeedJobsBoardURL);
 
@@ -403,6 +440,12 @@ namespace AutoJobSearchJobScraper.WebScraper
             var googleJobsBoardURL = $"https://www.google.com/search?q={WebUtility.UrlEncode(searchTerm)}&sourceid=chrome&ie=UTF-8&ibp=htl;jobs&start={pageIndex}";
 
             driver.Navigate().GoToUrl(googleJobsBoardURL);
+
+            if (BROWSER_DEBUG_MODE == true)
+            {
+                PauseBrowserAutomationUntilUserOverrides();
+            }
+
             htmlDocument!.LoadHtml(driver.PageSource);
             CheckForCaptcha(ref htmlDocument, ref driver, googleJobsBoardURL);
 
@@ -417,6 +460,12 @@ namespace AutoJobSearchJobScraper.WebScraper
             var googleJobsBoardURL = $"https://www.google.com/search?q={WebUtility.UrlEncode(searchTerm)}&sourceid=chrome&ie=UTF-8&ibp=htl;jobs&start={pageIndex}";
 
             driver.Navigate().GoToUrl(googleJobsBoardURL);
+
+            if (BROWSER_DEBUG_MODE == true)
+            {
+                PauseBrowserAutomationUntilUserOverrides();
+            }
+
             htmlDocument!.LoadHtml(driver.PageSource);
             CheckForCaptcha(ref htmlDocument, ref driver, googleJobsBoardURL);
 
@@ -466,6 +515,12 @@ namespace AutoJobSearchJobScraper.WebScraper
                 driver.Quit();
                 driver = new EdgeDriver();
                 driver.Navigate().GoToUrl(url);
+
+                if (BROWSER_DEBUG_MODE == true)
+                {
+                    PauseBrowserAutomationUntilUserOverrides();
+                }
+
                 doc.LoadHtml(driver.PageSource); // Reload the page now that captcha has been bypassed.
             }
         }
@@ -486,6 +541,12 @@ namespace AutoJobSearchJobScraper.WebScraper
                 driver.Quit();
                 driver = new ChromeDriver();
                 driver.Navigate().GoToUrl(url);
+
+                if (BROWSER_DEBUG_MODE == true)
+                {
+                    PauseBrowserAutomationUntilUserOverrides();
+                }
+
                 doc.LoadHtml(driver.PageSource); // Reload the page now that captcha has been bypassed.
             }
         }
