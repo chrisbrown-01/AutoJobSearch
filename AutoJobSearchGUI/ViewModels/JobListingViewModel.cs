@@ -9,6 +9,7 @@ using AutoJobSearchShared.Helpers;
 using AutoJobSearchShared.Models;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Media;
 using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -30,7 +31,7 @@ namespace AutoJobSearchGUI.ViewModels
     public partial class JobListingViewModel : ViewModelBase // Needs to be public for View previewer to work
     {
         private const int NUMBER_OF_MOST_COMMON_WORDS_TO_DISPLAY = 20;
-        private const string EDIT_BUTTON_DEFAULT_COLOUR = "Gray";
+        private const string EDIT_BUTTON_DEFAULT_COLOUR = "WhiteSmoke";
         private const string EDIT_BUTTON_ENABLED_COLOUR = "YellowGreen";
 
         public delegate void CreateNewContactWithAssociatedJobIdHandler(int jobId);
@@ -380,6 +381,8 @@ namespace AutoJobSearchGUI.ViewModels
         [RelayCommand]
         private async Task DeleteJobAsync()
         {
+            // TODO: run dialog popup box to ensure user wants to delete job
+
             JobListingModel? nextJobToDisplay;
 
             var currentIndex = Singletons.JobListings.IndexOf(JobListing);
