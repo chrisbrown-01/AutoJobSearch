@@ -81,23 +81,21 @@
 							Command="{Binding ViewFileCommand}"
 							CommandParameter="{Binding File3}"/>
 					</MenuItem>
-				</MenuItem>
-			</Menu>
-			<Menu>
-				<MenuItem Header="Associated Contacts">
-					<ListBox
-						ItemsSource="{Binding AssociatedContactIds}"
-						SelectedItem="{Binding SelectedContactId}"
-						SelectionMode="Single"/>
-					<Button
-						Content="Navigate to Contact"
-						Command="{Binding ViewContactCommand}"
-						ClickMode="Press"
-						IsEnabled="{Binding IsNavigateToContactButtonEnabled}"/>
-					<Button 
-						Content="Add New Contact"
-						Command="{Binding AddAssociatedContactCommand}"
-						ClickMode="Press"/>
+					<MenuItem 
+						Header="Associated Contacts" 
+						StaysOpenOnClick="True" >
+						<ListBox 
+							ItemsSource="{Binding AssociatedContactIds}"
+							SelectedItem="{Binding SelectedContactId}"
+							SelectionMode="Single" />
+						<MenuItem
+							Header="Navigate to Contact"
+							Command="{Binding ViewContactCommand}"
+							IsEnabled="{Binding IsNavigateToContactButtonEnabled}" />
+						<MenuItem
+							Header="Add New Contact"
+							Command="{Binding AddAssociatedContactCommand}" />
+					</MenuItem>
 				</MenuItem>
 			</Menu>
 		</StackPanel>
