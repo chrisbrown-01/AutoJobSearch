@@ -14,8 +14,12 @@
 			HorizontalAlignment="Center">
 			<Button Content="Previous Contact" Margin="5 0" Command="{Binding GoToPreviousContactCommand}" />
 			<Button Content="Next Contact" Margin="5 0" Command="{Binding GoToNextContactCommand}" />
-			<Button Content="Create New Contact" Margin="5 0" Command="{Binding CreateNewContactCommand}" />
-			<Button Content="Delete Contact" Margin="5 0" Command="{Binding DeleteContactCommand}" />
+			<Menu Margin="5 0">
+				<MenuItem Header="Options">
+					<MenuItem Header="Create New Contact" Command="{Binding CreateNewContactCommand}" />
+					<MenuItem Header="Delete Contact" Command="{Binding DeleteContactCommand}" />
+				</MenuItem>
+			</Menu>
 		</StackPanel>
 		
 		<Grid>
@@ -194,10 +198,12 @@
 			<Menu Grid.Row="8" Grid.Column="1">
 				<MenuItem Header="Navigate to Associated Jobs">
 					<ListBox   
+						HorizontalAlignment="Center"
 						ItemsSource="{Binding Contact.JobListingIds}"
 						SelectedItem="{Binding SelectedJobListingId}"
 						SelectionMode="Single"/>
 					<Button 
+						HorizontalAlignment="Center"
 						Content="Navigate to Job"
 						Command="{Binding OpenJobListingCommand}"
 						ClickMode="Press"
