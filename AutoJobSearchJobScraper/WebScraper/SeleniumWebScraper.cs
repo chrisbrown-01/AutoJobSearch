@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Edge;
+using OpenQA.Selenium.Firefox;
 using System.Net;
 using System.Text.RegularExpressions;
 namespace AutoJobSearchJobScraper.WebScraper
@@ -110,6 +111,7 @@ namespace AutoJobSearchJobScraper.WebScraper
             var jobListings = new List<JobListing>();
             var driver_Edge = new EdgeDriver();
             var driver_Chrome = new ChromeDriver();
+            var driver_Firefox = new FirefoxDriver();
 
             try
             {
@@ -121,10 +123,12 @@ namespace AutoJobSearchJobScraper.WebScraper
                     for (int i = 0; i < _maxJobListingIndex + 1; i += 10)
                     {
                         // Swap scraping duties between browsers to help avoid anti-robot site protections.
-                        if ((i / 10) % 2 == 0)
+                        if ((i / 10) % 3 == 0)
                             jobListings.AddRange(ScrapeJobsWithEdgeBrowser(ref driver_Edge, searchTerm, i, country));
-                        else
+                        else if ((i / 10) % 3 == 1)
                             jobListings.AddRange(ScrapeJobsWithChromeBrowser(ref driver_Chrome, searchTerm, i, country));
+                        else
+                            jobListings.AddRange(ScrapeJobsWithFirefoxBrowser(ref driver_Firefox, searchTerm, i, country));
                     }
                 }
             }
@@ -173,6 +177,79 @@ namespace AutoJobSearchJobScraper.WebScraper
 
                 jobListing.ApplicationLinks = GetApplicationLinks(anchorElements);
                 jobListing.Description = GetDescription(jobListing, JobBoards.GoogleJobSearch);
+
+                jobListings.Add(jobListing);
+            }
+
+            return jobListings;
+        }
+
+        /// <summary>
+        /// Extract job listings for the Indeed job board.
+        /// </summary>
+        /// <param name="jobListingNodes">The HTML nodes that contain the job listing descriptions.</param>
+        /// <param name="searchTerm"></param>
+        /// <param name="driver"></param>
+        /// <returns></returns>
+        private List<JobListing> ScrapeJobs_Indeed(
+            ref FirefoxDriver driver,
+            IEnumerable<HtmlNode>? jobListingNodes,
+            string searchTerm,
+            Country country
+            )
+        {
+            // TODO: consolidate to methods to prevent duplication for all 3 browser types
+            var jobListings = new List<JobListing>();
+
+            if (jobListingNodes is null || !jobListingNodes.Any())
+                return jobListings;
+
+            var doc = new HtmlDocument();
+
+            foreach (var node in jobListingNodes)
+            {
+                // Indeed applies an id attribute to the HTML div element containing the job description. 
+                // The value of the id attribute is the Indeed job id, which we need in order to navigate to the job's URL.
+                var jobId = node.GetAttributeValue(INDEED_JOB_DESCRIPTION_HTML_DIV_ID_ATTRIBUTE, null);
+
+                // Skip over this job if the id cannot be determined.
+                if (String.IsNullOrWhiteSpace(jobId)) continue;
+
+                string url;
+
+                if (country == Country.Canada)
+                {
+                    url = $"https://ca.indeed.com/viewjob?jk={jobId}";
+                }
+                else
+                {
+                    url = $"https://www.indeed.com/viewjob?jk={jobId}";
+                }
+
+                driver.Navigate().GoToUrl(url);
+
+                if (BROWSER_DEBUG_MODE == true)
+                {
+                    PauseBrowserAutomationUntilUserOverrides();
+                }
+
+                // Need to provide a short delay or the Selenium browser will randomly throw exceptions.
+                // Hacky solution but you can't use "ref" keywords for async method arguments.
+                // Exception details for if they start occurring again: "OpenQA.Selenium.WebDriverException - unknown error: session deleted because of page crash"
+                Task.Delay(CHROME_DRIVER_DELAY_IN_MS).Wait();
+
+                doc.LoadHtml(driver.PageSource);
+
+                CheckForCaptcha(ref doc, ref driver, url);
+
+                var jobListing = new JobListing
+                {
+                    SearchTerm = searchTerm,
+                    Description_Raw = WebUtility.HtmlDecode(doc.DocumentNode.InnerText)
+                };
+
+                jobListing.ApplicationLinks.Add(new ApplicationLink { Link = url });
+                jobListing.Description = GetDescription(jobListing, JobBoards.Indeed);
 
                 jobListings.Add(jobListing);
             }
@@ -336,6 +413,31 @@ namespace AutoJobSearchJobScraper.WebScraper
             }
         }
 
+        private List<JobListing> ScrapeJobsWithFirefoxBrowser(ref FirefoxDriver driver, string searchTerm, int pageIndex, Country country)
+        {
+            var jobListings = new List<JobListing>();
+
+            var jobListingNodes_Google = ScrapeJobNodes_Google(ref driver, searchTerm, pageIndex);
+            var jobListingNodes_Indeed = ScrapeJobNodes_Indeed(ref driver, searchTerm, pageIndex, country);
+
+            // If there are no jobs found on any of the job boards, break the loop and start scraping with the next search term
+            if ((jobListingNodes_Google is null || !jobListingNodes_Google.Any()) &&
+                (jobListingNodes_Indeed is null || !jobListingNodes_Indeed.Any()))
+            {
+                _logger.LogWarning(
+                    "No jobs detected during job scraping. " +
+                    "{@searchTerm} {@iterationValue}",
+                    searchTerm, pageIndex);
+
+                return jobListings;
+            }
+
+            jobListings.AddRange(ScrapeJobs_Google(jobListingNodes_Google, searchTerm));
+            jobListings.AddRange(ScrapeJobs_Indeed(ref driver, jobListingNodes_Indeed, searchTerm, country));
+
+            return jobListings;
+        }
+
         private List<JobListing> ScrapeJobsWithEdgeBrowser(ref EdgeDriver driver, string searchTerm, int pageIndex, Country country)
         {
             var jobListings = new List<JobListing>();
@@ -386,6 +488,30 @@ namespace AutoJobSearchJobScraper.WebScraper
             return jobListings;
         }
 
+        private IEnumerable<HtmlNode>? ScrapeJobNodes_Indeed(ref FirefoxDriver driver, string searchTerm, int pageIndex, Country country)
+        {
+            var htmlDocument = new HtmlDocument();
+            var indeedJobsBoardURL = DetermineIndeedUrlAndSubdomain(searchTerm, pageIndex, country);
+
+            driver.Navigate().GoToUrl(indeedJobsBoardURL);
+
+            if (BROWSER_DEBUG_MODE == true)
+            {
+                PauseBrowserAutomationUntilUserOverrides();
+            }
+
+            htmlDocument!.LoadHtml(driver.PageSource);
+            CheckForCaptcha(ref htmlDocument, ref driver, indeedJobsBoardURL);
+
+            // Get all a (anchor) HTML elements that have the correct job id attribute
+            var jobListingNodes = htmlDocument?
+                .DocumentNode?
+                .SelectNodes("//a")
+                .Where(x => x.GetAttributeValue(INDEED_JOB_DESCRIPTION_HTML_DIV_ID_ATTRIBUTE, null) != null);
+
+            return jobListingNodes;
+        }
+
         private IEnumerable<HtmlNode>? ScrapeJobNodes_Indeed(ref EdgeDriver driver, string searchTerm, int pageIndex, Country country)
         {
             var htmlDocument = new HtmlDocument();
@@ -430,6 +556,26 @@ namespace AutoJobSearchJobScraper.WebScraper
                 .DocumentNode?
                 .SelectNodes("//a")
                 .Where(x => x.GetAttributeValue(INDEED_JOB_DESCRIPTION_HTML_DIV_ID_ATTRIBUTE, null) != null);
+
+            return jobListingNodes;
+        }
+
+        private IEnumerable<HtmlNode>? ScrapeJobNodes_Google(ref FirefoxDriver driver, string searchTerm, int pageIndex)
+        {
+            var htmlDocument = new HtmlDocument();
+            var googleJobsBoardURL = $"https://www.google.com/search?q={WebUtility.UrlEncode(searchTerm)}&sourceid=chrome&ie=UTF-8&ibp=htl;jobs&start={pageIndex}";
+
+            driver.Navigate().GoToUrl(googleJobsBoardURL);
+
+            if (BROWSER_DEBUG_MODE == true)
+            {
+                PauseBrowserAutomationUntilUserOverrides();
+            }
+
+            htmlDocument!.LoadHtml(driver.PageSource);
+            CheckForCaptcha(ref htmlDocument, ref driver, googleJobsBoardURL);
+
+            var jobListingNodes = htmlDocument?.DocumentNode?.SelectNodes("//li")?.AsEnumerable(); // Get all li (list item) HTML elements
 
             return jobListingNodes;
         }
@@ -495,6 +641,32 @@ namespace AutoJobSearchJobScraper.WebScraper
             else
             {
                 return Country.USA;
+            }
+        }
+
+        /// <summary>
+        /// If captcha is detected, close the browser and open a new browser to the same URL. This should allow scraping to continue.
+        /// </summary>
+        /// <param name="doc"></param>
+        /// <param name="driver"></param>
+        /// <param name="url"></param>
+        private void CheckForCaptcha(ref HtmlDocument doc, ref FirefoxDriver driver, string url)
+        {
+            var innerText = doc.DocumentNode.InnerText;
+
+            if (innerText.Contains(CAPTCHA_MESSAGE_GOOGLE, StringComparison.OrdinalIgnoreCase) ||
+                innerText.Contains(CAPTCHA_MESSAGE_INDEED, StringComparison.OrdinalIgnoreCase))
+            {
+                driver.Quit();
+                driver = new FirefoxDriver();
+                driver.Navigate().GoToUrl(url);
+
+                if (BROWSER_DEBUG_MODE == true)
+                {
+                    PauseBrowserAutomationUntilUserOverrides();
+                }
+
+                doc.LoadHtml(driver.PageSource); // Reload the page now that captcha has been bypassed.
             }
         }
 
