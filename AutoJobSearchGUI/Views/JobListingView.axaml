@@ -103,10 +103,13 @@
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="Auto" />
 				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="*" />
 			</Grid.ColumnDefinitions>
 
 			<Grid.RowDefinitions>
-				<RowDefinition Height="Auto" />
 				<RowDefinition Height="Auto" />
 				<RowDefinition Height="Auto" />
 				<RowDefinition Height="Auto" />
@@ -116,7 +119,7 @@
 				<RowDefinition Height="2*" />
 			</Grid.RowDefinitions>
 
-			<StackPanel Grid.Row="0" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center">
+			<StackPanel Grid.Row="0" Grid.ColumnSpan="6" Orientation="Horizontal" HorizontalAlignment="Center">
 				<TextBlock Margin="0 5 5 0">Id:</TextBlock>
 				<TextBlock Text="{Binding JobListing.Id}" Margin="0 5 25 0"/>
 				<TextBlock Margin="25 5 5 0">Creation Date:</TextBlock>
@@ -131,10 +134,11 @@
 				HorizontalAlignment="Center"
 				VerticalAlignment="Center"
 				Text="Search Term"
-				Margin="0 5"/>
+				Margin="0 5 0 5"/>
 			<TextBox 
 				Grid.Row="1" 
 				Grid.Column="1" 
+				Grid.ColumnSpan="3"
 				Text="{Binding JobListing.SearchTerm}"
 				IsEnabled="{Binding IsEditModeEnabled}"
 				TextWrapping="NoWrap"
@@ -142,25 +146,25 @@
 				AcceptsTab="True"
 				IsUndoEnabled="True"
 				UndoLimit="1000"
-				Margin="0 5"/>
+				Margin="0 5 5 5"/>
 
 			<TextBlock 
-				Grid.Row="2" 				   
-				Grid.Column="0" 
+				Grid.Row="1" 				   
+				Grid.Column="4" 
 				HorizontalAlignment="Center" 
 				VerticalAlignment="Center"
 				Text="Score"
-				Margin="0 5"/>
+				Margin="10 5 5 5"/>
 			<NumericUpDown 
-				Grid.Row="2" 
-				Grid.Column="1" 
+				Grid.Row="1" 
+				Grid.Column="5" 
 				Value="{Binding JobListing.Score}"
 				IsEnabled="{Binding IsEditModeEnabled}" 
 				FormatString="0"
-				Margin="0 5"/>
+				Margin="0 5 5 5"/>
 
-			<StackPanel Grid.Row="3"
-			Grid.ColumnSpan="2"
+			<StackPanel Grid.Row="2"
+			Grid.ColumnSpan="6"
 			Orientation="Horizontal"
 			HorizontalAlignment="Center">
 				<TextBlock VerticalAlignment="Center" Margin="10 0 5 0">To Be Applied To</TextBlock>
@@ -175,8 +179,8 @@
 				<CheckBox IsChecked="{Binding JobListing.IsRejected}" />
 			</StackPanel>
 
-			<StackPanel Grid.Row="4"
-			Grid.ColumnSpan="2"
+			<StackPanel Grid.Row="3"
+			Grid.ColumnSpan="6"
 			Orientation="Horizontal"
 			HorizontalAlignment="Center">
 				<TextBlock VerticalAlignment="Center" Margin="25 0 5 0">Declined Offer</TextBlock>
@@ -193,7 +197,7 @@
 			
 
 			<StackPanel
-				Grid.Row="5"
+				Grid.Row="4"
 				Grid.Column="0">
 				<TextBlock
 					Text="Job Description"
@@ -208,8 +212,9 @@
 					Command="{Binding DisplayMostCommonWordsCommand}"/>
 			</StackPanel>
 			<TextBox
-				Grid.Row="5"
+				Grid.Row="4"
 				Grid.Column="1"
+				Grid.ColumnSpan="5"
 				Text="{Binding JobListing.Description}"
 				IsReadOnly="{Binding !IsEditModeEnabled}"
 				TextWrapping="Wrap"
@@ -217,10 +222,10 @@
 				AcceptsTab="True"
 				IsUndoEnabled="True"
 				UndoLimit="1000"
-				Margin="0 5"/>
+				Margin="0 5 5 5"/>
 
 			<TextBlock
-				Grid.Row="6"
+				Grid.Row="5"
 				Grid.Column="0"
 				HorizontalAlignment="Center"
 				VerticalAlignment="Top"
@@ -232,23 +237,25 @@
 				 control is always disabled, and if users need to manually add application links then 
 				 it needs to be performed in the Notes text box. -->
 			<TextBox
-				Grid.Row="6"
+				Grid.Row="5"
 				Grid.Column="1"
+				Grid.ColumnSpan="5"
 				Text="{Binding JobListing.ApplicationLinks}"
 				IsEnabled="True"
 				IsReadOnly="True"
-				Margin="0 5"/>
+				Margin="0 5 5 5"/>
 
 			<TextBlock
-				Grid.Row="7"
+				Grid.Row="6"
 				Grid.Column="0"
 				HorizontalAlignment="Center"
 				VerticalAlignment="Top"
 				Text="Notes"
 				Margin="0 5"/>
 			<TextBox
-				Grid.Row="7"
+				Grid.Row="6"
 				Grid.Column="1"
+				Grid.ColumnSpan="5"
 				Text="{Binding JobListing.Notes}"
 				IsEnabled="{Binding IsEditModeEnabled}"
 				TextWrapping="Wrap"
@@ -256,7 +263,7 @@
 				AcceptsTab="True"
 				IsUndoEnabled="True"
 				UndoLimit="1000"
-				Margin="0 5"/>
+				Margin="0 5 5 5"/>
 		</Grid>
 	</DockPanel>
 	
