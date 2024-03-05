@@ -20,80 +20,67 @@
 			HorizontalAlignment="Center">
 			<Button Content="Previous Job" Margin="5 0" Command="{Binding GoToPreviousJobCommand}" />
 			<Button Content="Next Job" Margin="5 0" Command="{Binding GoToNextJobCommand}" />
-			<Button Content="Add Job" Margin="5 0" Command="{Binding CreateJobCommand}" />
-			<Button Content="Delete Job" Margin="5 0" Command="{Binding DeleteJobCommand}" />
-			<Button Content="Edit Job" Margin="5 0" Command="{Binding ToggleEditModeCommand}" Background="{Binding EditButtonColour}" />		
 			<Menu>
-				<MenuItem Header="Upload Files">
-					<Button
-						HorizontalAlignment="Center"
-						Content="Resume"
-						Command="{Binding UploadFileCommand}"
-						CommandParameter="{Binding Resume}"
-						ClickMode="Press"/>
-					<Button
-						HorizontalAlignment="Center"
-						Content="Cover Letter"
-						Command="{Binding UploadFileCommand}"
-						CommandParameter="{Binding CoverLetter}"
-						ClickMode="Press"/>
-					<Button
-						HorizontalAlignment="Center"
-						Content="File 1"
-						Command="{Binding UploadFileCommand}"
-						CommandParameter="{Binding File1}"
-						ClickMode="Press"/>
-					<Button
-						HorizontalAlignment="Center"
-						Content="File 2"
-						Command="{Binding UploadFileCommand}"
-						CommandParameter="{Binding File2}"
-						ClickMode="Press"/>
-					<Button
-						HorizontalAlignment="Center"
-						Content="File 3"
-						Command="{Binding UploadFileCommand}"
-						CommandParameter="{Binding File3}"
-						ClickMode="Press"/>
-				</MenuItem>
-			</Menu>
-			<Menu>
-				<MenuItem Header="View Files" IsEnabled="{Binding IsViewFilesEnabled}">
-					<Button
-						IsEnabled="{Binding IsViewResumeEnabled}"
-						HorizontalAlignment="Center"
-						Content="Resume"
-						Command="{Binding ViewFileCommand}"
-						CommandParameter="{Binding Resume}"
-						ClickMode="Press"/>
-					<Button
-						IsEnabled="{Binding IsViewCoverLetterEnabled}"
-						HorizontalAlignment="Center"
-						Content="Cover Letter"
-						Command="{Binding ViewFileCommand}"
-						CommandParameter="{Binding CoverLetter}"
-						ClickMode="Press"/>
-					<Button
-						IsEnabled="{Binding IsViewFile1Enabled}"
-						HorizontalAlignment="Center"
-						Content="File 1"
-						Command="{Binding ViewFileCommand}"
-						CommandParameter="{Binding File1}"
-						ClickMode="Press"/>
-					<Button
-						IsEnabled="{Binding IsViewFile2Enabled}"
-						HorizontalAlignment="Center"
-						Content="File 2"
-						Command="{Binding ViewFileCommand}"
-						CommandParameter="{Binding File2}"
-						ClickMode="Press"/>
-					<Button
-						IsEnabled="{Binding IsViewFile3Enabled}"
-						HorizontalAlignment="Center"
-						Content="File 3"
-						Command="{Binding ViewFileCommand}"
-						CommandParameter="{Binding File3}"
-						ClickMode="Press"/>
+				<MenuItem Header="Options">
+					<MenuItem 
+						Header="Create New Job"
+						Command="{Binding CreateJobCommand}" />
+					<MenuItem
+						Header="Delete Job"
+						Command="{Binding DeleteJobCommand}" />
+					<MenuItem
+						Header="Edit Job"
+						Command="{Binding ToggleEditModeCommand}" 
+						Background="{Binding EditButtonColour}" />
+					<MenuItem Header="Upload Files">
+						<MenuItem
+							Header="Resume"
+							Command="{Binding UploadFileCommand}"
+							CommandParameter="{Binding Resume}"/>
+						<MenuItem
+							Header="Cover Letter"
+							Command="{Binding UploadFileCommand}"
+							CommandParameter="{Binding CoverLetter}"/>
+						<MenuItem
+							Header="File 1"
+							Command="{Binding UploadFileCommand}"
+							CommandParameter="{Binding File1}"/>
+						<MenuItem
+							Header="File 2"
+							Command="{Binding UploadFileCommand}"
+							CommandParameter="{Binding File2}"/>
+						<MenuItem
+							Header="File 3"
+							Command="{Binding UploadFileCommand}"
+							CommandParameter="{Binding File3}"/>
+					</MenuItem>
+					<MenuItem Header="View Files" IsEnabled="{Binding IsViewFilesEnabled}">
+						<MenuItem
+							Header="Resume"
+							IsEnabled="{Binding IsViewResumeEnabled}"
+							Command="{Binding ViewFileCommand}"
+							CommandParameter="{Binding Resume}"/>
+						<MenuItem
+							Header="Cover Letter"
+							IsEnabled="{Binding IsViewCoverLetterEnabled}"
+							Command="{Binding ViewFileCommand}"
+							CommandParameter="{Binding CoverLetter}"/>
+						<MenuItem
+							Header="File 1"
+							IsEnabled="{Binding IsViewFile1Enabled}"
+							Command="{Binding ViewFileCommand}"
+							CommandParameter="{Binding File1}"/>
+						<MenuItem
+							Header="File 2"
+							IsEnabled="{Binding IsViewFile2Enabled}"
+							Command="{Binding ViewFileCommand}"
+							CommandParameter="{Binding File2}"/>
+						<MenuItem
+							Header="File 3"
+							IsEnabled="{Binding IsViewFile3Enabled}"
+							Command="{Binding ViewFileCommand}"
+							CommandParameter="{Binding File3}"/>
+					</MenuItem>
 				</MenuItem>
 			</Menu>
 			<Menu>
