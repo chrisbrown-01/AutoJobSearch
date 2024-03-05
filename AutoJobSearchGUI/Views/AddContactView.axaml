@@ -16,8 +16,12 @@
 			<Button Content="Next Contact" Margin="5 0" Command="{Binding GoToNextContactCommand}" />
 			<Menu Margin="5 0">
 				<MenuItem Header="Options">
-					<MenuItem Header="Create New Contact" Command="{Binding CreateNewContactCommand}" />
-					<MenuItem Header="Delete Contact" Command="{Binding DeleteContactCommand}" />
+					<MenuItem 
+						Header="Create New Contact" 
+						Command="{Binding CreateNewContactCommand}" />
+					<MenuItem 
+						Header="Delete Contact"
+						Command="{Binding DeleteContactCommand}" />
 				</MenuItem>
 			</Menu>
 		</StackPanel>
@@ -45,7 +49,7 @@
 				Grid.Row="0"
 				Grid.Column="0"
 				VerticalAlignment="Center"
-				HorizontalAlignment="Center"
+				HorizontalAlignment="Left"
 				Text="Company"
 				Margin="20 10"/>
 			<AutoCompleteBox
@@ -63,7 +67,7 @@
 				Grid.Row="1"
 				Grid.Column="0"
 				VerticalAlignment="Center"
-				HorizontalAlignment="Center"
+				HorizontalAlignment="Left"
 				Text="Location"
 				Margin="20 10"/>
 			<AutoCompleteBox
@@ -81,7 +85,7 @@
 				Grid.Row="2"
 				Grid.Column="0"
 				VerticalAlignment="Center"
-				HorizontalAlignment="Center"
+				HorizontalAlignment="Left"
 				Text="Name"
 				Margin="20 10"/>
 			<TextBox
@@ -99,7 +103,7 @@
 				Grid.Row="3"
 				Grid.Column="0"
 				VerticalAlignment="Center"
-				HorizontalAlignment="Center"
+				HorizontalAlignment="Left"
 				Text="Title"
 				Margin="20 10"/>
 			<AutoCompleteBox
@@ -117,7 +121,7 @@
 				Grid.Row="4"
 				Grid.Column="0"
 				VerticalAlignment="Center"
-				HorizontalAlignment="Center"
+				HorizontalAlignment="Left"
 				Text="Email"
 				Margin="20 10"/>
 			<TextBox
@@ -135,7 +139,7 @@
 				Grid.Row="5"
 				Grid.Column="0"
 				VerticalAlignment="Center"
-				HorizontalAlignment="Center"
+				HorizontalAlignment="Left"
 				Text="Phone"
 				Margin="20 10"/>
 			<TextBox
@@ -153,7 +157,7 @@
 				Grid.Row="6"
 				Grid.Column="0"
 				VerticalAlignment="Center"
-				HorizontalAlignment="Center"
+				HorizontalAlignment="Left"
 				Text="LinkedIn"
 				Margin="20 10"/>
 			<TextBox
@@ -171,7 +175,7 @@
 				Grid.Row="7"
 				Grid.Column="0"
 				VerticalAlignment="Center"
-				HorizontalAlignment="Center"
+				HorizontalAlignment="Left"
 				Text="Notes"
 				Margin="20 10"/>		
 			<TextBox
@@ -192,45 +196,36 @@
 				Grid.Row="8"
 				Grid.Column="0"
 				VerticalAlignment="Center"
-				HorizontalAlignment="Center"
+				HorizontalAlignment="Left"
 				Text="Job IDs"
 				Margin="20 10"/>
 			<Menu Grid.Row="8" Grid.Column="1">
 				<MenuItem Header="Navigate to Associated Jobs">
 					<ListBox   
-						HorizontalAlignment="Center"
 						ItemsSource="{Binding Contact.JobListingIds}"
 						SelectedItem="{Binding SelectedJobListingId}"
 						SelectionMode="Single"/>
-					<Button 
-						HorizontalAlignment="Center"
-						Content="Navigate to Job"
+					<MenuItem
+						Header="Navigate to Job"
 						Command="{Binding OpenJobListingCommand}"
-						ClickMode="Press"
-						IsEnabled="{Binding IsNavigateToJobButtonEnabled}"/>
+						IsEnabled="{Binding IsNavigateToJobButtonEnabled}" />
 				</MenuItem>
 			</Menu>
-			<Menu Grid.Row="8" Grid.Column="2">
+			<Menu Grid.Row="8" Grid.Column="2" >
 				<MenuItem Header="Add/Delete Associated Job">
 					<TextBox
 						x:Name="JobIdTextBox" 
 						Watermark="Enter Job ID (integer number)" />
-					<Button
-						Content="Add Job ID"
+					<MenuItem
+						Header="Add Job ID"
 						Command="{Binding CreateContactAssociatedJobIdCommand}"
-						CommandParameter="{Binding Text, ElementName=JobIdTextBox}"
-						ClickMode="Press"
-						HorizontalAlignment="Center" 
-						IsEnabled="True"/>
-					<Button
-						Content="Delete Job ID"
+						CommandParameter="{Binding Text, ElementName=JobIdTextBox}" />
+					<MenuItem
+						Header="Delete Job ID"
 						Command="{Binding DeleteContactAssociatedJobIdCommand}"
-						CommandParameter="{Binding Text, ElementName=JobIdTextBox}"
-						ClickMode="Press" 
-						HorizontalAlignment="Center" />
+						CommandParameter="{Binding Text, ElementName=JobIdTextBox}" />
 				</MenuItem>
 			</Menu>
-
 		</Grid>	
 	</DockPanel>
 </UserControl>
