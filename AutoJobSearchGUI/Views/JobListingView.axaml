@@ -17,7 +17,8 @@
 		<StackPanel 
 			DockPanel.Dock="Top" 
 			Orientation="Horizontal"
-			HorizontalAlignment="Center" Spacing="10">
+			HorizontalAlignment="Center" 
+			Spacing="10" >
 			<Button Content="Previous Job" Command="{Binding GoToPreviousJobCommand}" />
 			<Button Content="Next Job" Command="{Binding GoToNextJobCommand}" />
 			<Menu
