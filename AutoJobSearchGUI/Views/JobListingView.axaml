@@ -31,7 +31,7 @@
 					<MenuItem
 						Header="Edit Job"
 						Command="{Binding ToggleEditModeCommand}" 
-						Background="{Binding EditButtonColour}" />
+						FontWeight="{Binding EditButtonFontWeight}"    />
 					<MenuItem Header="Upload Files">
 						<MenuItem
 							Header="Resume"
@@ -315,7 +315,7 @@
 				Grid.Column="1"
 				Grid.ColumnSpan="5"
 				Text="{Binding JobListing.Notes}"
-				IsEnabled="{Binding IsEditModeEnabled}"
+				IsReadOnly="{Binding !IsEditModeEnabled}"			   
 				TextWrapping="Wrap"
 				AcceptsReturn="True"
 				AcceptsTab="True"

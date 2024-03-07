@@ -31,8 +31,8 @@ namespace AutoJobSearchGUI.ViewModels
     public partial class JobListingViewModel : ViewModelBase // Needs to be public for View previewer to work
     {
         private const int NUMBER_OF_MOST_COMMON_WORDS_TO_DISPLAY = 20;
-        private const string EDIT_BUTTON_DEFAULT_COLOUR = "WhiteSmoke";
-        private const string EDIT_BUTTON_ENABLED_COLOUR = "YellowGreen";
+        private const string EDIT_BUTTON_DEFAULT_FONT_WEIGHT = "Regular";
+        private const string EDIT_BUTTON_ENABLED_FONT_WEIGHT = "ExtraBold";
 
         public delegate void CreateNewContactWithAssociatedJobIdHandler(int jobId);
         public event CreateNewContactWithAssociatedJobIdHandler? CreateNewContactWithAssociatedJobIdRequest;
@@ -54,16 +54,16 @@ namespace AutoJobSearchGUI.ViewModels
         public static JobListingsAssociatedFilesStringField File2 => JobListingsAssociatedFilesStringField.File2;
         public static JobListingsAssociatedFilesStringField File3 => JobListingsAssociatedFilesStringField.File3;
 
-        private const string ASSOCIATED_FILES_DIRECTORY_NAME = "JobListingAssociatedFiles";
+        private const string ASSOCIATED_FILES_DIRECTORY_NAME = "JobListingAssociatedFiles"; 
 
         private readonly string _associatedFilesDirectoryPath; 
 
         [ObservableProperty]
-        private string _editButtonColour = EDIT_BUTTON_DEFAULT_COLOUR;
+        private string _editButtonFontWeight = EDIT_BUTTON_DEFAULT_FONT_WEIGHT;
 
         [ObservableProperty]
         private bool _isEditModeEnabled;
-
+        
         [ObservableProperty]
         private bool _isViewFilesEnabled;
 
@@ -349,28 +349,21 @@ namespace AutoJobSearchGUI.ViewModels
         }
 
         [RelayCommand]
-        private void ToggleEditButtonColour()
-        {
-            IsEditModeEnabled = !IsEditModeEnabled;
-
-        }
-
-        [RelayCommand]
         private void ToggleEditMode()
         {
             IsEditModeEnabled = !IsEditModeEnabled;
-            SetEditButtonColour();
+            SetEditViewProperties();
         }
 
-        private void SetEditButtonColour()
+        private void SetEditViewProperties()
         {
             if (IsEditModeEnabled)
             {
-                EditButtonColour = EDIT_BUTTON_ENABLED_COLOUR;
+                EditButtonFontWeight = EDIT_BUTTON_ENABLED_FONT_WEIGHT;
             }
             else
             {
-                EditButtonColour = EDIT_BUTTON_DEFAULT_COLOUR;
+                EditButtonFontWeight = EDIT_BUTTON_DEFAULT_FONT_WEIGHT;
             }
         }
 
@@ -486,7 +479,7 @@ namespace AutoJobSearchGUI.ViewModels
         {
             SelectedContactId = -1; // Prevent erroneous navigations to contact when updating the view model.
             IsEditModeEnabled = false;
-            SetEditButtonColour();
+            SetEditViewProperties();
 
             IsNavigateToContactButtonEnabled = AssociatedContactIds.Any();
 
