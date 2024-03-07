@@ -4,6 +4,7 @@ using AutoJobSearchGUI.Models;
 using AutoJobSearchShared.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using MsBox.Avalonia;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -170,7 +171,17 @@ namespace AutoJobSearchGUI.ViewModels
 
         [RelayCommand]
         private async Task DeleteContactAsync()
-        {            
+        {
+            var box = MessageBoxManager.GetMessageBoxStandard(
+                "Confirm Delete Contact",
+                "Are you sure you want to delete this contact? This action cannot be reversed.",
+                MsBox.Avalonia.Enums.ButtonEnum.OkAbort,
+                MsBox.Avalonia.Enums.Icon.Warning);
+
+            var result = await box.ShowAsync();
+
+            if (result != MsBox.Avalonia.Enums.ButtonResult.Ok) return;
+
             ContactModel? nextContactToDisplay;
 
             var currentIndex = Singletons.Contacts.IndexOf(Contact);

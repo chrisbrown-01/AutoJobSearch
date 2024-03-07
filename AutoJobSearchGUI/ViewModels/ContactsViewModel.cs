@@ -253,11 +253,23 @@ namespace AutoJobSearchGUI.ViewModels
         [RelayCommand]
         private async Task DeleteContactAsync()
         {
+            var box = MessageBoxManager.GetMessageBoxStandard(
+                "Confirm Delete Contact",
+                "Are you sure you want to delete this contact? This action cannot be reversed.",
+                MsBox.Avalonia.Enums.ButtonEnum.OkAbort,
+                MsBox.Avalonia.Enums.Icon.Warning);
+
+            var result = await box.ShowAsync();
+
+            if (result != MsBox.Avalonia.Enums.ButtonResult.Ok) return;
+
             if (SelectedContact == null) return;
 
             await _dbContext.DeleteContactAsync(SelectedContact.Id);
             Singletons.Contacts.Remove(SelectedContact); 
             ContactsDisplayed.Remove(SelectedContact);
+
+            SelectedContact = null;
         }
 
         [RelayCommand]
