@@ -193,6 +193,14 @@
 					<MenuItem Header="Go To Default View" Command="{Binding RenderDefaultContactsViewCommand}" />
 					<MenuItem Header="Add New Contact" Command="{Binding AddNewContactCommand}" />
 					<MenuItem Header="Delete All Contacts" Command="{Binding DeleteAllContactsCommand}" />
+					<MenuItem Header="Contacts Per Page">
+						<NumericUpDown
+							Maximum="100"
+							Minimum="1"
+							Increment="5"
+							Value="{Binding PageSize}"
+							FormatString="0" />
+					</MenuItem>
 				</MenuItem>
 			</Menu>
 		</StackPanel>

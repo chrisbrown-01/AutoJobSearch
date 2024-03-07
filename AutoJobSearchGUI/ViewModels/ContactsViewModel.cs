@@ -16,6 +16,7 @@ namespace AutoJobSearchGUI.ViewModels
     public partial class ContactsViewModel : ViewModelBase
     {
         private readonly IDbContext _dbContext;
+        private const int DEFAULT_PAGE_SIZE = 50;
 
         public delegate void OpenAddContactViewHandler(ContactModel? contact);
         public event OpenAddContactViewHandler? OpenAddContactViewRequest;
@@ -33,7 +34,7 @@ namespace AutoJobSearchGUI.ViewModels
         private int _pageIndex;
 
         [ObservableProperty]
-        private int _pageSize;
+        private int _pageSize = DEFAULT_PAGE_SIZE;
 
         [ObservableProperty]
         private IEnumerable<string> _contacts_Companies = default!;
@@ -73,9 +74,19 @@ namespace AutoJobSearchGUI.ViewModels
             ContactsQueryModel = new();
 
             PageIndex = 0; 
-            PageSize = 50; // TODO: allow customization
 
             RenderDefaultContactsViewCommand.Execute(null);
+        }
+
+        partial void OnPageSizeChanged(int value)
+        {
+            if (value == null || value < 1 || value > 100)
+            {
+                PageSize = DEFAULT_PAGE_SIZE;
+                return;
+            }
+
+            UpdateContacts();
         }
 
         public void UpdateContacts()

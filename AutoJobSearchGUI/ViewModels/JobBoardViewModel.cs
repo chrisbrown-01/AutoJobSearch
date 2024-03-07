@@ -22,6 +22,8 @@ namespace AutoJobSearchGUI.ViewModels
         public delegate void OpenJobListingViewHandler(JobListingModel job);
         public event OpenJobListingViewHandler? OpenJobListingViewRequest;
 
+        private const int DEFAULT_PAGE_SIZE = 50;
+
         [ObservableProperty]
         private JobBoardQueryModel _jobBoardQueryModel;
 
@@ -35,7 +37,7 @@ namespace AutoJobSearchGUI.ViewModels
         private int _pageIndex;
 
         [ObservableProperty]
-        private int _pageSize;
+        private int _pageSize = DEFAULT_PAGE_SIZE;
 
         private readonly IDbContext _dbContext;
 
@@ -53,9 +55,19 @@ namespace AutoJobSearchGUI.ViewModels
             _dbContext = dbContext;
 
             PageIndex = 0;
-            PageSize = 50; // TODO: allow customization
 
             RenderDefaultJobBoardViewCommand.Execute(null);
+        }
+
+        partial void OnPageSizeChanged(int value)
+        {
+           if (value == null || value < 1 || value > 100)
+            {
+                PageSize = DEFAULT_PAGE_SIZE;
+                return;
+            }
+
+            UpdateJobBoard();
         }
 
         [RelayCommand]
