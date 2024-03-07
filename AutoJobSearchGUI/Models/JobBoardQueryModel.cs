@@ -52,37 +52,37 @@ namespace AutoJobSearchGUI.Models
         private bool _orderByAscending;
 
         [ObservableProperty]
-        private DateTimeOffset _searchedOnDate = DateTime.Today;
+        private DateTimeOffset _createdAtDate = DateTime.Today;
 
         [ObservableProperty]
-        private DateTimeOffset _modifiedOnDate = DateTime.Today; 
+        private DateTimeOffset _modifiedAtDate = DateTime.Today; 
 
         [ObservableProperty]
         private bool _columnFiltersEnabled;
 
         [ObservableProperty]
-        private bool _searchedOnDateEnabled;
+        private bool _createdAtDateEnabled;
 
         [ObservableProperty]
-        private bool _searchedBetweenDatesEnabled;
+        private bool _createdBetweenDatesEnabled;
 
         [ObservableProperty]
-        private DateTimeOffset _searchedOnDateStart = DateTime.Today.AddDays(-1);
+        private DateTimeOffset _createdBetweenDateStart = DateTime.Today.AddDays(-1);
 
         [ObservableProperty]
-        private DateTimeOffset _searchedOnDateEnd = DateTime.Today;
+        private DateTimeOffset _createdBetweenDateEnd = DateTime.Today;
 
         [ObservableProperty]
-        private bool _modifiedOnDateEnabled; 
+        private bool _modifiedAtDateEnabled; 
 
         [ObservableProperty]
         private bool _modifiedBetweenDatesEnabled; 
 
         [ObservableProperty]
-        private DateTimeOffset _modifiedOnDateStart = DateTime.Today.AddDays(-1); 
+        private DateTimeOffset _modifiedBetweenDateStart = DateTime.Today.AddDays(-1); 
 
         [ObservableProperty]
-        private DateTimeOffset _modifiedOnDateEnd = DateTime.Today; 
+        private DateTimeOffset _modifiedBetweenDateEnd = DateTime.Today; 
 
         [ObservableProperty]
         private bool _scoreEqualsEnabled;

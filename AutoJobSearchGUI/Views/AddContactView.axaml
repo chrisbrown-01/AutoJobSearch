@@ -11,11 +11,38 @@
 		<StackPanel
 			DockPanel.Dock="Top"
 			Orientation="Horizontal"
-			HorizontalAlignment="Center">
-			<Button Content="Previous Contact" Margin="5 0" Command="{Binding GoToPreviousContactCommand}" />
-			<Button Content="Next Contact" Margin="5 0" Command="{Binding GoToNextContactCommand}" />
-			<Button Content="Create New Contact" Margin="5 0" Command="{Binding CreateNewContactCommand}" />
-			<Button Content="Delete Contact" Margin="5 0" Command="{Binding DeleteContactCommand}" />
+			HorizontalAlignment="Center"
+			Spacing="10" 
+			Margin="5" >
+			<Menu
+				BorderBrush="Gray"
+				BorderThickness="0.8"
+				CornerRadius="3">
+				<MenuItem
+					Header="Previous Contact"
+					Command="{Binding GoToPreviousContactCommand}" />
+			</Menu>
+			<Menu
+				BorderBrush="Gray"
+				BorderThickness="0.8"
+				CornerRadius="3">
+				<MenuItem
+					Header="Next Contact"
+					Command="{Binding GoToNextContactCommand}" />
+			</Menu>
+			<Menu
+				BorderBrush="Gray"
+				BorderThickness="0.8"
+				CornerRadius="3">
+				<MenuItem Header="Options">
+					<MenuItem 
+						Header="Create New Contact" 
+						Command="{Binding CreateNewContactCommand}" />
+					<MenuItem 
+						Header="Delete Contact"
+						Command="{Binding DeleteContactCommand}" />
+				</MenuItem>
+			</Menu>
 		</StackPanel>
 		
 		<Grid>
@@ -43,7 +70,7 @@
 				VerticalAlignment="Center"
 				HorizontalAlignment="Center"
 				Text="Company"
-				Margin="20 10"/>
+				Margin="5" />
 			<AutoCompleteBox
 				Grid.Row="0"
 				Grid.Column="1"
@@ -53,7 +80,7 @@
 				FilterMode="ContainsOrdinal"
 				ItemsSource="{Binding Contacts_Companies}"	
 				IsTextCompletionEnabled="True"
-				Margin="0 10 15 10"/>
+				Margin="0 5 15 5" />
 
 			<TextBlock
 				Grid.Row="1"
@@ -61,7 +88,7 @@
 				VerticalAlignment="Center"
 				HorizontalAlignment="Center"
 				Text="Location"
-				Margin="20 10"/>
+				Margin="5"/>
 			<AutoCompleteBox
 				Grid.Row="1"
 				Grid.Column="1"
@@ -71,7 +98,7 @@
 				FilterMode="ContainsOrdinal"
 				ItemsSource="{Binding Contacts_Locations}"
 				IsTextCompletionEnabled="True"
-				Margin="0 10 15 10"/>
+				Margin="0 5 15 5"/>
 
 			<TextBlock
 				Grid.Row="2"
@@ -79,7 +106,7 @@
 				VerticalAlignment="Center"
 				HorizontalAlignment="Center"
 				Text="Name"
-				Margin="20 10"/>
+				Margin="5"/>
 			<TextBox
 				Grid.Row="2"
 				Grid.Column="1"
@@ -89,7 +116,7 @@
 				IsUndoEnabled="True"
 				TextWrapping="NoWrap"
 				Watermark="John Smith"
-				Margin="0 10 15 10"/>
+				Margin="0 5 15 5"/>
 
 			<TextBlock
 				Grid.Row="3"
@@ -97,7 +124,7 @@
 				VerticalAlignment="Center"
 				HorizontalAlignment="Center"
 				Text="Title"
-				Margin="20 10"/>
+				Margin="5"/>
 			<AutoCompleteBox
 				Grid.Row="3"
 				Grid.Column="1"
@@ -107,7 +134,7 @@
 				FilterMode="ContainsOrdinal"
 				ItemsSource="{Binding Contacts_Titles}"
 				IsTextCompletionEnabled="True"
-				Margin="0 10 15 10"/>
+				Margin="0 5 15 5"/>
 
 			<TextBlock
 				Grid.Row="4"
@@ -115,7 +142,7 @@
 				VerticalAlignment="Center"
 				HorizontalAlignment="Center"
 				Text="Email"
-				Margin="20 10"/>
+				Margin="5"/>
 			<TextBox
 				Grid.Row="4"
 				Grid.Column="1"
@@ -125,7 +152,7 @@
 				IsUndoEnabled="True"
 				TextWrapping="NoWrap"
 				Watermark="example@example.com"
-				Margin="0 10 15 10"/>
+				Margin="0 5 15 5"/>
 
 			<TextBlock
 				Grid.Row="5"
@@ -133,7 +160,7 @@
 				VerticalAlignment="Center"
 				HorizontalAlignment="Center"
 				Text="Phone"
-				Margin="20 10"/>
+				Margin="5"/>
 			<TextBox
 				Grid.Row="5"
 				Grid.Column="1"
@@ -143,7 +170,7 @@
 				IsUndoEnabled="True"
 				TextWrapping="NoWrap"
 				Watermark="555-555-5555"
-				Margin="0 10 15 10"/>
+				Margin="0 5 15 5"/>
 
 			<TextBlock
 				Grid.Row="6"
@@ -151,7 +178,7 @@
 				VerticalAlignment="Center"
 				HorizontalAlignment="Center"
 				Text="LinkedIn"
-				Margin="20 10"/>
+				Margin="5"/>
 			<TextBox
 				Grid.Row="6"
 				Grid.Column="1"
@@ -161,7 +188,7 @@
 				IsUndoEnabled="True"
 				TextWrapping="NoWrap"
 				Watermark="www.linkedin.com/in/example"
-				Margin="0 10 15 10"/>
+				Margin="0 5 15 5"/>
 
 			<TextBlock
 				Grid.Row="7"
@@ -169,7 +196,7 @@
 				VerticalAlignment="Center"
 				HorizontalAlignment="Center"
 				Text="Notes"
-				Margin="20 10"/>		
+				Margin="5"/>		
 			<TextBox
 				Grid.Row="7"
 				Grid.Column="1"
@@ -182,49 +209,57 @@
 				AcceptsTab="True"
 				IsUndoEnabled="True"
 				UndoLimit="1000"
-				Margin="0 10 15 5"/>
+				Margin="0 5 15 5"/>
 
 			<TextBlock
 				Grid.Row="8"
 				Grid.Column="0"
 				VerticalAlignment="Center"
 				HorizontalAlignment="Center"
-				Text="Job IDs"
-				Margin="20 10"/>
-			<Menu Grid.Row="8" Grid.Column="1">
-				<MenuItem Header="Navigate to Associated Jobs">
-					<ListBox   
-						ItemsSource="{Binding Contact.JobListingIds}"
-						SelectedItem="{Binding SelectedJobListingId}"
-						SelectionMode="Single"/>
-					<Button 
-						Content="Navigate to Job"
-						Command="{Binding OpenJobListingCommand}"
-						ClickMode="Press"
-						IsEnabled="{Binding IsNavigateToJobButtonEnabled}"/>
-				</MenuItem>
-			</Menu>
-			<Menu Grid.Row="8" Grid.Column="2">
-				<MenuItem Header="Add/Delete Associated Job">
-					<TextBox
-						x:Name="JobIdTextBox" 
-						Watermark="Enter Job ID (integer number)" />
-					<Button
-						Content="Add Job ID"
-						Command="{Binding CreateContactAssociatedJobIdCommand}"
-						CommandParameter="{Binding Text, ElementName=JobIdTextBox}"
-						ClickMode="Press"
-						HorizontalAlignment="Center" 
-						IsEnabled="True"/>
-					<Button
-						Content="Delete Job ID"
-						Command="{Binding DeleteContactAssociatedJobIdCommand}"
-						CommandParameter="{Binding Text, ElementName=JobIdTextBox}"
-						ClickMode="Press" 
-						HorizontalAlignment="Center" />
-				</MenuItem>
-			</Menu>
-
+				Text="Jobs"
+				Margin="5"/>
+			<StackPanel
+				Grid.Row="8" 
+				Grid.Column="1"
+				Grid.ColumnSpan="2" 
+				Orientation="Horizontal"
+				HorizontalAlignment="Center"
+				Spacing="10"
+				Margin="5">
+				<Menu
+					BorderBrush="Gray"
+					BorderThickness="0.8"
+					CornerRadius="3">
+					<MenuItem Header="Navigate to Associated Jobs">
+						<ListBox
+							ItemsSource="{Binding Contact.JobListingIds}"
+							SelectedItem="{Binding SelectedJobListingId}"
+							SelectionMode="Single"/>
+						<MenuItem
+							Header="Navigate to Job"
+							Command="{Binding OpenJobListingCommand}"
+							IsEnabled="{Binding IsNavigateToJobButtonEnabled}" />
+					</MenuItem>
+				</Menu>
+				<Menu
+					BorderBrush="Gray"
+					BorderThickness="0.8"
+					CornerRadius="3">
+					<MenuItem Header="Add/Delete Associated Job">
+						<TextBox
+							x:Name="JobIdTextBox"
+							Watermark="Enter Job ID (integer number)" />
+						<MenuItem
+							Header="Add Job ID"
+							Command="{Binding CreateContactAssociatedJobIdCommand}"
+							CommandParameter="{Binding Text, ElementName=JobIdTextBox}" />
+						<MenuItem
+							Header="Delete Job ID"
+							Command="{Binding DeleteContactAssociatedJobIdCommand}"
+							CommandParameter="{Binding Text, ElementName=JobIdTextBox}" />
+					</MenuItem>
+				</Menu>				
+			</StackPanel>
 		</Grid>	
 	</DockPanel>
 </UserControl>

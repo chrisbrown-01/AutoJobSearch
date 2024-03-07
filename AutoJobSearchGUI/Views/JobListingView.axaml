@@ -17,100 +17,104 @@
 		<StackPanel 
 			DockPanel.Dock="Top" 
 			Orientation="Horizontal"
-			HorizontalAlignment="Center">
-			<Button Content="Previous Job" Margin="5 0" Command="{Binding GoToPreviousJobCommand}" />
-			<Button Content="Next Job" Margin="5 0" Command="{Binding GoToNextJobCommand}" />
-			<Button Content="Add Job" Margin="5 0" Command="{Binding CreateJobCommand}" />
-			<Button Content="Delete Job" Margin="5 0" Command="{Binding DeleteJobCommand}" />
-			<Button Content="Edit Job" Margin="5 0" Command="{Binding ToggleEditModeCommand}" Background="{Binding EditButtonColour}" />		
-			<Menu>
-				<MenuItem Header="Upload Files">
-					<Button
-						HorizontalAlignment="Center"
-						Content="Resume"
-						Command="{Binding UploadFileCommand}"
-						CommandParameter="{Binding Resume}"
-						ClickMode="Press"/>
-					<Button
-						HorizontalAlignment="Center"
-						Content="Cover Letter"
-						Command="{Binding UploadFileCommand}"
-						CommandParameter="{Binding CoverLetter}"
-						ClickMode="Press"/>
-					<Button
-						HorizontalAlignment="Center"
-						Content="File 1"
-						Command="{Binding UploadFileCommand}"
-						CommandParameter="{Binding File1}"
-						ClickMode="Press"/>
-					<Button
-						HorizontalAlignment="Center"
-						Content="File 2"
-						Command="{Binding UploadFileCommand}"
-						CommandParameter="{Binding File2}"
-						ClickMode="Press"/>
-					<Button
-						HorizontalAlignment="Center"
-						Content="File 3"
-						Command="{Binding UploadFileCommand}"
-						CommandParameter="{Binding File3}"
-						ClickMode="Press"/>
-				</MenuItem>
+			HorizontalAlignment="Center" 
+			Spacing="10"
+			Margin="5" >
+			<Menu
+				BorderBrush="Gray"
+				BorderThickness="0.8"
+				CornerRadius="3">
+				<MenuItem 
+					Header="Previous Job"
+					Command="{Binding GoToPreviousJobCommand}" />
 			</Menu>
-			<Menu>
-				<MenuItem Header="View Files" IsEnabled="{Binding IsViewFilesEnabled}">
-					<Button
-						IsEnabled="{Binding IsViewResumeEnabled}"
-						HorizontalAlignment="Center"
-						Content="Resume"
-						Command="{Binding ViewFileCommand}"
-						CommandParameter="{Binding Resume}"
-						ClickMode="Press"/>
-					<Button
-						IsEnabled="{Binding IsViewCoverLetterEnabled}"
-						HorizontalAlignment="Center"
-						Content="Cover Letter"
-						Command="{Binding ViewFileCommand}"
-						CommandParameter="{Binding CoverLetter}"
-						ClickMode="Press"/>
-					<Button
-						IsEnabled="{Binding IsViewFile1Enabled}"
-						HorizontalAlignment="Center"
-						Content="File 1"
-						Command="{Binding ViewFileCommand}"
-						CommandParameter="{Binding File1}"
-						ClickMode="Press"/>
-					<Button
-						IsEnabled="{Binding IsViewFile2Enabled}"
-						HorizontalAlignment="Center"
-						Content="File 2"
-						Command="{Binding ViewFileCommand}"
-						CommandParameter="{Binding File2}"
-						ClickMode="Press"/>
-					<Button
-						IsEnabled="{Binding IsViewFile3Enabled}"
-						HorizontalAlignment="Center"
-						Content="File 3"
-						Command="{Binding ViewFileCommand}"
-						CommandParameter="{Binding File3}"
-						ClickMode="Press"/>
-				</MenuItem>
+			<Menu
+				BorderBrush="Gray"
+				BorderThickness="0.8"
+				CornerRadius="3">
+				<MenuItem
+					Header="Next Job"
+					Command="{Binding GoToNextJobCommand}" />
 			</Menu>
-			<Menu>
-				<MenuItem Header="Associated Contacts">
-					<ListBox
-						ItemsSource="{Binding AssociatedContactIds}"
-						SelectedItem="{Binding SelectedContactId}"
-						SelectionMode="Single"/>
-					<Button
-						Content="Navigate to Contact"
-						Command="{Binding ViewContactCommand}"
-						ClickMode="Press"
-						IsEnabled="{Binding IsNavigateToContactButtonEnabled}"/>
-					<Button 
-						Content="Add New Contact"
-						Command="{Binding AddAssociatedContactCommand}"
-						ClickMode="Press"/>
+			<Menu
+				BorderBrush="Gray" 
+				BorderThickness="0.8" 
+				CornerRadius="3">
+				<MenuItem Header="Options">
+					<MenuItem
+						Header="Edit Job"
+						Command="{Binding ToggleEditModeCommand}"
+						FontWeight="{Binding EditButtonFontWeight}" />
+					<MenuItem
+						Header="Delete Job"
+						Command="{Binding DeleteJobCommand}" />
+					<MenuItem 
+						Header="Create New Job"
+						Command="{Binding CreateJobCommand}" />				
+					<MenuItem Header="Upload Files">
+						<MenuItem
+							Header="Resume"
+							Command="{Binding UploadFileCommand}"
+							CommandParameter="{Binding Resume}"/>
+						<MenuItem
+							Header="Cover Letter"
+							Command="{Binding UploadFileCommand}"
+							CommandParameter="{Binding CoverLetter}"/>
+						<MenuItem
+							Header="File 1"
+							Command="{Binding UploadFileCommand}"
+							CommandParameter="{Binding File1}"/>
+						<MenuItem
+							Header="File 2"
+							Command="{Binding UploadFileCommand}"
+							CommandParameter="{Binding File2}"/>
+						<MenuItem
+							Header="File 3"
+							Command="{Binding UploadFileCommand}"
+							CommandParameter="{Binding File3}"/>
+					</MenuItem>
+					<MenuItem Header="View Files" IsEnabled="{Binding IsViewFilesEnabled}">
+						<MenuItem
+							Header="Resume"
+							IsEnabled="{Binding IsViewResumeEnabled}"
+							Command="{Binding ViewFileCommand}"
+							CommandParameter="{Binding Resume}"/>
+						<MenuItem
+							Header="Cover Letter"
+							IsEnabled="{Binding IsViewCoverLetterEnabled}"
+							Command="{Binding ViewFileCommand}"
+							CommandParameter="{Binding CoverLetter}"/>
+						<MenuItem
+							Header="File 1"
+							IsEnabled="{Binding IsViewFile1Enabled}"
+							Command="{Binding ViewFileCommand}"
+							CommandParameter="{Binding File1}"/>
+						<MenuItem
+							Header="File 2"
+							IsEnabled="{Binding IsViewFile2Enabled}"
+							Command="{Binding ViewFileCommand}"
+							CommandParameter="{Binding File2}"/>
+						<MenuItem
+							Header="File 3"
+							IsEnabled="{Binding IsViewFile3Enabled}"
+							Command="{Binding ViewFileCommand}"
+							CommandParameter="{Binding File3}"/>
+					</MenuItem>
+					<MenuItem 
+						Header="Associated Contacts" 
+						StaysOpenOnClick="True" >
+						<ListBox 
+							ItemsSource="{Binding AssociatedContactIds}"
+							SelectedItem="{Binding SelectedContactId}"
+							SelectionMode="Single" />
+						<MenuItem
+							Header="Navigate to Contact"
+							Command="{Binding ViewContactCommand}"
+							IsEnabled="{Binding IsNavigateToContactButtonEnabled}" />
+						<MenuItem
+							Header="Create New Contact"
+							Command="{Binding AddAssociatedContactCommand}" />
+					</MenuItem>
 				</MenuItem>
 			</Menu>
 		</StackPanel>
@@ -118,11 +122,12 @@
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="Auto" />
 				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="0.5*" />
 			</Grid.ColumnDefinitions>
 
 			<Grid.RowDefinitions>
-				<RowDefinition Height="Auto" />
-				<RowDefinition Height="Auto" />
 				<RowDefinition Height="Auto" />
 				<RowDefinition Height="Auto" />
 				<RowDefinition Height="Auto" />
@@ -132,141 +137,220 @@
 				<RowDefinition Height="2*" />
 			</Grid.RowDefinitions>
 
-			<TextBlock Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center" Margin="0 5">Id</TextBlock>
-			<TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding JobListing.Id}" Margin="0 5"/>
-
-			<TextBlock Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center" Margin="0 5">Creation Date</TextBlock>
-			<TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding JobListing.CreatedAt}" Margin="0 5"/>
-
-			<TextBlock Grid.Row="2" Grid.Column="0" HorizontalAlignment="Center" Margin="0 5">Status Last Modified</TextBlock>
-			<TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding JobListing.StatusModifiedAt}" Margin="0 5"/>
+			<TextBlock
+				Grid.Row="0"
+				Grid.Column="0"
+				HorizontalAlignment="Center"
+				VerticalAlignment="Center"
+				Text="Created At"
+				Margin="5" />
+			<TextBox
+				Grid.Row="0"
+				Grid.Column="1"
+				Grid.ColumnSpan="2"
+				Text="{Binding JobListing.CreatedAt}"
+				Focusable="False"
+				IsEnabled="False"
+				IsReadOnly="True"
+				Margin="0 5 15 5" />
 
 			<TextBlock
-				Grid.Row="3"
+				Grid.Row="0"
+				Grid.Column="3"
+				HorizontalAlignment="Center"
+				VerticalAlignment="Center"
+				Text="Id"
+				Margin="5" />
+			<TextBox
+				Grid.Row="0"
+				Grid.Column="4"
+				Text="{Binding JobListing.Id}"
+				Focusable="False" 
+				IsEnabled="False" 
+				IsReadOnly="True"
+				Margin="0 5 15 5" />
+
+			<TextBlock
+				Grid.Row="1"
+				Grid.Column="0"
+				HorizontalAlignment="Center"
+				VerticalAlignment="Center"
+				Text="Status Modified"
+				Margin="5" />
+			<TextBox 
+				Grid.Row="1" 
+				Grid.Column="1" 
+				Grid.ColumnSpan="2"
+				Text="{Binding JobListing.StatusModifiedAt}"
+				Focusable="False"
+				IsEnabled="False"
+				IsReadOnly="True"
+				Margin="0 5 15 5"/>
+
+			<TextBlock 
+				Grid.Row="1" 				   
+				Grid.Column="3" 
+				HorizontalAlignment="Center" 
+				VerticalAlignment="Center"
+				Text="Score"
+				Margin="5" />
+			<NumericUpDown 
+				Grid.Row="1" 
+				Grid.Column="4" 
+				Value="{Binding JobListing.Score}"
+				IsEnabled="{Binding IsEditModeEnabled}" 
+				FormatString="0"
+				Margin="0 5 15 5"/>
+
+			<TextBlock
+				Grid.Row="2"
 				Grid.Column="0"
 				HorizontalAlignment="Center"
 				VerticalAlignment="Center"
 				Text="Search Term"
-				Margin="0 5"/>
-			<TextBox 
-				Grid.Row="3" 
-				Grid.Column="1" 
+				Margin="5" />
+			<TextBox
+				Grid.Row="2"
+				Grid.Column="1"
+				Grid.ColumnSpan="4"
 				Text="{Binding JobListing.SearchTerm}"
+				Watermark="Search Term"
 				IsEnabled="{Binding IsEditModeEnabled}"
 				TextWrapping="NoWrap"
 				AcceptsReturn="False"
 				AcceptsTab="True"
 				IsUndoEnabled="True"
 				UndoLimit="1000"
-				Margin="0 5"/>
+				Margin="0 5 15 5"/>
 
-			<TextBlock 
-				Grid.Row="4" 				   
-				Grid.Column="0" 
-				HorizontalAlignment="Center" 
-				VerticalAlignment="Center"
-				Text="Score"
-				Margin="0 5"/>
-			<NumericUpDown 
-				Grid.Row="4" 
-				Grid.Column="1" 
-				Value="{Binding JobListing.Score}"
-				IsEnabled="{Binding IsEditModeEnabled}" 
-				FormatString="0"
-				Margin="0 5"/>
-
-			<StackPanel Grid.Row="5"
-			Grid.ColumnSpan="2"
-			Orientation="Horizontal"
-			HorizontalAlignment="Center">
-				<TextBlock VerticalAlignment="Center">To Be Applied To</TextBlock>
-				<CheckBox IsChecked="{Binding JobListing.IsToBeAppliedTo}" />
-				<TextBlock VerticalAlignment="Center">Applied</TextBlock>
-				<CheckBox IsChecked="{Binding JobListing.IsAppliedTo}" />
-				<TextBlock VerticalAlignment="Center">Interviewing</TextBlock>
-				<CheckBox IsChecked="{Binding JobListing.IsInterviewing}" />
-				<TextBlock VerticalAlignment="Center">Negotiating</TextBlock>
-				<CheckBox IsChecked="{Binding JobListing.IsNegotiating}" />
-				<TextBlock VerticalAlignment="Center">Rejected</TextBlock>
-				<CheckBox IsChecked="{Binding JobListing.IsRejected}" />
-				<TextBlock VerticalAlignment="Center">Declined Offer</TextBlock>
-				<CheckBox IsChecked="{Binding JobListing.IsDeclinedOffer}" />
-				<TextBlock VerticalAlignment="Center">Accepted Offer</TextBlock>
-				<CheckBox IsChecked="{Binding JobListing.IsAcceptedOffer}" />
-				<TextBlock VerticalAlignment="Center">Favourite</TextBlock>
-				<CheckBox IsChecked="{Binding JobListing.IsFavourite}" />
-				<!--Margin="10 0 5 0"-->
-				<TextBlock VerticalAlignment="Center">Archived/Hidden</TextBlock>
-				<CheckBox IsChecked="{Binding JobListing.IsHidden}" />
-			</StackPanel>
-
+			<StackPanel 
+				Grid.Row="3"
+				Grid.ColumnSpan="5"
+				Orientation="Horizontal"
+				HorizontalAlignment="Center"
+				Margin="5" 
+				Spacing="5" >
+				<ToggleButton 
+					ClickMode="Press" 
+					Content="To Be Applied To"
+					FontSize="11"
+					IsChecked="{Binding JobListing.IsToBeAppliedTo}" />
+				<ToggleButton
+					ClickMode="Press"
+					Content="Applied"
+					FontSize="11"
+					IsChecked="{Binding JobListing.IsAppliedTo}" />
+				<ToggleButton
+					ClickMode="Press"
+					Content="Interviewing"
+					FontSize="11"
+					IsChecked="{Binding JobListing.IsInterviewing}" />
+				<ToggleButton
+					ClickMode="Press"
+					Content="Negotiating"
+					FontSize="11"
+					IsChecked="{Binding JobListing.IsNegotiating}" />
+				<ToggleButton
+					ClickMode="Press"
+					Content="Rejected"
+					FontSize="11"
+					IsChecked="{Binding JobListing.IsRejected}" />
+				<ToggleButton
+					ClickMode="Press"
+					Content="Declined Offer"
+					FontSize="11"
+					IsChecked="{Binding JobListing.IsDeclinedOffer}" />
+				<ToggleButton
+					ClickMode="Press"
+					Content="Accepted Offer"
+					FontSize="11"
+					IsChecked="{Binding JobListing.IsAcceptedOffer}" />
+				<ToggleButton
+					ClickMode="Press"
+					Content="Favourite"
+					FontSize="11"
+					IsChecked="{Binding JobListing.IsFavourite}" />
+				<ToggleButton
+					ClickMode="Press"
+					Content="Archived/Hidden"
+					FontSize="11"
+					IsChecked="{Binding JobListing.IsHidden}" />
+			</StackPanel>	
+			
 			<StackPanel
-				Grid.Row="6"
-				Grid.Column="0">
+				Grid.Row="4"
+				Grid.Column="0"
+				Margin="5"
+				Spacing="5" >
 				<TextBlock
 					Text="Job Description"
-					Margin="0 5"
 					HorizontalAlignment="Center"
-				VerticalAlignment="Top"/>
-				<Button 
-					HorizontalAlignment="Center"
-					Content="Most Common Words" 
-					ClickMode="Press" 
-					FontSize="8"
-					Command="{Binding DisplayMostCommonWordsCommand}"/>
+					VerticalAlignment="Top" />
+				<Menu
+					BorderBrush="Gray"
+					BorderThickness="0.8"
+					CornerRadius="3">
+					<MenuItem
+						Header="Most Common Words"
+						Command="{Binding DisplayMostCommonWordsCommand}"
+						FontSize="7" />
+				</Menu>
 			</StackPanel>
 			<TextBox
-				Grid.Row="6"
+				Grid.Row="4"
 				Grid.Column="1"
+				Grid.ColumnSpan="4"
 				Text="{Binding JobListing.Description}"
+				Watermark="Job Description"
 				IsReadOnly="{Binding !IsEditModeEnabled}"
 				TextWrapping="Wrap"
 				AcceptsReturn="True"
 				AcceptsTab="True"
 				IsUndoEnabled="True"
 				UndoLimit="1000"
-				Margin="0 5"/>
+				Margin="0 5 15 5" />
 
 			<TextBlock
-				Grid.Row="7"
+				Grid.Row="5"
 				Grid.Column="0"
 				HorizontalAlignment="Center"
 				VerticalAlignment="Top"
-				Text="Application Links" 
-				Margin="0 5"/>
+				Text="Web Links"
+				Margin="5" />
 			<!-- There is no good way of being able to display the ApplicationLinks table records
 			     in a view control such as a ListBox, while also allowing the user to make updates to these
 				 links within the view and have the changes reflected in the database. Therefore editing this
 				 control is always disabled, and if users need to manually add application links then 
 				 it needs to be performed in the Notes text box. -->
 			<TextBox
-				Grid.Row="7"
+				Grid.Row="5"
 				Grid.Column="1"
+				Grid.ColumnSpan="4"
 				Text="{Binding JobListing.ApplicationLinks}"
-				IsEnabled="True"
+				Watermark="Application Website/URL"
 				IsReadOnly="True"
-				Margin="0 5"/>
+				Margin="0 5 15 5"/>
 
 			<TextBlock
-				Grid.Row="8"
+				Grid.Row="6"
 				Grid.Column="0"
 				HorizontalAlignment="Center"
 				VerticalAlignment="Top"
 				Text="Notes"
-				Margin="0 5"/>
+				Margin="5" />
 			<TextBox
-				Grid.Row="8"
+				Grid.Row="6"
 				Grid.Column="1"
+				Grid.ColumnSpan="4"
 				Text="{Binding JobListing.Notes}"
-				IsEnabled="{Binding IsEditModeEnabled}"
+				Watermark="Click 'Edit Job', then add your notes here."
+				IsReadOnly="{Binding !IsEditModeEnabled}"			   
 				TextWrapping="Wrap"
 				AcceptsReturn="True"
 				AcceptsTab="True"
 				IsUndoEnabled="True"
 				UndoLimit="1000"
-				Margin="0 5"/>
+				Margin="0 5 15 15"/>
 		</Grid>
 	</DockPanel>
-	
-
 </UserControl>

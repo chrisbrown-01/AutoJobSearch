@@ -29,10 +29,36 @@
 			<RowDefinition Height="3*" />
 		</Grid.RowDefinitions>
 
-		<StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center">
-			<Button Content="Execute Job Search" Command="{Binding ExecuteJobSearchCommand}" />
-			<Button Content="Create New Search Profile" Command="{Binding CreateNewProfileCommand}" />
-			<Button Content="Delete Current Search Profile" Command="{Binding DeleteCurrentProfileCommand}" />
+		<StackPanel 
+			Grid.Row="0" 
+			Orientation="Horizontal" 
+			HorizontalAlignment="Center"
+			Spacing="10"
+			Margin="5" >
+			<Menu
+				BorderBrush="Gray"
+				BorderThickness="0.8"
+				CornerRadius="3">
+				<MenuItem
+					Header="Execute Job Search"
+					Command="{Binding ExecuteJobSearchCommand}" />
+			</Menu>
+			<Menu
+				BorderBrush="Gray"
+				BorderThickness="0.8"
+				CornerRadius="3">
+				<MenuItem
+					Header="Create New Search Profile"
+					Command="{Binding CreateNewProfileCommand}" />
+			</Menu>
+			<Menu
+				BorderBrush="Gray"
+				BorderThickness="0.8"
+				CornerRadius="3">
+				<MenuItem
+					Header="Delete Current Search Profile"
+					Command="{Binding DeleteCurrentProfileCommand}" />
+			</Menu>
 			<ComboBox
 				IsTextSearchEnabled="True"
 				PlaceholderText="Select Profile"
@@ -50,10 +76,12 @@
 			VerticalAlignment="Center" 
 			HorizontalAlignment="Center" 
 			Orientation="Horizontal" 
-			Grid.Row="1" Margin="30 5">
-			<TextBlock Text="Profile Name" VerticalAlignment="Center" Margin="0,0,10,0" />
-			<TextBox Text="{Binding SelectedSearchProfile.ProfileName}" Width="125" />
-			<TextBlock Text="Max Search Index" VerticalAlignment="Center" Margin="100,0,10,0" />
+			Grid.Row="1"
+			Spacing="10"
+			Margin="5" >
+			<TextBlock Text="Profile Name" VerticalAlignment="Center" />
+			<TextBox Text="{Binding SelectedSearchProfile.ProfileName}" Width="150" />
+			<TextBlock Text="Max Search Index" VerticalAlignment="Center" Margin="100 0 0 0" />
 			<!--Application displays error if user manually deletes all numbers inside these controls
 			(using backspace or delete on keyboard). No way to prevent this.-->
 			<NumericUpDown 
@@ -64,49 +92,73 @@
 				Value="{Binding SelectedSearchProfile.MaxJobListingIndex}"/>
 		</StackPanel>
 
-		<TextBlock Grid.Row="2" Text="Search Terms" Margin="30 0"/>
+		<TextBlock 
+			Grid.Row="2" 
+			Text="Search Terms" 
+			Margin="15 0"/>
 		<TextBox 
 			Grid.Row="3" 
 			IsReadOnly="False" 
-			TextWrapping="NoWrap"
-			Margin="30 5" 
+			TextWrapping="Wrap"
+			Margin="15 5" 
 			AcceptsReturn="True"
-			Text="{Binding SelectedSearchProfile.Searches}" />
+			Text="{Binding SelectedSearchProfile.Searches}"
+			Watermark="Enter job search terms here. Seperate multiple search terms with commas. Ensure you specify the country you are searching for, ex. 'Programming jobs New York USA'." />
 
-		<TextBlock Grid.Row="4" Text="Positive Scoring Keywords" Foreground="SeaGreen" Margin="30 0"/>
+		<TextBlock 
+			Grid.Row="4" 
+			Text="Positive Scoring Keywords" 
+			Foreground="SeaGreen" 
+			Margin="15 0"/>
 		<TextBox 
 			Grid.Row="5" 
 			IsReadOnly="False" 
-			TextWrapping="NoWrap" 
-			Margin="30 5" 
+			TextWrapping="Wrap" 
+			Margin="15 5" 
 			AcceptsReturn="True"
-			Text="{Binding SelectedSearchProfile.KeywordsPositive}" />
+			Text="{Binding SelectedSearchProfile.KeywordsPositive}"
+			Watermark="Enter positive scoring keywords here. Seperate multiple keywords with commas. Ex. 'junior, benefits'" />
 
-		<TextBlock Grid.Row="6" Text="Negative Scoring Keywords" Foreground="Crimson" Margin="30 0"/>
+		<TextBlock 
+			Grid.Row="6" 
+			Text="Negative Scoring Keywords" 
+			Foreground="Crimson" 
+			Margin="15 0"/>
 		<TextBox 
 			Grid.Row="7" 
 			IsReadOnly="False" 
-			TextWrapping="NoWrap" 
-			Margin="30 5"
+			TextWrapping="Wrap" 
+			Margin="15 5"
 			AcceptsReturn="True"
-			Text="{Binding SelectedSearchProfile.KeywordsNegative}" />
+			Text="{Binding SelectedSearchProfile.KeywordsNegative}"
+			Watermark="Enter negative scoring keywords here. Seperate multiple keywords with commas. Ex. 'senior, unpaid'" />
 
-		<TextBlock Grid.Row="8" Text="Positive Scoring Sentiments" Foreground="SeaGreen" Margin="30 0"/>
+		<TextBlock 
+			Grid.Row="8" 
+			Text="Positive Scoring Sentiments" 
+			Foreground="SeaGreen" 
+			Margin="15 0"/>
 		<TextBox 
 			Grid.Row="9" 
 			IsReadOnly="False" 
-			TextWrapping="NoWrap" 
-			Margin="30 5" 
+			TextWrapping="Wrap" 
+			Margin="15 5" 
 			AcceptsReturn="True"
-			Text="{Binding SelectedSearchProfile.SentimentsPositive}" />
+			Text="{Binding SelectedSearchProfile.SentimentsPositive}" 
+			Watermark="Enter positive scoring sentiments (short sentences) here. Seperate multiple sentiments with commas. Ex. 'looking for new graduates, no experience required'" />
 
-		<TextBlock Grid.Row="10" Text="Negative Scoring Sentiments" Foreground="Crimson" Margin="30 0"/>
+		<TextBlock 
+			Grid.Row="10" 
+			Text="Negative Scoring Sentiments" 
+			Foreground="Crimson" 
+			Margin="15 0"/>
 		<TextBox 
 			Grid.Row="11" 
 			IsReadOnly="False" 
-			TextWrapping="NoWrap"
-			Margin="30 5" 
+			TextWrapping="Wrap"
+			Margin="15 5 15 15" 
 			AcceptsReturn="True"
-			Text="{Binding SelectedSearchProfile.SentimentsNegative}" />
+			Text="{Binding SelectedSearchProfile.SentimentsNegative}"
+			Watermark="Enter negative scoring sentiments (short sentences) here. Seperate multiple sentiments with commas. Ex. 'unpaid internship with no possibility of promotion, must be willing to work 80 hour weeks'" />
 	</Grid>
 </UserControl>

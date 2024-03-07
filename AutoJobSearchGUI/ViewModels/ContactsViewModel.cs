@@ -16,6 +16,7 @@ namespace AutoJobSearchGUI.ViewModels
     public partial class ContactsViewModel : ViewModelBase
     {
         private readonly IDbContext _dbContext;
+        private const int DEFAULT_PAGE_SIZE = 50;
 
         public delegate void OpenAddContactViewHandler(ContactModel? contact);
         public event OpenAddContactViewHandler? OpenAddContactViewRequest;
@@ -33,7 +34,7 @@ namespace AutoJobSearchGUI.ViewModels
         private int _pageIndex;
 
         [ObservableProperty]
-        private int _pageSize;
+        private int _pageSize = DEFAULT_PAGE_SIZE;
 
         [ObservableProperty]
         private IEnumerable<string> _contacts_Companies = default!;
@@ -73,9 +74,19 @@ namespace AutoJobSearchGUI.ViewModels
             ContactsQueryModel = new();
 
             PageIndex = 0; 
-            PageSize = 50; // TODO: allow customization
 
             RenderDefaultContactsViewCommand.Execute(null);
+        }
+
+        partial void OnPageSizeChanged(int value)
+        {
+            if (value < 1 || value > 100)
+            {
+                PageSize = DEFAULT_PAGE_SIZE;
+                return;
+            }
+
+            UpdateContacts();
         }
 
         public void UpdateContacts()
@@ -253,11 +264,23 @@ namespace AutoJobSearchGUI.ViewModels
         [RelayCommand]
         private async Task DeleteContactAsync()
         {
+            var box = MessageBoxManager.GetMessageBoxStandard(
+                "Confirm Delete Contact",
+                "Are you sure you want to delete this contact? This action cannot be reversed.",
+                MsBox.Avalonia.Enums.ButtonEnum.OkAbort,
+                MsBox.Avalonia.Enums.Icon.Warning);
+
+            var result = await box.ShowAsync();
+
+            if (result != MsBox.Avalonia.Enums.ButtonResult.Ok) return;
+
             if (SelectedContact == null) return;
 
             await _dbContext.DeleteContactAsync(SelectedContact.Id);
             Singletons.Contacts.Remove(SelectedContact); 
             ContactsDisplayed.Remove(SelectedContact);
+
+            SelectedContact = null;
         }
 
         [RelayCommand]
@@ -271,11 +294,10 @@ namespace AutoJobSearchGUI.ViewModels
 
             var result = await box.ShowAsync();
 
-            if (result == MsBox.Avalonia.Enums.ButtonResult.Ok)
-            {
-               await _dbContext.DeleteAllContactsAsync();
-               await RenderDefaultContactsViewAsync();
-            }          
+            if (result != MsBox.Avalonia.Enums.ButtonResult.Ok) return;
+
+            await _dbContext.DeleteAllContactsAsync();
+            await RenderDefaultContactsViewAsync();        
         }
 
         [RelayCommand]

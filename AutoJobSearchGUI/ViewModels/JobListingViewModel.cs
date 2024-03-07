@@ -9,6 +9,7 @@ using AutoJobSearchShared.Helpers;
 using AutoJobSearchShared.Models;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Media;
 using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -30,8 +31,8 @@ namespace AutoJobSearchGUI.ViewModels
     public partial class JobListingViewModel : ViewModelBase // Needs to be public for View previewer to work
     {
         private const int NUMBER_OF_MOST_COMMON_WORDS_TO_DISPLAY = 20;
-        private const string EDIT_BUTTON_DEFAULT_COLOUR = "Gray";
-        private const string EDIT_BUTTON_ENABLED_COLOUR = "YellowGreen";
+        private const string EDIT_BUTTON_DEFAULT_FONT_WEIGHT = "Regular";
+        private const string EDIT_BUTTON_ENABLED_FONT_WEIGHT = "ExtraBold";
 
         public delegate void CreateNewContactWithAssociatedJobIdHandler(int jobId);
         public event CreateNewContactWithAssociatedJobIdHandler? CreateNewContactWithAssociatedJobIdRequest;
@@ -53,16 +54,16 @@ namespace AutoJobSearchGUI.ViewModels
         public static JobListingsAssociatedFilesStringField File2 => JobListingsAssociatedFilesStringField.File2;
         public static JobListingsAssociatedFilesStringField File3 => JobListingsAssociatedFilesStringField.File3;
 
-        private const string ASSOCIATED_FILES_DIRECTORY_NAME = "JobListingAssociatedFiles";
+        private const string ASSOCIATED_FILES_DIRECTORY_NAME = "JobListingAssociatedFiles"; 
 
         private readonly string _associatedFilesDirectoryPath; 
 
         [ObservableProperty]
-        private string _editButtonColour = EDIT_BUTTON_DEFAULT_COLOUR;
+        private string _editButtonFontWeight = EDIT_BUTTON_DEFAULT_FONT_WEIGHT;
 
         [ObservableProperty]
         private bool _isEditModeEnabled;
-
+        
         [ObservableProperty]
         private bool _isViewFilesEnabled;
 
@@ -179,7 +180,15 @@ namespace AutoJobSearchGUI.ViewModels
                     return;
                 }
 
-                Process.Start(new ProcessStartInfo(completePath) { UseShellExecute = true });
+                try
+                {
+                    Process.Start(new ProcessStartInfo(completePath) { UseShellExecute = true });
+                }
+                catch (Exception ex)
+                {
+                    Log.Error("Exception thrown when trying to start a process for viewing a file. Exception details: {@ex}", ex);
+                    await DisplayViewFileErrorMessageAsync();
+                }          
             }
 
             async Task DisplayViewFileErrorMessageAsync()
@@ -340,28 +349,21 @@ namespace AutoJobSearchGUI.ViewModels
         }
 
         [RelayCommand]
-        private void ToggleEditButtonColour()
-        {
-            IsEditModeEnabled = !IsEditModeEnabled;
-
-        }
-
-        [RelayCommand]
         private void ToggleEditMode()
         {
             IsEditModeEnabled = !IsEditModeEnabled;
-            SetEditButtonColour();
+            SetEditViewProperties();
         }
 
-        private void SetEditButtonColour()
+        private void SetEditViewProperties()
         {
             if (IsEditModeEnabled)
             {
-                EditButtonColour = EDIT_BUTTON_ENABLED_COLOUR;
+                EditButtonFontWeight = EDIT_BUTTON_ENABLED_FONT_WEIGHT;
             }
             else
             {
-                EditButtonColour = EDIT_BUTTON_DEFAULT_COLOUR;
+                EditButtonFontWeight = EDIT_BUTTON_DEFAULT_FONT_WEIGHT;
             }
         }
 
@@ -380,6 +382,16 @@ namespace AutoJobSearchGUI.ViewModels
         [RelayCommand]
         private async Task DeleteJobAsync()
         {
+            var box = MessageBoxManager.GetMessageBoxStandard(
+                "Confirm Delete Job",
+                "Are you sure you want to delete this job listing? This action cannot be reversed.",
+                MsBox.Avalonia.Enums.ButtonEnum.OkAbort,
+                MsBox.Avalonia.Enums.Icon.Warning);
+
+            var result = await box.ShowAsync();
+
+            if (result != MsBox.Avalonia.Enums.ButtonResult.Ok) return;
+
             JobListingModel? nextJobToDisplay;
 
             var currentIndex = Singletons.JobListings.IndexOf(JobListing);
@@ -475,7 +487,7 @@ namespace AutoJobSearchGUI.ViewModels
         {
             SelectedContactId = -1; // Prevent erroneous navigations to contact when updating the view model.
             IsEditModeEnabled = false;
-            SetEditButtonColour();
+            SetEditViewProperties();
 
             IsNavigateToContactButtonEnabled = AssociatedContactIds.Any();
 

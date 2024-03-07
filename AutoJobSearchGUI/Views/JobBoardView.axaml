@@ -16,11 +16,40 @@
 	</Design.DataContext>
 
 	<DockPanel>
-		<StackPanel DockPanel.Dock="Top" Orientation="Horizontal" HorizontalAlignment="Center" >
-			<Button Command="{Binding OpenJobListingCommand}" Content="Open Selected Job" />
-			<Button Command="{Binding GoToPreviousPageCommand}" Content="Previous Page" />
-			<Button Command="{Binding GoToNextPageCommand}" Content="Next Page" />
-			<Menu>
+		<StackPanel 
+			DockPanel.Dock="Top" 
+			Orientation="Horizontal" 
+			HorizontalAlignment="Center"
+			Spacing="10"
+			Margin="5" >
+			<Menu
+				BorderBrush="Gray"
+				BorderThickness="0.8"
+				CornerRadius="3">
+				<MenuItem
+					Header="Open Selected Job"
+					Command="{Binding OpenJobListingCommand}" />
+			</Menu>
+			<Menu
+				BorderBrush="Gray"
+				BorderThickness="0.8"
+				CornerRadius="3">
+				<MenuItem
+					Header="Previous Page"
+					Command="{Binding GoToPreviousPageCommand}" />
+			</Menu>
+			<Menu
+				BorderBrush="Gray"
+				BorderThickness="0.8"
+				CornerRadius="3">
+				<MenuItem
+					Header="Next Page"
+					Command="{Binding GoToNextPageCommand}" />
+			</Menu>
+			<Menu 
+				BorderBrush="Gray"
+				BorderThickness="0.8"
+				CornerRadius="3">
 				<MenuItem Header="Advanced Query">
 					<MenuItem Header="Column Filters">
 						<CheckBox Content="Enable Query Filter" FontWeight="ExtraBold" IsChecked="{Binding JobBoardQueryModel.ColumnFiltersEnabled}" ClickMode="Press" />
@@ -47,44 +76,44 @@
 					</MenuItem>
 					<MenuItem Header="Creation Date">
 						<CheckBox 
-								Content="Enable Created On Date" 
+								Content="Enable Created At Date" 
 								FontWeight="ExtraBold"
-								IsChecked="{Binding JobBoardQueryModel.SearchedOnDateEnabled}"
-								IsEnabled="{Binding !JobBoardQueryModel.SearchedBetweenDatesEnabled}" 
+								IsChecked="{Binding JobBoardQueryModel.CreatedAtDateEnabled}"
+								IsEnabled="{Binding !JobBoardQueryModel.CreatedBetweenDatesEnabled}" 
 								ClickMode="Press"/>
 						<CheckBox 
 								Content="Enable Created Between Dates" 
 								FontWeight="ExtraBold"
-								IsChecked="{Binding JobBoardQueryModel.SearchedBetweenDatesEnabled}"
-								IsEnabled="{Binding !JobBoardQueryModel.SearchedOnDateEnabled}" 
+								IsChecked="{Binding JobBoardQueryModel.CreatedBetweenDatesEnabled}"
+								IsEnabled="{Binding !JobBoardQueryModel.CreatedAtDateEnabled}" 
 								ClickMode="Press"/>
-						<MenuItem Header="Created On Date">
-							<DatePicker SelectedDate="{Binding JobBoardQueryModel.SearchedOnDate}" />
+						<MenuItem Header="Created At Date">
+							<DatePicker SelectedDate="{Binding JobBoardQueryModel.CreatedAtDate}" />
 						</MenuItem>
 						<MenuItem Header="Created Between Dates">
-							<DatePicker SelectedDate="{Binding JobBoardQueryModel.SearchedOnDateStart}" />
-							<DatePicker SelectedDate="{Binding JobBoardQueryModel.SearchedOnDateEnd}" />
+							<DatePicker SelectedDate="{Binding JobBoardQueryModel.CreatedBetweenDateStart}" />
+							<DatePicker SelectedDate="{Binding JobBoardQueryModel.CreatedBetweenDateEnd}" />
 						</MenuItem>
 					</MenuItem>
 					<MenuItem Header="Status Modified Date">
 						<CheckBox
-								Content="Enable Modified On Date"
+								Content="Enable Modified At Date"
 								FontWeight="ExtraBold"
-								IsChecked="{Binding JobBoardQueryModel.ModifiedOnDateEnabled}"
+								IsChecked="{Binding JobBoardQueryModel.ModifiedAtDateEnabled}"
 								IsEnabled="{Binding !JobBoardQueryModel.ModifiedBetweenDatesEnabled}"
 								ClickMode="Press"/>
 						<CheckBox
 								Content="Enable Modified Between Dates"
 								FontWeight="ExtraBold"
 								IsChecked="{Binding JobBoardQueryModel.ModifiedBetweenDatesEnabled}"
-								IsEnabled="{Binding !JobBoardQueryModel.ModifiedOnDateEnabled}"
+								IsEnabled="{Binding !JobBoardQueryModel.ModifiedAtDateEnabled}"
 								ClickMode="Press"/>
-						<MenuItem Header="Modified On Date">
-							<DatePicker SelectedDate="{Binding JobBoardQueryModel.ModifiedOnDate}" />
+						<MenuItem Header="Modified At Date">
+							<DatePicker SelectedDate="{Binding JobBoardQueryModel.ModifiedAtDate}" />
 						</MenuItem>
 						<MenuItem Header="Modified Between Dates">
-							<DatePicker SelectedDate="{Binding JobBoardQueryModel.ModifiedOnDateStart}" />
-							<DatePicker SelectedDate="{Binding JobBoardQueryModel.ModifiedOnDateEnd}" />
+							<DatePicker SelectedDate="{Binding JobBoardQueryModel.ModifiedBetweenDateStart}" />
+							<DatePicker SelectedDate="{Binding JobBoardQueryModel.ModifiedBetweenDateEnd}" />
 						</MenuItem>
 					</MenuItem>
 					<MenuItem Header="Score">
@@ -144,23 +173,34 @@
 						ClickMode="Press"/>
 				</MenuItem>
 			</Menu>
-			<Menu>
+			<Menu 
+				BorderBrush="Gray"
+				BorderThickness="0.8"
+				CornerRadius="3">
 				<MenuItem Header="Options">
 					<MenuItem Header="Go To Default View" Command="{Binding RenderDefaultJobBoardViewCommand}" />
 					<MenuItem Header="Add New Job" Command="{Binding CreateJobCommand}" />
 					<MenuItem Header="Delete All Records" Command="{Binding DeleteAllRecordsCommand}" />
+					<MenuItem Header="Jobs Per Page">
+						<NumericUpDown
+							Maximum="100"
+							Minimum="1"
+							Increment="5"
+							Value="{Binding PageSize}"
+							FormatString="0" />
+					</MenuItem>
 				</MenuItem>
 			</Menu>
 		</StackPanel>
 		<DataGrid
-	 	CanUserResizeColumns="True"
-		CanUserReorderColumns="True"
-	 	ItemsSource="{Binding JobListingsDisplayed}"
-		SelectedItem="{Binding SelectedJobListing}"
-		RowHeight="150"
-		GridLinesVisibility="Horizontal"
-		HorizontalGridLinesBrush="Gray"  
-		IsScrollInertiaEnabled="True">
+	 		CanUserResizeColumns="True"
+			CanUserReorderColumns="True"
+	 		ItemsSource="{Binding JobListingsDisplayed}"
+			SelectedItem="{Binding SelectedJobListing}"
+			RowHeight="150"
+			GridLinesVisibility="Horizontal"
+			HorizontalGridLinesBrush="Gray"  
+			IsScrollInertiaEnabled="True">
 			<i:Interaction.Behaviors>
 				<ia:EventTriggerBehavior EventName="DoubleTapped">
 					<ia:InvokeCommandAction Command="{Binding OpenJobListingCommand}"/>
@@ -177,20 +217,20 @@
 					Header="Search Term" 
 					Binding="{Binding SearchTerm}" 
 					IsReadOnly="True" 
-					Width="1.5*" />
+					Width="1.1*" />
 				<DataGridTextColumn 
 					Header="Created At" 
 					Binding="{Binding CreatedAt}" 
 					IsReadOnly="True"
-					Width="1*" />
+					Width="1.1*" />
 				<DataGridTextColumn
 					Header="Status Modified At"
 					Binding="{Binding StatusModifiedAt}"
 					IsReadOnly="True"
-					Width="1.5*" />
+					Width="1.1*" />
 				<DataGridTemplateColumn 
 					Header="Job Description" 
-					Width="1*">
+					Width="1.1*">
 					<DataGridTemplateColumn.CellTemplate>
 						<DataTemplate>
 							<TextBlock 

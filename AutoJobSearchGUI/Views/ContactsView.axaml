@@ -10,11 +10,40 @@
 			 x:DataType="vm:ContactsViewModel">
 
 	<DockPanel>
-		<StackPanel DockPanel.Dock="Top" Orientation="Horizontal" HorizontalAlignment="Center" >
-			<Button Command="{Binding OpenContactCommand}" Content="Open Selected Contact" />
-			<Button Command="{Binding GoToPreviousPageCommand}" Content="Previous Page" />
-			<Button Command="{Binding GoToNextPageCommand}" Content="Next Page" />
-			<Menu>
+		<StackPanel 
+			DockPanel.Dock="Top" 
+			Orientation="Horizontal" 
+			HorizontalAlignment="Center" 
+			Spacing="10"
+			Margin="5" >
+			<Menu
+				BorderBrush="Gray"
+				BorderThickness="0.8"
+				CornerRadius="3">
+				<MenuItem
+					Header="Open Selected Contact"
+					Command="{Binding OpenContactCommand}" />
+			</Menu>
+			<Menu
+				BorderBrush="Gray"
+				BorderThickness="0.8"
+				CornerRadius="3">
+				<MenuItem
+					Header="Previous Page"
+					Command="{Binding GoToPreviousPageCommand}" />
+			</Menu>
+			<Menu
+				BorderBrush="Gray"
+				BorderThickness="0.8"
+				CornerRadius="3">
+				<MenuItem
+					Header="Next Page"
+					Command="{Binding GoToNextPageCommand}" />
+			</Menu>
+			<Menu
+				BorderBrush="Gray"
+				BorderThickness="0.8"
+				CornerRadius="3">
 				<MenuItem Header="Advanced Query">
 					<MenuItem Header="Company Query">
 						<CheckBox 
@@ -156,11 +185,22 @@
 						ClickMode="Press"/>
 				</MenuItem>
 			</Menu>
-			<Menu>
+			<Menu
+				BorderBrush="Gray"
+				BorderThickness="0.8"
+				CornerRadius="3">
 				<MenuItem Header="Options">
 					<MenuItem Header="Go To Default View" Command="{Binding RenderDefaultContactsViewCommand}" />
 					<MenuItem Header="Add New Contact" Command="{Binding AddNewContactCommand}" />
 					<MenuItem Header="Delete All Contacts" Command="{Binding DeleteAllContactsCommand}" />
+					<MenuItem Header="Contacts Per Page">
+						<NumericUpDown
+							Maximum="100"
+							Minimum="1"
+							Increment="5"
+							Value="{Binding PageSize}"
+							FormatString="0" />
+					</MenuItem>
 				</MenuItem>
 			</Menu>
 		</StackPanel>
