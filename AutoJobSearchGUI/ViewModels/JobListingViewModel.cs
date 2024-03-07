@@ -180,7 +180,15 @@ namespace AutoJobSearchGUI.ViewModels
                     return;
                 }
 
-                Process.Start(new ProcessStartInfo(completePath) { UseShellExecute = true });
+                try
+                {
+                    Process.Start(new ProcessStartInfo(completePath) { UseShellExecute = true });
+                }
+                catch (Exception ex)
+                {
+                    Log.Error("Exception thrown when trying to start a process for viewing a file. Exception details: {@ex}", ex);
+                    await DisplayViewFileErrorMessageAsync();
+                }          
             }
 
             async Task DisplayViewFileErrorMessageAsync()

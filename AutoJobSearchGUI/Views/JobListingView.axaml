@@ -104,9 +104,8 @@
 				<ColumnDefinition Width="Auto" />
 				<ColumnDefinition Width="*" />
 				<ColumnDefinition Width="*" />
-				<ColumnDefinition Width="*" />
 				<ColumnDefinition Width="Auto" />
-				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="0.5*" />
 			</Grid.ColumnDefinitions>
 
 			<Grid.RowDefinitions>
@@ -119,26 +118,82 @@
 				<RowDefinition Height="2*" />
 			</Grid.RowDefinitions>
 
-			<StackPanel Grid.Row="0" Grid.ColumnSpan="6" Orientation="Horizontal" HorizontalAlignment="Center">
-				<TextBlock Margin="0 5 5 0">Id:</TextBlock>
-				<TextBlock Text="{Binding JobListing.Id}" Margin="0 5 25 0"/>
-				<TextBlock Margin="25 5 5 0">Creation Date:</TextBlock>
-				<TextBlock Text="{Binding JobListing.CreatedAt}" Margin="0 5 25 0"/>
-				<TextBlock Margin="25 5 5 0">Status Last Modified:</TextBlock>
-				<TextBlock Text="{Binding JobListing.StatusModifiedAt}" Margin="0 5 5 0"/>
-			</StackPanel>
+			<TextBlock
+				Grid.Row="0"
+				Grid.Column="0"
+				HorizontalAlignment="Center"
+				VerticalAlignment="Center"
+				Text="Created At"
+				Margin="0 5 0 5"/>
+			<TextBox
+				Grid.Row="0"
+				Grid.Column="1"
+				Grid.ColumnSpan="2"
+				Text="{Binding JobListing.CreatedAt}"
+				Focusable="False"
+				IsEnabled="False"
+				IsReadOnly="True"
+				Margin="0 5 5 5"/>
+
+			<TextBlock
+				Grid.Row="0"
+				Grid.Column="3"
+				HorizontalAlignment="Center"
+				VerticalAlignment="Center"
+				Text="Id"
+				Margin="10 5 5 5"/>
+			<TextBox
+				Grid.Row="0"
+				Grid.Column="4"
+				Text="{Binding JobListing.Id}"
+				Focusable="False" 
+				IsEnabled="False" 
+				IsReadOnly="True"
+				Margin="0 5 5 5" />
 
 			<TextBlock
 				Grid.Row="1"
 				Grid.Column="0"
 				HorizontalAlignment="Center"
 				VerticalAlignment="Center"
-				Text="Search Term"
+				Text="Status Modified"
 				Margin="0 5 0 5"/>
 			<TextBox 
 				Grid.Row="1" 
 				Grid.Column="1" 
-				Grid.ColumnSpan="3"
+				Grid.ColumnSpan="2"
+				Text="{Binding JobListing.StatusModifiedAt}"
+				Focusable="False"
+				IsEnabled="False"
+				IsReadOnly="True"
+				Margin="0 5 5 5"/>
+
+			<TextBlock 
+				Grid.Row="1" 				   
+				Grid.Column="3" 
+				HorizontalAlignment="Center" 
+				VerticalAlignment="Center"
+				Text="Score"
+				Margin="10 5 5 5"/>
+			<NumericUpDown 
+				Grid.Row="1" 
+				Grid.Column="4" 
+				Value="{Binding JobListing.Score}"
+				IsEnabled="{Binding IsEditModeEnabled}" 
+				FormatString="0"
+				Margin="0 5 5 5"/>
+
+			<TextBlock
+				Grid.Row="2"
+				Grid.Column="0"
+				HorizontalAlignment="Center"
+				VerticalAlignment="Center"
+				Text="Search Term"
+				Margin="0 5 0 5"/>
+			<TextBox
+				Grid.Row="2"
+				Grid.Column="1"
+				Grid.ColumnSpan="4"
 				Text="{Binding JobListing.SearchTerm}"
 				IsEnabled="{Binding IsEditModeEnabled}"
 				TextWrapping="NoWrap"
@@ -146,56 +201,60 @@
 				AcceptsTab="True"
 				IsUndoEnabled="True"
 				UndoLimit="1000"
-				Margin="0 5 5 5"/>
-
-			<TextBlock 
-				Grid.Row="1" 				   
-				Grid.Column="4" 
-				HorizontalAlignment="Center" 
-				VerticalAlignment="Center"
-				Text="Score"
-				Margin="10 5 5 5"/>
-			<NumericUpDown 
-				Grid.Row="1" 
-				Grid.Column="5" 
-				Value="{Binding JobListing.Score}"
-				IsEnabled="{Binding IsEditModeEnabled}" 
-				FormatString="0"
-				Margin="0 5 5 5"/>
-
-			<StackPanel Grid.Row="2"
-			Grid.ColumnSpan="6"
-			Orientation="Horizontal"
-			HorizontalAlignment="Center">
-				<TextBlock VerticalAlignment="Center" Margin="11 0 5 0">To Be Applied To</TextBlock>
-				<CheckBox IsChecked="{Binding JobListing.IsToBeAppliedTo}" />
-				<TextBlock VerticalAlignment="Center" Margin="10 0 5 0">Applied</TextBlock>
-				<CheckBox IsChecked="{Binding JobListing.IsAppliedTo}" />
-				<TextBlock VerticalAlignment="Center" Margin="10 0 5 0">Interviewing</TextBlock>
-				<CheckBox IsChecked="{Binding JobListing.IsInterviewing}" />
-				<TextBlock VerticalAlignment="Center" Margin="10 0 5 0">Negotiating</TextBlock>
-				<CheckBox IsChecked="{Binding JobListing.IsNegotiating}" />
-				<TextBlock VerticalAlignment="Center" Margin="10 0 5 0">Rejected</TextBlock>
-				<CheckBox IsChecked="{Binding JobListing.IsRejected}" />
-			</StackPanel>
+				Margin="0 5 10 5"/>
 
 			<StackPanel Grid.Row="3"
-			Grid.ColumnSpan="6"
+			Grid.ColumnSpan="5"
 			Orientation="Horizontal"
-			HorizontalAlignment="Center">
-				<TextBlock VerticalAlignment="Center" Margin="25 0 5 0">Declined Offer</TextBlock>
-				<CheckBox IsChecked="{Binding JobListing.IsDeclinedOffer}" />
-				<TextBlock VerticalAlignment="Center" Margin="20 0 5 0">Accepted Offer</TextBlock>
-				<CheckBox IsChecked="{Binding JobListing.IsAcceptedOffer}" />
-				<TextBlock VerticalAlignment="Center" Margin="20 0 5 0">Favourite</TextBlock>
-				<CheckBox IsChecked="{Binding JobListing.IsFavourite}" />
-				<!--Margin="10 0 5 0"-->
-				<TextBlock VerticalAlignment="Center" Margin="25 0 5 0">Archived/Hidden</TextBlock>
-				<CheckBox IsChecked="{Binding JobListing.IsHidden}" />
-			</StackPanel>
+			HorizontalAlignment="Center"
+			Margin="0 5 0 5" Spacing="5">
+				<ToggleButton 
+					ClickMode="Press" 
+					Content="To Be Applied To"
+					FontSize="11"
+					IsChecked="{Binding JobListing.IsToBeAppliedTo}" />
+				<ToggleButton
+					ClickMode="Press"
+					Content="Applied"
+					FontSize="11"
+					IsChecked="{Binding JobListing.IsAppliedTo}" />
+				<ToggleButton
+					ClickMode="Press"
+					Content="Interviewing"
+					FontSize="11"
+					IsChecked="{Binding JobListing.IsInterviewing}" />
+				<ToggleButton
+					ClickMode="Press"
+					Content="Negotiating"
+					FontSize="11"
+					IsChecked="{Binding JobListing.IsNegotiating}" />
+				<ToggleButton
+					ClickMode="Press"
+					Content="Rejected"
+					FontSize="11"
+					IsChecked="{Binding JobListing.IsRejected}" />
+				<ToggleButton
+					ClickMode="Press"
+					Content="Declined Offer"
+					FontSize="11"
+					IsChecked="{Binding JobListing.IsDeclinedOffer}" />
+				<ToggleButton
+					ClickMode="Press"
+					Content="Accepted Offer"
+					FontSize="11"
+					IsChecked="{Binding JobListing.IsAcceptedOffer}" />
+				<ToggleButton
+					ClickMode="Press"
+					Content="Favourite"
+					FontSize="11"
+					IsChecked="{Binding JobListing.IsFavourite}" />
+				<ToggleButton
+					ClickMode="Press"
+					Content="Archived/Hidden"
+					FontSize="11"
+					IsChecked="{Binding JobListing.IsHidden}" />
+			</StackPanel>	
 			
-			
-
 			<StackPanel
 				Grid.Row="4"
 				Grid.Column="0">
@@ -241,7 +300,6 @@
 				Grid.Column="1"
 				Grid.ColumnSpan="5"
 				Text="{Binding JobListing.ApplicationLinks}"
-				IsEnabled="True"
 				IsReadOnly="True"
 				Margin="0 5 5 5"/>
 
@@ -266,6 +324,4 @@
 				Margin="0 5 5 5"/>
 		</Grid>
 	</DockPanel>
-	
-
 </UserControl>
