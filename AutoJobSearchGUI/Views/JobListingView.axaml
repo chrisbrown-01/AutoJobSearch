@@ -18,9 +18,24 @@
 			DockPanel.Dock="Top" 
 			Orientation="Horizontal"
 			HorizontalAlignment="Center" 
-			Spacing="10" >
-			<Button Content="Previous Job" Command="{Binding GoToPreviousJobCommand}" />
-			<Button Content="Next Job" Command="{Binding GoToNextJobCommand}" />
+			Spacing="10"
+			Margin="5" >
+			<Menu
+				BorderBrush="Gray"
+				BorderThickness="0.8"
+				CornerRadius="3">
+				<MenuItem 
+					Header="Previous Job"
+					Command="{Binding GoToPreviousJobCommand}" />
+			</Menu>
+			<Menu
+				BorderBrush="Gray"
+				BorderThickness="0.8"
+				CornerRadius="3">
+				<MenuItem
+					Header="Next Job"
+					Command="{Binding GoToNextJobCommand}" />
+			</Menu>
 			<Menu
 				BorderBrush="Gray" 
 				BorderThickness="0.8" 

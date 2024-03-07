@@ -33,10 +33,32 @@
 			Grid.Row="0" 
 			Orientation="Horizontal" 
 			HorizontalAlignment="Center"
-			Spacing="10" >
-			<Button Content="Execute Job Search" Command="{Binding ExecuteJobSearchCommand}" />
-			<Button Content="Create New Search Profile" Command="{Binding CreateNewProfileCommand}" />
-			<Button Content="Delete Current Search Profile" Command="{Binding DeleteCurrentProfileCommand}" />
+			Spacing="10"
+			Margin="5" >
+			<Menu
+				BorderBrush="Gray"
+				BorderThickness="0.8"
+				CornerRadius="3">
+				<MenuItem
+					Header="Execute Job Search"
+					Command="{Binding ExecuteJobSearchCommand}" />
+			</Menu>
+			<Menu
+				BorderBrush="Gray"
+				BorderThickness="0.8"
+				CornerRadius="3">
+				<MenuItem
+					Header="Create New Search Profile"
+					Command="{Binding CreateNewProfileCommand}" />
+			</Menu>
+			<Menu
+				BorderBrush="Gray"
+				BorderThickness="0.8"
+				CornerRadius="3">
+				<MenuItem
+					Header="Delete Current Search Profile"
+					Command="{Binding DeleteCurrentProfileCommand}" />
+			</Menu>
 			<ComboBox
 				IsTextSearchEnabled="True"
 				PlaceholderText="Select Profile"
@@ -55,8 +77,8 @@
 			HorizontalAlignment="Center" 
 			Orientation="Horizontal" 
 			Grid.Row="1"
-			Margin="10"
-			Spacing="10" >
+			Spacing="10"
+			Margin="5" >
 			<TextBlock Text="Profile Name" VerticalAlignment="Center" />
 			<TextBox Text="{Binding SelectedSearchProfile.ProfileName}" Width="150" />
 			<TextBlock Text="Max Search Index" VerticalAlignment="Center" Margin="100 0 0 0" />

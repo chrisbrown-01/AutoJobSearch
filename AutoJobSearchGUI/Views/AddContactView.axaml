@@ -12,13 +12,24 @@
 			DockPanel.Dock="Top"
 			Orientation="Horizontal"
 			HorizontalAlignment="Center"
-			Spacing="10" >
-			<Button 
-				Content="Previous Contact"  
-				Command="{Binding GoToPreviousContactCommand}" />
-			<Button 
-				Content="Next Contact" 
-				Command="{Binding GoToNextContactCommand}" />
+			Spacing="10" 
+			Margin="5" >
+			<Menu
+				BorderBrush="Gray"
+				BorderThickness="0.8"
+				CornerRadius="3">
+				<MenuItem
+					Header="Previous Contact"
+					Command="{Binding GoToPreviousContactCommand}" />
+			</Menu>
+			<Menu
+				BorderBrush="Gray"
+				BorderThickness="0.8"
+				CornerRadius="3">
+				<MenuItem
+					Header="Next Contact"
+					Command="{Binding GoToNextContactCommand}" />
+			</Menu>
 			<Menu
 				BorderBrush="Gray"
 				BorderThickness="0.8"

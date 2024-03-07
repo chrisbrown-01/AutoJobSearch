@@ -14,10 +14,32 @@
 			DockPanel.Dock="Top" 
 			Orientation="Horizontal" 
 			HorizontalAlignment="Center" 
-			Spacing="10" >
-			<Button Command="{Binding OpenContactCommand}" Content="Open Selected Contact" />
-			<Button Command="{Binding GoToPreviousPageCommand}" Content="Previous Page" />
-			<Button Command="{Binding GoToNextPageCommand}" Content="Next Page" />
+			Spacing="10"
+			Margin="5" >
+			<Menu
+				BorderBrush="Gray"
+				BorderThickness="0.8"
+				CornerRadius="3">
+				<MenuItem
+					Header="Open Selected Contact"
+					Command="{Binding OpenContactCommand}" />
+			</Menu>
+			<Menu
+				BorderBrush="Gray"
+				BorderThickness="0.8"
+				CornerRadius="3">
+				<MenuItem
+					Header="Previous Page"
+					Command="{Binding GoToPreviousPageCommand}" />
+			</Menu>
+			<Menu
+				BorderBrush="Gray"
+				BorderThickness="0.8"
+				CornerRadius="3">
+				<MenuItem
+					Header="Next Page"
+					Command="{Binding GoToNextPageCommand}" />
+			</Menu>
 			<Menu
 				BorderBrush="Gray"
 				BorderThickness="0.8"
