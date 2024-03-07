@@ -10,11 +10,18 @@
 			 x:DataType="vm:ContactsViewModel">
 
 	<DockPanel>
-		<StackPanel DockPanel.Dock="Top" Orientation="Horizontal" HorizontalAlignment="Center" >
+		<StackPanel 
+			DockPanel.Dock="Top" 
+			Orientation="Horizontal" 
+			HorizontalAlignment="Center" 
+			Spacing="10" >
 			<Button Command="{Binding OpenContactCommand}" Content="Open Selected Contact" />
 			<Button Command="{Binding GoToPreviousPageCommand}" Content="Previous Page" />
 			<Button Command="{Binding GoToNextPageCommand}" Content="Next Page" />
-			<Menu>
+			<Menu
+				BorderBrush="Gray"
+				BorderThickness="0.8"
+				CornerRadius="3">
 				<MenuItem Header="Advanced Query">
 					<MenuItem Header="Company Query">
 						<CheckBox 
@@ -156,7 +163,10 @@
 						ClickMode="Press"/>
 				</MenuItem>
 			</Menu>
-			<Menu>
+			<Menu
+				BorderBrush="Gray"
+				BorderThickness="0.8"
+				CornerRadius="3">
 				<MenuItem Header="Options">
 					<MenuItem Header="Go To Default View" Command="{Binding RenderDefaultContactsViewCommand}" />
 					<MenuItem Header="Add New Contact" Command="{Binding AddNewContactCommand}" />
