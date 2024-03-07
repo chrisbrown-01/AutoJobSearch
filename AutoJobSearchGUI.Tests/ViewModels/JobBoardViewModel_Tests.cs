@@ -132,10 +132,10 @@ namespace AutoJobSearchGUI.Tests.ViewModels
             jobBoardQueryModel.SearchTermQueryStringEnabled = false;
             jobBoardQueryModel.JobDescriptionQueryStringEnabled = false;
             jobBoardQueryModel.NotesQueryStringEnabled = false;
-            jobBoardQueryModel.SearchedBetweenDatesEnabled = false;
-            jobBoardQueryModel.SearchedOnDateEnabled = false;
+            jobBoardQueryModel.CreatedBetweenDatesEnabled = false;
+            jobBoardQueryModel.CreatedAtDateEnabled = false;
             jobBoardQueryModel.ModifiedBetweenDatesEnabled = false;
-            jobBoardQueryModel.ModifiedOnDateEnabled = false;
+            jobBoardQueryModel.ModifiedAtDateEnabled = false;
             jobBoardQueryModel.ScoreEqualsEnabled = false;
             jobBoardQueryModel.ScoreRangeEnabled = false;
 

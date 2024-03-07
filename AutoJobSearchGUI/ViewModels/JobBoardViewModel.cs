@@ -141,29 +141,29 @@ namespace AutoJobSearchGUI.ViewModels
                 result = result.Where(x => x.Notes.Contains(JobBoardQueryModel.NotesQueryString, StringComparison.OrdinalIgnoreCase));
             }
 
-            if (JobBoardQueryModel.SearchedOnDateEnabled)
+            if (JobBoardQueryModel.CreatedAtDateEnabled)
             {
-                result = result.Where(x => x.CreatedAt.Date == JobBoardQueryModel.SearchedOnDate.Date);
+                result = result.Where(x => x.CreatedAt.Date == JobBoardQueryModel.CreatedAtDate.Date);
             }
 
-            if (JobBoardQueryModel.SearchedBetweenDatesEnabled)
+            if (JobBoardQueryModel.CreatedBetweenDatesEnabled)
             {
                 result = result.Where(x =>
-                x.CreatedAt.Date >= JobBoardQueryModel.SearchedOnDateStart.Date &&
-                x.CreatedAt.Date <= JobBoardQueryModel.SearchedOnDateEnd.Date
+                x.CreatedAt.Date >= JobBoardQueryModel.CreatedBetweenDateStart.Date &&
+                x.CreatedAt.Date <= JobBoardQueryModel.CreatedBetweenDateEnd.Date
                 );
             }
 
-            if (JobBoardQueryModel.ModifiedOnDateEnabled)
+            if (JobBoardQueryModel.ModifiedAtDateEnabled)
             {
-                result = result.Where(x => x.StatusModifiedAt.Date == JobBoardQueryModel.ModifiedOnDate.Date);
+                result = result.Where(x => x.StatusModifiedAt.Date == JobBoardQueryModel.ModifiedAtDate.Date);
             }
 
             if (JobBoardQueryModel.ModifiedBetweenDatesEnabled)
             {
                 result = result.Where(x =>
-                x.StatusModifiedAt.Date >= JobBoardQueryModel.ModifiedOnDateStart.Date &&
-                x.StatusModifiedAt.Date <= JobBoardQueryModel.ModifiedOnDateEnd.Date
+                x.StatusModifiedAt.Date >= JobBoardQueryModel.ModifiedBetweenDateStart.Date &&
+                x.StatusModifiedAt.Date <= JobBoardQueryModel.ModifiedBetweenDateEnd.Date
                 );
             }
 

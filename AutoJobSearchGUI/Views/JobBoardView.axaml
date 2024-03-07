@@ -56,42 +56,42 @@
 						<CheckBox 
 								Content="Enable Created At Date" 
 								FontWeight="ExtraBold"
-								IsChecked="{Binding JobBoardQueryModel.SearchedOnDateEnabled}"
-								IsEnabled="{Binding !JobBoardQueryModel.SearchedBetweenDatesEnabled}" 
+								IsChecked="{Binding JobBoardQueryModel.CreatedAtDateEnabled}"
+								IsEnabled="{Binding !JobBoardQueryModel.CreatedBetweenDatesEnabled}" 
 								ClickMode="Press"/>
 						<CheckBox 
 								Content="Enable Created Between Dates" 
 								FontWeight="ExtraBold"
-								IsChecked="{Binding JobBoardQueryModel.SearchedBetweenDatesEnabled}"
-								IsEnabled="{Binding !JobBoardQueryModel.SearchedOnDateEnabled}" 
+								IsChecked="{Binding JobBoardQueryModel.CreatedBetweenDatesEnabled}"
+								IsEnabled="{Binding !JobBoardQueryModel.CreatedAtDateEnabled}" 
 								ClickMode="Press"/>
 						<MenuItem Header="Created At Date">
-							<DatePicker SelectedDate="{Binding JobBoardQueryModel.SearchedOnDate}" />
+							<DatePicker SelectedDate="{Binding JobBoardQueryModel.CreatedAtDate}" />
 						</MenuItem>
 						<MenuItem Header="Created Between Dates">
-							<DatePicker SelectedDate="{Binding JobBoardQueryModel.SearchedOnDateStart}" />
-							<DatePicker SelectedDate="{Binding JobBoardQueryModel.SearchedOnDateEnd}" />
+							<DatePicker SelectedDate="{Binding JobBoardQueryModel.CreatedBetweenDateStart}" />
+							<DatePicker SelectedDate="{Binding JobBoardQueryModel.CreatedBetweenDateEnd}" />
 						</MenuItem>
 					</MenuItem>
 					<MenuItem Header="Status Modified Date">
 						<CheckBox
-								Content="Enable Modified On Date"
+								Content="Enable Modified At Date"
 								FontWeight="ExtraBold"
-								IsChecked="{Binding JobBoardQueryModel.ModifiedOnDateEnabled}"
+								IsChecked="{Binding JobBoardQueryModel.ModifiedAtDateEnabled}"
 								IsEnabled="{Binding !JobBoardQueryModel.ModifiedBetweenDatesEnabled}"
 								ClickMode="Press"/>
 						<CheckBox
 								Content="Enable Modified Between Dates"
 								FontWeight="ExtraBold"
 								IsChecked="{Binding JobBoardQueryModel.ModifiedBetweenDatesEnabled}"
-								IsEnabled="{Binding !JobBoardQueryModel.ModifiedOnDateEnabled}"
+								IsEnabled="{Binding !JobBoardQueryModel.ModifiedAtDateEnabled}"
 								ClickMode="Press"/>
-						<MenuItem Header="Modified On Date">
-							<DatePicker SelectedDate="{Binding JobBoardQueryModel.ModifiedOnDate}" />
+						<MenuItem Header="Modified At Date">
+							<DatePicker SelectedDate="{Binding JobBoardQueryModel.ModifiedAtDate}" />
 						</MenuItem>
 						<MenuItem Header="Modified Between Dates">
-							<DatePicker SelectedDate="{Binding JobBoardQueryModel.ModifiedOnDateStart}" />
-							<DatePicker SelectedDate="{Binding JobBoardQueryModel.ModifiedOnDateEnd}" />
+							<DatePicker SelectedDate="{Binding JobBoardQueryModel.ModifiedBetweenDateStart}" />
+							<DatePicker SelectedDate="{Binding JobBoardQueryModel.ModifiedBetweenDateEnd}" />
 						</MenuItem>
 					</MenuItem>
 					<MenuItem Header="Score">
