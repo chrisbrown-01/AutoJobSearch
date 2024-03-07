@@ -29,7 +29,11 @@
 			<RowDefinition Height="3*" />
 		</Grid.RowDefinitions>
 
-		<StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center">
+		<StackPanel 
+			Grid.Row="0" 
+			Orientation="Horizontal" 
+			HorizontalAlignment="Center"
+			Spacing="10" >
 			<Button Content="Execute Job Search" Command="{Binding ExecuteJobSearchCommand}" />
 			<Button Content="Create New Search Profile" Command="{Binding CreateNewProfileCommand}" />
 			<Button Content="Delete Current Search Profile" Command="{Binding DeleteCurrentProfileCommand}" />
@@ -50,10 +54,12 @@
 			VerticalAlignment="Center" 
 			HorizontalAlignment="Center" 
 			Orientation="Horizontal" 
-			Grid.Row="1" Margin="30 5">
-			<TextBlock Text="Profile Name" VerticalAlignment="Center" Margin="0,0,10,0" />
-			<TextBox Text="{Binding SelectedSearchProfile.ProfileName}" Width="125" />
-			<TextBlock Text="Max Search Index" VerticalAlignment="Center" Margin="100,0,10,0" />
+			Grid.Row="1"
+			Margin="10"
+			Spacing="10" >
+			<TextBlock Text="Profile Name" VerticalAlignment="Center" />
+			<TextBox Text="{Binding SelectedSearchProfile.ProfileName}" Width="150" />
+			<TextBlock Text="Max Search Index" VerticalAlignment="Center" Margin="100 0 0 0" />
 			<!--Application displays error if user manually deletes all numbers inside these controls
 			(using backspace or delete on keyboard). No way to prevent this.-->
 			<NumericUpDown 
@@ -64,48 +70,67 @@
 				Value="{Binding SelectedSearchProfile.MaxJobListingIndex}"/>
 		</StackPanel>
 
-		<TextBlock Grid.Row="2" Text="Search Terms" Margin="30 0"/>
+		<TextBlock 
+			Grid.Row="2" 
+			Text="Search Terms" 
+			Margin="15 0"/>
 		<TextBox 
 			Grid.Row="3" 
 			IsReadOnly="False" 
 			TextWrapping="NoWrap"
-			Margin="30 5" 
+			Margin="15 5" 
 			AcceptsReturn="True"
 			Text="{Binding SelectedSearchProfile.Searches}" />
 
-		<TextBlock Grid.Row="4" Text="Positive Scoring Keywords" Foreground="SeaGreen" Margin="30 0"/>
+		<TextBlock 
+			Grid.Row="4" 
+			Text="Positive Scoring Keywords" 
+			Foreground="SeaGreen" 
+			Margin="15 0"/>
 		<TextBox 
 			Grid.Row="5" 
 			IsReadOnly="False" 
 			TextWrapping="NoWrap" 
-			Margin="30 5" 
+			Margin="15 5" 
 			AcceptsReturn="True"
 			Text="{Binding SelectedSearchProfile.KeywordsPositive}" />
 
-		<TextBlock Grid.Row="6" Text="Negative Scoring Keywords" Foreground="Crimson" Margin="30 0"/>
+		<TextBlock 
+			Grid.Row="6" 
+			Text="Negative Scoring Keywords" 
+			Foreground="Crimson" 
+			Margin="15 0"/>
 		<TextBox 
 			Grid.Row="7" 
 			IsReadOnly="False" 
 			TextWrapping="NoWrap" 
-			Margin="30 5"
+			Margin="15 5"
 			AcceptsReturn="True"
 			Text="{Binding SelectedSearchProfile.KeywordsNegative}" />
 
-		<TextBlock Grid.Row="8" Text="Positive Scoring Sentiments" Foreground="SeaGreen" Margin="30 0"/>
+		<TextBlock 
+			Grid.Row="8" 
+			Text="Positive Scoring Sentiments" 
+			Foreground="SeaGreen" 
+			Margin="15 0"/>
 		<TextBox 
 			Grid.Row="9" 
 			IsReadOnly="False" 
 			TextWrapping="NoWrap" 
-			Margin="30 5" 
+			Margin="15 5" 
 			AcceptsReturn="True"
 			Text="{Binding SelectedSearchProfile.SentimentsPositive}" />
 
-		<TextBlock Grid.Row="10" Text="Negative Scoring Sentiments" Foreground="Crimson" Margin="30 0"/>
+		<TextBlock 
+			Grid.Row="10" 
+			Text="Negative Scoring Sentiments" 
+			Foreground="Crimson" 
+			Margin="15 0"/>
 		<TextBox 
 			Grid.Row="11" 
 			IsReadOnly="False" 
 			TextWrapping="NoWrap"
-			Margin="30 5" 
+			Margin="15 5 15 15" 
 			AcceptsReturn="True"
 			Text="{Binding SelectedSearchProfile.SentimentsNegative}" />
 	</Grid>
