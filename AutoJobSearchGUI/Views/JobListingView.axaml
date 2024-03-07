@@ -20,7 +20,10 @@
 			HorizontalAlignment="Center" Spacing="15">
 			<Button Content="Previous Job" Command="{Binding GoToPreviousJobCommand}" />
 			<Button Content="Next Job" Command="{Binding GoToNextJobCommand}" />
-			<Menu>
+			<Menu
+				BorderBrush="Gray" 
+				BorderThickness="0.8" 
+				CornerRadius="3">
 				<MenuItem Header="Options">
 					<MenuItem
 						Header="Edit Job"
