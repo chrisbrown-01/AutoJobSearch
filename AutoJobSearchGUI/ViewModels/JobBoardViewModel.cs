@@ -252,10 +252,22 @@ namespace AutoJobSearchGUI.ViewModels
         [RelayCommand]
         private async Task DeleteJobAsync()
         {
+            var box = MessageBoxManager.GetMessageBoxStandard(
+                "Confirm Delete Job",
+                "Are you sure you want to delete this job listing? This action cannot be reversed.",
+                MsBox.Avalonia.Enums.ButtonEnum.OkAbort,
+                MsBox.Avalonia.Enums.Icon.Warning);
+
+            var result = await box.ShowAsync();
+
+            if (result != MsBox.Avalonia.Enums.ButtonResult.Ok) return;
+
             if (SelectedJobListing == null) return;
             await _dbContext.DeleteJobAsync(SelectedJobListing.Id);
             Singletons.JobListings.Remove(SelectedJobListing);
             JobListingsDisplayed.Remove(SelectedJobListing);
+
+            SelectedJobListing = null;
         }
 
         [RelayCommand]
