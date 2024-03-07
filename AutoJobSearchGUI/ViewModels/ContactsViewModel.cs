@@ -80,7 +80,7 @@ namespace AutoJobSearchGUI.ViewModels
 
         partial void OnPageSizeChanged(int value)
         {
-            if (value == null || value < 1 || value > 100)
+            if (value < 1 || value > 100)
             {
                 PageSize = DEFAULT_PAGE_SIZE;
                 return;
