@@ -214,6 +214,7 @@
 				Grid.Column="1"
 				Grid.ColumnSpan="4"
 				Text="{Binding JobListing.SearchTerm}"
+				Watermark="Search Term"
 				IsEnabled="{Binding IsEditModeEnabled}"
 				TextWrapping="NoWrap"
 				AcceptsReturn="False"
@@ -300,6 +301,7 @@
 				Grid.Column="1"
 				Grid.ColumnSpan="4"
 				Text="{Binding JobListing.Description}"
+				Watermark="Job Description"
 				IsReadOnly="{Binding !IsEditModeEnabled}"
 				TextWrapping="Wrap"
 				AcceptsReturn="True"
@@ -325,6 +327,7 @@
 				Grid.Column="1"
 				Grid.ColumnSpan="4"
 				Text="{Binding JobListing.ApplicationLinks}"
+				Watermark="Application Website/URL"
 				IsReadOnly="True"
 				Margin="0 5 15 5"/>
 
@@ -340,6 +343,7 @@
 				Grid.Column="1"
 				Grid.ColumnSpan="4"
 				Text="{Binding JobListing.Notes}"
+				Watermark="Click 'Edit Job', then add your notes here."
 				IsReadOnly="{Binding !IsEditModeEnabled}"			   
 				TextWrapping="Wrap"
 				AcceptsReturn="True"
