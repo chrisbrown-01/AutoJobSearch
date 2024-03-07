@@ -285,12 +285,15 @@
 					Text="Job Description"
 					HorizontalAlignment="Center"
 					VerticalAlignment="Top" />
-				<Button 
-					HorizontalAlignment="Center"
-					Content="Most Common Words" 
-					ClickMode="Press" 
-					FontSize="8"
-					Command="{Binding DisplayMostCommonWordsCommand}"/>
+				<Menu
+					BorderBrush="Gray"
+					BorderThickness="0.8"
+					CornerRadius="3">
+					<MenuItem
+						Header="Most Common Words"
+						Command="{Binding DisplayMostCommonWordsCommand}"
+						FontSize="7" />
+				</Menu>
 			</StackPanel>
 			<TextBox
 				Grid.Row="4"
