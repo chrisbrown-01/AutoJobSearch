@@ -127,6 +127,7 @@ namespace AutoJobSearchGUI.ViewModels
         private async Task ExecuteQueryAsync()
         {
             // TODO: add logic for if description filter is enabled. might be best to create seperate SQLIte methods depending on necessary arguments
+            // TODO: also need to consider fact that details are populated already once this method is executed, so redundant db calls are being made later when the individual job listing is opened
             var result = await _dbContext.ExecuteJobListingQueryAsync(
                JobBoardQueryModel.ColumnFiltersEnabled,
                JobBoardQueryModel.IsToBeAppliedTo,
