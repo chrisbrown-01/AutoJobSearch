@@ -16,11 +16,18 @@
 	</Design.DataContext>
 
 	<DockPanel>
-		<StackPanel DockPanel.Dock="Top" Orientation="Horizontal" HorizontalAlignment="Center" >
+		<StackPanel 
+			DockPanel.Dock="Top" 
+			Orientation="Horizontal" 
+			HorizontalAlignment="Center"
+			Spacing="10">
 			<Button Command="{Binding OpenJobListingCommand}" Content="Open Selected Job" />
 			<Button Command="{Binding GoToPreviousPageCommand}" Content="Previous Page" />
 			<Button Command="{Binding GoToNextPageCommand}" Content="Next Page" />
-			<Menu>
+			<Menu 
+				BorderBrush="Gray"
+				BorderThickness="0.8"
+				CornerRadius="3">
 				<MenuItem Header="Advanced Query">
 					<MenuItem Header="Column Filters">
 						<CheckBox Content="Enable Query Filter" FontWeight="ExtraBold" IsChecked="{Binding JobBoardQueryModel.ColumnFiltersEnabled}" ClickMode="Press" />
@@ -47,7 +54,7 @@
 					</MenuItem>
 					<MenuItem Header="Creation Date">
 						<CheckBox 
-								Content="Enable Created On Date" 
+								Content="Enable Created At Date" 
 								FontWeight="ExtraBold"
 								IsChecked="{Binding JobBoardQueryModel.SearchedOnDateEnabled}"
 								IsEnabled="{Binding !JobBoardQueryModel.SearchedBetweenDatesEnabled}" 
@@ -58,7 +65,7 @@
 								IsChecked="{Binding JobBoardQueryModel.SearchedBetweenDatesEnabled}"
 								IsEnabled="{Binding !JobBoardQueryModel.SearchedOnDateEnabled}" 
 								ClickMode="Press"/>
-						<MenuItem Header="Created On Date">
+						<MenuItem Header="Created At Date">
 							<DatePicker SelectedDate="{Binding JobBoardQueryModel.SearchedOnDate}" />
 						</MenuItem>
 						<MenuItem Header="Created Between Dates">
@@ -144,7 +151,10 @@
 						ClickMode="Press"/>
 				</MenuItem>
 			</Menu>
-			<Menu>
+			<Menu 
+				BorderBrush="Gray"
+				BorderThickness="0.8"
+				CornerRadius="3">
 				<MenuItem Header="Options">
 					<MenuItem Header="Go To Default View" Command="{Binding RenderDefaultJobBoardViewCommand}" />
 					<MenuItem Header="Add New Job" Command="{Binding CreateJobCommand}" />
@@ -153,14 +163,14 @@
 			</Menu>
 		</StackPanel>
 		<DataGrid
-	 	CanUserResizeColumns="True"
-		CanUserReorderColumns="True"
-	 	ItemsSource="{Binding JobListingsDisplayed}"
-		SelectedItem="{Binding SelectedJobListing}"
-		RowHeight="150"
-		GridLinesVisibility="Horizontal"
-		HorizontalGridLinesBrush="Gray"  
-		IsScrollInertiaEnabled="True">
+	 		CanUserResizeColumns="True"
+			CanUserReorderColumns="True"
+	 		ItemsSource="{Binding JobListingsDisplayed}"
+			SelectedItem="{Binding SelectedJobListing}"
+			RowHeight="150"
+			GridLinesVisibility="Horizontal"
+			HorizontalGridLinesBrush="Gray"  
+			IsScrollInertiaEnabled="True">
 			<i:Interaction.Behaviors>
 				<ia:EventTriggerBehavior EventName="DoubleTapped">
 					<ia:InvokeCommandAction Command="{Binding OpenJobListingCommand}"/>
@@ -177,20 +187,20 @@
 					Header="Search Term" 
 					Binding="{Binding SearchTerm}" 
 					IsReadOnly="True" 
-					Width="1.5*" />
+					Width="1.1*" />
 				<DataGridTextColumn 
 					Header="Created At" 
 					Binding="{Binding CreatedAt}" 
 					IsReadOnly="True"
-					Width="1*" />
+					Width="1.1*" />
 				<DataGridTextColumn
 					Header="Status Modified At"
 					Binding="{Binding StatusModifiedAt}"
 					IsReadOnly="True"
-					Width="1.5*" />
+					Width="1.1*" />
 				<DataGridTemplateColumn 
 					Header="Job Description" 
-					Width="1*">
+					Width="1.1*">
 					<DataGridTemplateColumn.CellTemplate>
 						<DataTemplate>
 							<TextBlock 

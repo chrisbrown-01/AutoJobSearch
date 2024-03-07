@@ -17,7 +17,7 @@
 		<StackPanel 
 			DockPanel.Dock="Top" 
 			Orientation="Horizontal"
-			HorizontalAlignment="Center" Spacing="15">
+			HorizontalAlignment="Center" Spacing="10">
 			<Button Content="Previous Job" Command="{Binding GoToPreviousJobCommand}" />
 			<Button Content="Next Job" Command="{Binding GoToNextJobCommand}" />
 			<Menu
@@ -279,7 +279,7 @@
 			<TextBox
 				Grid.Row="4"
 				Grid.Column="1"
-				Grid.ColumnSpan="5"
+				Grid.ColumnSpan="4"
 				Text="{Binding JobListing.Description}"
 				IsReadOnly="{Binding !IsEditModeEnabled}"
 				TextWrapping="Wrap"
@@ -304,7 +304,7 @@
 			<TextBox
 				Grid.Row="5"
 				Grid.Column="1"
-				Grid.ColumnSpan="5"
+				Grid.ColumnSpan="4"
 				Text="{Binding JobListing.ApplicationLinks}"
 				IsReadOnly="True"
 				Margin="0 5 15 5"/>
@@ -319,7 +319,7 @@
 			<TextBox
 				Grid.Row="6"
 				Grid.Column="1"
-				Grid.ColumnSpan="5"
+				Grid.ColumnSpan="4"
 				Text="{Binding JobListing.Notes}"
 				IsReadOnly="{Binding !IsEditModeEnabled}"			   
 				TextWrapping="Wrap"
