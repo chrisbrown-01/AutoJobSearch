@@ -271,11 +271,10 @@ namespace AutoJobSearchGUI.ViewModels
 
             var result = await box.ShowAsync();
 
-            if (result == MsBox.Avalonia.Enums.ButtonResult.Ok)
-            {
-               await _dbContext.DeleteAllContactsAsync();
-               await RenderDefaultContactsViewAsync();
-            }          
+            if (result != MsBox.Avalonia.Enums.ButtonResult.Ok) return;
+
+            await _dbContext.DeleteAllContactsAsync();
+            await RenderDefaultContactsViewAsync();        
         }
 
         [RelayCommand]

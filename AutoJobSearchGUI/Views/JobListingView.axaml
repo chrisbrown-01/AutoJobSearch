@@ -31,7 +31,7 @@
 					<MenuItem
 						Header="Edit Job"
 						Command="{Binding ToggleEditModeCommand}" 
-						FontWeight="{Binding EditButtonFontWeight}"    />
+						FontWeight="{Binding EditButtonFontWeight}" />
 					<MenuItem Header="Upload Files">
 						<MenuItem
 							Header="Resume"

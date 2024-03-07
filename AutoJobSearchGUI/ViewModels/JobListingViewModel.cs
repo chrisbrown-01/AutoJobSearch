@@ -382,7 +382,15 @@ namespace AutoJobSearchGUI.ViewModels
         [RelayCommand]
         private async Task DeleteJobAsync()
         {
-            // TODO: run dialog popup box to ensure user wants to delete job
+            var box = MessageBoxManager.GetMessageBoxStandard(
+                "Confirm Delete Job",
+                "Are you sure you want to delete this job listing? This action cannot be reversed.",
+                MsBox.Avalonia.Enums.ButtonEnum.OkAbort,
+                MsBox.Avalonia.Enums.Icon.Warning);
+
+            var result = await box.ShowAsync();
+
+            if (result != MsBox.Avalonia.Enums.ButtonResult.Ok) return;
 
             JobListingModel? nextJobToDisplay;
 
