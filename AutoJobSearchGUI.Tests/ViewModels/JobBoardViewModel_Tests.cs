@@ -142,6 +142,8 @@ namespace AutoJobSearchGUI.Tests.ViewModels
             _viewModel.JobBoardQueryModel = jobBoardQueryModel;
 
             _dbContext.ExecuteJobListingQueryAsync(
+                _viewModel.JobBoardQueryModel.JobDescriptionQueryStringEnabled,
+                _viewModel.JobBoardQueryModel.NotesQueryStringEnabled,
                 _viewModel.JobBoardQueryModel.ColumnFiltersEnabled,
                 _viewModel.JobBoardQueryModel.IsToBeAppliedTo,
                 _viewModel.JobBoardQueryModel.IsAppliedTo,
@@ -158,6 +160,8 @@ namespace AutoJobSearchGUI.Tests.ViewModels
 
             // Assert
             await _dbContext.Received().ExecuteJobListingQueryAsync(
+                _viewModel.JobBoardQueryModel.JobDescriptionQueryStringEnabled,
+                _viewModel.JobBoardQueryModel.NotesQueryStringEnabled,
                 _viewModel.JobBoardQueryModel.ColumnFiltersEnabled,
                 _viewModel.JobBoardQueryModel.IsToBeAppliedTo,
                 _viewModel.JobBoardQueryModel.IsAppliedTo,

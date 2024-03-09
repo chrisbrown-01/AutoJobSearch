@@ -30,6 +30,7 @@ namespace AutoJobSearchShared.Database
         }
 
         // TODO: add NOT NULL constraints to tables
+        // TODO: investigate creating an index on ApplicationLinks, ContactsAssociatedJobs table
         public void CreateTables()
         {
             connection.Execute("PRAGMA foreign_keys = ON;");
@@ -241,7 +242,9 @@ namespace AutoJobSearchShared.Database
         }
 
         public async Task<IQueryable<JobListing>> ExecuteJobListingQueryAsync(
-            bool columnFiltersEnabled,
+            bool descriptionFilterEnabled,
+            bool notesFilterEnabled,
+            bool columnFilterEnabled,
             bool isToBeAppliedTo,
             bool isAppliedTo,
             bool isInterviewing,
@@ -251,76 +254,105 @@ namespace AutoJobSearchShared.Database
             bool isAcceptedOffer,
             bool isFavourite)
         {
-            if (columnFiltersEnabled)
+            string descriptionSQL;
+            string notesSQL;
+            string columnSQL;
+
+            if(descriptionFilterEnabled)
             {
-                const string sql =
-                "SELECT Id, " +
-                "SearchTerm, " +
-                "CreatedAt, " +
-                "StatusModifiedAt, " +
-                "Description, " +
-                "Score, " +             
-                "IsAppliedTo, " +
-                "IsToBeAppliedTo, " +
-                "IsInterviewing, " +
-                "IsNegotiating, " +
-                "IsRejected, " +
-                "IsDeclinedOffer, " +
-                "IsAcceptedOffer, " +
-                "IsFavourite, " +
-                "IsHidden, " +
-                "Notes FROM JobListings " +
-                "WHERE IsAppliedTo = @IsAppliedTo " +
-                "AND IsToBeAppliedTo = @IsToBeAppliedTo " +
-                "AND IsInterviewing = @IsInterviewing " +
-                "AND IsNegotiating = @IsNegotiating " +
-                "AND IsRejected = @IsRejected " +
-                "AND IsDeclinedOffer = @IsDeclinedOffer " +
-                "AND IsAcceptedOffer = @IsAcceptedOffer " +
-                "AND IsFavourite = @IsFavourite " +
-                "AND IsHidden = False;";
-
-                var jobListings = await connection.QueryAsync<JobListing>(
-                sql,
-                new
-                {
-                    IsAppliedTo = isAppliedTo,
-                    IsToBeAppliedTo = isToBeAppliedTo,
-                    IsInterviewing = isInterviewing,
-                    IsNegotiating = isNegotiating,
-                    IsRejected = isRejected,
-                    IsDeclinedOffer = isDeclinedOffer,
-                    IsAcceptedOffer = isAcceptedOffer,
-                    IsFavourite = isFavourite
-                }).ConfigureAwait(false);
-
-                return jobListings.AsQueryable();
+                descriptionSQL = "Description";
             }
             else
             {
-                const string sql =
-                "SELECT Id, " +
-                "SearchTerm, " +
-                "CreatedAt, " +
-                "StatusModifiedAt, " +
-                "Description, " +
-                "Score, " +
-                "IsAppliedTo, " +
-                "IsToBeAppliedTo, " +
-                "IsInterviewing, " +
-                "IsNegotiating, " +
-                "IsRejected, " +
-                "IsDeclinedOffer, " +
-                "IsAcceptedOffer, " +
-                "IsFavourite, " +
-                "IsHidden, " +
-                "Notes FROM JobListings " +
-                "WHERE IsHidden = False;";
-
-                var jobListings = await connection.QueryAsync<JobListing>(sql).ConfigureAwait(false);
-
-                return jobListings.AsQueryable();
+                descriptionSQL = "SUBSTR(Description, 1, 200) AS Description";
             }
+
+            if(notesFilterEnabled)
+            {
+                notesSQL = "Notes";
+            }
+            else
+            {
+                notesSQL = "SUBSTR(Notes, 1, 0) AS Notes";
+            }
+
+            if(columnFilterEnabled)
+            {
+                columnSQL = $"IsToBeAppliedTo = {isToBeAppliedTo} "
+                    + $"AND IsAppliedTo = {isAppliedTo} "
+                    + $"AND IsInterviewing = {isInterviewing} "
+                    + $"AND IsNegotiating = {isNegotiating} "
+                    + $"AND IsRejected = {isRejected} "
+                    + $"AND IsDeclinedOffer = {isDeclinedOffer} "
+                    + $"AND IsAcceptedOffer = {isAcceptedOffer} "
+                    + $"AND IsFavourite = {isFavourite} "
+                    + "AND IsHidden = False";
+            }
+            else
+            {
+                columnSQL = "IsHidden = False";
+            }
+
+            string querySQL = 
+                $@"SELECT 
+                    Q1.Id, 
+                    Q1.SearchTerm, 
+                    Q1.CreatedAt, 
+                    Q1.StatusModifiedAt, 
+                    Q1.Score, 
+                    Q1.IsAppliedTo, 
+                    Q1.IsToBeAppliedTo, 
+                    Q1.IsInterviewing, 
+                    Q1.IsNegotiating, 
+                    Q1.IsRejected, 
+                    Q1.IsDeclinedOffer, 
+                    Q1.IsAcceptedOffer, 
+                    Q1.IsFavourite, 
+                    Q1.IsHidden,
+                    Q2.Description,
+                    Q3.Notes
+                FROM 
+                    (SELECT 
+                        Id, 
+                        SearchTerm, 
+                        CreatedAt, 
+                        StatusModifiedAt, 
+                        Score, 
+                        IsAppliedTo, 
+                        IsToBeAppliedTo, 
+                        IsInterviewing, 
+                        IsNegotiating, 
+                        IsRejected, 
+                        IsDeclinedOffer, 
+                        IsAcceptedOffer, 
+                        IsFavourite, 
+                        IsHidden
+                    FROM 
+                        JobListings 
+                    WHERE 
+                        {columnSQL}) AS Q1
+                JOIN 
+                    (SELECT
+                        Id,
+                        {descriptionSQL}
+                    FROM 
+                        JobListings
+                    WHERE
+                        IsHidden = False) AS Q2
+                ON Q1.Id = Q2.Id
+                JOIN 
+                    (SELECT
+                        Id,
+                        {notesSQL}
+                    FROM 
+                        JobListings
+                    WHERE
+                        IsHidden = False) AS Q3
+                ON Q1.Id = Q3.Id;";
+
+            var jobListings = await connection.QueryAsync<JobListing>(querySQL).ConfigureAwait(false);
+
+            return jobListings.AsQueryable();
         }
 
         public async Task<IEnumerable<JobListing>> GetHiddenJobListingsAsync()

@@ -9,7 +9,9 @@ namespace AutoJobSearchShared.Database
         Task DeleteAllJobListingsAsync();
         Task DeleteJobSearchProfileAsync(int id);
         Task<IQueryable<JobListing>> ExecuteJobListingQueryAsync(
-            bool columnFiltersEnabled,
+            bool descriptionFilterEnabled,
+            bool notesFilterEnabled,
+            bool columnFilterEnabled,
             bool isToBeAppliedTo,
             bool isAppliedTo,
             bool isInterviewing,

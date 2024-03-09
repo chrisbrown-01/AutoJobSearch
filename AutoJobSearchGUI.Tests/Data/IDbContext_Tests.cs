@@ -146,7 +146,9 @@ namespace AutoJobSearchGUI.Tests.Data
         public async Task ExecuteJobListingQueryAsync_Should_ReturnIQueryable()
         {
             // Arrange
-            bool columnFiltersEnabled = _fixture.Create<bool>();
+            bool descriptionFilterEnabled = _fixture.Create<bool>();
+            bool notesFilterEnabled = _fixture.Create<bool>();
+            bool columnFilterEnabled = _fixture.Create<bool>();
             bool isToBeAppliedTo = _fixture.Create<bool>();
             bool isAppliedTo = _fixture.Create<bool>();
             bool isInterviewing = _fixture.Create<bool>();
@@ -158,7 +160,9 @@ namespace AutoJobSearchGUI.Tests.Data
             var expectedResult = _fixture.Create<IQueryable<JobListing>>();
 
             _dbContext.ExecuteJobListingQueryAsync(
-                columnFiltersEnabled,
+                 descriptionFilterEnabled,
+                 notesFilterEnabled,
+                 columnFilterEnabled,
                  isToBeAppliedTo,
                  isAppliedTo,
                  isInterviewing,
@@ -171,7 +175,9 @@ namespace AutoJobSearchGUI.Tests.Data
 
             // Act
             var actualResult = await _dbContext.ExecuteJobListingQueryAsync(
-                columnFiltersEnabled,
+                 descriptionFilterEnabled,
+                 notesFilterEnabled,
+                 columnFilterEnabled,
                  isToBeAppliedTo,
                  isAppliedTo,
                  isInterviewing,
@@ -183,7 +189,9 @@ namespace AutoJobSearchGUI.Tests.Data
 
             // Assert
             await _dbContext.Received().ExecuteJobListingQueryAsync(
-                columnFiltersEnabled,
+                descriptionFilterEnabled,
+                notesFilterEnabled,
+                columnFilterEnabled,
                 isToBeAppliedTo,
                 isAppliedTo,
                 isInterviewing,

@@ -79,7 +79,9 @@ namespace AutoJobSearchShared.Tests.Database
         public async Task ExecuteJobListingQueryAsync_Should_BeCalled()
         {
             // Arrange
-            bool columnFiltersEnabled = _fixture.Create<bool>();
+            bool descriptionFilterEnabled = _fixture.Create<bool>();
+            bool notesFilterEnabled = _fixture.Create<bool>();
+            bool columnFilterEnabled = _fixture.Create<bool>();
             bool isToBeAppliedTo = _fixture.Create<bool>();
             bool isAppliedTo = _fixture.Create<bool>();
             bool isInterviewing = _fixture.Create<bool>();
@@ -91,7 +93,9 @@ namespace AutoJobSearchShared.Tests.Database
 
             // Act
             await _db.ExecuteJobListingQueryAsync(
-                columnFiltersEnabled, 
+                descriptionFilterEnabled,
+                notesFilterEnabled,
+                columnFilterEnabled,
                 isToBeAppliedTo,
                 isAppliedTo, 
                 isInterviewing, 
@@ -103,7 +107,9 @@ namespace AutoJobSearchShared.Tests.Database
 
             // Assert
             await _db.Received().ExecuteJobListingQueryAsync(
-                columnFiltersEnabled,
+                descriptionFilterEnabled,
+                notesFilterEnabled,
+                columnFilterEnabled,
                 isToBeAppliedTo,
                 isAppliedTo,
                 isInterviewing,
@@ -118,7 +124,9 @@ namespace AutoJobSearchShared.Tests.Database
         public async Task ExecuteJobListingQueryAsync_Should_ReturnIQueryable()
         {
             // Arrange
-            bool columnFiltersEnabled = _fixture.Create<bool>();
+            bool descriptionFilterEnabled = _fixture.Create<bool>();
+            bool notesFilterEnabled = _fixture.Create<bool>();
+            bool columnFilterEnabled = _fixture.Create<bool>();
             bool isToBeAppliedTo = _fixture.Create<bool>();
             bool isAppliedTo = _fixture.Create<bool>();
             bool isInterviewing = _fixture.Create<bool>();
@@ -130,7 +138,9 @@ namespace AutoJobSearchShared.Tests.Database
             var expectedResult = _fixture.Create<IQueryable<JobListing>>();
 
             _db.ExecuteJobListingQueryAsync(
-                columnFiltersEnabled,
+                descriptionFilterEnabled,
+                notesFilterEnabled,
+                columnFilterEnabled,
                 isToBeAppliedTo,
                 isAppliedTo,
                 isInterviewing,
@@ -143,7 +153,9 @@ namespace AutoJobSearchShared.Tests.Database
 
             // Act
             var actualResult = await _db.ExecuteJobListingQueryAsync(
-                columnFiltersEnabled,
+                descriptionFilterEnabled,
+                notesFilterEnabled,
+                columnFilterEnabled,
                 isToBeAppliedTo,
                 isAppliedTo,
                 isInterviewing,

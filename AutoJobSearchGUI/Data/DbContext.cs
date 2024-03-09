@@ -77,7 +77,9 @@ namespace AutoJobSearchGUI.Data
         }
 
         public async Task<IQueryable<JobListing>> ExecuteJobListingQueryAsync(
-            bool columnFiltersEnabled,
+            bool descriptionFilterEnabled,
+            bool notesFilterEnabled,
+            bool columnFilterEnabled,
             bool isToBeAppliedTo,
             bool isAppliedTo,
             bool isInterviewing,
@@ -90,7 +92,9 @@ namespace AutoJobSearchGUI.Data
             Log.Information("Executing job board advanced query against database.");
 
             return await _dbContext.ExecuteJobListingQueryAsync(
-                 columnFiltersEnabled,
+                 descriptionFilterEnabled,
+                 notesFilterEnabled,
+                 columnFilterEnabled,
                  isToBeAppliedTo,
                  isAppliedTo,
                  isInterviewing,

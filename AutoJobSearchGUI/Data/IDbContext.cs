@@ -17,7 +17,9 @@ namespace AutoJobSearchGUI.Data
         Task UpdateJobListingStringPropertyAsync(JobListingsStringField columnName, string value, int id);
         Task UpdateJobSearchProfileStringPropertyAsync(JobSearchProfilesStringField columnName, string value, int id);
         Task<IQueryable<JobListing>> ExecuteJobListingQueryAsync(
-            bool columnFiltersEnabled,
+            bool descriptionFilterEnabled,
+            bool notesFilterEnabled,
+            bool columnFilterEnabled,
             bool isToBeAppliedTo,
             bool isAppliedTo,
             bool isInterviewing,

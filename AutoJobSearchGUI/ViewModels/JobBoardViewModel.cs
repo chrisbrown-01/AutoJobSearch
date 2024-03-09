@@ -126,9 +126,9 @@ namespace AutoJobSearchGUI.ViewModels
         [RelayCommand]
         private async Task ExecuteQueryAsync()
         {
-            // TODO: add logic for if description filter is enabled. might be best to create seperate SQLIte methods depending on necessary arguments
-            // TODO: also need to consider fact that details are populated already once this method is executed, so redundant db calls are being made later when the individual job listing is opened
             var result = await _dbContext.ExecuteJobListingQueryAsync(
+               JobBoardQueryModel.JobDescriptionQueryStringEnabled,
+               JobBoardQueryModel.NotesQueryStringEnabled,
                JobBoardQueryModel.ColumnFiltersEnabled,
                JobBoardQueryModel.IsToBeAppliedTo,
                JobBoardQueryModel.IsAppliedTo,
@@ -163,8 +163,7 @@ namespace AutoJobSearchGUI.ViewModels
             {
                 result = result.Where(x =>
                 x.CreatedAt.Date >= JobBoardQueryModel.CreatedBetweenDateStart.Date &&
-                x.CreatedAt.Date <= JobBoardQueryModel.CreatedBetweenDateEnd.Date
-                );
+                x.CreatedAt.Date <= JobBoardQueryModel.CreatedBetweenDateEnd.Date);
             }
 
             if (JobBoardQueryModel.ModifiedAtDateEnabled)
@@ -176,8 +175,7 @@ namespace AutoJobSearchGUI.ViewModels
             {
                 result = result.Where(x =>
                 x.StatusModifiedAt.Date >= JobBoardQueryModel.ModifiedBetweenDateStart.Date &&
-                x.StatusModifiedAt.Date <= JobBoardQueryModel.ModifiedBetweenDateEnd.Date
-                );
+                x.StatusModifiedAt.Date <= JobBoardQueryModel.ModifiedBetweenDateEnd.Date);
             }
 
             if (JobBoardQueryModel.ScoreEqualsEnabled)
