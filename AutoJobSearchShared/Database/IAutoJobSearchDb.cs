@@ -37,5 +37,13 @@ namespace AutoJobSearchShared.Database
         Task DeleteContactAsync(int id);
         Task UpdateContactStringPropertyAsync(ContactStringField columnName, string value, int id);
         Task DeleteAllContactsAsync();
+        Task<IEnumerable<ContactAssociatedJobId>> GetAllContactsAssociatedJobIdsAsync();
+        Task<ContactAssociatedJobId> CreateContactAssociatedJobIdAsync(int contactId, int jobId);
+        Task DeleteContactAssociatedJobIdAsync(int contactId, int jobId);
+        Task DeleteJobAsync(int jobId);
+        Task<JobListing> CreateJobAsync();
+        Task UpdateJobListingIntPropertyAsync(JobListingsIntField columnName, int value, int id);
+        Task CreateJobListingAssociatedFilesAsync(JobListingAssociatedFiles jobListingAssociatedFiles);
+        Task UpdateJobListingAssociatedFilesAsync(JobListingAssociatedFiles jobListingAssociatedFiles);
     }
 }
