@@ -29,7 +29,6 @@ namespace AutoJobSearchShared.Database
             }
         }
 
-        // TODO: add NOT NULL constraints to tables
         // TODO: investigate creating an index on ApplicationLinks, ContactsAssociatedJobs table
         public void CreateTables()
         {
@@ -37,30 +36,30 @@ namespace AutoJobSearchShared.Database
 
             const string createJobListingsTableSQL = "CREATE TABLE JobListings (" +
                 "Id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "SearchTerm TEXT," +
-                "CreatedAt TEXT," +
-                "StatusModifiedAt TEXT," +
-                "Description_Raw TEXT," +
-                "Description TEXT," +
-                "Notes TEXT," +
-                "Score INTEGER," +
-                "IsToBeAppliedTo INTEGER," +
-                "IsAppliedTo INTEGER," +
-                "IsInterviewing INTEGER," +
-                "IsNegotiating INTEGER," +
-                "IsRejected INTEGER," +
-                "IsDeclinedOffer INTEGER," +
-                "IsAcceptedOffer INTEGER," +
-                "IsFavourite INTEGER," +
-                "IsHidden INTEGER)";
+                "SearchTerm TEXT NOT NULL," +
+                "CreatedAt TEXT NOT NULL," +
+                "StatusModifiedAt TEXT NOT NULL," +
+                "Description_Raw TEXT NOT NULL," +
+                "Description TEXT NOT NULL," +
+                "Notes TEXT NOT NULL," +
+                "Score INTEGER NOT NULL," +
+                "IsToBeAppliedTo INTEGER NOT NULL," +
+                "IsAppliedTo INTEGER NOT NULL," +
+                "IsInterviewing INTEGER NOT NULL," +
+                "IsNegotiating INTEGER NOT NULL," +
+                "IsRejected INTEGER NOT NULL," +
+                "IsDeclinedOffer INTEGER NOT NULL," +
+                "IsAcceptedOffer INTEGER NOT NULL," +
+                "IsFavourite INTEGER NOT NULL," +
+                "IsHidden INTEGER NOT NULL)";
 
             connection.Execute(createJobListingsTableSQL);
 
             const string createApplicationLinksTableSQL = "CREATE TABLE ApplicationLinks (" +
                  "Id INTEGER PRIMARY KEY AUTOINCREMENT," +
                  "JobListingId INTEGER NOT NULL," +
-                 "Link TEXT," +
-                 "Link_RawHTML TEXT," +
+                 "Link TEXT NOT NULL," +
+                 "Link_RawHTML TEXT NOT NULL," +
                  "FOREIGN KEY(JobListingId) REFERENCES JobListings(Id) ON DELETE CASCADE)";
 
             connection.Execute(createApplicationLinksTableSQL);
@@ -78,27 +77,27 @@ namespace AutoJobSearchShared.Database
 
             const string createJobSearchProfilesTableSQL = "CREATE TABLE JobSearchProfiles (" +
                  "Id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                 "MaxJobListingIndex INTEGER," +
-                 "ProfileName TEXT," +
-                 "Searches TEXT," +
-                 "KeywordsPositive TEXT," +
-                 "KeywordsNegative TEXT," +
-                 "SentimentsPositive TEXT," +
-                 "SentimentsNegative TEXT)";
+                 "MaxJobListingIndex INTEGER NOT NULL," +
+                 "ProfileName TEXT NOT NULL," +
+                 "Searches TEXT NOT NULL," +
+                 "KeywordsPositive TEXT NOT NULL," +
+                 "KeywordsNegative TEXT NOT NULL," +
+                 "SentimentsPositive TEXT NOT NULL," +
+                 "SentimentsNegative TEXT NOT NULL)";
 
             connection.Execute(createJobSearchProfilesTableSQL);
 
             const string createContactsTableSQL = "CREATE TABLE Contacts (" +
                 "Id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "CreatedAt TEXT," +
-                "Company TEXT," +
-                "Location TEXT," +
-                "Name TEXT," +
-                "Title TEXT," +
-                "Email TEXT," +
-                "Phone TEXT," +
-                "LinkedIn TEXT," +
-                "Notes TEXT)";
+                "CreatedAt TEXT NOT NULL," +
+                "Company TEXT NOT NULL," +
+                "Location TEXT NOT NULL," +
+                "Name TEXT NOT NULL," +
+                "Title TEXT NOT NULL," +
+                "Email TEXT NOT NULL," +
+                "Phone TEXT NOT NULL," +
+                "LinkedIn TEXT NOT NULL," +
+                "Notes TEXT NOT NULL)";
 
             connection.Execute(createContactsTableSQL);
 
