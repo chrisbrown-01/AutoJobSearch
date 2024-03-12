@@ -1,4 +1,5 @@
 ﻿using AutoJobSearchGUI.Data;
+using AutoJobSearchGUI.Helpers;
 using AutoJobSearchGUI.Models;
 using AutoJobSearchGUI.Services;
 using AutoJobSearchShared.Models;
@@ -58,7 +59,7 @@ namespace AutoJobSearchGUI.ViewModels
                 return;
             }
 
-            SearchProfiles = ConvertProfilesToMvvmModel(allProfiles);
+            SearchProfiles = JobSearchProfileHelpers.ConvertProfilesToMvvmModel(allProfiles);
 
             if (!SearchProfiles.Any())
             {
@@ -80,7 +81,7 @@ namespace AutoJobSearchGUI.ViewModels
             if (!allProfiles.Any())
                 throw new ApplicationException("No job search profiles could be loaded for the Job Search page.");
 
-            SearchProfiles = ConvertProfilesToMvvmModel(allProfiles);
+            SearchProfiles = JobSearchProfileHelpers.ConvertProfilesToMvvmModel(allProfiles);
 
             SelectedSearchProfile = SearchProfiles.Last();
             EnableOnChangedEvents(SearchProfiles);
@@ -105,37 +106,6 @@ namespace AutoJobSearchGUI.ViewModels
             {
                 profile.EnableEvents = true;
             }
-        }
-
-        // TODO: move to static helpers class
-        private List<JobSearchProfileModel> ConvertProfilesToMvvmModel(IEnumerable<JobSearchProfile> profiles)
-        {
-            var profilesMvvm = new List<JobSearchProfileModel>();
-
-            foreach (var profile in profiles)
-            {
-                profilesMvvm.Add(ConvertProfileToMvvmModel(profile));
-            }
-
-            return profilesMvvm;
-        }
-
-        // TODO: move to static helpers class
-        private JobSearchProfileModel ConvertProfileToMvvmModel(JobSearchProfile profile)
-        {
-            var result = new JobSearchProfileModel()
-            {
-                Id = profile.Id,
-                MaxJobListingIndex = profile.MaxJobListingIndex,
-                ProfileName = profile.ProfileName,
-                Searches = profile.Searches,
-                KeywordsPositive = profile.KeywordsPositive,
-                KeywordsNegative = profile.KeywordsNegative,
-                SentimentsPositive = profile.SentimentsPositive,
-                SentimentsNegative = profile.SentimentsNegative
-            };
-
-            return result;
         }
     }
 }

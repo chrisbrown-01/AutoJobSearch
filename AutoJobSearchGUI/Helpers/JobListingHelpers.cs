@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace AutoJobSearchGUI.Helpers
 {
-    internal class JobListingHelpers
+    internal static class JobListingHelpers
     {
         internal static JobListingModel ConvertJobListingToJobListingModel(JobListing job)
         {
