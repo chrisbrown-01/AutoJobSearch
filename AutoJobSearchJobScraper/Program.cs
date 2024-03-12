@@ -25,7 +25,7 @@ namespace AutoJobSearchJobScraper
 
             Log.Logger = new LoggerConfiguration()
                                 .MinimumLevel.Information()
-                                .WriteTo.Console(new JsonFormatter())
+                                //.WriteTo.Console(new JsonFormatter())
                                 .WriteTo.File(new JsonFormatter(), logFilePath)
                                 .CreateLogger();
 
@@ -90,6 +90,13 @@ namespace AutoJobSearchJobScraper
                 StringHelpers.ConvertCommaSeperatedStringsToIEnumerable(jobSearchProfile.SentimentsNegative));
 
             await db.SaveJobListingsAsync(scoredJobs);
+
+            Console.WriteLine(
+                "\r\n" +
+                "All jobs have finished processing. " +
+                "Please refresh the Job Board (click 'Options', then 'Go To Default View') to see all new jobs. " +
+                "You can now close this window." +
+                "\r\n");
         }
 
         private static async Task RunProgram(IServiceProvider serviceProvider, IEnumerable<string> searchTerms)

@@ -338,8 +338,7 @@ namespace AutoJobSearchJobScraper.WebScraper
             {
                 try
                 {
-                    var description = listing.Description_Raw.Substring(startingIndex + startingIndexKeywordLength, endingIndex - (startingIndex + startingIndexKeywordLength));
-                    return StringHelpers.AddNewLinesToMisformedString(description);
+                    return listing.Description_Raw.Substring(startingIndex + startingIndexKeywordLength, endingIndex - (startingIndex + startingIndexKeywordLength));
                 }
                 catch
                 {
@@ -354,12 +353,12 @@ namespace AutoJobSearchJobScraper.WebScraper
                         startingIndexKeyword,
                         startingIndexKeywordLength);
 
-                    return StringHelpers.AddNewLinesToMisformedString(listing.Description_Raw);
+                    return listing.Description_Raw;
                 }
             }
             else
             {
-                return StringHelpers.AddNewLinesToMisformedString(listing.Description_Raw);
+                return listing.Description_Raw;
             }
         }
 

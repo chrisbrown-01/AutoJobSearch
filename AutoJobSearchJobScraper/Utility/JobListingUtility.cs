@@ -78,6 +78,8 @@ namespace AutoJobSearchJobScraper.Utility
                               sentimentsPositive.Count(),
                               sentimentsNegative.Count());
 
+            Console.WriteLine("\r\nApplying scorings to job listings. DO NOT CLOSE THIS WINDOW YET.\r\n");
+
             sentimentsPositive = sentimentsPositive.Select(s => s.ToLower());
             sentimentsNegative = sentimentsNegative.Select(s => s.ToLower());
 
