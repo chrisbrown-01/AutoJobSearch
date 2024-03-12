@@ -8,9 +8,9 @@ namespace AutoJobSearchJobScraper.Utility
 {
     internal class JobListingUtility
     {
-        private readonly int WEIGHTED_FUZZ_RATIO_THRESHOLD;
-        private readonly int PARTIAL_FUZZ_RATIO_THRESHOLD;
         private readonly ILogger<JobListingUtility> _logger;
+        private readonly int PARTIAL_FUZZ_RATIO_THRESHOLD;
+        private readonly int WEIGHTED_FUZZ_RATIO_THRESHOLD;
 
         public JobListingUtility(ILogger<JobListingUtility> logger)
         {
@@ -57,50 +57,6 @@ namespace AutoJobSearchJobScraper.Utility
                     $"Failed to read {nameof(PARTIAL_FUZZ_RATIO_THRESHOLD)} from appsettings.json config file. " +
                     $"Ensure that {nameof(PARTIAL_FUZZ_RATIO_THRESHOLD)} has a value greater than 0.");
             }
-        }
-
-        public async Task<IEnumerable<JobListing>> FilterDuplicatesAsync(
-            IEnumerable<JobListing> jobListingsPossibleDuplicates,
-            HashSet<string> existingApplicationLinks)
-        {
-            _logger.LogInformation("Filtering duplicate job listings. " +
-                                   "{@jobListingsPossibleDuplicates.Count}, " +
-                                   "{@existingApplicationLinks.Count}",
-                                    jobListingsPossibleDuplicates.Count(),
-                                    existingApplicationLinks.Count);
-
-            var cleanedJobListings = jobListingsPossibleDuplicates.ToList();
-
-            foreach (var jobListing in jobListingsPossibleDuplicates)
-            {
-                bool isJobDuplicate = false;
-
-                foreach (var link in jobListing.ApplicationLinks)
-                {
-                    if (existingApplicationLinks.Contains(link.Link))
-                    {
-                        cleanedJobListings.Remove(jobListing);
-                        isJobDuplicate = true;
-                        break;
-                    }
-                }
-
-                if (isJobDuplicate) continue;
-
-                foreach (var link in jobListing.ApplicationLinks)
-                {
-                    existingApplicationLinks.Add(link.Link);
-                }
-            }
-
-            await Task.CompletedTask;
-
-            _logger.LogInformation(
-                "Completed filtering for duplicate job listings. " +
-                "Returning {@cleanedJobListings.Count} unique job listings.",
-                cleanedJobListings.Count);
-
-            return cleanedJobListings;
         }
 
         public async Task<IEnumerable<JobListing>> ApplyScoringsAsync(
@@ -176,6 +132,50 @@ namespace AutoJobSearchJobScraper.Utility
 
             await Task.CompletedTask;
             return jobList;
+        }
+
+        public async Task<IEnumerable<JobListing>> FilterDuplicatesAsync(
+                    IEnumerable<JobListing> jobListingsPossibleDuplicates,
+            HashSet<string> existingApplicationLinks)
+        {
+            _logger.LogInformation("Filtering duplicate job listings. " +
+                                   "{@jobListingsPossibleDuplicates.Count}, " +
+                                   "{@existingApplicationLinks.Count}",
+                                    jobListingsPossibleDuplicates.Count(),
+                                    existingApplicationLinks.Count);
+
+            var cleanedJobListings = jobListingsPossibleDuplicates.ToList();
+
+            foreach (var jobListing in jobListingsPossibleDuplicates)
+            {
+                bool isJobDuplicate = false;
+
+                foreach (var link in jobListing.ApplicationLinks)
+                {
+                    if (existingApplicationLinks.Contains(link.Link))
+                    {
+                        cleanedJobListings.Remove(jobListing);
+                        isJobDuplicate = true;
+                        break;
+                    }
+                }
+
+                if (isJobDuplicate) continue;
+
+                foreach (var link in jobListing.ApplicationLinks)
+                {
+                    existingApplicationLinks.Add(link.Link);
+                }
+            }
+
+            await Task.CompletedTask;
+
+            _logger.LogInformation(
+                "Completed filtering for duplicate job listings. " +
+                "Returning {@cleanedJobListings.Count} unique job listings.",
+                cleanedJobListings.Count);
+
+            return cleanedJobListings;
         }
     }
 }

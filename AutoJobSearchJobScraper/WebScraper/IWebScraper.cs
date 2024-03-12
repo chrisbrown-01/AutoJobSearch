@@ -1,5 +1,4 @@
 ﻿using AutoJobSearchShared.Models;
-using HtmlAgilityPack;
 
 namespace AutoJobSearchJobScraper.WebScraper
 {

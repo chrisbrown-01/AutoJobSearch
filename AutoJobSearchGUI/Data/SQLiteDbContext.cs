@@ -1,11 +1,9 @@
 ﻿using AutoJobSearchShared.Database;
 using AutoJobSearchShared.Enums;
 using AutoJobSearchShared.Models;
-using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace AutoJobSearchGUI.Data
@@ -24,6 +22,11 @@ namespace AutoJobSearchGUI.Data
             return await _sqliteDb.CreateContactAssociatedJobIdAsync(contactId, jobId);
         }
 
+        public async Task<Contact> CreateContactAsync(Contact contact)
+        {
+            return await _sqliteDb.CreateContactAsync(contact);
+        }
+
         public async Task<JobListing> CreateJobAsync()
         {
             return await _sqliteDb.CreateJobAsync();
@@ -37,11 +40,6 @@ namespace AutoJobSearchGUI.Data
         public async Task<JobSearchProfile> CreateJobSearchProfileAsync(JobSearchProfile profile)
         {
             return await _sqliteDb.CreateJobSearchProfileAsync(profile);
-        }
-
-        public async Task<Contact> CreateContactAsync(Contact contact)
-        {
-            return await _sqliteDb.CreateContactAsync(contact);
         }
 
         public async Task DeleteAllContactsAsync()

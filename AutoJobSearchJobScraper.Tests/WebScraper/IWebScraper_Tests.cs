@@ -4,20 +4,15 @@ using AutoJobSearchJobScraper.WebScraper;
 using AutoJobSearchShared.Models;
 using FluentAssertions;
 using NSubstitute;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AutoJobSearchJobScraper.Tests.WebScraper
 {
     public class IWebScraper_Tests
     {
         private readonly IFixture _fixture;
-        private readonly IWebScraper _webScraper;
-        private readonly IEnumerable<string> _searchTerms;
         private readonly int? _maxJobListingIndex;
+        private readonly IEnumerable<string> _searchTerms;
+        private readonly IWebScraper _webScraper;
 
         public IWebScraper_Tests()
         {
@@ -37,11 +32,19 @@ namespace AutoJobSearchJobScraper.Tests.WebScraper
         }
 
         [Fact]
-        public async Task ScrapeJobsAsync_Should_Return_NonNullResult()
+        public async Task ScrapeJobsAsync_Should_Return_EmptyResult()
         {
+            // Arrange
+            IEnumerable<JobListing> expectedResult = new List<JobListing>();
+            _webScraper.ScrapeJobsAsync(_searchTerms, _maxJobListingIndex).Returns(expectedResult);
+
+            // Act
             var result = await _webScraper.ScrapeJobsAsync(_searchTerms, _maxJobListingIndex);
 
+            // Assert
+            result.Should().BeEquivalentTo(expectedResult);
             result.Should().NotBeNull();
+            result.Should().BeEmpty();
         }
 
         [Fact]
@@ -60,19 +63,11 @@ namespace AutoJobSearchJobScraper.Tests.WebScraper
         }
 
         [Fact]
-        public async Task ScrapeJobsAsync_Should_Return_EmptyResult()
+        public async Task ScrapeJobsAsync_Should_Return_NonNullResult()
         {
-            // Arrange
-            IEnumerable<JobListing> expectedResult = new List<JobListing>();
-            _webScraper.ScrapeJobsAsync(_searchTerms, _maxJobListingIndex).Returns(expectedResult);
-
-            // Act
             var result = await _webScraper.ScrapeJobsAsync(_searchTerms, _maxJobListingIndex);
 
-            // Assert
-            result.Should().BeEquivalentTo(expectedResult);
             result.Should().NotBeNull();
-            result.Should().BeEmpty();
         }
     }
 }

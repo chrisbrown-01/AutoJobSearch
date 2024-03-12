@@ -1,17 +1,14 @@
 ﻿using AutoJobSearchGUI.Models;
 using AutoJobSearchShared.Models;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AutoJobSearchGUI.Helpers
 {
     internal static class ContactsHelpers
     {
         internal static List<ContactModel> ConvertContactsToContactModels(
-            IEnumerable<Contact> contacts, 
+            IEnumerable<Contact> contacts,
             IEnumerable<ContactAssociatedJobId> contactsAssociatedJobIds)
         {
             var contactModels = new List<ContactModel>();

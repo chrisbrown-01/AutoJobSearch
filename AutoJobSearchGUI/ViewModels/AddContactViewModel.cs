@@ -8,10 +8,7 @@ using MsBox.Avalonia;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
-using System.Text;
 using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace AutoJobSearchGUI.ViewModels
 {
@@ -19,15 +16,6 @@ namespace AutoJobSearchGUI.ViewModels
     public partial class AddContactViewModel : ViewModelBase
     {
         private readonly IDbContext _dbContext;
-
-        public delegate void OpenJobListingViewHandler(int jobListingId);
-        public event OpenJobListingViewHandler? OpenJobListingViewRequest;
-
-        public delegate void UpdateContactsViewHandler();
-        public event UpdateContactsViewHandler? UpdateContactsViewRequest;
-
-        public delegate void OpenContactsViewHandler();
-        public event OpenContactsViewHandler? OpenContactsViewRequest;
 
         [ObservableProperty]
         private ContactModel _contact = default!;
@@ -42,15 +30,27 @@ namespace AutoJobSearchGUI.ViewModels
         private IEnumerable<string> _contacts_Titles = default!;
 
         [ObservableProperty]
-        private object _selectedJobListingId = new();
+        private bool _isNavigateToJobButtonEnabled;
 
         [ObservableProperty]
-        private bool _isNavigateToJobButtonEnabled;
+        private object _selectedJobListingId = new();
 
         public AddContactViewModel(IDbContext dbContext)
         {
             _dbContext = dbContext;
         }
+
+        public delegate void OpenContactsViewHandler();
+
+        public delegate void OpenJobListingViewHandler(int jobListingId);
+
+        public delegate void UpdateContactsViewHandler();
+
+        public event OpenContactsViewHandler? OpenContactsViewRequest;
+
+        public event OpenJobListingViewHandler? OpenJobListingViewRequest;
+
+        public event UpdateContactsViewHandler? UpdateContactsViewRequest;
 
         [RelayCommand]
         private async Task CreateContactAssociatedJobIdAsync(string jobIdTextBoxInput)
@@ -74,26 +74,7 @@ namespace AutoJobSearchGUI.ViewModels
                 // I cannot fix this bug, and it seems the only way to resolve is when the user navigates to a new contact,
                 // which causes the JobIds in the list box to reset.
                 DisableOnChangedEvents(Contact);
-                OpenContact(Contact); 
-            }
-        }
-
-        [RelayCommand]
-        private async Task DeleteContactAssociatedJobIdAsync(string jobIdTextBoxInput)
-        {
-            if (Int32.TryParse(jobIdTextBoxInput, out int jobId))
-            {
-                if (!Contact.JobListingIds.Contains(jobId)) return;
-
-                await _dbContext.DeleteContactAssociatedJobIdAsync(Contact.Id, jobId);
-                Contact.JobListingIds.Remove(jobId);
-
-                // Re-open contact to ensure that "Navigate" button in the view functions properly.
-                // This still doesn't fix the bug where the user cannot immediately select a newly added item in the ListBox.
-                // I cannot fix this bug, and it seems the only way to resolve is when the user navigates to a new contact,
-                // which causes the JobIds in the list box to reset.
-                DisableOnChangedEvents(Contact);
-                OpenContact(Contact); 
+                OpenContact(Contact);
             }
         }
 
@@ -117,56 +98,22 @@ namespace AutoJobSearchGUI.ViewModels
         }
 
         [RelayCommand]
-        private void OpenJobListing()
+        private async Task DeleteContactAssociatedJobIdAsync(string jobIdTextBoxInput)
         {
-            if (SelectedJobListingId is not int || SelectedJobListingId is null) return;
-            if ((int)SelectedJobListingId < 1) return;
+            if (Int32.TryParse(jobIdTextBoxInput, out int jobId))
+            {
+                if (!Contact.JobListingIds.Contains(jobId)) return;
 
-            DisableOnChangedEvents(Contact);
-            OpenJobListingViewRequest?.Invoke((int)SelectedJobListingId);
-            SelectedJobListingId = -1; // Set to invalid number so the currently selected integer does not persist by accident.
-        }
+                await _dbContext.DeleteContactAssociatedJobIdAsync(Contact.Id, jobId);
+                Contact.JobListingIds.Remove(jobId);
 
-        [RelayCommand]
-        private void OpenContact(ContactModel contact)
-        {
-            Contact = contact;
-
-            // Ensure controls in the view are up-to-date
-            IsNavigateToJobButtonEnabled = Contact.JobListingIds.Any();
-            Contacts_Companies = Singletons.Contacts.Select(x => x.Company).Distinct();
-            Contacts_Locations = Singletons.Contacts.Select(x => x.Location).Distinct();
-            Contacts_Titles = Singletons.Contacts.Select(x => x.Title).Distinct();
-
-            EnableOnChangedEvents(Contact);
-        }
-
-        [RelayCommand]
-        private void GoToPreviousContact()
-        {
-            var currentIndex = Singletons.Contacts.IndexOf(Contact);
-            if (currentIndex < 0) return;
-
-            var previousIndex = currentIndex - 1;
-            if (previousIndex < 0) return;
-
-            DisableOnChangedEvents(Contact);
-
-            OpenContact(Singletons.Contacts[previousIndex]);
-        }
-
-        [RelayCommand]
-        private void GoToNextContact()
-        {
-            var currentIndex = Singletons.Contacts.IndexOf(Contact);
-            if (currentIndex < 0) return;
-
-            var nextIndex = currentIndex + 1;
-            if (nextIndex >= Singletons.Contacts.Count) return;
-
-            DisableOnChangedEvents(Contact);
-
-            OpenContact(Singletons.Contacts[nextIndex]);
+                // Re-open contact to ensure that "Navigate" button in the view functions properly.
+                // This still doesn't fix the bug where the user cannot immediately select a newly added item in the ListBox.
+                // I cannot fix this bug, and it seems the only way to resolve is when the user navigates to a new contact,
+                // which causes the JobIds in the list box to reset.
+                DisableOnChangedEvents(Contact);
+                OpenContact(Contact);
+            }
         }
 
         [RelayCommand]
@@ -219,6 +166,15 @@ namespace AutoJobSearchGUI.ViewModels
         }
 
         /// <summary>
+        /// Prevent events from firing. This method should be called in preparation of instantiating new view model properties.
+        /// </summary>
+        /// <param name="contact"></param>
+        private void DisableOnChangedEvents(ContactModel contact)
+        {
+            contact.EnableEvents = false;
+        }
+
+        /// <summary>
         /// Allows events to fire. This method should be called after the view model properties have been fully instantiated.
         /// </summary>
         /// <param name="contact"></param>
@@ -227,13 +183,57 @@ namespace AutoJobSearchGUI.ViewModels
             contact.EnableEvents = true;
         }
 
-        /// <summary>
-        /// Prevent events from firing. This method should be called in preparation of instantiating new view model properties.
-        /// </summary>
-        /// <param name="contact"></param>
-        private void DisableOnChangedEvents(ContactModel contact)
+        [RelayCommand]
+        private void GoToNextContact()
         {
-            contact.EnableEvents = false;
+            var currentIndex = Singletons.Contacts.IndexOf(Contact);
+            if (currentIndex < 0) return;
+
+            var nextIndex = currentIndex + 1;
+            if (nextIndex >= Singletons.Contacts.Count) return;
+
+            DisableOnChangedEvents(Contact);
+
+            OpenContact(Singletons.Contacts[nextIndex]);
+        }
+
+        [RelayCommand]
+        private void GoToPreviousContact()
+        {
+            var currentIndex = Singletons.Contacts.IndexOf(Contact);
+            if (currentIndex < 0) return;
+
+            var previousIndex = currentIndex - 1;
+            if (previousIndex < 0) return;
+
+            DisableOnChangedEvents(Contact);
+
+            OpenContact(Singletons.Contacts[previousIndex]);
+        }
+
+        [RelayCommand]
+        private void OpenContact(ContactModel contact)
+        {
+            Contact = contact;
+
+            // Ensure controls in the view are up-to-date
+            IsNavigateToJobButtonEnabled = Contact.JobListingIds.Any();
+            Contacts_Companies = Singletons.Contacts.Select(x => x.Company).Distinct();
+            Contacts_Locations = Singletons.Contacts.Select(x => x.Location).Distinct();
+            Contacts_Titles = Singletons.Contacts.Select(x => x.Title).Distinct();
+
+            EnableOnChangedEvents(Contact);
+        }
+
+        [RelayCommand]
+        private void OpenJobListing()
+        {
+            if (SelectedJobListingId is not int || SelectedJobListingId is null) return;
+            if ((int)SelectedJobListingId < 1) return;
+
+            DisableOnChangedEvents(Contact);
+            OpenJobListingViewRequest?.Invoke((int)SelectedJobListingId);
+            SelectedJobListingId = -1; // Set to invalid number so the currently selected integer does not persist by accident.
         }
     }
 }

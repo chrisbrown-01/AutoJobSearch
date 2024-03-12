@@ -1,15 +1,10 @@
 ﻿using AutoJobSearchGUI.Data;
 using AutoJobSearchGUI.Helpers;
 using AutoJobSearchGUI.Models;
-using AutoJobSearchShared.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using Serilog;
 using Serilog.Formatting.Json;
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -17,16 +12,17 @@ namespace AutoJobSearchGUI.ViewModels
 {
     public partial class MainWindowViewModel : ViewModelBase // Needs to be public for View previewer to work
     {
-        private JobBoardViewModel jobBoardViewModel;
-        private JobSearchViewModel jobSearchViewModel;
-        private JobListingViewModel jobListingViewModel;
-        private HelpViewModel helpViewModel;
-        private AddContactViewModel addContactViewModel;
-        private ContactsViewModel contactsViewModel;
         private readonly DbContext dbContext;
 
         [ObservableProperty]
         private ViewModelBase _contentViewModel;
+
+        private AddContactViewModel addContactViewModel;
+        private ContactsViewModel contactsViewModel;
+        private HelpViewModel helpViewModel;
+        private JobBoardViewModel jobBoardViewModel;
+        private JobListingViewModel jobListingViewModel;
+        private JobSearchViewModel jobSearchViewModel;
 
         public MainWindowViewModel()
         {
@@ -35,7 +31,7 @@ namespace AutoJobSearchGUI.ViewModels
             dbContext = new DbContext();
 
             InitializeSingletons();
-          
+
             jobBoardViewModel = new JobBoardViewModel(dbContext);
             jobSearchViewModel = new JobSearchViewModel(dbContext);
             jobListingViewModel = new JobListingViewModel(dbContext);
@@ -48,23 +44,63 @@ namespace AutoJobSearchGUI.ViewModels
             SubscribeToEvents();
         }
 
-        private void InitializeSingletons()
+        public void ChangeViewToAddContact(ContactModel? contact)
         {
-            Singletons.JobListings = GetAllJobListingsAsync().Result;
-            Singletons.Contacts = GetAllContactsAsync().Result;
+            if (contact is not null)
+            {
+                addContactViewModel.OpenContactCommand.Execute(contact);
+            }
+            else
+            {
+                addContactViewModel.CreateNewContactCommand.Execute(null);
+            }
+
+            ContentViewModel = addContactViewModel;
         }
 
-        private async Task<List<ContactModel>> GetAllContactsAsync()
+        public void ChangeViewToAddContact(int jobId)
         {
-            var contacts = await dbContext.GetAllContactsAsync();
-            var contactsAssociatedJobIds = await dbContext.GetAllContactsAssociatedJobIdsAsync();
-            return ContactsHelpers.ConvertContactsToContactModels(contacts, contactsAssociatedJobIds);
+            addContactViewModel.CreateNewContactCommand.Execute(jobId);
+            ContentViewModel = addContactViewModel;
         }
 
-        private async Task<List<JobListingModel>> GetAllJobListingsAsync()
+        public void ChangeViewToContact(int contactId)
         {
-            var jobs = await dbContext.GetAllJobListingsAsync();
-            return JobListingHelpers.ConvertJobListingsToJobListingModels(jobs);
+            addContactViewModel.OpenContactCommand.Execute(Singletons.Contacts.Where(x => x.Id == contactId).Single());
+            ContentViewModel = addContactViewModel;
+        }
+
+        public void ChangeViewToContacts()
+        {
+            ContentViewModel = contactsViewModel;
+        }
+
+        public void ChangeViewToHelp()
+        {
+            ContentViewModel = helpViewModel;
+        }
+
+        public void ChangeViewToJobBoard()
+        {
+            UpdateJobBoard();
+            ContentViewModel = jobBoardViewModel;
+        }
+
+        public void ChangeViewToJobListing(int jobListingId)
+        {
+            jobListingViewModel.OpenJobListingByIdCommand.ExecuteAsync(jobListingId).Wait();
+            ContentViewModel = jobListingViewModel;
+        }
+
+        public void ChangeViewToJobListing(JobListingModel jobListing)
+        {
+            jobListingViewModel.OpenJobListingCommand.ExecuteAsync(jobListing).Wait();
+            ContentViewModel = jobListingViewModel;
+        }
+
+        public void ChangeViewToJobSearch()
+        {
+            ContentViewModel = jobSearchViewModel;
         }
 
         public void Dispose()
@@ -83,63 +119,38 @@ namespace AutoJobSearchGUI.ViewModels
             jobBoardViewModel.UpdateJobBoard();
         }
 
-        public void ChangeViewToContacts()
+        private void ConfigureSerilog()
         {
-            ContentViewModel = contactsViewModel;
+            // At the time of creating this project, the logging provider for Avalonia is pretty crude and not well documented.
+            // Therefore I am choosing to make this project dependent on Serilog and configuring the logger in the MainWindowViewModel
+            // to ensure I am not interfering with any of Avalonia's startup procedures.
+
+            Log.Logger = new LoggerConfiguration()
+                    .MinimumLevel.Information()
+                    .WriteTo.Console(new JsonFormatter())
+                    .WriteTo.File(new JsonFormatter(), "AutoJobSearchGuiLogFile.json", rollingInterval: RollingInterval.Month)
+                    .CreateLogger();
+
+            Log.Information("Starting GUI application.");
         }
 
-        public void ChangeViewToAddContact(ContactModel? contact)
+        private async Task<List<ContactModel>> GetAllContactsAsync()
         {
-            if(contact is not null)
-            {
-                addContactViewModel.OpenContactCommand.Execute(contact);
-            }
-            else
-            {
-                addContactViewModel.CreateNewContactCommand.Execute(null);
-            }
-
-            ContentViewModel = addContactViewModel;
+            var contacts = await dbContext.GetAllContactsAsync();
+            var contactsAssociatedJobIds = await dbContext.GetAllContactsAssociatedJobIdsAsync();
+            return ContactsHelpers.ConvertContactsToContactModels(contacts, contactsAssociatedJobIds);
         }
 
-        public void ChangeViewToContact(int contactId)
+        private async Task<List<JobListingModel>> GetAllJobListingsAsync()
         {
-            addContactViewModel.OpenContactCommand.Execute(Singletons.Contacts.Where(x => x.Id == contactId).Single());
-            ContentViewModel = addContactViewModel;
+            var jobs = await dbContext.GetAllJobListingsAsync();
+            return JobListingHelpers.ConvertJobListingsToJobListingModels(jobs);
         }
 
-        public void ChangeViewToAddContact(int jobId)
+        private void InitializeSingletons()
         {
-            addContactViewModel.CreateNewContactCommand.Execute(jobId);
-            ContentViewModel = addContactViewModel;
-        }
-
-        public void ChangeViewToJobBoard()
-        {
-            UpdateJobBoard();
-            ContentViewModel = jobBoardViewModel;
-        }
-
-        public void ChangeViewToHelp()
-        {
-            ContentViewModel = helpViewModel;
-        }
-
-        public void ChangeViewToJobSearch()
-        {
-            ContentViewModel = jobSearchViewModel;
-        }
-
-        public void ChangeViewToJobListing(int jobListingId)
-        {
-            jobListingViewModel.OpenJobListingByIdCommand.ExecuteAsync(jobListingId).Wait();
-            ContentViewModel = jobListingViewModel;
-        }
-
-        public void ChangeViewToJobListing(JobListingModel jobListing)
-        {
-            jobListingViewModel.OpenJobListingCommand.ExecuteAsync(jobListing).Wait();
-            ContentViewModel = jobListingViewModel;
+            Singletons.JobListings = GetAllJobListingsAsync().Result;
+            Singletons.Contacts = GetAllContactsAsync().Result;
         }
 
         private void SubscribeToEvents()
@@ -178,21 +189,6 @@ namespace AutoJobSearchGUI.ViewModels
             addContactViewModel.OpenContactsViewRequest -= ChangeViewToContacts;
 
             addContactViewModel.UpdateContactsViewRequest -= UpdateContacts;
-        }
-
-        private void ConfigureSerilog()
-        {
-            // At the time of creating this project, the logging provider for Avalonia is pretty crude and not well documented.
-            // Therefore I am choosing to make this project dependent on Serilog and configuring the logger in the MainWindowViewModel
-            // to ensure I am not interfering with any of Avalonia's startup procedures.
-
-            Log.Logger = new LoggerConfiguration()
-                    .MinimumLevel.Information()
-                    .WriteTo.Console(new JsonFormatter())
-                    .WriteTo.File(new JsonFormatter(), "AutoJobSearchGuiLogFile.json", rollingInterval: RollingInterval.Month)
-                    .CreateLogger();
-
-            Log.Information("Starting GUI application.");
         }
     }
 }

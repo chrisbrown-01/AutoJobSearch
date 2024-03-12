@@ -6,20 +6,14 @@ using AutoJobSearchGUI.ViewModels;
 using AutoJobSearchShared.Models;
 using FluentAssertions;
 using NSubstitute;
-using NSubstitute.ExceptionExtensions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AutoJobSearchGUI.Tests.ViewModels
 {
     public class JobSearchViewModel_Tests
     {
-        private readonly JobSearchViewModel _viewModel;
         private readonly IDbContext _dbContext;
         private readonly IFixture _fixture;
+        private readonly JobSearchViewModel _viewModel;
 
         public JobSearchViewModel_Tests()
         {
@@ -46,10 +40,10 @@ namespace AutoJobSearchGUI.Tests.ViewModels
         }
 
         [Fact]
-        public async void DeleteCurrentProfile_SelectedSearchProfileIsNull_DoesNotDeleteProfile()
+        public async void DeleteCurrentProfile_SelectedSearchProfileIdIsLessThanOne_DoesNotDeleteProfile()
         {
             // Arrange
-            _viewModel.SelectedSearchProfile = null!;
+            _viewModel.SelectedSearchProfile = new JobSearchProfileModel() { Id = 0 };
 
             // Act
             await _viewModel.DeleteCurrentProfileCommand.ExecuteAsync(null);
@@ -59,10 +53,10 @@ namespace AutoJobSearchGUI.Tests.ViewModels
         }
 
         [Fact]
-        public async void DeleteCurrentProfile_SelectedSearchProfileIdIsLessThanOne_DoesNotDeleteProfile()
+        public async void DeleteCurrentProfile_SelectedSearchProfileIsNull_DoesNotDeleteProfile()
         {
             // Arrange
-            _viewModel.SelectedSearchProfile = new JobSearchProfileModel() { Id = 0 };
+            _viewModel.SelectedSearchProfile = null!;
 
             // Act
             await _viewModel.DeleteCurrentProfileCommand.ExecuteAsync(null);
