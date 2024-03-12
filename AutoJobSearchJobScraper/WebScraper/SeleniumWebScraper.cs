@@ -139,6 +139,7 @@ namespace AutoJobSearchJobScraper.WebScraper
             {
                 driver_Edge.Quit();
                 driver_Chrome.Quit();
+                driver_Firefox.Quit();
             }
 
             await Task.CompletedTask;
