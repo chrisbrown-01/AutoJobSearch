@@ -11,8 +11,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-// TODO: run format and code cleanup
-
 namespace AutoJobSearchGUI.ViewModels
 {
     public partial class JobSearchViewModel : ViewModelBase // Needs to be public for View previewer to work

@@ -106,7 +106,7 @@ namespace AutoJobSearchJobScraper.Utility
 
                 foreach (var sentiment in sentimentsPositive)
                 {
-                    // TODO: final - experiment with thresholds
+                    // TODO: experiment with thresholds
                     if (Fuzz.WeightedRatio(sentiment, job.Description.ToLower()) >= WEIGHTED_FUZZ_RATIO_THRESHOLD &&
                        Fuzz.PartialRatio(sentiment, job.Description.ToLower()) >= PARTIAL_FUZZ_RATIO_THRESHOLD)
                     {
