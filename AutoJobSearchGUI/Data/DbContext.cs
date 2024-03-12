@@ -178,10 +178,10 @@ namespace AutoJobSearchGUI.Data
             return await _dbContext.GetAllContactsAsync();
         }
 
-        public async Task<Contact> CreateNewContactAsync(Contact contact)
+        public async Task<Contact> CreateContactAsync(Contact contact)
         {
             Log.Information("Creating new contact in database.");
-            return await _dbContext.CreateNewContactAsync(contact);
+            return await _dbContext.CreateContactAsync(contact);
         }
 
         public async Task DeleteContactAsync(int id)

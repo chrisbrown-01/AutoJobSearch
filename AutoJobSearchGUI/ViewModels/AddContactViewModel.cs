@@ -100,7 +100,7 @@ namespace AutoJobSearchGUI.ViewModels
         [RelayCommand]
         private async Task CreateNewContactAsync(int? jobId)
         {
-            var newContact = await _dbContext.CreateNewContactAsync(new Contact());
+            var newContact = await _dbContext.CreateContactAsync(new Contact());
             List<int> jobIds = new();
 
             if (jobId is not null)

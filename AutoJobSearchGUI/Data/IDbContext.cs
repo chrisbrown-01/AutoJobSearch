@@ -33,7 +33,7 @@ namespace AutoJobSearchGUI.Data
         Task<IEnumerable<JobListing>> GetAllJobListingsAsync();
         Task<JobListing> GetJobListingDetailsByIdAsync(int id);
         Task<IEnumerable<Contact>> GetAllContactsAsync();
-        Task<Contact> CreateNewContactAsync(Contact contact);
+        Task<Contact> CreateContactAsync(Contact contact);
         Task DeleteContactAsync(int id);
         Task UpdateContactStringPropertyAsync(ContactStringField columnName, string value, int id);
         Task DeleteAllContactsAsync();

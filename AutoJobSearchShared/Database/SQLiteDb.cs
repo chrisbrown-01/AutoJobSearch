@@ -492,8 +492,7 @@ namespace AutoJobSearchShared.Database
             return await connection.QueryAsync<Contact>(sql).ConfigureAwait(false);
         }
 
-        // TODO: rename CreateNewContact to CreateContact
-        public async Task<Contact> CreateNewContactAsync(Contact contact)
+        public async Task<Contact> CreateContactAsync(Contact contact)
         {
             const string sql = 
                 "INSERT INTO Contacts (" +

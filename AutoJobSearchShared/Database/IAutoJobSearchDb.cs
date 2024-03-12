@@ -33,7 +33,7 @@ namespace AutoJobSearchShared.Database
         Task UpdateJobSearchProfileIntPropertyAsync(JobSearchProfilesIntField columnName, int value, int id);
         Task UpdateJobSearchProfileStringPropertyAsync(JobSearchProfilesStringField columnName, string value, int id);
         Task<IEnumerable<Contact>> GetAllContactsAsync();
-        Task<Contact> CreateNewContactAsync(Contact contact);
+        Task<Contact> CreateContactAsync(Contact contact);
         Task DeleteContactAsync(int id);
         Task UpdateContactStringPropertyAsync(ContactStringField columnName, string value, int id);
         Task DeleteAllContactsAsync();
