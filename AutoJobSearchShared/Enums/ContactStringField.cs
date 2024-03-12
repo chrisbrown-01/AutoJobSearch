@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AutoJobSearchShared.Enums
+﻿namespace AutoJobSearchShared.Enums
 {
     public enum ContactStringField
     {
@@ -15,6 +9,6 @@ namespace AutoJobSearchShared.Enums
         Email,
         Phone,
         LinkedIn,
-        Notes          
+        Notes
     }
 }

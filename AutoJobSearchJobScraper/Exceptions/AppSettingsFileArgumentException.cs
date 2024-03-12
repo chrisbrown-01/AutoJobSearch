@@ -1,15 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AutoJobSearchJobScraper.Exceptions
+﻿namespace AutoJobSearchJobScraper.Exceptions
 {
     internal class AppSettingsFileArgumentException : Exception
     {
-        public string? ConfigSettingName { get; set; }
-
         public AppSettingsFileArgumentException()
         {
         }
@@ -26,5 +18,7 @@ namespace AutoJobSearchJobScraper.Exceptions
         public AppSettingsFileArgumentException(string message, Exception innerException) : base(message, innerException)
         {
         }
+
+        public string? ConfigSettingName { get; set; }
     }
 }

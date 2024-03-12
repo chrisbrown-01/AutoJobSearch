@@ -2,7 +2,6 @@
 using AutoJobSearchShared.Models;
 using Microsoft.Extensions.Logging;
 
-
 namespace AutoJobSearchJobScraper.Data
 {
     internal class SQLiteDbContext : IDbContext

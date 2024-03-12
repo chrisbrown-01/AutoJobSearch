@@ -1,10 +1,5 @@
 ﻿using AutoJobSearchShared.Helpers;
 using FluentAssertions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AutoJobSearchShared.Tests.Helpers
 {
@@ -35,6 +30,5 @@ namespace AutoJobSearchShared.Tests.Helpers
             // Assert
             result.Should().BeEquivalentTo(expected);
         }
-
     }
 }

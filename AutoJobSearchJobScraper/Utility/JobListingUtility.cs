@@ -8,9 +8,9 @@ namespace AutoJobSearchJobScraper.Utility
 {
     internal class JobListingUtility
     {
-        private readonly int WEIGHTED_FUZZ_RATIO_THRESHOLD;
-        private readonly int PARTIAL_FUZZ_RATIO_THRESHOLD;
         private readonly ILogger<JobListingUtility> _logger;
+        private readonly int PARTIAL_FUZZ_RATIO_THRESHOLD;
+        private readonly int WEIGHTED_FUZZ_RATIO_THRESHOLD;
 
         public JobListingUtility(ILogger<JobListingUtility> logger)
         {
@@ -59,8 +59,85 @@ namespace AutoJobSearchJobScraper.Utility
             }
         }
 
+        public async Task<IEnumerable<JobListing>> ApplyScoringsAsync(
+            IEnumerable<JobListing> jobListingsUnscored,
+            IEnumerable<string> keywordsPositive,
+            IEnumerable<string> keywordsNegative,
+            IEnumerable<string> sentimentsPositive,
+            IEnumerable<string> sentimentsNegative)
+        {
+            _logger.LogInformation("Applying scorings to job listings. " +
+                              "{@jobListingsUnscored.Count}, " +
+                              "{@keywordsPositive.Count}, " +
+                              "{@keywordsNegative.Count}, " +
+                              "{@sentimentsPositive.Count}, " +
+                              "{@sentimentsNegative.Count}",
+                              jobListingsUnscored.Count(),
+                              keywordsPositive.Count(),
+                              keywordsNegative.Count(),
+                              sentimentsPositive.Count(),
+                              sentimentsNegative.Count());
+
+            Console.WriteLine("\r\nApplying scorings to job listings. DO NOT CLOSE THIS WINDOW YET.\r\n");
+
+            sentimentsPositive = sentimentsPositive.Select(s => s.ToLower());
+            sentimentsNegative = sentimentsNegative.Select(s => s.ToLower());
+
+            var jobList = jobListingsUnscored.ToList();
+
+            var counter = 0;
+            var lockObj = new object();
+
+            Parallel.ForEach(jobList, job =>
+            {
+                foreach (var keyword in keywordsPositive)
+                {
+                    if (job.Description.Contains(keyword, StringComparison.OrdinalIgnoreCase))
+                    {
+                        job.Score++;
+                    }
+                }
+
+                foreach (var item in keywordsNegative)
+                {
+                    if (job.Description.Contains(item, StringComparison.OrdinalIgnoreCase))
+                    {
+                        job.Score--;
+                    }
+                }
+
+                foreach (var sentiment in sentimentsPositive)
+                {
+                    // TODO: experiment with thresholds
+                    if (Fuzz.WeightedRatio(sentiment, job.Description.ToLower()) >= WEIGHTED_FUZZ_RATIO_THRESHOLD &&
+                       Fuzz.PartialRatio(sentiment, job.Description.ToLower()) >= PARTIAL_FUZZ_RATIO_THRESHOLD)
+                    {
+                        job.Score++;
+                    }
+                }
+
+                foreach (var sentiment in sentimentsNegative)
+                {
+                    if (Fuzz.WeightedRatio(sentiment, job.Description.ToLower()) >= WEIGHTED_FUZZ_RATIO_THRESHOLD &&
+                       Fuzz.PartialRatio(sentiment, job.Description.ToLower()) >= PARTIAL_FUZZ_RATIO_THRESHOLD)
+                    {
+                        job.Score--;
+                    }
+                }
+
+                lock (lockObj)
+                {
+                    int progress = ++counter;
+                    Console.WriteLine("{0} of {1} processed...", progress, jobList.Count);
+                }
+            });
+
+            await Task.CompletedTask;
+            return jobList;
+        }
+
         public async Task<IEnumerable<JobListing>> FilterDuplicatesAsync(
-            IEnumerable<JobListing> jobListingsPossibleDuplicates,
+                    IEnumerable<JobListing> jobListingsPossibleDuplicates,
             HashSet<string> existingApplicationLinks)
         {
             _logger.LogInformation("Filtering duplicate job listings. " +
@@ -101,81 +178,6 @@ namespace AutoJobSearchJobScraper.Utility
                 cleanedJobListings.Count);
 
             return cleanedJobListings;
-        }
-
-        public async Task<IEnumerable<JobListing>> ApplyScoringsAsync(
-            IEnumerable<JobListing> jobListingsUnscored,
-            IEnumerable<string> keywordsPositive,
-            IEnumerable<string> keywordsNegative,
-            IEnumerable<string> sentimentsPositive,
-            IEnumerable<string> sentimentsNegative)
-        {
-            _logger.LogInformation("Applying scorings to job listings. " +
-                              "{@jobListingsUnscored.Count}, " +
-                              "{@keywordsPositive.Count}, " +
-                              "{@keywordsNegative.Count}, " +
-                              "{@sentimentsPositive.Count}, " +
-                              "{@sentimentsNegative.Count}",
-                              jobListingsUnscored.Count(),
-                              keywordsPositive.Count(),
-                              keywordsNegative.Count(),
-                              sentimentsPositive.Count(),
-                              sentimentsNegative.Count());
-
-            sentimentsPositive = sentimentsPositive.Select(s => s.ToLower());
-            sentimentsNegative = sentimentsNegative.Select(s => s.ToLower());
-
-            var jobList = jobListingsUnscored.ToList();
-
-            var counter = 0;
-            var lockObj = new object();
-
-            Parallel.ForEach(jobList, job =>
-            {
-                foreach (var keyword in keywordsPositive)
-                {
-                    if (job.Description.Contains(keyword, StringComparison.OrdinalIgnoreCase))
-                    {
-                        job.Score++;
-                    }
-                }
-
-                foreach (var item in keywordsNegative)
-                {
-                    if (job.Description.Contains(item, StringComparison.OrdinalIgnoreCase))
-                    {
-                        job.Score--;
-                    }
-                }
-
-                foreach (var sentiment in sentimentsPositive)
-                {
-                    // TODO: final - experiment with thresholds
-                    if (Fuzz.WeightedRatio(sentiment, job.Description.ToLower()) >= WEIGHTED_FUZZ_RATIO_THRESHOLD &&
-                       Fuzz.PartialRatio(sentiment, job.Description.ToLower()) >= PARTIAL_FUZZ_RATIO_THRESHOLD)
-                    {
-                        job.Score++;
-                    }
-                }
-
-                foreach (var sentiment in sentimentsNegative)
-                {
-                    if (Fuzz.WeightedRatio(sentiment, job.Description.ToLower()) >= WEIGHTED_FUZZ_RATIO_THRESHOLD &&
-                       Fuzz.PartialRatio(sentiment, job.Description.ToLower()) >= PARTIAL_FUZZ_RATIO_THRESHOLD)
-                    {
-                        job.Score--;
-                    }
-                }
-
-                lock (lockObj)
-                {
-                    int progress = ++counter;
-                    Console.WriteLine("{0} of {1} processed...", progress, jobList.Count);
-                }
-            });
-
-            await Task.CompletedTask;
-            return jobList;
         }
     }
 }

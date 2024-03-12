@@ -1,21 +1,8 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AutoJobSearchGUI.ViewModels
+﻿namespace AutoJobSearchGUI.ViewModels
 {
     // TODO: update help contents
     public partial class HelpViewModel : ViewModelBase // Needs to be public for View previewer to work
     {
-        public static string AboutThisProject => "This project was built in October 2023 as a tool to help automate my job search. " +
-            "This user interface was built with AvaloniaUI. The web scraping is accomplished using Selenium. Both the GUI and the " +
-            "web scraper read/save data to a local shared SQLite database. All code is written in C# and XAML.\r\n\r\n" +
-            "Project Website: https://chrisbrown-01.github.io/AutoJobSearch/\r\n\r\n" +
-            "GitHub: https://github.com/chrisbrown-01/AutoJobSearch\r\n\r\n";
-
         public static string AboutJobBoard => "The Job Board tab displays the scraped job listings in a table format. Select a job and press the " +
             "\"Open Selected Job\" button to view the full job description and weblinks to apply at.\r\n\r\n" +
             "After executing the job scraper, you will need to use the Advanced Query \"Clear All Filters\" button or the Options \"Go To Default View\" " +
@@ -26,17 +13,6 @@ namespace AutoJobSearchGUI.ViewModels
             "Query the database for specific results using the \"Advanced Query\" menu and enabling the appropriate filters.\r\n\r\n" +
             "The user can hide jobs by right clicking on a job listing and selecting \"Hide Job\". By default, the GUI will not display any jobs that were " +
             "hidden unless they use the Advanced Query option.";
-
-        public static string AboutJobSearch => "The Job Search tab allows the user to specify what jobs they wish to search for, as well as any keywords and " +
-            "sentiments they wish to define for scoring the scraped jobs.\r\n\r\n" +
-            "To specify multiple search terms/keywords/sentiments, place each item on a " +
-            "new line and end each line with a comma (ex. the Search Term area should look like...\r\n\r\n" +
-            "Job To Search For #1,\r\n" +
-            "Job To Search For #2\r\n\r\n" +
-            "Therefore do not include commas anywhere " +
-            "except to define the end of a search term/keyword/sentiment.\r\n\r\n" +
-            "The user can start the job scraper for the selected profile by pressing the \"Execute Job Search\" button.\r\n\r\n" +
-            "Multiple search profiles can be created by the user if you wish to split up your job searches and scoring keywords/sentiments.";
 
         public static string AboutJobScoring => "Job scoring is accomplished using the keywords and sentiments specified by the user in the job search profile " +
             "section. The keywords and sentiments are not case sensitive.\r\n\r\n" +
@@ -66,5 +42,22 @@ namespace AutoJobSearchGUI.ViewModels
             "web scraper will resume without any need for further user interaction.\r\n\r\n" +
             "In my testing, Google blocks any sort of request to their job search " +
             "page if it isn't being made by a browser. Therefore you cannot use a headless browser or pure HTTP requests to scrape jobs.";
+
+        public static string AboutJobSearch => "The Job Search tab allows the user to specify what jobs they wish to search for, as well as any keywords and " +
+            "sentiments they wish to define for scoring the scraped jobs.\r\n\r\n" +
+            "To specify multiple search terms/keywords/sentiments, place each item on a " +
+            "new line and end each line with a comma (ex. the Search Term area should look like...\r\n\r\n" +
+            "Job To Search For #1,\r\n" +
+            "Job To Search For #2\r\n\r\n" +
+            "Therefore do not include commas anywhere " +
+            "except to define the end of a search term/keyword/sentiment.\r\n\r\n" +
+            "The user can start the job scraper for the selected profile by pressing the \"Execute Job Search\" button.\r\n\r\n" +
+            "Multiple search profiles can be created by the user if you wish to split up your job searches and scoring keywords/sentiments.";
+
+        public static string AboutThisProject => "This project was built in October 2023 as a tool to help automate my job search. " +
+                                            "This user interface was built with AvaloniaUI. The web scraping is accomplished using Selenium. Both the GUI and the " +
+            "web scraper read/save data to a local shared SQLite database. All code is written in C# and XAML.\r\n\r\n" +
+            "Project Website: https://chrisbrown-01.github.io/AutoJobSearch/\r\n\r\n" +
+            "GitHub: https://github.com/chrisbrown-01/AutoJobSearch\r\n\r\n";
     }
 }

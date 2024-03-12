@@ -343,7 +343,7 @@
 				Grid.Column="1"
 				Grid.ColumnSpan="4"
 				Text="{Binding JobListing.Notes}"
-				Watermark="Click 'Edit Job', then add your notes here."
+				Watermark="Click 'Options' --> 'Edit Job', then add your notes here."
 				IsReadOnly="{Binding !IsEditModeEnabled}"			   
 				TextWrapping="Wrap"
 				AcceptsReturn="True"

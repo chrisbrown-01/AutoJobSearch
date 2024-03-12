@@ -5,21 +5,16 @@ using AutoJobSearchShared.Enums;
 using AutoJobSearchShared.Models;
 using FluentAssertions;
 using NSubstitute;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AutoJobSearchShared.Tests.Database
 {
     public class IAutoJobSearchDb_Tests
     {
-        private readonly IAutoJobSearchDb _db;
         private readonly ApplicationLink _applicationLink;
+        private readonly IAutoJobSearchDb _db;
+        private readonly IFixture _fixture;
         private readonly JobListing _jobListing;
         private readonly JobSearchProfile _jobSearchProfile;
-        private readonly IFixture _fixture;
 
         public IAutoJobSearchDb_Tests()
         {
@@ -66,20 +61,12 @@ namespace AutoJobSearchShared.Tests.Database
         }
 
         [Fact]
-        public async Task SaveJobListingsAsync_Should_BeCalled()
-        {
-            var jobListings = _fixture.CreateMany<JobListing>();
-
-            await _db.SaveJobListingsAsync(jobListings);
-
-            await _db.Received().SaveJobListingsAsync(jobListings);
-        }
-
-        [Fact]
         public async Task ExecuteJobListingQueryAsync_Should_BeCalled()
         {
             // Arrange
-            bool columnFiltersEnabled = _fixture.Create<bool>();
+            bool descriptionFilterEnabled = _fixture.Create<bool>();
+            bool notesFilterEnabled = _fixture.Create<bool>();
+            bool columnFilterEnabled = _fixture.Create<bool>();
             bool isToBeAppliedTo = _fixture.Create<bool>();
             bool isAppliedTo = _fixture.Create<bool>();
             bool isInterviewing = _fixture.Create<bool>();
@@ -91,19 +78,23 @@ namespace AutoJobSearchShared.Tests.Database
 
             // Act
             await _db.ExecuteJobListingQueryAsync(
-                columnFiltersEnabled, 
+                descriptionFilterEnabled,
+                notesFilterEnabled,
+                columnFilterEnabled,
                 isToBeAppliedTo,
-                isAppliedTo, 
-                isInterviewing, 
+                isAppliedTo,
+                isInterviewing,
                 isNegotiating,
-                isRejected, 
+                isRejected,
                 isDeclinedOffer,
                 isAcceptedOffer,
                 isFavourite);
 
             // Assert
             await _db.Received().ExecuteJobListingQueryAsync(
-                columnFiltersEnabled,
+                descriptionFilterEnabled,
+                notesFilterEnabled,
+                columnFilterEnabled,
                 isToBeAppliedTo,
                 isAppliedTo,
                 isInterviewing,
@@ -118,7 +109,9 @@ namespace AutoJobSearchShared.Tests.Database
         public async Task ExecuteJobListingQueryAsync_Should_ReturnIQueryable()
         {
             // Arrange
-            bool columnFiltersEnabled = _fixture.Create<bool>();
+            bool descriptionFilterEnabled = _fixture.Create<bool>();
+            bool notesFilterEnabled = _fixture.Create<bool>();
+            bool columnFilterEnabled = _fixture.Create<bool>();
             bool isToBeAppliedTo = _fixture.Create<bool>();
             bool isAppliedTo = _fixture.Create<bool>();
             bool isInterviewing = _fixture.Create<bool>();
@@ -130,7 +123,9 @@ namespace AutoJobSearchShared.Tests.Database
             var expectedResult = _fixture.Create<IQueryable<JobListing>>();
 
             _db.ExecuteJobListingQueryAsync(
-                columnFiltersEnabled,
+                descriptionFilterEnabled,
+                notesFilterEnabled,
+                columnFilterEnabled,
                 isToBeAppliedTo,
                 isAppliedTo,
                 isInterviewing,
@@ -143,7 +138,9 @@ namespace AutoJobSearchShared.Tests.Database
 
             // Act
             var actualResult = await _db.ExecuteJobListingQueryAsync(
-                columnFiltersEnabled,
+                descriptionFilterEnabled,
+                notesFilterEnabled,
+                columnFilterEnabled,
                 isToBeAppliedTo,
                 isAppliedTo,
                 isInterviewing,
@@ -167,21 +164,6 @@ namespace AutoJobSearchShared.Tests.Database
         }
 
         [Fact]
-        public async Task GetAllApplicationLinksAsync_Should_Return_NonEmptyIEnumerable()
-        {
-            // Arrange
-            var applicationLinks = _fixture.CreateMany<string>();
-            _db.GetAllApplicationLinksAsync().Returns(applicationLinks);
-
-            // Act
-            var result = await _db.GetAllApplicationLinksAsync();
-
-            // Assert
-            result.Should().BeEquivalentTo(applicationLinks);
-            result.Should().NotBeNullOrEmpty();
-        }
-
-        [Fact]
         public async Task GetAllApplicationLinksAsync_Should_Return_EmptyIEnumerable()
         {
             // Arrange
@@ -198,26 +180,26 @@ namespace AutoJobSearchShared.Tests.Database
         }
 
         [Fact]
+        public async Task GetAllApplicationLinksAsync_Should_Return_NonEmptyIEnumerable()
+        {
+            // Arrange
+            var applicationLinks = _fixture.CreateMany<string>();
+            _db.GetAllApplicationLinksAsync().Returns(applicationLinks);
+
+            // Act
+            var result = await _db.GetAllApplicationLinksAsync();
+
+            // Assert
+            result.Should().BeEquivalentTo(applicationLinks);
+            result.Should().NotBeNullOrEmpty();
+        }
+
+        [Fact]
         public async Task GetAllJobListingsAsync_Should_BeCalled()
         {
             await _db.GetAllJobListingsAsync();
 
             await _db.Received().GetAllJobListingsAsync();
-        }
-
-        [Fact]
-        public async Task GetAllJobListingsAsync_Should_Return_NonEmptyIEnumerable()
-        {
-            // Arrange
-            var jobListings = _fixture.CreateMany<JobListing>();
-            _db.GetAllJobListingsAsync().Returns(jobListings);
-
-            // Act
-            var result = await _db.GetAllJobListingsAsync();
-
-            // Assert
-            result.Should().BeEquivalentTo(jobListings);
-            result.Should().NotBeNullOrEmpty();
         }
 
         [Fact]
@@ -237,26 +219,26 @@ namespace AutoJobSearchShared.Tests.Database
         }
 
         [Fact]
+        public async Task GetAllJobListingsAsync_Should_Return_NonEmptyIEnumerable()
+        {
+            // Arrange
+            var jobListings = _fixture.CreateMany<JobListing>();
+            _db.GetAllJobListingsAsync().Returns(jobListings);
+
+            // Act
+            var result = await _db.GetAllJobListingsAsync();
+
+            // Assert
+            result.Should().BeEquivalentTo(jobListings);
+            result.Should().NotBeNullOrEmpty();
+        }
+
+        [Fact]
         public async Task GetAllJobSearchProfilesAsync_Should_BeCalled()
         {
             await _db.GetAllJobSearchProfilesAsync();
 
             await _db.Received().GetAllJobSearchProfilesAsync();
-        }
-
-        [Fact]
-        public async Task GetAllJobSearchProfilesAsync_Should_Return_NonEmptyIEnumerable()
-        {
-            // Arrange
-            var jobSearchProfiles = _fixture.CreateMany<JobSearchProfile>();
-            _db.GetAllJobSearchProfilesAsync().Returns(jobSearchProfiles);
-
-            // Act
-            var result = await _db.GetAllJobSearchProfilesAsync();
-
-            // Assert
-            result.Should().BeEquivalentTo(jobSearchProfiles);
-            result.Should().NotBeNullOrEmpty();
         }
 
         [Fact]
@@ -276,26 +258,26 @@ namespace AutoJobSearchShared.Tests.Database
         }
 
         [Fact]
+        public async Task GetAllJobSearchProfilesAsync_Should_Return_NonEmptyIEnumerable()
+        {
+            // Arrange
+            var jobSearchProfiles = _fixture.CreateMany<JobSearchProfile>();
+            _db.GetAllJobSearchProfilesAsync().Returns(jobSearchProfiles);
+
+            // Act
+            var result = await _db.GetAllJobSearchProfilesAsync();
+
+            // Assert
+            result.Should().BeEquivalentTo(jobSearchProfiles);
+            result.Should().NotBeNullOrEmpty();
+        }
+
+        [Fact]
         public async Task GetFavouriteJobListingsAsync_Should_BeCalled()
         {
             await _db.GetFavouriteJobListingsAsync();
 
             await _db.Received().GetFavouriteJobListingsAsync();
-        }
-
-        [Fact]
-        public async Task GetFavouriteJobListingsAsync_Should_Return_NonEmptyIEnumerable()
-        {
-            // Arrange
-            var favouriteListings = _fixture.CreateMany<JobListing>();
-            _db.GetFavouriteJobListingsAsync().Returns(favouriteListings);
-
-            // Act
-            var result = await _db.GetFavouriteJobListingsAsync();
-
-            // Assert
-            result.Should().BeEquivalentTo(favouriteListings);
-            result.Should().NotBeNullOrEmpty();
         }
 
         [Fact]
@@ -315,26 +297,26 @@ namespace AutoJobSearchShared.Tests.Database
         }
 
         [Fact]
+        public async Task GetFavouriteJobListingsAsync_Should_Return_NonEmptyIEnumerable()
+        {
+            // Arrange
+            var favouriteListings = _fixture.CreateMany<JobListing>();
+            _db.GetFavouriteJobListingsAsync().Returns(favouriteListings);
+
+            // Act
+            var result = await _db.GetFavouriteJobListingsAsync();
+
+            // Assert
+            result.Should().BeEquivalentTo(favouriteListings);
+            result.Should().NotBeNullOrEmpty();
+        }
+
+        [Fact]
         public async Task GetHiddenJobListingsAsyn_Should_BeCalled()
         {
             await _db.GetHiddenJobListingsAsync();
 
             await _db.Received().GetHiddenJobListingsAsync();
-        }
-
-        [Fact]
-        public async Task GetHiddenJobListingsAsync_Should_Return_NonEmptyIEnumerable()
-        {
-            // Arrange
-            var hiddenListings = _fixture.CreateMany<JobListing>();
-            _db.GetHiddenJobListingsAsync().Returns(hiddenListings);
-
-            // Act
-            var result = await _db.GetHiddenJobListingsAsync();
-
-            // Assert
-            result.Should().BeEquivalentTo(hiddenListings);
-            result.Should().NotBeNullOrEmpty();
         }
 
         [Fact]
@@ -351,6 +333,21 @@ namespace AutoJobSearchShared.Tests.Database
             result.Should().BeEquivalentTo(hiddenListings);
             result.Should().NotBeNull();
             result.Should().BeEmpty();
+        }
+
+        [Fact]
+        public async Task GetHiddenJobListingsAsync_Should_Return_NonEmptyIEnumerable()
+        {
+            // Arrange
+            var hiddenListings = _fixture.CreateMany<JobListing>();
+            _db.GetHiddenJobListingsAsync().Returns(hiddenListings);
+
+            // Act
+            var result = await _db.GetHiddenJobListingsAsync();
+
+            // Assert
+            result.Should().BeEquivalentTo(hiddenListings);
+            result.Should().NotBeNullOrEmpty();
         }
 
         [Fact]
@@ -408,6 +405,16 @@ namespace AutoJobSearchShared.Tests.Database
 
             // Assert
             actualProfile.Should().BeNull();
+        }
+
+        [Fact]
+        public async Task SaveJobListingsAsync_Should_BeCalled()
+        {
+            var jobListings = _fixture.CreateMany<JobListing>();
+
+            await _db.SaveJobListingsAsync(jobListings);
+
+            await _db.Received().SaveJobListingsAsync(jobListings);
         }
 
         [Fact]

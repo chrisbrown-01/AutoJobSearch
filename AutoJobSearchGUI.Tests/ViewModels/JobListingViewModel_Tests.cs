@@ -6,19 +6,14 @@ using AutoJobSearchGUI.ViewModels;
 using AutoJobSearchShared.Models;
 using FluentAssertions;
 using NSubstitute;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AutoJobSearchGUI.Tests.ViewModels
 {
     public class JobListingViewModel_Tests
     {
-        private readonly JobListingViewModel _viewModel;
         private readonly IDbContext _dbContext;
         private readonly IFixture _fixture;
+        private readonly JobListingViewModel _viewModel;
 
         public JobListingViewModel_Tests()
         {

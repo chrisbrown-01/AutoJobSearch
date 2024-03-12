@@ -1,43 +1,29 @@
 ﻿using AutoJobSearchGUI.Data;
 using AutoJobSearchGUI.Helpers;
 using AutoJobSearchGUI.Models;
-using AutoJobSearchShared.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MsBox.Avalonia;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace AutoJobSearchGUI.ViewModels
 {
     public partial class ContactsViewModel : ViewModelBase
     {
-        private readonly IDbContext _dbContext;
         private const int DEFAULT_PAGE_SIZE = 50;
-
-        public delegate void OpenAddContactViewHandler(ContactModel? contact);
-        public event OpenAddContactViewHandler? OpenAddContactViewRequest;
-
-        [ObservableProperty]
-        private ContactsQueryModel _contactsQueryModel;
-
-        [ObservableProperty]
-        private List<ContactModel> _contactsDisplayed = default!;
-
-        [ObservableProperty]
-        private ContactModel? _selectedContact;
-
-        [ObservableProperty]
-        private int _pageIndex;
-
-        [ObservableProperty]
-        private int _pageSize = DEFAULT_PAGE_SIZE;
+        private readonly IDbContext _dbContext;
 
         [ObservableProperty]
         private IEnumerable<string> _contacts_Companies = default!;
+
+        [ObservableProperty]
+        private IEnumerable<string> _contacts_Emails = default!;
+
+        [ObservableProperty]
+        private IEnumerable<string> _contacts_LinkedIns = default!;
 
         [ObservableProperty]
         private IEnumerable<string> _contacts_Locations = default!;
@@ -46,48 +32,39 @@ namespace AutoJobSearchGUI.ViewModels
         private IEnumerable<string> _contacts_Names = default!;
 
         [ObservableProperty]
-        private IEnumerable<string> _contacts_Titles = default!;
-
-        [ObservableProperty]
-        private IEnumerable<string> _contacts_Emails = default!;
-
-        [ObservableProperty]
         private IEnumerable<string> _contacts_Phones = default!;
 
         [ObservableProperty]
-        private IEnumerable<string> _contacts_LinkedIns = default!;
+        private IEnumerable<string> _contacts_Titles = default!;
 
-        private void SetAutoCompleteBoxFields()
-        {
-            Contacts_Companies = Singletons.Contacts.Select(x => x.Company).Distinct();
-            Contacts_Locations = Singletons.Contacts.Select(x => x.Location).Distinct();
-            Contacts_Names = Singletons.Contacts.Select(x => x.Name).Distinct();
-            Contacts_Titles = Singletons.Contacts.Select(x => x.Title).Distinct();
-            Contacts_Emails = Singletons.Contacts.Select(x => x.Email).Distinct();
-            Contacts_Phones = Singletons.Contacts.Select(x => x.Phone).Distinct();
-            Contacts_LinkedIns = Singletons.Contacts.Select(x => x.LinkedIn).Distinct();
-        }
+        [ObservableProperty]
+        private List<ContactModel> _contactsDisplayed = default!;
+
+        [ObservableProperty]
+        private ContactsQueryModel _contactsQueryModel;
+
+        [ObservableProperty]
+        private int _pageIndex;
+
+        [ObservableProperty]
+        private int _pageSize = DEFAULT_PAGE_SIZE;
+
+        [ObservableProperty]
+        private ContactModel? _selectedContact;
 
         public ContactsViewModel(IDbContext dbContext)
         {
             _dbContext = dbContext;
             ContactsQueryModel = new();
 
-            PageIndex = 0; 
+            PageIndex = 0;
 
             RenderDefaultContactsViewCommand.Execute(null);
         }
 
-        partial void OnPageSizeChanged(int value)
-        {
-            if (value < 1 || value > 100)
-            {
-                PageSize = DEFAULT_PAGE_SIZE;
-                return;
-            }
+        public delegate void OpenAddContactViewHandler(ContactModel? contact);
 
-            UpdateContacts();
-        }
+        public event OpenAddContactViewHandler? OpenAddContactViewRequest;
 
         public void UpdateContacts()
         {
@@ -97,15 +74,48 @@ namespace AutoJobSearchGUI.ViewModels
         }
 
         [RelayCommand]
-        private async Task RenderDefaultContactsViewAsync()
+        private void AddNewContact()
         {
-            PageIndex = 0;
-            Singletons.Contacts = await GetAllContactModelsAsync();
-            ContactsDisplayed = Singletons.Contacts.Skip(PageIndex * PageSize).Take(PageSize).ToList();
+            OpenAddContactViewRequest?.Invoke(null);
+        }
 
-            ContactsQueryModel = new();
+        [RelayCommand]
+        private async Task DeleteAllContactsAsync()
+        {
+            var box = MessageBoxManager.GetMessageBoxStandard(
+                "Confirm Delete All Contacts",
+                "Are you sure you want to delete all contacts from the database? This action cannot be reversed.",
+                MsBox.Avalonia.Enums.ButtonEnum.OkAbort,
+                MsBox.Avalonia.Enums.Icon.Warning);
 
-            SetAutoCompleteBoxFields();
+            var result = await box.ShowAsync();
+
+            if (result != MsBox.Avalonia.Enums.ButtonResult.Ok) return;
+
+            await _dbContext.DeleteAllContactsAsync();
+            await RenderDefaultContactsViewAsync();
+        }
+
+        [RelayCommand]
+        private async Task DeleteContactAsync()
+        {
+            var box = MessageBoxManager.GetMessageBoxStandard(
+                "Confirm Delete Contact",
+                "Are you sure you want to delete this contact? This action cannot be reversed.",
+                MsBox.Avalonia.Enums.ButtonEnum.OkAbort,
+                MsBox.Avalonia.Enums.Icon.Warning);
+
+            var result = await box.ShowAsync();
+
+            if (result != MsBox.Avalonia.Enums.ButtonResult.Ok) return;
+
+            if (SelectedContact == null) return;
+
+            await _dbContext.DeleteContactAsync(SelectedContact.Id);
+            Singletons.Contacts.Remove(SelectedContact);
+            ContactsDisplayed.Remove(SelectedContact);
+
+            SelectedContact = null;
         }
 
         [RelayCommand]
@@ -248,56 +258,11 @@ namespace AutoJobSearchGUI.ViewModels
             ContactsDisplayed = Singletons.Contacts.Skip(PageIndex * PageSize).Take(PageSize).ToList();
         }
 
-        [RelayCommand]
-        private void OpenContact()
+        private async Task<List<ContactModel>> GetAllContactModelsAsync()
         {
-            if (SelectedContact == null) return;
-            OpenAddContactViewRequest?.Invoke(SelectedContact);
-        }
-
-        [RelayCommand]
-        private void AddNewContact()
-        {
-            OpenAddContactViewRequest?.Invoke(null);
-        }
-
-        [RelayCommand]
-        private async Task DeleteContactAsync()
-        {
-            var box = MessageBoxManager.GetMessageBoxStandard(
-                "Confirm Delete Contact",
-                "Are you sure you want to delete this contact? This action cannot be reversed.",
-                MsBox.Avalonia.Enums.ButtonEnum.OkAbort,
-                MsBox.Avalonia.Enums.Icon.Warning);
-
-            var result = await box.ShowAsync();
-
-            if (result != MsBox.Avalonia.Enums.ButtonResult.Ok) return;
-
-            if (SelectedContact == null) return;
-
-            await _dbContext.DeleteContactAsync(SelectedContact.Id);
-            Singletons.Contacts.Remove(SelectedContact); 
-            ContactsDisplayed.Remove(SelectedContact);
-
-            SelectedContact = null;
-        }
-
-        [RelayCommand]
-        private async Task DeleteAllContactsAsync()
-        {
-            var box = MessageBoxManager.GetMessageBoxStandard(
-                "Confirm Delete All Contacts",
-                "Are you sure you want to delete all contacts from the database? This action cannot be reversed.",
-                MsBox.Avalonia.Enums.ButtonEnum.OkAbort,
-                MsBox.Avalonia.Enums.Icon.Warning);
-
-            var result = await box.ShowAsync();
-
-            if (result != MsBox.Avalonia.Enums.ButtonResult.Ok) return;
-
-            await _dbContext.DeleteAllContactsAsync();
-            await RenderDefaultContactsViewAsync();        
+            var contacts = await _dbContext.GetAllContactsAsync();
+            var contactsAssociatedJobIds = await _dbContext.GetAllContactsAssociatedJobIdsAsync();
+            return ContactsHelpers.ConvertContactsToContactModels(contacts, contactsAssociatedJobIds);
         }
 
         [RelayCommand]
@@ -319,11 +284,45 @@ namespace AutoJobSearchGUI.ViewModels
             ContactsDisplayed = Singletons.Contacts.Skip(PageIndex * PageSize).Take(PageSize).ToList();
         }
 
-        private async Task<List<ContactModel>> GetAllContactModelsAsync()
+        partial void OnPageSizeChanged(int value)
         {
-            var contacts = await _dbContext.GetAllContactsAsync();
-            var contactsAssociatedJobIds = await _dbContext.GetAllContactsAssociatedJobIdsAsync();
-            return ContactsHelpers.ConvertContactsToContactModels(contacts, contactsAssociatedJobIds);
+            if (value < 1 || value > 100)
+            {
+                PageSize = DEFAULT_PAGE_SIZE;
+                return;
+            }
+
+            UpdateContacts();
+        }
+
+        [RelayCommand]
+        private void OpenContact()
+        {
+            if (SelectedContact == null) return;
+            OpenAddContactViewRequest?.Invoke(SelectedContact);
+        }
+
+        [RelayCommand]
+        private async Task RenderDefaultContactsViewAsync()
+        {
+            PageIndex = 0;
+            Singletons.Contacts = await GetAllContactModelsAsync();
+            ContactsDisplayed = Singletons.Contacts.Skip(PageIndex * PageSize).Take(PageSize).ToList();
+
+            ContactsQueryModel = new();
+
+            SetAutoCompleteBoxFields();
+        }
+
+        private void SetAutoCompleteBoxFields()
+        {
+            Contacts_Companies = Singletons.Contacts.Select(x => x.Company).Distinct();
+            Contacts_Locations = Singletons.Contacts.Select(x => x.Location).Distinct();
+            Contacts_Names = Singletons.Contacts.Select(x => x.Name).Distinct();
+            Contacts_Titles = Singletons.Contacts.Select(x => x.Title).Distinct();
+            Contacts_Emails = Singletons.Contacts.Select(x => x.Email).Distinct();
+            Contacts_Phones = Singletons.Contacts.Select(x => x.Phone).Distinct();
+            Contacts_LinkedIns = Singletons.Contacts.Select(x => x.LinkedIn).Distinct();
         }
     }
 }

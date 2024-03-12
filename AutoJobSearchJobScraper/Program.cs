@@ -2,19 +2,42 @@
 using AutoJobSearchJobScraper.Utility;
 using AutoJobSearchJobScraper.WebScraper;
 using AutoJobSearchShared.Helpers;
-using AutoJobSearchShared.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Formatting.Json;
-using System;
 
 namespace AutoJobSearchJobScraper
 {
     internal class Program
     {
-        static void Main(string[] args)
+        private static void ConfigureLogger()
+        {
+            const string LOG_FILE_NAME = "JobScraperLogFile.json";
+            var logFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, LOG_FILE_NAME);
+
+            if (!File.Exists(logFilePath))
+            {
+                var fileStream = File.Create(logFilePath);
+                fileStream.Close();
+                fileStream.Dispose();
+            }
+
+            Log.Logger = new LoggerConfiguration()
+                                .MinimumLevel.Information()
+                                //.WriteTo.Console(new JsonFormatter())
+                                .WriteTo.File(new JsonFormatter(), logFilePath)
+                                .CreateLogger();
+
+            // Attach event handler for unhandled exceptions
+            AppDomain.CurrentDomain.UnhandledException += (sender, eventArgs) =>
+            {
+                var exception = (Exception)eventArgs.ExceptionObject;
+                Log.Fatal(exception, "An unhandled exception occurred.");
+            };
+        }
+
+        private static void Main(string[] args)
         {
             ConfigureLogger();
 
@@ -67,6 +90,13 @@ namespace AutoJobSearchJobScraper
                 StringHelpers.ConvertCommaSeperatedStringsToIEnumerable(jobSearchProfile.SentimentsNegative));
 
             await db.SaveJobListingsAsync(scoredJobs);
+
+            Console.WriteLine(
+                "\r\n" +
+                "All jobs have finished processing. " +
+                "Please refresh the Job Board (click 'Options', then 'Go To Default View') to see all new jobs. " +
+                "You can now close this window." +
+                "\r\n");
         }
 
         private static async Task RunProgram(IServiceProvider serviceProvider, IEnumerable<string> searchTerms)
@@ -80,32 +110,6 @@ namespace AutoJobSearchJobScraper
             var filteredJobs = await utility.FilterDuplicatesAsync(scrapedJobs, existingLinks.ToHashSet());
 
             await db.SaveJobListingsAsync(filteredJobs);
-        }
-
-        private static void ConfigureLogger()
-        {
-            const string LOG_FILE_NAME = "JobScraperLogFile.json";
-            var logFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, LOG_FILE_NAME);
-
-            if (!File.Exists(logFilePath))
-            {
-                var fileStream = File.Create(logFilePath);
-                fileStream.Close();
-                fileStream.Dispose();
-            }
-
-            Log.Logger = new LoggerConfiguration()
-                                .MinimumLevel.Information()
-                                .WriteTo.Console(new JsonFormatter())
-                                .WriteTo.File(new JsonFormatter(), logFilePath)
-                                .CreateLogger();
-
-            // Attach event handler for unhandled exceptions
-            AppDomain.CurrentDomain.UnhandledException += (sender, eventArgs) =>
-            {
-                var exception = (Exception)eventArgs.ExceptionObject;
-                Log.Fatal(exception, "An unhandled exception occurred.");
-            };
         }
     }
 }

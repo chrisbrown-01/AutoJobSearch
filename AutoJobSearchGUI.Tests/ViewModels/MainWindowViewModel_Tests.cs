@@ -1,37 +1,20 @@
 ﻿using AutoFixture;
 using AutoFixture.AutoNSubstitute;
-using AutoJobSearchGUI.Data;
 using AutoJobSearchGUI.Models;
 using AutoJobSearchGUI.ViewModels;
 using FluentAssertions;
-using NSubstitute;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AutoJobSearchGUI.Tests.ViewModels
 {
     public class MainWindowViewModel_Tests
     {
-        private readonly MainWindowViewModel _viewModel;
         private readonly IFixture _fixture;
+        private readonly MainWindowViewModel _viewModel;
 
         public MainWindowViewModel_Tests()
         {
             _fixture = new Fixture().Customize(new AutoNSubstituteCustomization());
             _viewModel = new MainWindowViewModel();
-        }
-
-        [Fact]
-        public void ChangeViewToJobBoard_SwitchesToCorrectViewModel()
-        {
-            // Act
-            _viewModel.ChangeViewToJobBoard();
-
-            // Assert
-            _viewModel.ContentViewModel.Should().BeOfType<JobBoardViewModel>();
         }
 
         [Fact]
@@ -45,13 +28,13 @@ namespace AutoJobSearchGUI.Tests.ViewModels
         }
 
         [Fact]
-        public void ChangeViewToJobSearch_SwitchesToCorrectViewModel()
+        public void ChangeViewToJobBoard_SwitchesToCorrectViewModel()
         {
             // Act
-            _viewModel.ChangeViewToJobSearch();
+            _viewModel.ChangeViewToJobBoard();
 
             // Assert
-            _viewModel.ContentViewModel.Should().BeOfType<JobSearchViewModel>();
+            _viewModel.ContentViewModel.Should().BeOfType<JobBoardViewModel>();
         }
 
         [Fact]
@@ -65,6 +48,16 @@ namespace AutoJobSearchGUI.Tests.ViewModels
 
             // Assert
             _viewModel.ContentViewModel.Should().BeOfType<JobListingViewModel>();
+        }
+
+        [Fact]
+        public void ChangeViewToJobSearch_SwitchesToCorrectViewModel()
+        {
+            // Act
+            _viewModel.ChangeViewToJobSearch();
+
+            // Assert
+            _viewModel.ContentViewModel.Should().BeOfType<JobSearchViewModel>();
         }
     }
 }

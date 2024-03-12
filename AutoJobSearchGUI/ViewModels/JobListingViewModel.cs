@@ -2,20 +2,14 @@
 using AutoJobSearchGUI.Helpers;
 using AutoJobSearchGUI.Models;
 using AutoJobSearchGUI.Services;
-using AutoJobSearchGUI.Views;
-using AutoJobSearchShared;
 using AutoJobSearchShared.Enums;
 using AutoJobSearchShared.Helpers;
 using AutoJobSearchShared.Models;
-using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Media;
 using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
 using MsBox.Avalonia;
-using MsBox.Avalonia.Base;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -23,7 +17,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace AutoJobSearchGUI.ViewModels
@@ -35,15 +28,19 @@ namespace AutoJobSearchGUI.ViewModels
         private const string EDIT_BUTTON_ENABLED_FONT_WEIGHT = "ExtraBold";
 
         public delegate void CreateNewContactWithAssociatedJobIdHandler(int jobId);
+
         public event CreateNewContactWithAssociatedJobIdHandler? CreateNewContactWithAssociatedJobIdRequest;
 
         public delegate void ChangeViewToContactHandler(int contactId);
+
         public event ChangeViewToContactHandler? ChangeViewToContactRequest;
 
         public delegate void UpdateJobBoardViewHandler();
+
         public event UpdateJobBoardViewHandler? UpdateJobBoardViewRequest;
 
         public delegate void OpenJobBoardViewHandler();
+
         public event OpenJobBoardViewHandler? OpenJobBoardViewRequest;
 
         private readonly IDbContext _dbContext;
@@ -54,16 +51,16 @@ namespace AutoJobSearchGUI.ViewModels
         public static JobListingsAssociatedFilesStringField File2 => JobListingsAssociatedFilesStringField.File2;
         public static JobListingsAssociatedFilesStringField File3 => JobListingsAssociatedFilesStringField.File3;
 
-        private const string ASSOCIATED_FILES_DIRECTORY_NAME = "JobListingAssociatedFiles"; 
+        private const string ASSOCIATED_FILES_DIRECTORY_NAME = "JobListingAssociatedFiles";
 
-        private readonly string _associatedFilesDirectoryPath; 
+        private readonly string _associatedFilesDirectoryPath;
 
         [ObservableProperty]
         private string _editButtonFontWeight = EDIT_BUTTON_DEFAULT_FONT_WEIGHT;
 
         [ObservableProperty]
         private bool _isEditModeEnabled;
-        
+
         [ObservableProperty]
         private bool _isViewFilesEnabled;
 
@@ -95,6 +92,7 @@ namespace AutoJobSearchGUI.ViewModels
         private int _selectedContactId;
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+
         public JobListingViewModel() // For View previewer only
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         {
@@ -141,22 +139,27 @@ namespace AutoJobSearchGUI.ViewModels
                     fileToOpen = JobListing.JobListingAssociatedFiles.Resume;
                     await AttemptToOpenFileAsync(fileToOpen);
                     break;
+
                 case JobListingsAssociatedFilesStringField.CoverLetter:
                     fileToOpen = JobListing.JobListingAssociatedFiles.CoverLetter;
                     await AttemptToOpenFileAsync(fileToOpen);
                     break;
+
                 case JobListingsAssociatedFilesStringField.File1:
                     fileToOpen = JobListing.JobListingAssociatedFiles.File1;
                     await AttemptToOpenFileAsync(fileToOpen);
                     break;
+
                 case JobListingsAssociatedFilesStringField.File2:
                     fileToOpen = JobListing.JobListingAssociatedFiles.File2;
                     await AttemptToOpenFileAsync(fileToOpen);
                     break;
+
                 case JobListingsAssociatedFilesStringField.File3:
                     fileToOpen = JobListing.JobListingAssociatedFiles.File3;
                     await AttemptToOpenFileAsync(fileToOpen);
                     break;
+
                 default:
                     Log.Warning($"{nameof(fileField)} enum type could not be resolved when attempting to open file for viewing.");
                     break;
@@ -188,7 +191,7 @@ namespace AutoJobSearchGUI.ViewModels
                 {
                     Log.Error("Exception thrown when trying to start a process for viewing a file. Exception details: {@ex}", ex);
                     await DisplayViewFileErrorMessageAsync();
-                }          
+                }
             }
 
             async Task DisplayViewFileErrorMessageAsync()
@@ -204,10 +207,10 @@ namespace AutoJobSearchGUI.ViewModels
         }
 
         [RelayCommand]
-        private async Task UploadFileAsync(JobListingsAssociatedFilesStringField fileField) // TODO: test for linux & mac 
+        private async Task UploadFileAsync(JobListingsAssociatedFilesStringField fileField) // TODO: test for linux & mac
         {
             var filesService = App.Current?.Services?.GetService<IFilesService>();
-            
+
             if (filesService is null)
             {
                 Log.Warning("The UploadFileAsync method was executed but the IFilesService reference was null.");
@@ -249,18 +252,23 @@ namespace AutoJobSearchGUI.ViewModels
                     case JobListingsAssociatedFilesStringField.Resume:
                         jobListingAssociatedFiles.Resume = hashedFile;
                         break;
+
                     case JobListingsAssociatedFilesStringField.CoverLetter:
                         jobListingAssociatedFiles.CoverLetter = hashedFile;
                         break;
+
                     case JobListingsAssociatedFilesStringField.File1:
                         jobListingAssociatedFiles.File1 = hashedFile;
                         break;
+
                     case JobListingsAssociatedFilesStringField.File2:
                         jobListingAssociatedFiles.File2 = hashedFile;
                         break;
+
                     case JobListingsAssociatedFilesStringField.File3:
                         jobListingAssociatedFiles.File3 = hashedFile;
                         break;
+
                     default:
                         throw new ArgumentException($"{nameof(fileField)} enum type could not be resolved");
                 }
@@ -276,18 +284,23 @@ namespace AutoJobSearchGUI.ViewModels
                     case JobListingsAssociatedFilesStringField.Resume:
                         JobListing.JobListingAssociatedFiles.Resume = hashedFile;
                         break;
+
                     case JobListingsAssociatedFilesStringField.CoverLetter:
                         JobListing.JobListingAssociatedFiles.CoverLetter = hashedFile;
                         break;
+
                     case JobListingsAssociatedFilesStringField.File1:
                         JobListing.JobListingAssociatedFiles.File1 = hashedFile;
                         break;
+
                     case JobListingsAssociatedFilesStringField.File2:
                         JobListing.JobListingAssociatedFiles.File2 = hashedFile;
                         break;
+
                     case JobListingsAssociatedFilesStringField.File3:
                         JobListing.JobListingAssociatedFiles.File3 = hashedFile;
                         break;
+
                     default:
                         throw new ArgumentException($"{nameof(fileField)} enum type could not be resolved");
                 }

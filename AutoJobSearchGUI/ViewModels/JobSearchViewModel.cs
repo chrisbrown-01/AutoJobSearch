@@ -1,4 +1,5 @@
 ﻿using AutoJobSearchGUI.Data;
+using AutoJobSearchGUI.Helpers;
 using AutoJobSearchGUI.Models;
 using AutoJobSearchGUI.Services;
 using AutoJobSearchShared.Models;
@@ -6,13 +7,9 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Serilog;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-// TODO: run format and code cleanup
 
 namespace AutoJobSearchGUI.ViewModels
 {
@@ -27,6 +24,7 @@ namespace AutoJobSearchGUI.ViewModels
         private readonly IDbContext _dbContext;
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+
         public JobSearchViewModel() // For View previewer only
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         {
@@ -58,7 +56,7 @@ namespace AutoJobSearchGUI.ViewModels
                 return;
             }
 
-            SearchProfiles = ConvertProfilesToMvvmModel(allProfiles);
+            SearchProfiles = JobSearchProfileHelpers.ConvertProfilesToMvvmModel(allProfiles);
 
             if (!SearchProfiles.Any())
             {
@@ -80,7 +78,7 @@ namespace AutoJobSearchGUI.ViewModels
             if (!allProfiles.Any())
                 throw new ApplicationException("No job search profiles could be loaded for the Job Search page.");
 
-            SearchProfiles = ConvertProfilesToMvvmModel(allProfiles);
+            SearchProfiles = JobSearchProfileHelpers.ConvertProfilesToMvvmModel(allProfiles);
 
             SelectedSearchProfile = SearchProfiles.Last();
             EnableOnChangedEvents(SearchProfiles);
@@ -105,37 +103,6 @@ namespace AutoJobSearchGUI.ViewModels
             {
                 profile.EnableEvents = true;
             }
-        }
-
-        // TODO: move to static helpers class
-        private List<JobSearchProfileModel> ConvertProfilesToMvvmModel(IEnumerable<JobSearchProfile> profiles)
-        {
-            var profilesMvvm = new List<JobSearchProfileModel>();
-
-            foreach (var profile in profiles)
-            {
-                profilesMvvm.Add(ConvertProfileToMvvmModel(profile));
-            }
-
-            return profilesMvvm;
-        }
-
-        // TODO: move to static helpers class
-        private JobSearchProfileModel ConvertProfileToMvvmModel(JobSearchProfile profile)
-        {
-            var result = new JobSearchProfileModel()
-            {
-                Id = profile.Id,
-                MaxJobListingIndex = profile.MaxJobListingIndex,
-                ProfileName = profile.ProfileName,
-                Searches = profile.Searches,
-                KeywordsPositive = profile.KeywordsPositive,
-                KeywordsNegative = profile.KeywordsNegative,
-                SentimentsPositive = profile.SentimentsPositive,
-                SentimentsNegative = profile.SentimentsNegative
-            };
-
-            return result;
         }
     }
 }

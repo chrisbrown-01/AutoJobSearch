@@ -1,25 +1,19 @@
-﻿using NSubstitute;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AutoJobSearchJobScraper;
+﻿using AutoFixture;
+using AutoFixture.AutoNSubstitute;
 using AutoJobSearchJobScraper.Data;
 using AutoJobSearchShared.Models;
-using AutoFixture;
-using AutoFixture.AutoNSubstitute;
 using FluentAssertions;
+using NSubstitute;
 
 namespace AutoJobSearchJobScraper.Tests.Data
 {
     public class IDbContext_Tests
     {
-        private readonly IDbContext _dbContext;
-        private readonly JobSearchProfile _jobSearchProfile;
-        private readonly IEnumerable<JobListing> _jobListings;
         private readonly IEnumerable<string> _applicationLinks;
+        private readonly IDbContext _dbContext;
         private readonly IFixture _fixture;
+        private readonly IEnumerable<JobListing> _jobListings;
+        private readonly JobSearchProfile _jobSearchProfile;
 
         public IDbContext_Tests()
         {
@@ -32,48 +26,6 @@ namespace AutoJobSearchJobScraper.Tests.Data
         }
 
         [Fact]
-        public async Task GetJobSearchProfileByIdAsync_Should_BeCalled()
-        {
-            // Arrange
-            var testInt = _fixture.Create<int>();
-
-            // Act
-            await _dbContext.GetJobSearchProfileByIdAsync(testInt);
-
-            // Assert
-            await _dbContext.Received().GetJobSearchProfileByIdAsync(testInt);
-        }
-
-        [Fact]
-        public async Task GetJobSearchProfileByIdAsync_Should_ReturnProfile()
-        {
-            // Arrange
-            int id = Arg.Any<int>();
-            _dbContext.GetJobSearchProfileByIdAsync(id).Returns(_jobSearchProfile);
-
-            // Act
-            var result = await _dbContext.GetJobSearchProfileByIdAsync(id);
-
-            // Assert
-            result.Should().Be(_jobSearchProfile);
-            result.Should().NotBeNull();
-        }
-
-        [Fact]
-        public async Task GetJobSearchProfileByIdAsync_Should_ReturnNull()
-        {
-            // Arrange
-            int id = Arg.Any<int>();
-            _dbContext.GetJobSearchProfileByIdAsync(id).Returns((JobSearchProfile?)null);
-
-            // Act
-            var result = await _dbContext.GetJobSearchProfileByIdAsync(id);
-
-            // Assert
-            result.Should().BeNull();
-        }
-
-        [Fact]
         public async Task GetAllApplicationLinksAsync_Should_BeCalled()
         {
             // Act
@@ -81,6 +33,21 @@ namespace AutoJobSearchJobScraper.Tests.Data
 
             // Assert
             await _dbContext.Received().GetAllApplicationLinksAsync();
+        }
+
+        [Fact]
+        public async Task GetAllApplicationLinksAsync_Should_ReturnEmptyResult()
+        {
+            // Arrange
+            IEnumerable<string> emptyResult = new List<string>();
+            _dbContext.GetAllApplicationLinksAsync().Returns(emptyResult);
+
+            // Act
+            var result = await _dbContext.GetAllApplicationLinksAsync();
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Should().BeEmpty();
         }
 
         [Fact]
@@ -98,18 +65,45 @@ namespace AutoJobSearchJobScraper.Tests.Data
         }
 
         [Fact]
-        public async Task GetAllApplicationLinksAsync_Should_ReturnEmptyResult()
+        public async Task GetJobSearchProfileByIdAsync_Should_BeCalled()
         {
             // Arrange
-            IEnumerable<string> emptyResult = new List<string>();
-            _dbContext.GetAllApplicationLinksAsync().Returns(emptyResult);
+            var testInt = _fixture.Create<int>();
 
             // Act
-            var result = await _dbContext.GetAllApplicationLinksAsync();
+            await _dbContext.GetJobSearchProfileByIdAsync(testInt);
 
             // Assert
+            await _dbContext.Received().GetJobSearchProfileByIdAsync(testInt);
+        }
+
+        [Fact]
+        public async Task GetJobSearchProfileByIdAsync_Should_ReturnNull()
+        {
+            // Arrange
+            int id = Arg.Any<int>();
+            _dbContext.GetJobSearchProfileByIdAsync(id).Returns((JobSearchProfile?)null);
+
+            // Act
+            var result = await _dbContext.GetJobSearchProfileByIdAsync(id);
+
+            // Assert
+            result.Should().BeNull();
+        }
+
+        [Fact]
+        public async Task GetJobSearchProfileByIdAsync_Should_ReturnProfile()
+        {
+            // Arrange
+            int id = Arg.Any<int>();
+            _dbContext.GetJobSearchProfileByIdAsync(id).Returns(_jobSearchProfile);
+
+            // Act
+            var result = await _dbContext.GetJobSearchProfileByIdAsync(id);
+
+            // Assert
+            result.Should().Be(_jobSearchProfile);
             result.Should().NotBeNull();
-            result.Should().BeEmpty();
         }
 
         [Fact]

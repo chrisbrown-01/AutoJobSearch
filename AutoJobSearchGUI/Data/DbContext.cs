@@ -1,18 +1,16 @@
 ﻿using AutoJobSearchGUI.Models;
-using AutoJobSearchShared;
 using AutoJobSearchShared.Enums;
 using AutoJobSearchShared.Models;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Serilog;
 
 namespace AutoJobSearchGUI.Data
 {
     // At the time of creating this project, there is no official documentation on how to perform dependency injection in Avalonia.
-    // Therefore the purpose of this class is to act as the single point of change if the user wants to convert to using a 
+    // Therefore the purpose of this class is to act as the single point of change if the user wants to convert to using a
     // different database.
 
     public class DbContext : IDbContext
@@ -55,19 +53,30 @@ namespace AutoJobSearchGUI.Data
             };
         }
 
-        public async Task UpdateContactStringPropertyAsync(ContactStringField columnName, string value, int id)
+        public async Task<ContactAssociatedJobId> CreateContactAssociatedJobIdAsync(int contactId, int jobId)
         {
-            await _dbContext.UpdateContactStringPropertyAsync(columnName, value, id);
+            Log.Information("Creating contact associated job ID record for contact ID {@contactId} and job ID {@jobId} in database.", contactId, jobId);
+            return await _dbContext.CreateContactAssociatedJobIdAsync(contactId, jobId);
         }
 
-        public async Task UpdateJobSearchProfileIntPropertyAsync(JobSearchProfilesIntField columnName, int value, int id)
+        public async Task<Contact> CreateContactAsync(Contact contact)
         {
-            await _dbContext.UpdateJobSearchProfileIntPropertyAsync(columnName, value, id);
+            Log.Information("Creating new contact in database.");
+            return await _dbContext.CreateContactAsync(contact);
         }
 
-        public async Task UpdateJobSearchProfileStringPropertyAsync(JobSearchProfilesStringField columnName, string value, int id)
+        public async Task<JobListing> CreateJobAsync()
         {
-            await _dbContext.UpdateJobSearchProfileStringPropertyAsync(columnName, value, id);
+            Log.Information("Creating new job listing in database.");
+            return await _dbContext.CreateJobAsync();
+        }
+
+        public async Task CreateJobListingAssociatedFilesAsync(JobListingAssociatedFiles jobListingAssociatedFiles)
+        {
+            Log.Information("Creating new job listing associated file record in database for job ID {@jobListingAssociatedFiles.Id}.",
+                jobListingAssociatedFiles.Id);
+
+            await _dbContext.CreateJobListingAssociatedFilesAsync(jobListingAssociatedFiles);
         }
 
         public async Task<JobSearchProfile> CreateJobSearchProfileAsync(JobSearchProfile profile)
@@ -76,8 +85,52 @@ namespace AutoJobSearchGUI.Data
             return await _dbContext.CreateJobSearchProfileAsync(profile);
         }
 
+        public async Task DeleteAllContactsAsync()
+        {
+            Log.Information("Deleting all contacts from database.");
+            await _dbContext.DeleteAllContactsAsync();
+        }
+
+        public async Task DeleteAllJobListingsAsync()
+        {
+            Log.Information("Deleting all job listings and application links from database.");
+            await _dbContext.DeleteAllJobListingsAsync();
+        }
+
+        public async Task DeleteContactAssociatedJobIdAsync(int contactId, int jobId)
+        {
+            Log.Information("Deleting contact associated job ID record for contact ID {@contactId} and job ID {@jobId} in database.", contactId, jobId);
+            await _dbContext.DeleteContactAssociatedJobIdAsync(contactId, jobId);
+        }
+
+        public async Task DeleteContactAsync(int id)
+        {
+            Log.Information("Deleting contact for {@id} from database.", id);
+            await _dbContext.DeleteContactAsync(id);
+        }
+
+        public async Task DeleteJobAsync(int id)
+        {
+            Log.Information("Deleting job listing for {@id} from database.", id);
+            await _dbContext.DeleteJobAsync(id);
+        }
+
+        public async Task DeleteJobSearchProfileAsync(int id)
+        {
+            Log.Information("Deleting job search profile for {@id} from database.", id);
+            await _dbContext.DeleteJobSearchProfileAsync(id);
+        }
+
+        public void Dispose()
+        {
+            Log.Information("Disposing of _dbContext connection.");
+            _dbContext.Dispose();
+        }
+
         public async Task<IQueryable<JobListing>> ExecuteJobListingQueryAsync(
-            bool columnFiltersEnabled,
+            bool descriptionFilterEnabled,
+            bool notesFilterEnabled,
+            bool columnFilterEnabled,
             bool isToBeAppliedTo,
             bool isAppliedTo,
             bool isInterviewing,
@@ -90,7 +143,9 @@ namespace AutoJobSearchGUI.Data
             Log.Information("Executing job board advanced query against database.");
 
             return await _dbContext.ExecuteJobListingQueryAsync(
-                 columnFiltersEnabled,
+                 descriptionFilterEnabled,
+                 notesFilterEnabled,
+                 columnFilterEnabled,
                  isToBeAppliedTo,
                  isAppliedTo,
                  isInterviewing,
@@ -99,6 +154,18 @@ namespace AutoJobSearchGUI.Data
                  isDeclinedOffer,
                  isAcceptedOffer,
                  isFavourite);
+        }
+
+        public async Task<IEnumerable<ContactAssociatedJobId>> GetAllContactsAssociatedJobIdsAsync()
+        {
+            Log.Information("Getting all contacts associated job IDs from database.");
+            return await _dbContext.GetAllContactsAssociatedJobIdsAsync();
+        }
+
+        public async Task<IEnumerable<Contact>> GetAllContactsAsync()
+        {
+            Log.Information("Getting all contacts from database.");
+            return await _dbContext.GetAllContactsAsync();
         }
 
         public async Task<IEnumerable<JobListing>> GetAllJobListingsAsync()
@@ -131,6 +198,19 @@ namespace AutoJobSearchGUI.Data
             return await _dbContext.GetJobListingDetailsByIdAsync(id);
         }
 
+        public async Task UpdateContactStringPropertyAsync(ContactStringField columnName, string value, int id)
+        {
+            await _dbContext.UpdateContactStringPropertyAsync(columnName, value, id);
+        }
+
+        public async Task UpdateJobListingAssociatedFilesAsync(JobListingAssociatedFiles jobListingAssociatedFiles)
+        {
+            Log.Information("Updating job listing associated file record in database for job ID {@jobListingAssociatedFiles.Id}.",
+                jobListingAssociatedFiles.Id);
+
+            await _dbContext.UpdateJobListingAssociatedFilesAsync(jobListingAssociatedFiles);
+        }
+
         public async Task UpdateJobListingBoolPropertyAsync(JobListingsBoolField columnName, bool value, int id, DateTime statusModifiedAt)
         {
             Log.Information(
@@ -140,102 +220,24 @@ namespace AutoJobSearchGUI.Data
             await _dbContext.UpdateJobListingBoolPropertyAsync(columnName, value, id, statusModifiedAt);
         }
 
-        public async Task UpdateJobListingStringPropertyAsync(JobListingsStringField columnName, string value, int id)
-        {
-            await _dbContext.UpdateJobListingStringPropertyAsync(columnName, value, id);
-        }
-
         public async Task UpdateJobListingIntPropertyAsync(JobListingsIntField columnName, int value, int id)
         {
             await _dbContext.UpdateJobListingIntPropertyAsync(columnName, value, id);
         }
 
-        public async Task DeleteJobSearchProfileAsync(int id)
+        public async Task UpdateJobListingStringPropertyAsync(JobListingsStringField columnName, string value, int id)
         {
-            Log.Information("Deleting job search profile for {@id} from database.", id);
-            await _dbContext.DeleteJobSearchProfileAsync(id);
+            await _dbContext.UpdateJobListingStringPropertyAsync(columnName, value, id);
         }
 
-        public async Task DeleteAllJobListingsAsync()
+        public async Task UpdateJobSearchProfileIntPropertyAsync(JobSearchProfilesIntField columnName, int value, int id)
         {
-            Log.Information("Deleting all job listings and application links from database.");
-            await _dbContext.DeleteAllJobListingsAsync();
+            await _dbContext.UpdateJobSearchProfileIntPropertyAsync(columnName, value, id);
         }
 
-        public void Dispose()
+        public async Task UpdateJobSearchProfileStringPropertyAsync(JobSearchProfilesStringField columnName, string value, int id)
         {
-            Log.Information("Disposing of _dbContext connection.");
-            _dbContext.Dispose();
-        }
-
-        public async Task<IEnumerable<Contact>> GetAllContactsAsync()
-        {
-            Log.Information("Getting all contacts from database.");
-            return await _dbContext.GetAllContactsAsync();
-        }
-
-        public async Task<Contact> CreateNewContactAsync(Contact contact)
-        {
-            Log.Information("Creating new contact in database.");
-            return await _dbContext.CreateNewContactAsync(contact);
-        }
-
-        public async Task DeleteContactAsync(int id)
-        {
-            Log.Information("Deleting contact for {@id} from database.", id);
-            await _dbContext.DeleteContactAsync(id);
-        }
-
-        public async Task DeleteAllContactsAsync()
-        {
-            Log.Information("Deleting all contacts from database.");
-            await _dbContext.DeleteAllContactsAsync();
-        }
-
-        public async Task<IEnumerable<ContactAssociatedJobId>> GetAllContactsAssociatedJobIdsAsync()
-        {
-            Log.Information("Getting all contacts associated job IDs from database.");
-            return await _dbContext.GetAllContactsAssociatedJobIdsAsync();
-        }
-
-        public async Task<ContactAssociatedJobId> CreateContactAssociatedJobIdAsync(int contactId, int jobId)
-        {
-            Log.Information("Creating contact associated job ID record for contact ID {@contactId} and job ID {@jobId} in database.", contactId, jobId);
-            return await _dbContext.CreateContactAssociatedJobIdAsync(contactId, jobId);
-        }
-
-        public async Task DeleteContactAssociatedJobIdAsync(int contactId, int jobId)
-        {
-            Log.Information("Deleting contact associated job ID record for contact ID {@contactId} and job ID {@jobId} in database.", contactId, jobId);
-            await _dbContext.DeleteContactAssociatedJobIdAsync(contactId, jobId);
-        }
-
-        public async Task DeleteJobAsync(int id)
-        {
-            Log.Information("Deleting job listing for {@id} from database.", id);
-            await _dbContext.DeleteJobAsync(id);
-        }
-
-        public async Task<JobListing> CreateJobAsync()
-        {
-            Log.Information("Creating new job listing in database.");
-            return await _dbContext.CreateJobAsync();
-        }
-
-        public async Task CreateJobListingAssociatedFilesAsync(JobListingAssociatedFiles jobListingAssociatedFiles)
-        {
-            Log.Information("Creating new job listing associated file record in database for job ID {@jobListingAssociatedFiles.Id}.", 
-                jobListingAssociatedFiles.Id);
-
-            await _dbContext.CreateJobListingAssociatedFilesAsync(jobListingAssociatedFiles);
-        }
-
-        public async Task UpdateJobListingAssociatedFilesAsync(JobListingAssociatedFiles jobListingAssociatedFiles)
-        {
-            Log.Information("Updating job listing associated file record in database for job ID {@jobListingAssociatedFiles.Id}.",
-                jobListingAssociatedFiles.Id);
-
-            await _dbContext.UpdateJobListingAssociatedFilesAsync(jobListingAssociatedFiles);
+            await _dbContext.UpdateJobSearchProfileStringPropertyAsync(columnName, value, id);
         }
     }
 }

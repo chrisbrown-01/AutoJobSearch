@@ -3,7 +3,6 @@ using AutoJobSearchGUI.ViewModels;
 using AutoJobSearchGUI.Views;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Data.Core;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,6 +15,13 @@ namespace AutoJobSearchGUI
     public partial class App : Application // Needs to be public for View previewer to work
     {
         private IClassicDesktopStyleApplicationLifetime? desktop;
+
+        public new static App? Current => Application.Current as App;
+
+        /// <summary>
+        /// Gets the <see cref="IServiceProvider"/> instance to resolve application services.
+        /// </summary>
+        public IServiceProvider? Services { get; private set; }
 
         public override void Initialize()
         {
@@ -50,13 +56,6 @@ namespace AutoJobSearchGUI
 
             base.OnFrameworkInitializationCompleted();
         }
-
-        public new static App? Current => Application.Current as App;
-
-        /// <summary>
-        /// Gets the <see cref="IServiceProvider"/> instance to resolve application services.
-        /// </summary>
-        public IServiceProvider? Services { get; private set; }
 
         private void CloseConnections(object? sender, CancelEventArgs e)
         {

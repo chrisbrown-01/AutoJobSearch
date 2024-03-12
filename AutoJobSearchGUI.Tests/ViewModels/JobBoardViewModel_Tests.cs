@@ -5,115 +5,21 @@ using AutoJobSearchGUI.Models;
 using AutoJobSearchGUI.ViewModels;
 using AutoJobSearchShared.Models;
 using FluentAssertions;
-using MsBox.Avalonia;
-using MsBox.Avalonia.Base;
 using NSubstitute;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Xunit.Sdk;
 
 namespace AutoJobSearchGUI.Tests.ViewModels
 {
     public class JobBoardViewModel_Tests
     {
-        private readonly JobBoardViewModel _viewModel;
         private readonly IDbContext _dbContext;
         private readonly IFixture _fixture;
+        private readonly JobBoardViewModel _viewModel;
 
         public JobBoardViewModel_Tests()
         {
             _fixture = new Fixture().Customize(new AutoNSubstituteCustomization());
             _dbContext = Substitute.For<IDbContext>();
             _viewModel = new JobBoardViewModel(_dbContext);
-        }
-
-        [Fact]
-        public async void RenderDefaultJobBoardView_UpdatesPropertiesCorrectly()
-        {
-            // Arrange
-            var pageSize = _viewModel.PageSize;
-            var jobListings = _fixture.CreateMany<JobListing>();
-
-            foreach (var job in jobListings)
-            {
-                job.IsHidden = false;
-            }
-
-            _dbContext.GetAllJobListingsAsync().Returns(jobListings);
-
-            // Act
-            await _viewModel.RenderDefaultJobBoardViewCommand.ExecuteAsync(null);
-
-            // Assert
-            await _dbContext.Received().GetAllJobListingsAsync();
-            _viewModel.PageIndex.Should().Be(0);
-            _viewModel.JobListingsDisplayed.Should().NotBeNullOrEmpty();
-            _viewModel.JobListingsDisplayed.Should().BeOfType<List<JobListingModel>>();
-            _viewModel.JobListingsDisplayed.Count.Should().BeLessThanOrEqualTo(_viewModel.PageSize);
-            _viewModel.JobListingsDisplayed.Count.Should().BeGreaterThan(0);
-            _viewModel.JobListingsDisplayed.Should().AllSatisfy(x => x.EnableEvents.Should().BeTrue());
-            _viewModel.JobListingsDisplayed.Should().AllSatisfy(x => x.IsHidden.Should().BeFalse());
-        }
-
-        [Fact]
-        public async void RenderHiddenJobs_UpdatesPropertiesCorrectly()
-        {
-            // Arrange
-            var pageSize = _viewModel.PageSize;
-            var jobListings = _fixture.CreateMany<JobListing>();
-
-            foreach (var jobListing in jobListings)
-            {
-                jobListing.IsHidden = true;
-            }
-
-            _dbContext.GetHiddenJobListingsAsync().Returns(jobListings);
-
-            // Act
-            await _viewModel.RenderHiddenJobsCommand.ExecuteAsync(null);
-
-            // Assert
-            await _dbContext.Received().GetHiddenJobListingsAsync();
-            _viewModel.PageIndex.Should().Be(0);
-            _viewModel.JobListingsDisplayed.Should().NotBeNullOrEmpty();
-            _viewModel.JobListingsDisplayed.Should().BeOfType<List<JobListingModel>>();
-            _viewModel.JobListingsDisplayed.Count.Should().BeLessThanOrEqualTo(_viewModel.PageSize);
-            _viewModel.JobListingsDisplayed.Count.Should().BeGreaterThan(0);
-            _viewModel.JobListingsDisplayed.Should().AllSatisfy(x => x.EnableEvents.Should().BeTrue());
-            _viewModel.JobListingsDisplayed.Should().AllSatisfy(x => x.IsHidden.Should().BeTrue());
-        }
-
-        [Fact]
-        public async void RenderFavouriteJobs_UpdatesPropertiesCorrectly()
-        {
-            // Arrange
-            var pageSize = _viewModel.PageSize;
-            var jobListings = _fixture.CreateMany<JobListing>();
-
-            foreach (var jobListing in jobListings)
-            {
-                jobListing.IsFavourite = true;
-                jobListing.IsHidden = false;
-            }
-
-            _dbContext.GetFavouriteJobListingsAsync().Returns(jobListings);
-
-            // Act
-            await _viewModel.RenderFavouriteJobsCommand.ExecuteAsync(null);
-
-            // Assert
-            await _dbContext.Received().GetFavouriteJobListingsAsync();
-            _viewModel.PageIndex.Should().Be(0);
-            _viewModel.JobListingsDisplayed.Should().NotBeNullOrEmpty();
-            _viewModel.JobListingsDisplayed.Should().BeOfType<List<JobListingModel>>();
-            _viewModel.JobListingsDisplayed.Count.Should().BeLessThanOrEqualTo(_viewModel.PageSize);
-            _viewModel.JobListingsDisplayed.Count.Should().BeGreaterThan(0);
-            _viewModel.JobListingsDisplayed.Should().AllSatisfy(x => x.EnableEvents.Should().BeTrue());
-            _viewModel.JobListingsDisplayed.Should().AllSatisfy(x => x.IsHidden.Should().BeFalse());
-            _viewModel.JobListingsDisplayed.Should().AllSatisfy(x => x.IsFavourite.Should().BeTrue());
         }
 
         [Fact]
@@ -142,6 +48,8 @@ namespace AutoJobSearchGUI.Tests.ViewModels
             _viewModel.JobBoardQueryModel = jobBoardQueryModel;
 
             _dbContext.ExecuteJobListingQueryAsync(
+                _viewModel.JobBoardQueryModel.JobDescriptionQueryStringEnabled,
+                _viewModel.JobBoardQueryModel.NotesQueryStringEnabled,
                 _viewModel.JobBoardQueryModel.ColumnFiltersEnabled,
                 _viewModel.JobBoardQueryModel.IsToBeAppliedTo,
                 _viewModel.JobBoardQueryModel.IsAppliedTo,
@@ -158,6 +66,8 @@ namespace AutoJobSearchGUI.Tests.ViewModels
 
             // Assert
             await _dbContext.Received().ExecuteJobListingQueryAsync(
+                _viewModel.JobBoardQueryModel.JobDescriptionQueryStringEnabled,
+                _viewModel.JobBoardQueryModel.NotesQueryStringEnabled,
                 _viewModel.JobBoardQueryModel.ColumnFiltersEnabled,
                 _viewModel.JobBoardQueryModel.IsToBeAppliedTo,
                 _viewModel.JobBoardQueryModel.IsAppliedTo,
@@ -178,81 +88,6 @@ namespace AutoJobSearchGUI.Tests.ViewModels
                 _viewModel.JobListingsDisplayed.Should().AllSatisfy(x => x.EnableEvents.Should().BeTrue());
                 _viewModel.JobListingsDisplayed.Should().AllSatisfy(x => x.IsHidden.Should().BeFalse());
             }
-        }
-
-        [Fact]
-        public void OpenJobListing_SelectedJobListingIsNull_DoesNotInvokeEvent()
-        {
-            // Arrange
-            _viewModel.JobListingsDisplayed = _fixture.CreateMany<JobListingModel>().ToList();
-            foreach (var job in _viewModel.JobListingsDisplayed)
-            {
-                job.EnableEvents = true;
-            }
-
-            _viewModel.SelectedJobListing = null;
-            bool wasCalled = false;
-            _viewModel.OpenJobListingViewRequest += (job) => wasCalled = true;
-
-            // Act
-            _viewModel.OpenJobListingCommand.Execute(null);
-
-            // Assert
-            wasCalled.Should().BeFalse();
-            _viewModel.JobListingsDisplayed.Should().AllSatisfy(x => x.EnableEvents.Should().BeTrue());
-        }
-
-        [Fact]
-        public void OpenJobListing_SelectedJobListingIsNotNull_InvokesEvent()
-        {
-            // Arrange
-            _viewModel.JobListingsDisplayed = _fixture.CreateMany<JobListingModel>().ToList();
-            _viewModel.SelectedJobListing = _fixture.Create<JobListingModel>();
-            bool wasCalled = false;
-            _viewModel.OpenJobListingViewRequest += (job) => wasCalled = true;
-
-            // Act
-            _viewModel.OpenJobListingCommand.Execute(null);
-
-            // Assert
-            wasCalled.Should().BeTrue();
-            _viewModel.JobListingsDisplayed.Should().AllSatisfy(x => x.EnableEvents.Should().BeFalse());
-        }
-
-        [Fact]
-        public void HideJob_SelectedJobListingIsNull_DoesNotChangeCollections()
-        {
-            // Arrange
-            _viewModel.SelectedJobListing = null;
-            var initialJobListingsDisplayed = _fixture.CreateMany<JobListingModel>().ToList();
-            _viewModel.JobListingsDisplayed = initialJobListingsDisplayed;
-
-            // Act
-            _viewModel.HideJobCommand.Execute(null);
-
-            // Assert
-            _viewModel.JobListingsDisplayed.Should().BeEquivalentTo(initialJobListingsDisplayed);
-        }
-
-        [Fact]
-        public void HideJob_SelectedJobListingIsNotNull_UpdatesPropertiesAndCollections()
-        {
-            // Arrange
-            var selectedJobListing = _fixture.Create<JobListingModel>();
-            selectedJobListing.IsHidden = false;
-            selectedJobListing.EnableEvents = true;
-            _viewModel.SelectedJobListing = selectedJobListing;
-
-            bool wasCalled = false;
-            JobListingModel.BoolFieldChanged += (sender, args) => wasCalled = true;
-
-            // Act
-            _viewModel.HideJobCommand.Execute(null);
-
-            // Assert
-            selectedJobListing.IsHidden.Should().BeTrue();
-            _viewModel.JobListingsDisplayed.Should().NotContain(selectedJobListing);
-            wasCalled.Should().BeTrue();
         }
 
         [Fact]
@@ -305,6 +140,167 @@ namespace AutoJobSearchGUI.Tests.ViewModels
             // Assert
             _viewModel.PageIndex.Should().Be(initialPageIndex - 1);
             _viewModel.JobListingsDisplayed.Should().NotBeEquivalentTo(initialJobListingsDisplayed);
+        }
+
+        [Fact]
+        public void HideJob_SelectedJobListingIsNotNull_UpdatesPropertiesAndCollections()
+        {
+            // Arrange
+            var selectedJobListing = _fixture.Create<JobListingModel>();
+            selectedJobListing.IsHidden = false;
+            selectedJobListing.EnableEvents = true;
+            _viewModel.SelectedJobListing = selectedJobListing;
+
+            bool wasCalled = false;
+            JobListingModel.BoolFieldChanged += (sender, args) => wasCalled = true;
+
+            // Act
+            _viewModel.HideJobCommand.Execute(null);
+
+            // Assert
+            selectedJobListing.IsHidden.Should().BeTrue();
+            _viewModel.JobListingsDisplayed.Should().NotContain(selectedJobListing);
+            wasCalled.Should().BeTrue();
+        }
+
+        [Fact]
+        public void HideJob_SelectedJobListingIsNull_DoesNotChangeCollections()
+        {
+            // Arrange
+            _viewModel.SelectedJobListing = null;
+            var initialJobListingsDisplayed = _fixture.CreateMany<JobListingModel>().ToList();
+            _viewModel.JobListingsDisplayed = initialJobListingsDisplayed;
+
+            // Act
+            _viewModel.HideJobCommand.Execute(null);
+
+            // Assert
+            _viewModel.JobListingsDisplayed.Should().BeEquivalentTo(initialJobListingsDisplayed);
+        }
+
+        [Fact]
+        public void OpenJobListing_SelectedJobListingIsNotNull_InvokesEvent()
+        {
+            // Arrange
+            _viewModel.JobListingsDisplayed = _fixture.CreateMany<JobListingModel>().ToList();
+            _viewModel.SelectedJobListing = _fixture.Create<JobListingModel>();
+            bool wasCalled = false;
+            _viewModel.OpenJobListingViewRequest += (job) => wasCalled = true;
+
+            // Act
+            _viewModel.OpenJobListingCommand.Execute(null);
+
+            // Assert
+            wasCalled.Should().BeTrue();
+            _viewModel.JobListingsDisplayed.Should().AllSatisfy(x => x.EnableEvents.Should().BeFalse());
+        }
+
+        [Fact]
+        public void OpenJobListing_SelectedJobListingIsNull_DoesNotInvokeEvent()
+        {
+            // Arrange
+            _viewModel.JobListingsDisplayed = _fixture.CreateMany<JobListingModel>().ToList();
+            foreach (var job in _viewModel.JobListingsDisplayed)
+            {
+                job.EnableEvents = true;
+            }
+
+            _viewModel.SelectedJobListing = null;
+            bool wasCalled = false;
+            _viewModel.OpenJobListingViewRequest += (job) => wasCalled = true;
+
+            // Act
+            _viewModel.OpenJobListingCommand.Execute(null);
+
+            // Assert
+            wasCalled.Should().BeFalse();
+            _viewModel.JobListingsDisplayed.Should().AllSatisfy(x => x.EnableEvents.Should().BeTrue());
+        }
+
+        [Fact]
+        public async void RenderDefaultJobBoardView_UpdatesPropertiesCorrectly()
+        {
+            // Arrange
+            var pageSize = _viewModel.PageSize;
+            var jobListings = _fixture.CreateMany<JobListing>();
+
+            foreach (var job in jobListings)
+            {
+                job.IsHidden = false;
+            }
+
+            _dbContext.GetAllJobListingsAsync().Returns(jobListings);
+
+            // Act
+            await _viewModel.RenderDefaultJobBoardViewCommand.ExecuteAsync(null);
+
+            // Assert
+            await _dbContext.Received().GetAllJobListingsAsync();
+            _viewModel.PageIndex.Should().Be(0);
+            _viewModel.JobListingsDisplayed.Should().NotBeNullOrEmpty();
+            _viewModel.JobListingsDisplayed.Should().BeOfType<List<JobListingModel>>();
+            _viewModel.JobListingsDisplayed.Count.Should().BeLessThanOrEqualTo(_viewModel.PageSize);
+            _viewModel.JobListingsDisplayed.Count.Should().BeGreaterThan(0);
+            _viewModel.JobListingsDisplayed.Should().AllSatisfy(x => x.EnableEvents.Should().BeTrue());
+            _viewModel.JobListingsDisplayed.Should().AllSatisfy(x => x.IsHidden.Should().BeFalse());
+        }
+
+        [Fact]
+        public async void RenderFavouriteJobs_UpdatesPropertiesCorrectly()
+        {
+            // Arrange
+            var pageSize = _viewModel.PageSize;
+            var jobListings = _fixture.CreateMany<JobListing>();
+
+            foreach (var jobListing in jobListings)
+            {
+                jobListing.IsFavourite = true;
+                jobListing.IsHidden = false;
+            }
+
+            _dbContext.GetFavouriteJobListingsAsync().Returns(jobListings);
+
+            // Act
+            await _viewModel.RenderFavouriteJobsCommand.ExecuteAsync(null);
+
+            // Assert
+            await _dbContext.Received().GetFavouriteJobListingsAsync();
+            _viewModel.PageIndex.Should().Be(0);
+            _viewModel.JobListingsDisplayed.Should().NotBeNullOrEmpty();
+            _viewModel.JobListingsDisplayed.Should().BeOfType<List<JobListingModel>>();
+            _viewModel.JobListingsDisplayed.Count.Should().BeLessThanOrEqualTo(_viewModel.PageSize);
+            _viewModel.JobListingsDisplayed.Count.Should().BeGreaterThan(0);
+            _viewModel.JobListingsDisplayed.Should().AllSatisfy(x => x.EnableEvents.Should().BeTrue());
+            _viewModel.JobListingsDisplayed.Should().AllSatisfy(x => x.IsHidden.Should().BeFalse());
+            _viewModel.JobListingsDisplayed.Should().AllSatisfy(x => x.IsFavourite.Should().BeTrue());
+        }
+
+        [Fact]
+        public async void RenderHiddenJobs_UpdatesPropertiesCorrectly()
+        {
+            // Arrange
+            var pageSize = _viewModel.PageSize;
+            var jobListings = _fixture.CreateMany<JobListing>();
+
+            foreach (var jobListing in jobListings)
+            {
+                jobListing.IsHidden = true;
+            }
+
+            _dbContext.GetHiddenJobListingsAsync().Returns(jobListings);
+
+            // Act
+            await _viewModel.RenderHiddenJobsCommand.ExecuteAsync(null);
+
+            // Assert
+            await _dbContext.Received().GetHiddenJobListingsAsync();
+            _viewModel.PageIndex.Should().Be(0);
+            _viewModel.JobListingsDisplayed.Should().NotBeNullOrEmpty();
+            _viewModel.JobListingsDisplayed.Should().BeOfType<List<JobListingModel>>();
+            _viewModel.JobListingsDisplayed.Count.Should().BeLessThanOrEqualTo(_viewModel.PageSize);
+            _viewModel.JobListingsDisplayed.Count.Should().BeGreaterThan(0);
+            _viewModel.JobListingsDisplayed.Should().AllSatisfy(x => x.EnableEvents.Should().BeTrue());
+            _viewModel.JobListingsDisplayed.Should().AllSatisfy(x => x.IsHidden.Should().BeTrue());
         }
 
         // TODO: Broken due to conversion to use MVVM Toolkit RelayCommand attribute

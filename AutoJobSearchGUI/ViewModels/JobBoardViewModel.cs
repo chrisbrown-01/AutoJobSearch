@@ -1,18 +1,12 @@
 ﻿using AutoJobSearchGUI.Data;
 using AutoJobSearchGUI.Helpers;
 using AutoJobSearchGUI.Models;
-using AutoJobSearchShared;
-using AutoJobSearchShared.Models;
-using Avalonia.Interactivity;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MsBox.Avalonia;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace AutoJobSearchGUI.ViewModels
@@ -20,6 +14,7 @@ namespace AutoJobSearchGUI.ViewModels
     public partial class JobBoardViewModel : ViewModelBase // Needs to be public for View previewer to work
     {
         public delegate void OpenJobListingViewHandler(JobListingModel job);
+
         public event OpenJobListingViewHandler? OpenJobListingViewRequest;
 
         private const int DEFAULT_PAGE_SIZE = 50;
@@ -42,6 +37,7 @@ namespace AutoJobSearchGUI.ViewModels
         private readonly IDbContext _dbContext;
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+
         public JobBoardViewModel() // For View previewer only
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         {
@@ -61,7 +57,7 @@ namespace AutoJobSearchGUI.ViewModels
 
         partial void OnPageSizeChanged(int value)
         {
-           if (value < 1 || value > 100)
+            if (value < 1 || value > 100)
             {
                 PageSize = DEFAULT_PAGE_SIZE;
                 return;
@@ -82,16 +78,16 @@ namespace AutoJobSearchGUI.ViewModels
             var result = await box.ShowAsync();
 
             if (result != MsBox.Avalonia.Enums.ButtonResult.Ok) return;
-            
+
             await _dbContext.DeleteAllJobListingsAsync();
-            await RenderDefaultJobBoardViewAsync();         
+            await RenderDefaultJobBoardViewAsync();
         }
 
         [RelayCommand]
         private async Task RenderDefaultJobBoardViewAsync()
         {
             PageIndex = 0;
-            Singletons.JobListings = await GetAllJobListingsAsync(); 
+            Singletons.JobListings = await GetAllJobListingsAsync();
             JobListingsDisplayed = Singletons.JobListings.Skip(PageIndex * PageSize).Take(PageSize).ToList();
             EnableOnChangedEvents(JobListingsDisplayed);
 
@@ -126,9 +122,9 @@ namespace AutoJobSearchGUI.ViewModels
         [RelayCommand]
         private async Task ExecuteQueryAsync()
         {
-            // TODO: add logic for if description filter is enabled. might be best to create seperate SQLIte methods depending on necessary arguments
-            // TODO: also need to consider fact that details are populated already once this method is executed, so redundant db calls are being made later when the individual job listing is opened
             var result = await _dbContext.ExecuteJobListingQueryAsync(
+               JobBoardQueryModel.JobDescriptionQueryStringEnabled,
+               JobBoardQueryModel.NotesQueryStringEnabled,
                JobBoardQueryModel.ColumnFiltersEnabled,
                JobBoardQueryModel.IsToBeAppliedTo,
                JobBoardQueryModel.IsAppliedTo,
@@ -163,8 +159,7 @@ namespace AutoJobSearchGUI.ViewModels
             {
                 result = result.Where(x =>
                 x.CreatedAt.Date >= JobBoardQueryModel.CreatedBetweenDateStart.Date &&
-                x.CreatedAt.Date <= JobBoardQueryModel.CreatedBetweenDateEnd.Date
-                );
+                x.CreatedAt.Date <= JobBoardQueryModel.CreatedBetweenDateEnd.Date);
             }
 
             if (JobBoardQueryModel.ModifiedAtDateEnabled)
@@ -176,8 +171,7 @@ namespace AutoJobSearchGUI.ViewModels
             {
                 result = result.Where(x =>
                 x.StatusModifiedAt.Date >= JobBoardQueryModel.ModifiedBetweenDateStart.Date &&
-                x.StatusModifiedAt.Date <= JobBoardQueryModel.ModifiedBetweenDateEnd.Date
-                );
+                x.StatusModifiedAt.Date <= JobBoardQueryModel.ModifiedBetweenDateEnd.Date);
             }
 
             if (JobBoardQueryModel.ScoreEqualsEnabled)
@@ -261,7 +255,7 @@ namespace AutoJobSearchGUI.ViewModels
             DisableOnChangedEvents(JobListingsDisplayed);
             OpenJobListingViewRequest?.Invoke(SelectedJobListing);
         }
-        
+
         [RelayCommand]
         private async Task DeleteJobAsync()
         {
