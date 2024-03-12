@@ -39,5 +39,23 @@ namespace AutoJobSearchGUI.Helpers
 
             return contactModels;
         }
+
+        internal static ContactModel ConvertContactToContactModel(Contact contact, IEnumerable<int> associatedJobIds)
+        {
+            return new ContactModel()
+            {
+                Id = contact.Id,
+                JobListingIds = associatedJobIds.ToList(),
+                CreatedAt = contact.CreatedAt,
+                Company = contact.Company,
+                Location = contact.Location,
+                Name = contact.Name,
+                Title = contact.Title,
+                Email = contact.Email,
+                Phone = contact.Phone,
+                LinkedIn = contact.LinkedIn,
+                Notes = contact.Notes
+            };
+        }
     }
 }

@@ -109,7 +109,7 @@ namespace AutoJobSearchGUI.ViewModels
                 jobIds.Add(associatedJobIdRecord.JobListingId);
             }
 
-            var newContactModel = ConvertContactToContactModel(newContact, jobIds);
+            var newContactModel = ContactsHelpers.ConvertContactToContactModel(newContact, jobIds);
             Singletons.Contacts.Add(newContactModel);
             UpdateContactsViewRequest?.Invoke();
 
@@ -216,25 +216,6 @@ namespace AutoJobSearchGUI.ViewModels
             {
                 OpenContactsViewRequest?.Invoke(); // Return to Contacts view if no contacts are available to display.
             }
-        }
-
-        // TODO: move to ContactHelpers class
-        private static ContactModel ConvertContactToContactModel(Contact contact, IEnumerable<int> associatedJobIds)
-        {
-            return new ContactModel()
-            {
-                Id = contact.Id,
-                JobListingIds = associatedJobIds.ToList(),
-                CreatedAt = contact.CreatedAt,
-                Company = contact.Company,
-                Location = contact.Location,
-                Name = contact.Name,
-                Title = contact.Title,
-                Email = contact.Email,
-                Phone = contact.Phone,
-                LinkedIn = contact.LinkedIn,
-                Notes = contact.Notes
-            };
         }
 
         /// <summary>
