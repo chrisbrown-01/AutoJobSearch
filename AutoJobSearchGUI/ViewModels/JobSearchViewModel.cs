@@ -5,6 +5,7 @@ using AutoJobSearchGUI.Services;
 using AutoJobSearchShared.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using MsBox.Avalonia;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -39,10 +40,23 @@ namespace AutoJobSearchGUI.ViewModels
         }
 
         [RelayCommand]
-        private void ExecuteJobSearch()
+        private async Task ExecuteJobSearch()
         {
             Log.Information("Executing job search for job search profile {@id}", SelectedSearchProfile!.Id);
             JobScraperService.StartJobScraper(SelectedSearchProfile.Id);
+
+            var box = MessageBoxManager.GetMessageBoxStandard(
+                "",
+                "Automated job search has been executed.\r\n" +
+                "\r\n" +
+                "After the automated web browsers and the console window have closed,\r\n" +
+                "navigate to the Job Board and press 'Options' --> 'Go To Default View' to view the new listings.\r\n" +
+                "\r\n" +
+                "Do not close the web browsers or console window manually, as they will close on their own once completed.",
+                MsBox.Avalonia.Enums.ButtonEnum.Ok,
+                MsBox.Avalonia.Enums.Icon.Info);
+
+            await box.ShowAsync();
         }
 
         [RelayCommand]
