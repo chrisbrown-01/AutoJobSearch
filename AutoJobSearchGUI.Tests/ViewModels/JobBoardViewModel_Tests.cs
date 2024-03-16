@@ -1,6 +1,7 @@
 ﻿using AutoFixture;
 using AutoFixture.AutoNSubstitute;
 using AutoJobSearchGUI.Data;
+using AutoJobSearchGUI.Helpers;
 using AutoJobSearchGUI.Models;
 using AutoJobSearchGUI.ViewModels;
 using AutoJobSearchShared.Models;
@@ -303,6 +304,60 @@ namespace AutoJobSearchGUI.Tests.ViewModels
             _viewModel.JobListingsDisplayed.Count.Should().BeGreaterThan(0);
             _viewModel.JobListingsDisplayed.Should().AllSatisfy(x => x.EnableEvents.Should().BeTrue());
             _viewModel.JobListingsDisplayed.Should().AllSatisfy(x => x.IsHidden.Should().BeTrue());
+        }
+
+        [Fact]
+        public void GoToNextPage_HasMorePages_UpdatesPageIndexAndJobListingsDisplayed()
+        {
+            // Arrange
+            var initialPageIndex = 0;
+            var jobListings = _fixture.CreateMany<JobListing>(_viewModel.PageSize*2);
+            _dbContext.GetAllJobListingsAsync().Returns(jobListings);
+            _viewModel.RenderDefaultJobBoardViewCommand.ExecuteAsync(null);
+            var initialJobListingsDisplayed = _viewModel.JobListingsDisplayed.ToList();
+
+            // Act
+            _viewModel.GoToNextPageCommand.Execute(null);
+
+            // Assert
+            _viewModel.PageIndex.Should().Be(initialPageIndex + 1);
+            _viewModel.JobListingsDisplayed.Should().NotBeEquivalentTo(initialJobListingsDisplayed);
+        }
+
+        [Fact]
+        public void UpdateJobBoard_UpdatesPropertiesCorrectly()
+        {
+            // Arrange
+            Singletons.JobListings = _fixture.CreateMany<JobListingModel>().ToList();
+
+            // Act
+            _viewModel.UpdateJobBoard();
+
+            // Assert
+            _viewModel.JobListingsDisplayed.Should().AllSatisfy(x => x.EnableEvents.Should().BeTrue());
+        }
+
+        [Fact]
+        public void CreateJob_UpdatesViewModelCorrectly()
+        {
+            // Arrange
+            var createdJob = _fixture.Create<JobListing>();
+            _dbContext.CreateJobAsync().Returns(createdJob);
+
+            Singletons.JobListings = _fixture.CreateMany<JobListingModel>().ToList();
+            var initialNumOfJobListings = Singletons.JobListings.Count;
+            var initialNumOfDisplayedJobListings = _viewModel.JobListingsDisplayed.Count;
+
+            var createdJobModel = JobListingHelpers.ConvertJobListingToJobListingModel(createdJob);
+
+            // Act
+            _viewModel.CreateJobCommand.ExecuteAsync(null);
+            _viewModel.OpenJobListingCommand.Execute(null);
+
+            // Assert
+            _viewModel.SelectedJobListing.Should().BeEquivalentTo(createdJobModel);
+            Singletons.JobListings.Count.Should().Be(initialNumOfJobListings + 1);
+            _viewModel.JobListingsDisplayed.Count.Should().Be(initialNumOfDisplayedJobListings + 1);
         }
     }
 }
