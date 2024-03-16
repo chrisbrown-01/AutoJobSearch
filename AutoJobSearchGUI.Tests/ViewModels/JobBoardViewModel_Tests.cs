@@ -5,6 +5,8 @@ using AutoJobSearchGUI.Models;
 using AutoJobSearchGUI.ViewModels;
 using AutoJobSearchShared.Models;
 using FluentAssertions;
+using MsBox.Avalonia;
+using MsBox.Avalonia.Base;
 using NSubstitute;
 
 namespace AutoJobSearchGUI.Tests.ViewModels
@@ -302,44 +304,5 @@ namespace AutoJobSearchGUI.Tests.ViewModels
             _viewModel.JobListingsDisplayed.Should().AllSatisfy(x => x.EnableEvents.Should().BeTrue());
             _viewModel.JobListingsDisplayed.Should().AllSatisfy(x => x.IsHidden.Should().BeTrue());
         }
-
-        // TODO: Broken due to conversion to use MVVM Toolkit RelayCommand attribute
-        //[Fact]
-        //public async void DeleteAllRecords_UserConfirms_DeletesAllRecords()
-        //{
-        //    // Arrange
-        //    var box = Substitute.For<IMsBox<MsBox.Avalonia.Enums.ButtonResult>>();
-        //    box.ShowAsync().Returns(MsBox.Avalonia.Enums.ButtonResult.Ok);
-        //    MessageBoxManager.GetMessageBoxStandard(
-        //        Arg.Any<string>(),
-        //        Arg.Any<string>(),
-        //        Arg.Any<MsBox.Avalonia.Enums.ButtonEnum>(),
-        //        Arg.Any<MsBox.Avalonia.Enums.Icon>())
-        //        .Returns(box);
-
-        //    // Act
-        //    await _viewModel.DeleteAllRecordsCommand.ExecuteAsync(null);
-
-        //    // Assert
-        //    await _dbContext.Received().DeleteAllJobListingsAsync();
-        //}
-
-        // TODO: Broken due to conversion to use MVVM Toolkit RelayCommand attribute
-        //[Fact]
-        //public void GoToNextPage_HasMorePages_UpdatesPageIndexAndJobListingsDisplayed()
-        //{
-        //    // Arrange
-        //    var initialPageIndex = _fixture.Create<int>();
-        //    var initialJobListingsDisplayed = _fixture.CreateMany<JobListingModel>().ToList();
-        //    _viewModel.PageIndex = initialPageIndex;
-        //    _viewModel.JobListingsDisplayed = initialJobListingsDisplayed;
-
-        //    // Act
-        //    _viewModel.GoToNextPageCommand.Execute(null);
-
-        //    // Assert
-        //    _viewModel.PageIndex.Should().Be(initialPageIndex + 1);
-        //    _viewModel.JobListingsDisplayed.Should().NotBeEquivalentTo(initialJobListingsDisplayed);
-        //}
     }
 }
