@@ -252,5 +252,70 @@ namespace AutoJobSearchGUI.Tests.ViewModels
             // Assert
             _viewModel.JobListing.Should().Be(initialJobListing);
         }
+
+        [Fact]
+        public async void OpenJobListingByIdAsync_OpensJobListingWithCorrectId()
+        {
+            // Arrange
+            Singletons.JobListings = _fixture.CreateMany<JobListingModel>().ToList();
+            Singletons.Contacts = _fixture.CreateMany<ContactModel>().ToList();
+
+            var jobId = _fixture.Create<int>();
+            var jobIdModel = new JobListingModel() { Id = jobId, DetailsPopulated = true };
+            Singletons.JobListings.Add(jobIdModel);
+
+            // Act
+            await _viewModel.OpenJobListingByIdCommand.ExecuteAsync(jobId);
+
+            // Assert
+            _viewModel.JobListing.Id.Should().Be(jobId);
+        }
+
+        [Fact]
+        public async void OpenJobListingAsync_OpensCorrectJobListing_WhenDetails_ArePopulated()
+        {
+            // Arrange
+            Singletons.JobListings = _fixture.CreateMany<JobListingModel>().ToList();
+            Singletons.Contacts = _fixture.CreateMany<ContactModel>().ToList();
+
+            var jobId = _fixture.Create<int>();
+            var jobListingModel = new JobListingModel() { Id = jobId, DetailsPopulated = true };
+            Singletons.JobListings.Add(jobListingModel);
+
+            // Act
+            await _viewModel.OpenJobListingCommand.ExecuteAsync(jobListingModel);
+
+            // Assert
+            _viewModel.JobListing.Id.Should().Be(jobId);
+        }
+
+        [Fact]
+        public async void OpenJobListingAsync_OpensCorrectJobListing_WhenDetails_AreNotPopulated()
+        {
+            // Arrange
+            Singletons.JobListings = _fixture.CreateMany<JobListingModel>().ToList();
+            Singletons.Contacts = _fixture.CreateMany<ContactModel>().ToList();
+
+            var jobId = _fixture.Create<int>();
+            var jobListingModel = new JobListingModel() { Id = jobId, DetailsPopulated = true };
+            Singletons.JobListings.Add(jobListingModel);
+
+            var jobListing = _fixture.Create<JobListing>();
+            _dbContext.GetJobListingDetailsByIdAsync(Arg.Any<int>()).Returns(jobListing);
+
+            // Act
+            await _viewModel.OpenJobListingCommand.ExecuteAsync(jobListingModel);
+
+            // Assert
+            _viewModel.JobListing.Id.Should().Be(jobId);
+        }
+
+        /*
+// Arrange
+
+// Act
+
+// Assert
+        */
     }
 }
