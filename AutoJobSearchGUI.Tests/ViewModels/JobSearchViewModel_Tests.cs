@@ -1,6 +1,7 @@
 ﻿using AutoFixture;
 using AutoFixture.AutoNSubstitute;
 using AutoJobSearchGUI.Data;
+using AutoJobSearchGUI.Helpers;
 using AutoJobSearchGUI.Models;
 using AutoJobSearchGUI.ViewModels;
 using AutoJobSearchShared.Models;
@@ -82,6 +83,25 @@ namespace AutoJobSearchGUI.Tests.ViewModels
             _viewModel.SelectedSearchProfile.Should().NotBeNull();
             _viewModel.SearchProfiles.Should().NotBeNullOrEmpty();
             _viewModel.SearchProfiles.Should().AllSatisfy(x => x.EnableEvents.Should().BeTrue());
+        }
+
+        [Fact]
+        public async void RenderDefaultJobSearchViewAsync_CorrectlySwitchesToFirstProfile()
+        {
+            // Arrange
+            var jobSearchProfiles = _fixture.CreateMany<JobSearchProfile>();
+            _dbContext.GetAllJobSearchProfilesAsync().Returns(jobSearchProfiles);
+
+            var jobSearchProfileModels = JobSearchProfileHelpers.ConvertProfilesToMvvmModel(jobSearchProfiles);
+            jobSearchProfileModels.First().EnableEvents = true;
+
+            // Act
+            await _viewModel.RenderDefaultJobSearchViewCommand.ExecuteAsync(null);
+
+            // Assert
+            _viewModel.SelectedSearchProfile.Should().BeEquivalentTo(jobSearchProfileModels.First());
+            _viewModel.SelectedSearchProfile.Should().NotBe(null);
+            _viewModel.SearchProfiles.Should().NotBeNullOrEmpty();
         }
     }
 }

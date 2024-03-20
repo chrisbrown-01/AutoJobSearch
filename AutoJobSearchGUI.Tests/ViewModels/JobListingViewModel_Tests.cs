@@ -165,8 +165,9 @@ namespace AutoJobSearchGUI.Tests.ViewModels
             var newJob = _fixture.Create<JobListing>();
             var newJobListingModel = JobListingHelpers.ConvertJobListingToJobListingModel(newJob);
 
-            Singletons.JobListings = _fixture.CreateMany<JobListingModel>().ToList();
-            var initialJobListingsCount = Singletons.JobListings.Count;
+            var jobListings = _fixture.CreateMany<JobListingModel>().ToList();
+            Singletons.JobListings = jobListings;
+            var initialJobListingsCount = jobListings.Count;
 
             Singletons.Contacts = _fixture.CreateMany<ContactModel>().ToList();
 
@@ -309,13 +310,5 @@ namespace AutoJobSearchGUI.Tests.ViewModels
             // Assert
             _viewModel.JobListing.Id.Should().Be(jobId);
         }
-
-        /*
-// Arrange
-
-// Act
-
-// Assert
-        */
     }
 }
