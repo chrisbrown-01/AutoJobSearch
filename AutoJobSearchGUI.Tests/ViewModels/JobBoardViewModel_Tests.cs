@@ -26,7 +26,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
         }
 
         [Fact]
-        public async void ExecuteQuery_UpdatesPropertiesCorrectly()
+        public async Task ExecuteQuery_UpdatesPropertiesCorrectly()
         {
             // Arrange
             var pageSize = _viewModel.PageSize;
@@ -221,7 +221,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
         }
 
         [Fact]
-        public async void RenderDefaultJobBoardView_UpdatesPropertiesCorrectly()
+        public async Task RenderDefaultJobBoardView_UpdatesPropertiesCorrectly()
         {
             // Arrange
             var pageSize = _viewModel.PageSize;
@@ -249,7 +249,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
         }
 
         [Fact]
-        public async void RenderFavouriteJobs_UpdatesPropertiesCorrectly()
+        public async Task RenderFavouriteJobs_UpdatesPropertiesCorrectly()
         {
             // Arrange
             var pageSize = _viewModel.PageSize;
@@ -279,7 +279,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
         }
 
         [Fact]
-        public async void RenderHiddenJobs_UpdatesPropertiesCorrectly()
+        public async Task RenderHiddenJobs_UpdatesPropertiesCorrectly()
         {
             // Arrange
             var pageSize = _viewModel.PageSize;

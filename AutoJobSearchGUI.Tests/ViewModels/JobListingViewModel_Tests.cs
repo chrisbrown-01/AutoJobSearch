@@ -29,7 +29,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
         }
 
         [Fact]
-        public async void OpenJobListing_DetailsNotPopulated_UpdatesPropertiesCorrectly()
+        public async Task OpenJobListing_DetailsNotPopulated_UpdatesPropertiesCorrectly()
         {
             // Arrange
             var jobListingWithoutDetails = _fixture.Create<JobListingModel>();
@@ -63,7 +63,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
         }
 
         [Fact]
-        public async void OpenJobListing_DetailsPopulated_UpdatesPropertiesCorrectly()
+        public async Task OpenJobListing_DetailsPopulated_UpdatesPropertiesCorrectly()
         {
             // Arrange
             var jobListingWithDetails = _fixture.Create<JobListingModel>();
@@ -157,13 +157,12 @@ namespace AutoJobSearchGUI.Tests.ViewModels
 
 
         [Fact]
-        public async void CreateJobAsync_CreatesNewJob()
+        public async Task CreateJobAsync_CreatesNewJob()
         {
             // Arrange
             _viewModel.JobListing = _fixture.Create<JobListingModel>();
 
             var newJob = _fixture.Create<JobListing>();
-            var newJobListingModel = JobListingHelpers.ConvertJobListingToJobListingModel(newJob);
 
             var jobListings = _fixture.CreateMany<JobListingModel>().ToList();
             Singletons.JobListings = jobListings;
@@ -187,7 +186,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
         }
 
         [Fact]
-        public async void GoToPreviousJobAsync_GoesToPreviousJob_WhenValid()
+        public async Task GoToPreviousJobAsync_GoesToPreviousJob_WhenValid()
         {
             // Arrange
             Singletons.JobListings = _fixture.CreateMany<JobListingModel>().ToList();
@@ -206,7 +205,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
         }
 
         [Fact]
-        public async void GoToPreviousJobAsync_DoesNotGoToPreviousJob_WhenInvalid()
+        public async Task GoToPreviousJobAsync_DoesNotGoToPreviousJob_WhenInvalid()
         {
             // Arrange
             Singletons.JobListings = _fixture.CreateMany<JobListingModel>().ToList();
@@ -221,7 +220,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
         }
 
         [Fact]
-        public async void GoToNextJobAsync_GoesToNextJob_WhenValid()
+        public async Task GoToNextJobAsync_GoesToNextJob_WhenValid()
         {
             // Arrange
             Singletons.JobListings = _fixture.CreateMany<JobListingModel>().ToList();
@@ -240,7 +239,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
         }
 
         [Fact]
-        public async void GoToNextJobAsync_DoesNotGoToNextJob_WhenInvalid()
+        public async Task GoToNextJobAsync_DoesNotGoToNextJob_WhenInvalid()
         {
             // Arrange
             Singletons.JobListings = _fixture.CreateMany<JobListingModel>().ToList();
@@ -255,7 +254,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
         }
 
         [Fact]
-        public async void OpenJobListingByIdAsync_OpensJobListingWithCorrectId()
+        public async Task OpenJobListingByIdAsync_OpensJobListingWithCorrectId()
         {
             // Arrange
             Singletons.JobListings = _fixture.CreateMany<JobListingModel>().ToList();
@@ -273,7 +272,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
         }
 
         [Fact]
-        public async void OpenJobListingAsync_OpensCorrectJobListing_WhenDetails_ArePopulated()
+        public async Task OpenJobListingAsync_OpensCorrectJobListing_WhenDetails_ArePopulated()
         {
             // Arrange
             Singletons.JobListings = _fixture.CreateMany<JobListingModel>().ToList();
@@ -291,7 +290,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
         }
 
         [Fact]
-        public async void OpenJobListingAsync_OpensCorrectJobListing_WhenDetails_AreNotPopulated()
+        public async Task OpenJobListingAsync_OpensCorrectJobListing_WhenDetails_AreNotPopulated()
         {
             // Arrange
             Singletons.JobListings = _fixture.CreateMany<JobListingModel>().ToList();

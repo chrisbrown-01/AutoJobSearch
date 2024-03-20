@@ -24,7 +24,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
         }
 
         [Fact]
-        public async void CreateNewProfile_HasProfiles_CorrectlyUpdatesProperties()
+        public async Task CreateNewProfile_HasProfiles_CorrectlyUpdatesProperties()
         {
             // Arrange
             var profiles = _fixture.CreateMany<JobSearchProfile>();
@@ -41,7 +41,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
         }
 
         [Fact]
-        public async void DeleteCurrentProfile_SelectedSearchProfileIdIsLessThanOne_DoesNotDeleteProfile()
+        public async Task DeleteCurrentProfile_SelectedSearchProfileIdIsLessThanOne_DoesNotDeleteProfile()
         {
             // Arrange
             _viewModel.SelectedSearchProfile = new JobSearchProfileModel() { Id = 0 };
@@ -54,7 +54,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
         }
 
         [Fact]
-        public async void DeleteCurrentProfile_SelectedSearchProfileIsNull_DoesNotDeleteProfile()
+        public async Task DeleteCurrentProfile_SelectedSearchProfileIsNull_DoesNotDeleteProfile()
         {
             // Arrange
             _viewModel.SelectedSearchProfile = null!;
@@ -67,7 +67,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
         }
 
         [Fact]
-        public async void DeleteCurrentProfile_SelectedSearchProfileIsValid_DeletesProfileAndRendersDefaultView()
+        public async Task DeleteCurrentProfile_SelectedSearchProfileIsValid_DeletesProfileAndRendersDefaultView()
         {
             // Arrange
             var selectedSearchProfile = new JobSearchProfileModel() { Id = 100 }; // Any positive integer for ID
@@ -86,7 +86,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
         }
 
         [Fact]
-        public async void RenderDefaultJobSearchViewAsync_CorrectlySwitchesToFirstProfile()
+        public async Task RenderDefaultJobSearchViewAsync_CorrectlySwitchesToFirstProfile()
         {
             // Arrange
             var jobSearchProfiles = _fixture.CreateMany<JobSearchProfile>();
