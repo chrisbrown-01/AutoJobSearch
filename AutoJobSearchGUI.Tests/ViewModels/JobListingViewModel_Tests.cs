@@ -19,6 +19,8 @@ namespace AutoJobSearchGUI.Tests.ViewModels
         private readonly IFilesService _filesService;
         private readonly IFixture _fixture;
         private readonly JobListingViewModel _viewModel;
+        private readonly List<JobListingModel> _singletonJobListings;
+        private readonly List<ContactModel> _singletonContacts;
 
         public JobListingViewModel_Tests()
         {
@@ -26,6 +28,8 @@ namespace AutoJobSearchGUI.Tests.ViewModels
             _dbContext = Substitute.For<IDbContext>();
             _filesService = Substitute.For<IFilesService>();
             _viewModel = new JobListingViewModel(_dbContext);
+            _singletonJobListings = _fixture.CreateMany<JobListingModel>().ToList();
+            _singletonContacts = _fixture.CreateMany<ContactModel>().ToList();
         }
 
         [Fact]
@@ -37,7 +41,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
 
             var jobListingWithDetails = _fixture.Create<JobListing>();
 
-            Singletons.Contacts = new List<ContactModel>();
+            Singletons.Contacts = _singletonContacts;
 
             _dbContext.GetJobListingDetailsByIdAsync(jobListingWithoutDetails.Id).Returns(jobListingWithDetails);
 
@@ -67,7 +71,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
         {
             // Arrange
             var jobListingWithDetails = _fixture.Create<JobListingModel>();
-            Singletons.Contacts = new List<ContactModel>();
+            Singletons.Contacts = _singletonContacts;
             jobListingWithDetails.DetailsPopulated = true;
             jobListingWithDetails.EnableEvents = false;
 
@@ -160,15 +164,14 @@ namespace AutoJobSearchGUI.Tests.ViewModels
         public async Task CreateJobAsync_CreatesNewJob()
         {
             // Arrange
+            Singletons.Contacts = _singletonContacts;
+
+            Singletons.JobListings = _singletonJobListings;
+            var initialJobListingsCount = Singletons.JobListings.Count;
+
             _viewModel.JobListing = _fixture.Create<JobListingModel>();
 
             var newJob = _fixture.Create<JobListing>();
-
-            var jobListings = _fixture.CreateMany<JobListingModel>().ToList();
-            Singletons.JobListings = jobListings;
-            var initialJobListingsCount = jobListings.Count;
-
-            Singletons.Contacts = _fixture.CreateMany<ContactModel>().ToList();
 
             bool wasCalled = false;
             _viewModel.UpdateJobBoardViewRequest += () => wasCalled = true;
@@ -182,15 +185,18 @@ namespace AutoJobSearchGUI.Tests.ViewModels
             // Assert
             wasCalled.Should().Be(true);
             await _dbContext.Received().CreateJobAsync();
-            Singletons.JobListings.Count.Should().Be(initialJobListingsCount + 1);
+
+            var count = Singletons.JobListings.Count;
+
+            count.Should().Be(initialJobListingsCount + 1);
         }
 
         [Fact]
         public async Task GoToPreviousJobAsync_GoesToPreviousJob_WhenValid()
         {
             // Arrange
-            Singletons.JobListings = _fixture.CreateMany<JobListingModel>().ToList();
-            Singletons.Contacts = _fixture.CreateMany<ContactModel>().ToList();
+            Singletons.Contacts = _singletonContacts;
+            Singletons.JobListings = _singletonJobListings;
             _viewModel.JobListing = Singletons.JobListings.Last();
             var initialJobListing = _viewModel.JobListing;
 
@@ -208,7 +214,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
         public async Task GoToPreviousJobAsync_DoesNotGoToPreviousJob_WhenInvalid()
         {
             // Arrange
-            Singletons.JobListings = _fixture.CreateMany<JobListingModel>().ToList();
+            Singletons.JobListings = _singletonJobListings;
             _viewModel.JobListing = Singletons.JobListings.First();
             var initialJobListing = _viewModel.JobListing;
 
@@ -223,8 +229,8 @@ namespace AutoJobSearchGUI.Tests.ViewModels
         public async Task GoToNextJobAsync_GoesToNextJob_WhenValid()
         {
             // Arrange
-            Singletons.JobListings = _fixture.CreateMany<JobListingModel>().ToList();
-            Singletons.Contacts = _fixture.CreateMany<ContactModel>().ToList();
+            Singletons.Contacts = _singletonContacts;
+            Singletons.JobListings = _singletonJobListings;
             _viewModel.JobListing = Singletons.JobListings.First();
             var initialJobListing = _viewModel.JobListing;
 
@@ -242,7 +248,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
         public async Task GoToNextJobAsync_DoesNotGoToNextJob_WhenInvalid()
         {
             // Arrange
-            Singletons.JobListings = _fixture.CreateMany<JobListingModel>().ToList();
+            Singletons.JobListings = _singletonJobListings;
             _viewModel.JobListing = Singletons.JobListings.Last();
             var initialJobListing = _viewModel.JobListing;
 
@@ -257,8 +263,8 @@ namespace AutoJobSearchGUI.Tests.ViewModels
         public async Task OpenJobListingByIdAsync_OpensJobListingWithCorrectId()
         {
             // Arrange
-            Singletons.JobListings = _fixture.CreateMany<JobListingModel>().ToList();
-            Singletons.Contacts = _fixture.CreateMany<ContactModel>().ToList();
+            Singletons.Contacts = _singletonContacts;
+            Singletons.JobListings = _singletonJobListings;
 
             var jobId = _fixture.Create<int>();
             var jobIdModel = new JobListingModel() { Id = jobId, DetailsPopulated = true };
@@ -275,8 +281,8 @@ namespace AutoJobSearchGUI.Tests.ViewModels
         public async Task OpenJobListingAsync_OpensCorrectJobListing_WhenDetails_ArePopulated()
         {
             // Arrange
-            Singletons.JobListings = _fixture.CreateMany<JobListingModel>().ToList();
-            Singletons.Contacts = _fixture.CreateMany<ContactModel>().ToList();
+            Singletons.Contacts = _singletonContacts;
+            Singletons.JobListings = _singletonJobListings;
 
             var jobId = _fixture.Create<int>();
             var jobListingModel = new JobListingModel() { Id = jobId, DetailsPopulated = true };
@@ -293,8 +299,8 @@ namespace AutoJobSearchGUI.Tests.ViewModels
         public async Task OpenJobListingAsync_OpensCorrectJobListing_WhenDetails_AreNotPopulated()
         {
             // Arrange
-            Singletons.JobListings = _fixture.CreateMany<JobListingModel>().ToList();
-            Singletons.Contacts = _fixture.CreateMany<ContactModel>().ToList();
+            Singletons.Contacts = _singletonContacts;
+            Singletons.JobListings = _singletonJobListings;
 
             var jobId = _fixture.Create<int>();
             var jobListingModel = new JobListingModel() { Id = jobId, DetailsPopulated = true };
