@@ -356,7 +356,8 @@ namespace AutoJobSearchGUI.Tests.ViewModels
 
             // Assert
             _viewModel.SelectedJobListing.Should().BeEquivalentTo(createdJobModel);
-            Singletons.JobListings.Count.Should().Be(initialNumOfJobListings + 1);
+            var newCount = Singletons.JobListings.Count;
+            newCount.Should().Be(initialNumOfJobListings + 1);
             _viewModel.JobListingsDisplayed.Count.Should().Be(initialNumOfDisplayedJobListings + 1);
         }
     }

@@ -41,13 +41,13 @@ namespace AutoJobSearchGUI.Tests.ViewModels
             Singletons.Contacts = _singletonContacts;
 
             Singletons.JobListings = _singletonJobListings;
-            foreach(var jobListing in Singletons.JobListings)
+            foreach (var jobListing in Singletons.JobListings)
             {
                 jobListing.Id = 0;
             }
 
             int jobId = 0;
-            while(_viewModel.Contact.JobListingIds.Contains(jobId))
+            while (_viewModel.Contact.JobListingIds.Contains(jobId))
             {
                 jobId++;
             }
@@ -73,23 +73,152 @@ namespace AutoJobSearchGUI.Tests.ViewModels
         public async Task CreateNewContactAsync_NonNullIntArgument_CorrectlyUpdatesProperties()
         {
             // Arrange
-            var jobId = _fixture.Create<int>();
+            int? jobId = _fixture.Create<int>();
 
             Singletons.Contacts = _singletonContacts;
             Singletons.JobListings = _singletonJobListings;
 
+            var initialContactsCount = Singletons.Contacts.Count;
+
             var associatedJobIdRecord = new ContactAssociatedJobId();
             _dbContext.CreateContactAssociatedJobIdAsync(Arg.Any<int>(), Arg.Any<int>()).Returns(associatedJobIdRecord);
 
-            // Act
+            var contact = new Contact();
+            _dbContext.CreateContactAsync(Arg.Any<Contact>()).Returns(contact);
+
+           // Act
+           await _viewModel.CreateNewContactCommand.ExecuteAsync(jobId);
 
             // Assert
+            var newCount = Singletons.Contacts.Count;
+            newCount.Should().Be(initialContactsCount + 1);
+            await _dbContext.Received().CreateContactAssociatedJobIdAsync(Arg.Any<int>(), Arg.Any<int>());
+            await _dbContext.Received().CreateContactAsync(Arg.Any<Contact>());
         }
 
+        [Fact]
+        public async Task CreateNewContactAsync_nullIntArgument_CorrectlyUpdatesProperties()
+        {
+            // Arrange
+            int? jobId = null;
 
-        // Arrange
+            Singletons.Contacts = _singletonContacts;
+            Singletons.JobListings = _singletonJobListings;
 
-        // Act
+            var initialContactsCount = Singletons.Contacts.Count;
 
-        // Assert
+            var associatedJobIdRecord = new ContactAssociatedJobId();
+            _dbContext.CreateContactAssociatedJobIdAsync(Arg.Any<int>(), Arg.Any<int>()).Returns(associatedJobIdRecord);
+
+            var contact = new Contact();
+            _dbContext.CreateContactAsync(Arg.Any<Contact>()).Returns(contact);
+
+            // Act
+            await _viewModel.CreateNewContactCommand.ExecuteAsync(jobId);
+
+            // Assert
+            var newCount = Singletons.Contacts.Count;
+            newCount.Should().Be(initialContactsCount + 1);
+            await _dbContext.DidNotReceive().CreateContactAssociatedJobIdAsync(Arg.Any<int>(), Arg.Any<int>());
+            await _dbContext.Received().CreateContactAsync(Arg.Any<Contact>());
+        }
+
+        [Fact]
+        public async Task DeleteContactAssociatedJobIdAsync_ValidInputArgument_CorrectlyUpdatesProperties()
+        {
+            // Arrange
+            Singletons.Contacts = _singletonContacts;
+
+            var contact = _fixture.Create<ContactModel>();
+            _viewModel.Contact = contact;
+
+            var initialJobId = contact.JobListingIds.First();
+
+            // Act
+            await _viewModel.DeleteContactAssociatedJobIdCommand.ExecuteAsync(initialJobId.ToString());
+
+            // Assert
+            _viewModel.Contact.JobListingIds.Should().NotContain(initialJobId);
+            await _dbContext.Received().DeleteContactAssociatedJobIdAsync(Arg.Any<int>(), Arg.Any<int>());
+        }
+
+        [Fact]
+        public async Task DeleteContactAssociatedJobIdAsync_InvalidInputArgument_DoesNotUpdateProperties()
+        {
+            // Arrange
+            Singletons.Contacts = _singletonContacts;
+
+            var contact = _fixture.Create<ContactModel>();
+            _viewModel.Contact = contact;
+
+            var initialJobId = contact.JobListingIds.First();
+
+            // Act
+            await _viewModel.DeleteContactAssociatedJobIdCommand.ExecuteAsync("999999");
+
+            // Assert
+            _viewModel.Contact.JobListingIds.Should().Contain(initialJobId);
+            await _dbContext.DidNotReceive().DeleteContactAssociatedJobIdAsync(Arg.Any<int>(), Arg.Any<int>());
+        }
+
+        [Fact]
+        public void GoToPreviousContact_GoesToPreviousContact_WhenValid()
+        {
+            // Arrange
+            Singletons.Contacts = _singletonContacts;
+            _viewModel.Contact = Singletons.Contacts.Last();
+            var initialJobListing = _viewModel.Contact;
+
+            // Act
+            _viewModel.GoToPreviousContactCommand.Execute(null);
+
+            // Assert
+            _viewModel.Contact.Should().NotBe(initialJobListing);
+        }
+
+        [Fact]
+        public void GoToPreviousContact_DoesNotGoToPreviousContact_WhenInvalid()
+        {
+            // Arrange
+            Singletons.Contacts = _singletonContacts;
+            _viewModel.Contact = Singletons.Contacts.First();
+            var initialJobListing = _viewModel.Contact;
+
+            // Act
+            _viewModel.GoToPreviousContactCommand.Execute(null);
+
+            // Assert
+            _viewModel.Contact.Should().Be(initialJobListing);
+        }
+
+        [Fact]
+        public void GoToNextContact_GoesToNextContact_WhenValid()
+        {
+            // Arrange
+            Singletons.Contacts = _singletonContacts;
+            _viewModel.Contact = Singletons.Contacts.First();
+            var initialJobListing = _viewModel.Contact;
+
+            // Act
+            _viewModel.GoToNextContactCommand.Execute(null);
+
+            // Assert
+            _viewModel.Contact.Should().NotBe(initialJobListing);
+        }
+
+        [Fact]
+        public void GoToNextContact_DoesNotGoToNextContact_WhenInvalid()
+        {
+            // Arrange
+            Singletons.Contacts = _singletonContacts;
+            _viewModel.Contact = Singletons.Contacts.Last();
+            var initialJobListing = _viewModel.Contact;
+
+            // Act
+            _viewModel.GoToNextContactCommand.Execute(null);
+
+            // Assert
+            _viewModel.Contact.Should().Be(initialJobListing);
+        }
     }
+}
