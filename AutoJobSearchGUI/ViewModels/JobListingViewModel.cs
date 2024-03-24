@@ -385,7 +385,7 @@ namespace AutoJobSearchGUI.ViewModels
         {
             DisableOnChangedEvents(JobListing);
 
-            var newJob = await _dbContext.CreateJobAsync();
+            var newJob = await _dbContext.CreateJobListingAsync();
             var newJobListingModel = JobListingHelpers.ConvertJobListingToJobListingModel(newJob);
             Singletons.JobListings.Add(newJobListingModel);
             UpdateJobBoardViewRequest?.Invoke();
@@ -427,7 +427,7 @@ namespace AutoJobSearchGUI.ViewModels
 
             DisableOnChangedEvents(JobListing);
 
-            await _dbContext.DeleteJobAsync(JobListing.Id);
+            await _dbContext.DeleteJobListingAsync(JobListing.Id);
             Singletons.JobListings.Remove(JobListing);
             UpdateJobBoardViewRequest?.Invoke();
 

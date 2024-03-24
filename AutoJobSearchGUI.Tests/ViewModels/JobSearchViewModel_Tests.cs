@@ -1,6 +1,7 @@
 ﻿using AutoFixture;
 using AutoFixture.AutoNSubstitute;
 using AutoJobSearchGUI.Data;
+using AutoJobSearchGUI.Helpers;
 using AutoJobSearchGUI.Models;
 using AutoJobSearchGUI.ViewModels;
 using AutoJobSearchShared.Models;
@@ -23,7 +24,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
         }
 
         [Fact]
-        public async void CreateNewProfile_HasProfiles_CorrectlyUpdatesProperties()
+        public async Task CreateNewProfile_HasProfiles_CorrectlyUpdatesProperties()
         {
             // Arrange
             var profiles = _fixture.CreateMany<JobSearchProfile>();
@@ -40,7 +41,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
         }
 
         [Fact]
-        public async void DeleteCurrentProfile_SelectedSearchProfileIdIsLessThanOne_DoesNotDeleteProfile()
+        public async Task DeleteCurrentProfile_SelectedSearchProfileIdIsLessThanOne_DoesNotDeleteProfile()
         {
             // Arrange
             _viewModel.SelectedSearchProfile = new JobSearchProfileModel() { Id = 0 };
@@ -53,7 +54,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
         }
 
         [Fact]
-        public async void DeleteCurrentProfile_SelectedSearchProfileIsNull_DoesNotDeleteProfile()
+        public async Task DeleteCurrentProfile_SelectedSearchProfileIsNull_DoesNotDeleteProfile()
         {
             // Arrange
             _viewModel.SelectedSearchProfile = null!;
@@ -66,7 +67,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
         }
 
         [Fact]
-        public async void DeleteCurrentProfile_SelectedSearchProfileIsValid_DeletesProfileAndRendersDefaultView()
+        public async Task DeleteCurrentProfile_SelectedSearchProfileIsValid_DeletesProfileAndRendersDefaultView()
         {
             // Arrange
             var selectedSearchProfile = new JobSearchProfileModel() { Id = 100 }; // Any positive integer for ID
@@ -82,6 +83,25 @@ namespace AutoJobSearchGUI.Tests.ViewModels
             _viewModel.SelectedSearchProfile.Should().NotBeNull();
             _viewModel.SearchProfiles.Should().NotBeNullOrEmpty();
             _viewModel.SearchProfiles.Should().AllSatisfy(x => x.EnableEvents.Should().BeTrue());
+        }
+
+        [Fact]
+        public async Task RenderDefaultJobSearchViewAsync_CorrectlySwitchesToFirstProfile()
+        {
+            // Arrange
+            var jobSearchProfiles = _fixture.CreateMany<JobSearchProfile>();
+            _dbContext.GetAllJobSearchProfilesAsync().Returns(jobSearchProfiles);
+
+            var jobSearchProfileModels = JobSearchProfileHelpers.ConvertProfilesToMvvmModel(jobSearchProfiles);
+            jobSearchProfileModels.First().EnableEvents = true;
+
+            // Act
+            await _viewModel.RenderDefaultJobSearchViewCommand.ExecuteAsync(null);
+
+            // Assert
+            _viewModel.SelectedSearchProfile.Should().BeEquivalentTo(jobSearchProfileModels.First());
+            _viewModel.SelectedSearchProfile.Should().NotBe(null);
+            _viewModel.SearchProfiles.Should().NotBeNullOrEmpty();
         }
     }
 }

@@ -30,6 +30,7 @@ namespace AutoJobSearchGUI.Tests.Data
             // Act
             var result = await _dbContext.CreateJobSearchProfileAsync(argument);
 
+            // Assert
             await _dbContext.Received().CreateJobSearchProfileAsync(Arg.Any<JobSearchProfile>());
             result.Should().BeEquivalentTo(expectedResult);
             result.Should().NotBeNull();

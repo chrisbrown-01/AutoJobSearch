@@ -1,6 +1,7 @@
 ﻿using AutoFixture;
 using AutoFixture.AutoNSubstitute;
 using AutoJobSearchGUI.Data;
+using AutoJobSearchGUI.Helpers;
 using AutoJobSearchGUI.Models;
 using AutoJobSearchGUI.ViewModels;
 using AutoJobSearchShared.Models;
@@ -23,7 +24,33 @@ namespace AutoJobSearchGUI.Tests.ViewModels
         }
 
         [Fact]
-        public async void ExecuteQuery_UpdatesPropertiesCorrectly()
+        public void CreateJob_UpdatesViewModelCorrectly()
+        {
+            // Arrange
+            var createdJob = _fixture.Create<JobListing>();
+            _dbContext.CreateJobListingAsync().Returns(createdJob);
+
+            Singletons.JobListings = _fixture.CreateMany<JobListingModel>().ToList();
+            var initialNumOfJobListings = Singletons.JobListings.Count;
+            var initialNumOfDisplayedJobListings = _viewModel.JobListingsDisplayed.Count;
+
+            var createdJobModel = JobListingHelpers.ConvertJobListingToJobListingModel(createdJob);
+
+            // Act
+            _viewModel.CreateJobCommand.ExecuteAsync(null);
+            _viewModel.OpenJobListingCommand.Execute(null);
+
+            // Assert
+            _viewModel.SelectedJobListing.Should().BeEquivalentTo(createdJobModel);
+            var newCount = Singletons.JobListings.Count;
+            newCount.Should().Be(initialNumOfJobListings + 1);
+
+            var jobListingsDisplayedCount = _viewModel.JobListingsDisplayed.Count;
+            jobListingsDisplayedCount.Should().Be(initialNumOfDisplayedJobListings + 1);
+        }
+
+        [Fact]
+        public async Task ExecuteQuery_UpdatesPropertiesCorrectly()
         {
             // Arrange
             var pageSize = _viewModel.PageSize;
@@ -88,6 +115,24 @@ namespace AutoJobSearchGUI.Tests.ViewModels
                 _viewModel.JobListingsDisplayed.Should().AllSatisfy(x => x.EnableEvents.Should().BeTrue());
                 _viewModel.JobListingsDisplayed.Should().AllSatisfy(x => x.IsHidden.Should().BeFalse());
             }
+        }
+
+        [Fact]
+        public void GoToNextPage_HasMorePages_UpdatesPageIndexAndJobListingsDisplayed()
+        {
+            // Arrange
+            var initialPageIndex = 0;
+            var jobListings = _fixture.CreateMany<JobListing>(_viewModel.PageSize * 2);
+            _dbContext.GetAllJobListingsAsync().Returns(jobListings);
+            _viewModel.RenderDefaultJobBoardViewCommand.ExecuteAsync(null);
+            var initialJobListingsDisplayed = _viewModel.JobListingsDisplayed.ToList();
+
+            // Act
+            _viewModel.GoToNextPageCommand.Execute(null);
+
+            // Assert
+            _viewModel.PageIndex.Should().Be(initialPageIndex + 1);
+            _viewModel.JobListingsDisplayed.Should().NotBeEquivalentTo(initialJobListingsDisplayed);
         }
 
         [Fact]
@@ -218,7 +263,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
         }
 
         [Fact]
-        public async void RenderDefaultJobBoardView_UpdatesPropertiesCorrectly()
+        public async Task RenderDefaultJobBoardView_UpdatesPropertiesCorrectly()
         {
             // Arrange
             var pageSize = _viewModel.PageSize;
@@ -246,7 +291,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
         }
 
         [Fact]
-        public async void RenderFavouriteJobs_UpdatesPropertiesCorrectly()
+        public async Task RenderFavouriteJobs_UpdatesPropertiesCorrectly()
         {
             // Arrange
             var pageSize = _viewModel.PageSize;
@@ -276,7 +321,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
         }
 
         [Fact]
-        public async void RenderHiddenJobs_UpdatesPropertiesCorrectly()
+        public async Task RenderHiddenJobs_UpdatesPropertiesCorrectly()
         {
             // Arrange
             var pageSize = _viewModel.PageSize;
@@ -303,43 +348,17 @@ namespace AutoJobSearchGUI.Tests.ViewModels
             _viewModel.JobListingsDisplayed.Should().AllSatisfy(x => x.IsHidden.Should().BeTrue());
         }
 
-        // TODO: Broken due to conversion to use MVVM Toolkit RelayCommand attribute
-        //[Fact]
-        //public async void DeleteAllRecords_UserConfirms_DeletesAllRecords()
-        //{
-        //    // Arrange
-        //    var box = Substitute.For<IMsBox<MsBox.Avalonia.Enums.ButtonResult>>();
-        //    box.ShowAsync().Returns(MsBox.Avalonia.Enums.ButtonResult.Ok);
-        //    MessageBoxManager.GetMessageBoxStandard(
-        //        Arg.Any<string>(),
-        //        Arg.Any<string>(),
-        //        Arg.Any<MsBox.Avalonia.Enums.ButtonEnum>(),
-        //        Arg.Any<MsBox.Avalonia.Enums.Icon>())
-        //        .Returns(box);
+        [Fact]
+        public void UpdateJobBoard_UpdatesPropertiesCorrectly()
+        {
+            // Arrange
+            Singletons.JobListings = _fixture.CreateMany<JobListingModel>().ToList();
 
-        //    // Act
-        //    await _viewModel.DeleteAllRecordsCommand.ExecuteAsync(null);
+            // Act
+            _viewModel.UpdateJobBoard();
 
-        //    // Assert
-        //    await _dbContext.Received().DeleteAllJobListingsAsync();
-        //}
-
-        // TODO: Broken due to conversion to use MVVM Toolkit RelayCommand attribute
-        //[Fact]
-        //public void GoToNextPage_HasMorePages_UpdatesPageIndexAndJobListingsDisplayed()
-        //{
-        //    // Arrange
-        //    var initialPageIndex = _fixture.Create<int>();
-        //    var initialJobListingsDisplayed = _fixture.CreateMany<JobListingModel>().ToList();
-        //    _viewModel.PageIndex = initialPageIndex;
-        //    _viewModel.JobListingsDisplayed = initialJobListingsDisplayed;
-
-        //    // Act
-        //    _viewModel.GoToNextPageCommand.Execute(null);
-
-        //    // Assert
-        //    _viewModel.PageIndex.Should().Be(initialPageIndex + 1);
-        //    _viewModel.JobListingsDisplayed.Should().NotBeEquivalentTo(initialJobListingsDisplayed);
-        //}
+            // Assert
+            _viewModel.JobListingsDisplayed.Should().AllSatisfy(x => x.EnableEvents.Should().BeTrue());
+        }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using AutoJobSearchJobScraper.Exceptions;
 using AutoJobSearchShared.Enums;
-using AutoJobSearchShared.Helpers;
 using AutoJobSearchShared.Models;
 using HtmlAgilityPack;
 using Microsoft.Extensions.Configuration;

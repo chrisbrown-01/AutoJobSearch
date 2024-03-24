@@ -12,7 +12,6 @@ using System.Threading.Tasks;
 
 namespace AutoJobSearchGUI.ViewModels
 {
-    // TODO: create tests
     public partial class AddContactViewModel : ViewModelBase
     {
         private readonly IDbContext _dbContext;

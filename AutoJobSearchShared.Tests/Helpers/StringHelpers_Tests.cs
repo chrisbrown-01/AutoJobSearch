@@ -30,5 +30,27 @@ namespace AutoJobSearchShared.Tests.Helpers
             // Assert
             result.Should().BeEquivalentTo(expected);
         }
+
+        [Fact]
+        public void TestHighestFrequencyWordsInString()
+        {
+            // Arrange
+            var textInput = "hello world, hello everyone. this is a test, a test for everyone.";
+            var textToIgnore = new HashSet<string> { "this", "is", "a" };
+            var maxNumOfWords = 3;
+
+            // Act
+            var result = StringHelpers.HighestFrequencyWordsInString(textInput, textToIgnore, maxNumOfWords);
+
+            // Assert
+            result.Count().Should().Be(maxNumOfWords);
+            result.Should().NotContain("this");
+            result.Should().NotContain("is");
+            result.Should().NotContain("a");
+            result.Should().Contain("hello");
+            result.Should().Contain("everyone");
+            result.Should().Contain("test");
+            result.Should().NotBeNullOrEmpty();
+        }
     }
 }

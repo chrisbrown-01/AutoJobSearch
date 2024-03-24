@@ -270,7 +270,7 @@ namespace AutoJobSearchGUI.ViewModels
             if (result != MsBox.Avalonia.Enums.ButtonResult.Ok) return;
 
             if (SelectedJobListing == null) return;
-            await _dbContext.DeleteJobAsync(SelectedJobListing.Id);
+            await _dbContext.DeleteJobListingAsync(SelectedJobListing.Id);
             Singletons.JobListings.Remove(SelectedJobListing);
             JobListingsDisplayed.Remove(SelectedJobListing);
 
@@ -280,7 +280,7 @@ namespace AutoJobSearchGUI.ViewModels
         [RelayCommand]
         private async Task CreateJobAsync()
         {
-            var newJob = await _dbContext.CreateJobAsync();
+            var newJob = await _dbContext.CreateJobListingAsync();
             var newJobListingModel = JobListingHelpers.ConvertJobListingToJobListingModel(newJob);
             Singletons.JobListings.Add(newJobListingModel);
             JobListingsDisplayed.Add(newJobListingModel);

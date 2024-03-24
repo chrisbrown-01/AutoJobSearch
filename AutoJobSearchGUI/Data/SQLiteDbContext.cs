@@ -27,14 +27,14 @@ namespace AutoJobSearchGUI.Data
             return await _sqliteDb.CreateContactAsync(contact);
         }
 
-        public async Task<JobListing> CreateJobAsync()
-        {
-            return await _sqliteDb.CreateJobAsync();
-        }
-
         public async Task CreateJobListingAssociatedFilesAsync(JobListingAssociatedFiles jobListingAssociatedFiles)
         {
             await _sqliteDb.CreateJobListingAssociatedFilesAsync(jobListingAssociatedFiles);
+        }
+
+        public async Task<JobListing> CreateJobListingAsync()
+        {
+            return await _sqliteDb.CreateJobListingAsync();
         }
 
         public async Task<JobSearchProfile> CreateJobSearchProfileAsync(JobSearchProfile profile)
@@ -62,9 +62,9 @@ namespace AutoJobSearchGUI.Data
             await _sqliteDb.DeleteContactAsync(id);
         }
 
-        public async Task DeleteJobAsync(int jobId)
+        public async Task DeleteJobListingAsync(int jobId)
         {
-            await _sqliteDb.DeleteJobAsync(jobId);
+            await _sqliteDb.DeleteJobListingAsync(jobId);
         }
 
         public async Task DeleteJobSearchProfileAsync(int id)

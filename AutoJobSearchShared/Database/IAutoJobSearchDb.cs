@@ -9,9 +9,9 @@ namespace AutoJobSearchShared.Database
 
         Task<Contact> CreateContactAsync(Contact contact);
 
-        Task<JobListing> CreateJobAsync();
-
         Task CreateJobListingAssociatedFilesAsync(JobListingAssociatedFiles jobListingAssociatedFiles);
+
+        Task<JobListing> CreateJobListingAsync();
 
         Task<JobSearchProfile> CreateJobSearchProfileAsync(JobSearchProfile profile);
 
@@ -23,7 +23,7 @@ namespace AutoJobSearchShared.Database
 
         Task DeleteContactAsync(int id);
 
-        Task DeleteJobAsync(int jobId);
+        Task DeleteJobListingAsync(int jobId);
 
         Task DeleteJobSearchProfileAsync(int id);
 

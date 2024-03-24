@@ -65,18 +65,18 @@ namespace AutoJobSearchGUI.Data
             return await _dbContext.CreateContactAsync(contact);
         }
 
-        public async Task<JobListing> CreateJobAsync()
-        {
-            Log.Information("Creating new job listing in database.");
-            return await _dbContext.CreateJobAsync();
-        }
-
         public async Task CreateJobListingAssociatedFilesAsync(JobListingAssociatedFiles jobListingAssociatedFiles)
         {
             Log.Information("Creating new job listing associated file record in database for job ID {@jobListingAssociatedFiles.Id}.",
                 jobListingAssociatedFiles.Id);
 
             await _dbContext.CreateJobListingAssociatedFilesAsync(jobListingAssociatedFiles);
+        }
+
+        public async Task<JobListing> CreateJobListingAsync()
+        {
+            Log.Information("Creating new job listing in database.");
+            return await _dbContext.CreateJobListingAsync();
         }
 
         public async Task<JobSearchProfile> CreateJobSearchProfileAsync(JobSearchProfile profile)
@@ -109,10 +109,10 @@ namespace AutoJobSearchGUI.Data
             await _dbContext.DeleteContactAsync(id);
         }
 
-        public async Task DeleteJobAsync(int id)
+        public async Task DeleteJobListingAsync(int id)
         {
             Log.Information("Deleting job listing for {@id} from database.", id);
-            await _dbContext.DeleteJobAsync(id);
+            await _dbContext.DeleteJobListingAsync(id);
         }
 
         public async Task DeleteJobSearchProfileAsync(int id)

@@ -27,6 +27,64 @@ namespace AutoJobSearchShared.Tests.Database
         }
 
         [Fact]
+        public async Task CreateContactAssociatedJobIdAsync_Should_CreateRecord()
+        {
+            // Arrange
+            var returnedRecord = _fixture.Create<ContactAssociatedJobId>();
+            _db.CreateContactAssociatedJobIdAsync(Arg.Any<int>(), Arg.Any<int>()).Returns(returnedRecord);
+
+            // Act
+            var createdRecord = await _db.CreateContactAssociatedJobIdAsync(_fixture.Create<int>(), _fixture.Create<int>());
+
+            // Assert
+            createdRecord.Should().NotBeNull();
+            createdRecord.Should().BeOfType<ContactAssociatedJobId>();
+            createdRecord.Should().BeEquivalentTo(returnedRecord);
+        }
+
+        [Fact]
+        public async Task CreateContactAsync_Should_CreateContact()
+        {
+            // Arrange
+            var returnedRecord = _fixture.Create<Contact>();
+            _db.CreateContactAsync(Arg.Any<Contact>()).Returns(returnedRecord);
+
+            // Act
+            var createdRecord = await _db.CreateContactAsync(_fixture.Create<Contact>());
+
+            // Assert
+            createdRecord.Should().NotBeNull();
+            createdRecord.Should().BeOfType<Contact>();
+            createdRecord.Should().BeEquivalentTo(returnedRecord);
+        }
+
+        [Fact]
+        public async Task CreateJobListingAssociatedFilesAsync_Should_BeCalled()
+        {
+            // Act
+            await _db.CreateJobListingAssociatedFilesAsync(_fixture.Create<JobListingAssociatedFiles>());
+
+            // Assert
+            await _db.Received().CreateJobListingAssociatedFilesAsync(Arg.Any<JobListingAssociatedFiles>());
+        }
+
+        [Fact]
+        public async Task CreateJobListingAsync_Should_CreateJobListing()
+        {
+            // Arrange
+            var returnedRecord = _fixture.Create<JobListing>();
+            _db.CreateJobListingAsync().Returns(returnedRecord);
+
+            // Act
+            var createdRecord = await _db.CreateJobListingAsync();
+
+            // Assert
+            createdRecord.Should().NotBeNull();
+            createdRecord.Should().BeOfType<JobListing>();
+            createdRecord.Should().BeEquivalentTo(returnedRecord);
+        }
+
+        [Fact]
         public async Task CreateJobSearchProfileAsync_Should_CreateProfile()
         {
             // Arrange
@@ -43,11 +101,51 @@ namespace AutoJobSearchShared.Tests.Database
         }
 
         [Fact]
+        public async Task DeleteAllContactsAsync_Should_BeCalled()
+        {
+            // Act
+            await _db.DeleteAllContactsAsync();
+
+            // Assert
+            await _db.Received().DeleteAllContactsAsync();
+        }
+
+        [Fact]
         public async Task DeleteAllJobListingsAsync_Should_BeCalled()
         {
             await _db.DeleteAllJobListingsAsync();
 
             await _db.Received().DeleteAllJobListingsAsync();
+        }
+
+        [Fact]
+        public async Task DeleteContactAssociatedJobIdAsync_Should_BeCalled()
+        {
+            // Act
+            await _db.DeleteContactAssociatedJobIdAsync(_fixture.Create<int>(), _fixture.Create<int>());
+
+            // Assert
+            await _db.Received().DeleteContactAssociatedJobIdAsync(Arg.Any<int>(), Arg.Any<int>());
+        }
+
+        [Fact]
+        public async Task DeleteContactAsync_Should_BeCalled()
+        {
+            // Act
+            await _db.DeleteContactAsync(_fixture.Create<int>());
+
+            // Assert
+            await _db.Received().DeleteContactAsync(Arg.Any<int>());
+        }
+
+        [Fact]
+        public async Task DeleteJobListingAsync_Should_BeCalled()
+        {
+            // Act
+            await _db.DeleteJobListingAsync(_fixture.Create<int>());
+
+            // Assert
+            await _db.Received().DeleteJobListingAsync(Arg.Any<int>());
         }
 
         [Fact]
@@ -192,6 +290,38 @@ namespace AutoJobSearchShared.Tests.Database
             // Assert
             result.Should().BeEquivalentTo(applicationLinks);
             result.Should().NotBeNullOrEmpty();
+        }
+
+        [Fact]
+        public async Task GetAllContactsAssociatedJobIdsAsync_Should_Return_NonEmptyIEnumerable()
+        {
+            // Arrange
+            var contactAssociatedJobIds = _fixture.CreateMany<ContactAssociatedJobId>();
+            _db.GetAllContactsAssociatedJobIdsAsync().Returns(contactAssociatedJobIds);
+
+            // Act
+            var result = await _db.GetAllContactsAssociatedJobIdsAsync();
+
+            // Assert
+            result.Should().BeEquivalentTo(contactAssociatedJobIds);
+            result.Should().NotBeNullOrEmpty();
+            await _db.Received().GetAllContactsAssociatedJobIdsAsync();
+        }
+
+        [Fact]
+        public async Task GetAllContactsAsync_Should_Return_NonEmptyIEnumerable()
+        {
+            // Arrange
+            var contacts = _fixture.CreateMany<Contact>();
+            _db.GetAllContactsAsync().Returns(contacts);
+
+            // Act
+            var result = await _db.GetAllContactsAsync();
+
+            // Assert
+            result.Should().BeEquivalentTo(contacts);
+            result.Should().NotBeNullOrEmpty();
+            await _db.Received().GetAllContactsAsync();
         }
 
         [Fact]
@@ -418,6 +548,34 @@ namespace AutoJobSearchShared.Tests.Database
         }
 
         [Fact]
+        public async Task UpdateContactStringPropertyAsync_Should_BeCalled()
+        {
+            // Arrange
+            var columnName = _fixture.Create<ContactStringField>();
+            string value = _fixture.Create<string>();
+            int id = _fixture.Create<int>();
+
+            // Act
+            await _db.UpdateContactStringPropertyAsync(columnName, value, id);
+
+            // Assert
+            await _db.Received().UpdateContactStringPropertyAsync(columnName, value, id);
+        }
+
+        [Fact]
+        public async Task UpdateJobListingAssociatedFilesAsync_Should_BeCalled()
+        {
+            // Arrange
+            var columnName = _fixture.Create<JobListingAssociatedFiles>();
+
+            // Act
+            await _db.UpdateJobListingAssociatedFilesAsync(columnName);
+
+            // Assert
+            await _db.Received().UpdateJobListingAssociatedFilesAsync(columnName);
+        }
+
+        [Fact]
         public async Task UpdateJobListingBoolPropertyAsync_Should_BeCalled()
         {
             // Arrange
@@ -434,6 +592,21 @@ namespace AutoJobSearchShared.Tests.Database
         }
 
         [Fact]
+        public async Task UpdateJobListingIntPropertyAsync_Should_BeCalled()
+        {
+            // Arrange
+            var columnName = _fixture.Create<JobListingsIntField>();
+            var value = _fixture.Create<int>();
+            var id = _fixture.Create<int>();
+
+            // Act
+            await _db.UpdateJobListingIntPropertyAsync(columnName, value, id);
+
+            // Assert
+            await _db.Received().UpdateJobListingIntPropertyAsync(columnName, value, id);
+        }
+
+        [Fact]
         public async Task UpdateJobListingStringPropertyAsync_Should_BeCalled()
         {
             // Arrange
@@ -446,6 +619,21 @@ namespace AutoJobSearchShared.Tests.Database
 
             // Assert
             await _db.Received().UpdateJobListingStringPropertyAsync(columnName, value, id);
+        }
+
+        [Fact]
+        public async Task UpdateJobSearchProfileIntPropertyAsync_Should_BeCalled()
+        {
+            // Arrange
+            var columnName = _fixture.Create<JobSearchProfilesIntField>();
+            var value = _fixture.Create<int>();
+            var id = _fixture.Create<int>();
+
+            // Act
+            await _db.UpdateJobSearchProfileIntPropertyAsync(columnName, value, id);
+
+            // Assert
+            await _db.Received().UpdateJobSearchProfileIntPropertyAsync(columnName, value, id);
         }
 
         [Fact]
