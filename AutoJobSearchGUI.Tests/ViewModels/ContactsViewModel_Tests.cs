@@ -200,10 +200,5 @@ namespace AutoJobSearchGUI.Tests.ViewModels
             _viewModel.ContactsQueryModel.Should().BeEquivalentTo(new ContactsQueryModel());
             _viewModel.ContactsDisplayed.Count.Should().BeLessThanOrEqualTo(_viewModel.PageSize);
         }
-        // Arrange
-
-        // Act
-
-        // Assert
     }
 }
