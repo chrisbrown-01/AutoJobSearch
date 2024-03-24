@@ -176,7 +176,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
             bool wasCalled = false;
             _viewModel.UpdateJobBoardViewRequest += () => wasCalled = true;
 
-            _dbContext.CreateJobAsync().Returns(newJob);
+            _dbContext.CreateJobListingAsync().Returns(newJob);
             _dbContext.GetJobListingDetailsByIdAsync(newJob.Id).Returns(newJob);
 
             // Act
@@ -184,7 +184,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
 
             // Assert
             wasCalled.Should().Be(true);
-            await _dbContext.Received().CreateJobAsync();
+            await _dbContext.Received().CreateJobListingAsync();
 
             var count = Singletons.JobListings.Count;
 

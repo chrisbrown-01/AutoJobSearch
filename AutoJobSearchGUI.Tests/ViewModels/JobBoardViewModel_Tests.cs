@@ -342,7 +342,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
         {
             // Arrange
             var createdJob = _fixture.Create<JobListing>();
-            _dbContext.CreateJobAsync().Returns(createdJob);
+            _dbContext.CreateJobListingAsync().Returns(createdJob);
 
             Singletons.JobListings = _fixture.CreateMany<JobListingModel>().ToList();
             var initialNumOfJobListings = Singletons.JobListings.Count;

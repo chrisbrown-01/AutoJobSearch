@@ -13,7 +13,7 @@ namespace AutoJobSearchGUI.Data
 
         Task<Contact> CreateContactAsync(Contact contact);
 
-        Task<JobListing> CreateJobAsync();
+        Task<JobListing> CreateJobListingAsync();
 
         Task CreateJobListingAssociatedFilesAsync(JobListingAssociatedFiles jobListingAssociatedFiles);
 
@@ -27,7 +27,7 @@ namespace AutoJobSearchGUI.Data
 
         Task DeleteContactAsync(int id);
 
-        Task DeleteJobAsync(int jobId);
+        Task DeleteJobListingAsync(int jobId);
 
         Task DeleteJobSearchProfileAsync(int id);
 

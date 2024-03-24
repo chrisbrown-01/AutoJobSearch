@@ -70,7 +70,7 @@ namespace AutoJobSearchShared.Database
             return await connection.QuerySingleAsync<Contact>(sql, contact).ConfigureAwait(false);
         }
 
-        public async Task<JobListing> CreateJobAsync()
+        public async Task<JobListing> CreateJobListingAsync()
         {
             var newJob = new JobListing();
 
@@ -291,7 +291,7 @@ namespace AutoJobSearchShared.Database
             await connection.ExecuteAsync(sql, new { Id = id }).ConfigureAwait(false);
         }
 
-        public async Task DeleteJobAsync(int jobId)
+        public async Task DeleteJobListingAsync(int jobId)
         {
             const string sql = "DELETE FROM JobListings WHERE Id = @Id;";
             await connection.ExecuteAsync(sql, new { Id = jobId }).ConfigureAwait(false);
