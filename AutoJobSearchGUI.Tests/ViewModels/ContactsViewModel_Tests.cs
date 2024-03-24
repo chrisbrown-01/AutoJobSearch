@@ -32,6 +32,21 @@ namespace AutoJobSearchGUI.Tests.ViewModels
         }
 
         [Fact]
+        public void UpdateContacts_SetsCorrectNumberOfRecords()
+        {
+            // Arrange
+            var pageSize = _viewModel.PageSize;
+            var pageIndex = _viewModel.PageIndex;
+            Singletons.Contacts = _singletonContacts;
+
+            // Act
+            _viewModel.UpdateContacts();
+
+            // Assert
+            _viewModel.ContactsDisplayed.Count.Should().BeLessThanOrEqualTo(_viewModel.PageSize);
+        }
+
+        [Fact]
         public async Task ExecuteQuery_UpdatesPropertiesCorrectly()
         {
             // Arrange
@@ -62,6 +77,129 @@ namespace AutoJobSearchGUI.Tests.ViewModels
             }
         }
 
+        [Fact]
+        public void OpenContact_InvokesEvent()
+        {
+            // Arrange
+            ContactModel? contactModel = _fixture.Create<ContactModel>();
+            _viewModel.SelectedContact = contactModel;
+
+            bool wasCalled = false;
+            _viewModel.OpenAddContactViewRequest += (contactModel) => wasCalled = true;
+
+            // Act
+            _viewModel.OpenContactCommand.Execute(null);
+
+            // Assert
+            wasCalled.Should().BeTrue();
+        }
+
+        [Fact]
+        public void AddNewContact_InvokesEvent()
+        {
+            // Arrange
+            ContactModel? contactModel = _fixture.Create<ContactModel>();
+
+            bool wasCalled = false;
+            _viewModel.OpenAddContactViewRequest += (contactModel) => wasCalled = true;
+
+            // Act
+            _viewModel.AddNewContactCommand.Execute(null);
+
+            // Assert
+            wasCalled.Should().BeTrue();
+        }
+
+        [Fact]
+        public void GoToNextPage_NoMorePages_DoesNotChangePageIndexOrJobListingsDisplayed()
+        {
+            // Arrange
+            var initialPageIndex = _fixture.Create<int>();
+            var initialContactsDisplayed = _fixture.CreateMany<ContactModel>().ToList();
+            _viewModel.PageIndex = initialPageIndex;
+            _viewModel.PageSize = 0;
+            _viewModel.ContactsDisplayed = initialContactsDisplayed;
+
+            // Act
+            _viewModel.GoToNextPageCommand.Execute(null);
+
+            // Assert
+            _viewModel.PageIndex.Should().Be(initialPageIndex);
+            _viewModel.ContactsDisplayed.Should().BeEquivalentTo(initialContactsDisplayed);
+        }
+
+        [Fact]
+        public void GoToNextPage_HasMorePages_UpdatesPageIndexAndJobListingsDisplayed()
+        {
+            // Arrange
+            var initialPageIndex = 0;
+            _viewModel.PageIndex = initialPageIndex;
+
+            _viewModel.PageSize = 50;
+            var contacts = _fixture.CreateMany<ContactModel>(_viewModel.PageSize * 2).ToList();
+            Singletons.Contacts = contacts;
+            var initialContactsDisplayed = contacts.Take(_viewModel.PageSize).ToList();
+            _viewModel.ContactsDisplayed = initialContactsDisplayed;
+
+            // Act
+            _viewModel.GoToNextPageCommand.Execute(null);
+
+            // Assert
+            _viewModel.PageIndex.Should().Be(initialPageIndex + 1);
+            _viewModel.ContactsDisplayed.Should().NotBeEquivalentTo(initialContactsDisplayed);
+        }
+
+        [Fact]
+        public void GoToPreviousPage_AtFirstPage_DoesNotChangePageIndexOrJobListingsDisplayed()
+        {
+            // Arrange
+            var initialPageIndex = 0;
+            var initialContactsDisplayed = _fixture.CreateMany<ContactModel>().ToList();
+            _viewModel.PageIndex = initialPageIndex;
+            _viewModel.PageSize = 50;
+            _viewModel.ContactsDisplayed = initialContactsDisplayed;
+
+            // Act
+            _viewModel.GoToPreviousPageCommand.Execute(null);
+
+            // Assert
+            _viewModel.PageIndex.Should().Be(initialPageIndex);
+            _viewModel.ContactsDisplayed.Should().BeEquivalentTo(initialContactsDisplayed);
+        }
+
+        [Fact]
+        public void GoToPreviousPage_NotAtFirstPage_UpdatesPageIndexAndJobListingsDisplayed()
+        {
+            // Arrange
+            var initialPageIndex = 10; // any positive integer
+            var initialContactsDisplayed = _fixture.CreateMany<ContactModel>().ToList();
+            _viewModel.PageIndex = initialPageIndex;
+            _viewModel.PageSize = 1;
+            _viewModel.ContactsDisplayed = initialContactsDisplayed;
+
+            // Act
+            _viewModel.GoToPreviousPageCommand.Execute(null);
+
+            // Assert
+            _viewModel.PageIndex.Should().Be(initialPageIndex - 1);
+            _viewModel.ContactsDisplayed.Should().NotBeEquivalentTo(initialContactsDisplayed);
+        }
+
+        [Fact]
+        public async Task RenderDefaultContactsViewAsync_CorrectlyUpdatesProperties()
+        {
+            // Arrange
+            _dbContext.GetAllContactsAsync().Returns(_fixture.CreateMany<Contact>());
+            _dbContext.GetAllContactsAssociatedJobIdsAsync().Returns(_fixture.CreateMany<ContactAssociatedJobId>());
+
+            // Act
+            await _viewModel.RenderDefaultContactsViewCommand.ExecuteAsync(null);
+
+            // Assert
+            _viewModel.PageIndex.Should().Be(0);
+            _viewModel.ContactsQueryModel.Should().BeEquivalentTo(new ContactsQueryModel());
+            _viewModel.ContactsDisplayed.Count.Should().BeLessThanOrEqualTo(_viewModel.PageSize);
+        }
         // Arrange
 
         // Act
