@@ -27,14 +27,14 @@ namespace AutoJobSearchGUI.Data
             return await _sqliteDb.CreateContactAsync(contact);
         }
 
-        public async Task<JobListing> CreateJobListingAsync()
-        {
-            return await _sqliteDb.CreateJobListingAsync();
-        }
-
         public async Task CreateJobListingAssociatedFilesAsync(JobListingAssociatedFiles jobListingAssociatedFiles)
         {
             await _sqliteDb.CreateJobListingAssociatedFilesAsync(jobListingAssociatedFiles);
+        }
+
+        public async Task<JobListing> CreateJobListingAsync()
+        {
+            return await _sqliteDb.CreateJobListingAsync();
         }
 
         public async Task<JobSearchProfile> CreateJobSearchProfileAsync(JobSearchProfile profile)

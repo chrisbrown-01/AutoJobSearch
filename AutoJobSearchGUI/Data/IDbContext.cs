@@ -13,9 +13,9 @@ namespace AutoJobSearchGUI.Data
 
         Task<Contact> CreateContactAsync(Contact contact);
 
-        Task<JobListing> CreateJobListingAsync();
-
         Task CreateJobListingAssociatedFilesAsync(JobListingAssociatedFiles jobListingAssociatedFiles);
+
+        Task<JobListing> CreateJobListingAsync();
 
         Task<JobSearchProfile> CreateJobSearchProfileAsync(JobSearchProfile profile);
 

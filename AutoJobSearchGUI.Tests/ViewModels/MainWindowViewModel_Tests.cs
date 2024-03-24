@@ -3,7 +3,6 @@ using AutoFixture.AutoNSubstitute;
 using AutoJobSearchGUI.Data;
 using AutoJobSearchGUI.Models;
 using AutoJobSearchGUI.ViewModels;
-using AutoJobSearchShared.Models;
 using FluentAssertions;
 using NSubstitute;
 
@@ -11,15 +10,64 @@ namespace AutoJobSearchGUI.Tests.ViewModels
 {
     public class MainWindowViewModel_Tests
     {
+        private readonly IDbContext _dbContext;
         private readonly IFixture _fixture;
         private readonly MainWindowViewModel _viewModel;
-        private readonly IDbContext _dbContext;
 
         public MainWindowViewModel_Tests()
         {
             _fixture = new Fixture().Customize(new AutoNSubstituteCustomization());
             _viewModel = new MainWindowViewModel();
             _dbContext = Substitute.For<IDbContext>();
+        }
+
+        [Fact]
+        public void ChangeViewToAddContact_ContactModelArgument_NotNull_SwitchesToCorrectViewModel()
+        {
+            // Arrange
+            var contact = _fixture.Create<ContactModel>();
+
+            // Act
+            _viewModel.ChangeViewToAddContact(contact);
+
+            // Assert
+            _viewModel.ContentViewModel.Should().BeOfType<AddContactViewModel>();
+        }
+
+        [Fact]
+        public void ChangeViewToAddContact_ContactModelArgument_Null_SwitchesToCorrectViewModel()
+        {
+            // Act
+            _viewModel.ChangeViewToAddContact(null);
+
+            // Assert
+            _viewModel.ContentViewModel.Should().BeOfType<AddContactViewModel>();
+        }
+
+        [Fact]
+        public void ChangeViewToContact_SwitchesToCorrectViewModel()
+        {
+            // Arrange
+            Singletons.Contacts = _fixture.CreateMany<ContactModel>().ToList();
+
+            // Act
+            _viewModel.ChangeViewToContact(Singletons.Contacts.First().Id);
+
+            // Assert
+            _viewModel.ContentViewModel.Should().BeOfType<AddContactViewModel>();
+        }
+
+        //    // Assert
+        //    _viewModel.ContentViewModel.Should().BeOfType<AddContactViewModel>();
+        //}
+        [Fact]
+        public void ChangeViewToContacts_SwitchesToCorrectViewModel()
+        {
+            // Act
+            _viewModel.ChangeViewToContacts();
+
+            // Assert
+            _viewModel.ContentViewModel.Should().BeOfType<ContactsViewModel>();
         }
 
         [Fact]
@@ -84,29 +132,6 @@ namespace AutoJobSearchGUI.Tests.ViewModels
             _viewModel.ContentViewModel.Should().BeOfType<JobSearchViewModel>();
         }
 
-        [Fact]
-        public void ChangeViewToAddContact_ContactModelArgument_NotNull_SwitchesToCorrectViewModel()
-        {
-            // Arrange
-            var contact = _fixture.Create<ContactModel>();
-
-            // Act
-            _viewModel.ChangeViewToAddContact(contact);
-
-            // Assert
-            _viewModel.ContentViewModel.Should().BeOfType<AddContactViewModel>();
-        }
-
-        [Fact]
-        public void ChangeViewToAddContact_ContactModelArgument_Null_SwitchesToCorrectViewModel()
-        {
-            // Act
-            _viewModel.ChangeViewToAddContact(null);
-
-            // Assert
-            _viewModel.ContentViewModel.Should().BeOfType<AddContactViewModel>();
-        }
-
         // Cannot complete test since IDbContext is not using the mock.
         //[Fact]
         //public void ChangeViewToAddContact_IntArgument_SwitchesToCorrectViewModel()
@@ -124,32 +149,5 @@ namespace AutoJobSearchGUI.Tests.ViewModels
 
         //    // Act
         //    _viewModel.ChangeViewToAddContact(jobId);
-
-        //    // Assert
-        //    _viewModel.ContentViewModel.Should().BeOfType<AddContactViewModel>();
-        //}
-
-        [Fact]
-        public void ChangeViewToContact_SwitchesToCorrectViewModel()
-        {
-            // Arrange
-            Singletons.Contacts = _fixture.CreateMany<ContactModel>().ToList();
-
-            // Act
-            _viewModel.ChangeViewToContact(Singletons.Contacts.First().Id);
-
-            // Assert
-            _viewModel.ContentViewModel.Should().BeOfType<AddContactViewModel>();
-        }
-
-        [Fact]
-        public void ChangeViewToContacts_SwitchesToCorrectViewModel()
-        {
-            // Act
-            _viewModel.ChangeViewToContacts();
-
-            // Assert
-            _viewModel.ContentViewModel.Should().BeOfType<ContactsViewModel>();
-        }
     }
 }

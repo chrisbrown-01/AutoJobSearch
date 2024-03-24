@@ -70,6 +70,35 @@ namespace AutoJobSearchShared.Database
             return await connection.QuerySingleAsync<Contact>(sql, contact).ConfigureAwait(false);
         }
 
+        public async Task CreateJobListingAssociatedFilesAsync(JobListingAssociatedFiles jobListingAssociatedFiles)
+        {
+            const string sql = "INSERT INTO JobListingsAssociatedFiles (" +
+                "Id, " +
+                "Resume, " +
+                "CoverLetter, " +
+                "File1, " +
+                "File2, " +
+                "File3)" +
+                "VALUES (" +
+                "@Id, " +
+                "@Resume, " +
+                "@CoverLetter, " +
+                "@File1, " +
+                "@File2, " +
+                "@File3);";
+
+            await connection.ExecuteAsync(sql,
+                new
+                {
+                    Id = jobListingAssociatedFiles.Id,
+                    Resume = jobListingAssociatedFiles.Resume,
+                    CoverLetter = jobListingAssociatedFiles.CoverLetter,
+                    File1 = jobListingAssociatedFiles.File1,
+                    File2 = jobListingAssociatedFiles.File2,
+                    File3 = jobListingAssociatedFiles.File3
+                }).ConfigureAwait(false);
+        }
+
         public async Task<JobListing> CreateJobListingAsync()
         {
             var newJob = new JobListing();
@@ -129,35 +158,6 @@ namespace AutoJobSearchShared.Database
                     IsFavourite = newJob.IsFavourite,
                     IsHidden = newJob.IsHidden,
                     Notes = newJob.Notes
-                }).ConfigureAwait(false);
-        }
-
-        public async Task CreateJobListingAssociatedFilesAsync(JobListingAssociatedFiles jobListingAssociatedFiles)
-        {
-            const string sql = "INSERT INTO JobListingsAssociatedFiles (" +
-                "Id, " +
-                "Resume, " +
-                "CoverLetter, " +
-                "File1, " +
-                "File2, " +
-                "File3)" +
-                "VALUES (" +
-                "@Id, " +
-                "@Resume, " +
-                "@CoverLetter, " +
-                "@File1, " +
-                "@File2, " +
-                "@File3);";
-
-            await connection.ExecuteAsync(sql,
-                new
-                {
-                    Id = jobListingAssociatedFiles.Id,
-                    Resume = jobListingAssociatedFiles.Resume,
-                    CoverLetter = jobListingAssociatedFiles.CoverLetter,
-                    File1 = jobListingAssociatedFiles.File1,
-                    File2 = jobListingAssociatedFiles.File2,
-                    File3 = jobListingAssociatedFiles.File3
                 }).ConfigureAwait(false);
         }
 

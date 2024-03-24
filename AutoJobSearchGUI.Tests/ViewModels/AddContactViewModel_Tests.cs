@@ -6,21 +6,16 @@ using AutoJobSearchGUI.ViewModels;
 using AutoJobSearchShared.Models;
 using FluentAssertions;
 using NSubstitute;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AutoJobSearchGUI.Tests.ViewModels
 {
     public class AddContactViewModel_Tests
     {
-        private readonly IFixture _fixture;
-        private readonly AddContactViewModel _viewModel;
         private readonly IDbContext _dbContext;
-        private readonly List<JobListingModel> _singletonJobListings;
+        private readonly IFixture _fixture;
         private readonly List<ContactModel> _singletonContacts;
+        private readonly List<JobListingModel> _singletonJobListings;
+        private readonly AddContactViewModel _viewModel;
 
         public AddContactViewModel_Tests()
         {
@@ -86,8 +81,8 @@ namespace AutoJobSearchGUI.Tests.ViewModels
             var contact = new Contact();
             _dbContext.CreateContactAsync(Arg.Any<Contact>()).Returns(contact);
 
-           // Act
-           await _viewModel.CreateNewContactCommand.ExecuteAsync(jobId);
+            // Act
+            await _viewModel.CreateNewContactCommand.ExecuteAsync(jobId);
 
             // Assert
             var newCount = Singletons.Contacts.Count;
@@ -124,25 +119,6 @@ namespace AutoJobSearchGUI.Tests.ViewModels
         }
 
         [Fact]
-        public async Task DeleteContactAssociatedJobIdAsync_ValidInputArgument_CorrectlyUpdatesProperties()
-        {
-            // Arrange
-            Singletons.Contacts = _singletonContacts;
-
-            var contact = _fixture.Create<ContactModel>();
-            _viewModel.Contact = contact;
-
-            var initialJobId = contact.JobListingIds.First();
-
-            // Act
-            await _viewModel.DeleteContactAssociatedJobIdCommand.ExecuteAsync(initialJobId.ToString());
-
-            // Assert
-            _viewModel.Contact.JobListingIds.Should().NotContain(initialJobId);
-            await _dbContext.Received().DeleteContactAssociatedJobIdAsync(Arg.Any<int>(), Arg.Any<int>());
-        }
-
-        [Fact]
         public async Task DeleteContactAssociatedJobIdAsync_InvalidInputArgument_DoesNotUpdateProperties()
         {
             // Arrange
@@ -162,7 +138,26 @@ namespace AutoJobSearchGUI.Tests.ViewModels
         }
 
         [Fact]
-        public void GoToPreviousContact_GoesToPreviousContact_WhenValid()
+        public async Task DeleteContactAssociatedJobIdAsync_ValidInputArgument_CorrectlyUpdatesProperties()
+        {
+            // Arrange
+            Singletons.Contacts = _singletonContacts;
+
+            var contact = _fixture.Create<ContactModel>();
+            _viewModel.Contact = contact;
+
+            var initialJobId = contact.JobListingIds.First();
+
+            // Act
+            await _viewModel.DeleteContactAssociatedJobIdCommand.ExecuteAsync(initialJobId.ToString());
+
+            // Assert
+            _viewModel.Contact.JobListingIds.Should().NotContain(initialJobId);
+            await _dbContext.Received().DeleteContactAssociatedJobIdAsync(Arg.Any<int>(), Arg.Any<int>());
+        }
+
+        [Fact]
+        public void GoToNextContact_DoesNotGoToNextContact_WhenInvalid()
         {
             // Arrange
             Singletons.Contacts = _singletonContacts;
@@ -170,22 +165,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
             var initialJobListing = _viewModel.Contact;
 
             // Act
-            _viewModel.GoToPreviousContactCommand.Execute(null);
-
-            // Assert
-            _viewModel.Contact.Should().NotBe(initialJobListing);
-        }
-
-        [Fact]
-        public void GoToPreviousContact_DoesNotGoToPreviousContact_WhenInvalid()
-        {
-            // Arrange
-            Singletons.Contacts = _singletonContacts;
-            _viewModel.Contact = Singletons.Contacts.First();
-            var initialJobListing = _viewModel.Contact;
-
-            // Act
-            _viewModel.GoToPreviousContactCommand.Execute(null);
+            _viewModel.GoToNextContactCommand.Execute(null);
 
             // Assert
             _viewModel.Contact.Should().Be(initialJobListing);
@@ -207,7 +187,22 @@ namespace AutoJobSearchGUI.Tests.ViewModels
         }
 
         [Fact]
-        public void GoToNextContact_DoesNotGoToNextContact_WhenInvalid()
+        public void GoToPreviousContact_DoesNotGoToPreviousContact_WhenInvalid()
+        {
+            // Arrange
+            Singletons.Contacts = _singletonContacts;
+            _viewModel.Contact = Singletons.Contacts.First();
+            var initialJobListing = _viewModel.Contact;
+
+            // Act
+            _viewModel.GoToPreviousContactCommand.Execute(null);
+
+            // Assert
+            _viewModel.Contact.Should().Be(initialJobListing);
+        }
+
+        [Fact]
+        public void GoToPreviousContact_GoesToPreviousContact_WhenValid()
         {
             // Arrange
             Singletons.Contacts = _singletonContacts;
@@ -215,10 +210,10 @@ namespace AutoJobSearchGUI.Tests.ViewModels
             var initialJobListing = _viewModel.Contact;
 
             // Act
-            _viewModel.GoToNextContactCommand.Execute(null);
+            _viewModel.GoToPreviousContactCommand.Execute(null);
 
             // Assert
-            _viewModel.Contact.Should().Be(initialJobListing);
+            _viewModel.Contact.Should().NotBe(initialJobListing);
         }
     }
 }

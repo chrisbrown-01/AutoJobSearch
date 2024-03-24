@@ -6,21 +6,16 @@ using AutoJobSearchGUI.ViewModels;
 using AutoJobSearchShared.Models;
 using FluentAssertions;
 using NSubstitute;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AutoJobSearchGUI.Tests.ViewModels
 {
     public class ContactsViewModel_Tests
     {
-        private readonly IFixture _fixture;
-        private readonly ContactsViewModel _viewModel;
         private readonly IDbContext _dbContext;
-        private readonly List<JobListingModel> _singletonJobListings;
+        private readonly IFixture _fixture;
         private readonly List<ContactModel> _singletonContacts;
+        private readonly List<JobListingModel> _singletonJobListings;
+        private readonly ContactsViewModel _viewModel;
 
         public ContactsViewModel_Tests()
         {
@@ -32,18 +27,19 @@ namespace AutoJobSearchGUI.Tests.ViewModels
         }
 
         [Fact]
-        public void UpdateContacts_SetsCorrectNumberOfRecords()
+        public void AddNewContact_InvokesEvent()
         {
             // Arrange
-            var pageSize = _viewModel.PageSize;
-            var pageIndex = _viewModel.PageIndex;
-            Singletons.Contacts = _singletonContacts;
+            ContactModel? contactModel = _fixture.Create<ContactModel>();
+
+            bool wasCalled = false;
+            _viewModel.OpenAddContactViewRequest += (contactModel) => wasCalled = true;
 
             // Act
-            _viewModel.UpdateContacts();
+            _viewModel.AddNewContactCommand.Execute(null);
 
             // Assert
-            _viewModel.ContactsDisplayed.Count.Should().BeLessThanOrEqualTo(_viewModel.PageSize);
+            wasCalled.Should().BeTrue();
         }
 
         [Fact]
@@ -78,57 +74,6 @@ namespace AutoJobSearchGUI.Tests.ViewModels
         }
 
         [Fact]
-        public void OpenContact_InvokesEvent()
-        {
-            // Arrange
-            ContactModel? contactModel = _fixture.Create<ContactModel>();
-            _viewModel.SelectedContact = contactModel;
-
-            bool wasCalled = false;
-            _viewModel.OpenAddContactViewRequest += (contactModel) => wasCalled = true;
-
-            // Act
-            _viewModel.OpenContactCommand.Execute(null);
-
-            // Assert
-            wasCalled.Should().BeTrue();
-        }
-
-        [Fact]
-        public void AddNewContact_InvokesEvent()
-        {
-            // Arrange
-            ContactModel? contactModel = _fixture.Create<ContactModel>();
-
-            bool wasCalled = false;
-            _viewModel.OpenAddContactViewRequest += (contactModel) => wasCalled = true;
-
-            // Act
-            _viewModel.AddNewContactCommand.Execute(null);
-
-            // Assert
-            wasCalled.Should().BeTrue();
-        }
-
-        [Fact]
-        public void GoToNextPage_NoMorePages_DoesNotChangePageIndexOrJobListingsDisplayed()
-        {
-            // Arrange
-            var initialPageIndex = _fixture.Create<int>();
-            var initialContactsDisplayed = _fixture.CreateMany<ContactModel>().ToList();
-            _viewModel.PageIndex = initialPageIndex;
-            _viewModel.PageSize = 0;
-            _viewModel.ContactsDisplayed = initialContactsDisplayed;
-
-            // Act
-            _viewModel.GoToNextPageCommand.Execute(null);
-
-            // Assert
-            _viewModel.PageIndex.Should().Be(initialPageIndex);
-            _viewModel.ContactsDisplayed.Should().BeEquivalentTo(initialContactsDisplayed);
-        }
-
-        [Fact]
         public void GoToNextPage_HasMorePages_UpdatesPageIndexAndJobListingsDisplayed()
         {
             // Arrange
@@ -147,6 +92,24 @@ namespace AutoJobSearchGUI.Tests.ViewModels
             // Assert
             _viewModel.PageIndex.Should().Be(initialPageIndex + 1);
             _viewModel.ContactsDisplayed.Should().NotBeEquivalentTo(initialContactsDisplayed);
+        }
+
+        [Fact]
+        public void GoToNextPage_NoMorePages_DoesNotChangePageIndexOrJobListingsDisplayed()
+        {
+            // Arrange
+            var initialPageIndex = _fixture.Create<int>();
+            var initialContactsDisplayed = _fixture.CreateMany<ContactModel>().ToList();
+            _viewModel.PageIndex = initialPageIndex;
+            _viewModel.PageSize = 0;
+            _viewModel.ContactsDisplayed = initialContactsDisplayed;
+
+            // Act
+            _viewModel.GoToNextPageCommand.Execute(null);
+
+            // Assert
+            _viewModel.PageIndex.Should().Be(initialPageIndex);
+            _viewModel.ContactsDisplayed.Should().BeEquivalentTo(initialContactsDisplayed);
         }
 
         [Fact]
@@ -186,6 +149,23 @@ namespace AutoJobSearchGUI.Tests.ViewModels
         }
 
         [Fact]
+        public void OpenContact_InvokesEvent()
+        {
+            // Arrange
+            ContactModel? contactModel = _fixture.Create<ContactModel>();
+            _viewModel.SelectedContact = contactModel;
+
+            bool wasCalled = false;
+            _viewModel.OpenAddContactViewRequest += (contactModel) => wasCalled = true;
+
+            // Act
+            _viewModel.OpenContactCommand.Execute(null);
+
+            // Assert
+            wasCalled.Should().BeTrue();
+        }
+
+        [Fact]
         public async Task RenderDefaultContactsViewAsync_CorrectlyUpdatesProperties()
         {
             // Arrange
@@ -198,6 +178,21 @@ namespace AutoJobSearchGUI.Tests.ViewModels
             // Assert
             _viewModel.PageIndex.Should().Be(0);
             _viewModel.ContactsQueryModel.Should().BeEquivalentTo(new ContactsQueryModel());
+            _viewModel.ContactsDisplayed.Count.Should().BeLessThanOrEqualTo(_viewModel.PageSize);
+        }
+
+        [Fact]
+        public void UpdateContacts_SetsCorrectNumberOfRecords()
+        {
+            // Arrange
+            var pageSize = _viewModel.PageSize;
+            var pageIndex = _viewModel.PageIndex;
+            Singletons.Contacts = _singletonContacts;
+
+            // Act
+            _viewModel.UpdateContacts();
+
+            // Assert
             _viewModel.ContactsDisplayed.Count.Should().BeLessThanOrEqualTo(_viewModel.PageSize);
         }
     }

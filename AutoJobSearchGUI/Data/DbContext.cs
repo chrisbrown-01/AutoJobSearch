@@ -65,18 +65,18 @@ namespace AutoJobSearchGUI.Data
             return await _dbContext.CreateContactAsync(contact);
         }
 
-        public async Task<JobListing> CreateJobListingAsync()
-        {
-            Log.Information("Creating new job listing in database.");
-            return await _dbContext.CreateJobListingAsync();
-        }
-
         public async Task CreateJobListingAssociatedFilesAsync(JobListingAssociatedFiles jobListingAssociatedFiles)
         {
             Log.Information("Creating new job listing associated file record in database for job ID {@jobListingAssociatedFiles.Id}.",
                 jobListingAssociatedFiles.Id);
 
             await _dbContext.CreateJobListingAssociatedFilesAsync(jobListingAssociatedFiles);
+        }
+
+        public async Task<JobListing> CreateJobListingAsync()
+        {
+            Log.Information("Creating new job listing in database.");
+            return await _dbContext.CreateJobListingAsync();
         }
 
         public async Task<JobSearchProfile> CreateJobSearchProfileAsync(JobSearchProfile profile)
