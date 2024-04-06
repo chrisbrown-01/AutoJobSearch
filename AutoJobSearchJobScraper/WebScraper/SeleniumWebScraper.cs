@@ -364,7 +364,7 @@ namespace AutoJobSearchJobScraper.WebScraper
         private IEnumerable<HtmlNode>? ScrapeJobNodes_Google(ref FirefoxDriver driver, string searchTerm, int pageIndex)
         {
             var htmlDocument = new HtmlDocument();
-            var googleJobsBoardURL = $"https://www.google.com/search?q={WebUtility.UrlEncode(searchTerm)}&sourceid=chrome&ie=UTF-8&ibp=htl;jobs&start={pageIndex}";
+            var googleJobsBoardURL = $"https://www.google.com/search?q={WebUtility.UrlEncode(searchTerm)};jobs&start={pageIndex}&ibp=htl;jobs";
 
             driver.Navigate().GoToUrl(googleJobsBoardURL);
 
@@ -384,7 +384,7 @@ namespace AutoJobSearchJobScraper.WebScraper
         private IEnumerable<HtmlNode>? ScrapeJobNodes_Google(ref EdgeDriver driver, string searchTerm, int pageIndex)
         {
             var htmlDocument = new HtmlDocument();
-            var googleJobsBoardURL = $"https://www.google.com/search?q={WebUtility.UrlEncode(searchTerm)}&sourceid=chrome&ie=UTF-8&ibp=htl;jobs&start={pageIndex}";
+            var googleJobsBoardURL = $"https://www.google.com/search?q={WebUtility.UrlEncode(searchTerm)};jobs&start={pageIndex}&ibp=htl;jobs";
 
             driver.Navigate().GoToUrl(googleJobsBoardURL);
 
@@ -404,7 +404,7 @@ namespace AutoJobSearchJobScraper.WebScraper
         private IEnumerable<HtmlNode>? ScrapeJobNodes_Google(ref ChromeDriver driver, string searchTerm, int pageIndex)
         {
             var htmlDocument = new HtmlDocument();
-            var googleJobsBoardURL = $"https://www.google.com/search?q={WebUtility.UrlEncode(searchTerm)}&sourceid=chrome&ie=UTF-8&ibp=htl;jobs&start={pageIndex}";
+            var googleJobsBoardURL = $"https://www.google.com/search?q={WebUtility.UrlEncode(searchTerm)};jobs&start={pageIndex}&ibp=htl;jobs";
 
             driver.Navigate().GoToUrl(googleJobsBoardURL);
 
