@@ -23,6 +23,7 @@
 			<MenuItem Header="Job Search" Command="{Binding ChangeViewToJobSearch}"/>
 			<MenuItem Header="Contacts" Command="{Binding ChangeViewToContacts}"/>
 			<MenuItem Header="Help" Command="{Binding ChangeViewToHelp}"/>
+			<MenuItem Header="Toggle Light/Dark Mode" Command="{Binding ToggleLightDarkMode}"/>
 		</Menu>
 		<ContentControl Content="{Binding ContentViewModel}" />
 	</DockPanel>

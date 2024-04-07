@@ -4,6 +4,7 @@ using AutoJobSearchGUI.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Serilog;
 using Serilog.Formatting.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -17,12 +18,12 @@ namespace AutoJobSearchGUI.ViewModels
         [ObservableProperty]
         private ViewModelBase _contentViewModel;
 
-        private AddContactViewModel addContactViewModel;
-        private ContactsViewModel contactsViewModel;
-        private HelpViewModel helpViewModel;
-        private JobBoardViewModel jobBoardViewModel;
-        private JobListingViewModel jobListingViewModel;
-        private JobSearchViewModel jobSearchViewModel;
+        private readonly AddContactViewModel addContactViewModel;
+        private readonly ContactsViewModel contactsViewModel;
+        private readonly HelpViewModel helpViewModel;
+        private readonly JobBoardViewModel jobBoardViewModel;
+        private readonly JobListingViewModel jobListingViewModel;
+        private readonly JobSearchViewModel jobSearchViewModel;
 
         public MainWindowViewModel()
         {
@@ -42,6 +43,28 @@ namespace AutoJobSearchGUI.ViewModels
             ContentViewModel = jobBoardViewModel;
 
             SubscribeToEvents();
+        }
+
+#pragma warning disable CA1822 // Mark members as static
+        // Cannot be static - it will throw an exception
+        public void ToggleLightDarkMode()
+#pragma warning restore CA1822 // Mark members as static
+        {
+            try
+            {
+                if (App.Current!.ActualThemeVariant == Avalonia.Styling.ThemeVariant.Light)
+                {
+                    App.Current!.RequestedThemeVariant = Avalonia.Styling.ThemeVariant.Dark;
+                }
+                else
+                {
+                    App.Current!.RequestedThemeVariant = Avalonia.Styling.ThemeVariant.Light;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Exception caught when toggling light/dark mode: {@Exception}", ex);
+            }           
         }
 
         public void ChangeViewToAddContact(ContactModel? contact)
@@ -119,7 +142,7 @@ namespace AutoJobSearchGUI.ViewModels
             jobBoardViewModel.UpdateJobBoard();
         }
 
-        private void ConfigureSerilog()
+        private static void ConfigureSerilog()
         {
             // At the time of creating this project, the logging provider for Avalonia is pretty crude and not well documented.
             // Therefore I am choosing to make this project dependent on Serilog and configuring the logger in the MainWindowViewModel

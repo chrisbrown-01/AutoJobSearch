@@ -266,7 +266,7 @@ namespace AutoJobSearchJobScraper.WebScraper
         /// </summary>
         /// <param name="listing"></param>
         /// <param name="anchorElements"></param>
-        private List<ApplicationLink> GetApplicationLinks(IEnumerable<HtmlNode> anchorElements)
+        private static List<ApplicationLink> GetApplicationLinks(IEnumerable<HtmlNode> anchorElements)
         {
             var applicationLinks = new List<ApplicationLink>();
             var existingLinks = new HashSet<string>();
@@ -305,10 +305,10 @@ namespace AutoJobSearchJobScraper.WebScraper
             // Usually, the main job description can be found as a substring between two keywords that are applied
             // at the beginning and end of the raw HTML job description.
 
-            string startingIndexKeyword = String.Empty;
-            int startingIndex = -1;
-            int endingIndex = -1;
-            int startingIndexKeywordLength = -1;
+            string startingIndexKeyword;
+            int startingIndex;
+            int endingIndex;
+            int startingIndexKeywordLength;
 
             if (jobBoardOption == JobBoards.GoogleJobSearch)
             {
@@ -330,7 +330,7 @@ namespace AutoJobSearchJobScraper.WebScraper
             }
 
             // If the raw description doesn't contain the keywords in the correct order, don't attempt to extract the substring description.
-            if (startingIndexKeywordLength != -1 &&
+            if (startingIndexKeywordLength > 0 &&
                 startingIndex != -1 &&
                 endingIndex != -1 &&
                 endingIndex > startingIndex)
@@ -361,10 +361,15 @@ namespace AutoJobSearchJobScraper.WebScraper
             }
         }
 
+        private static string ResolveGoogleJobsBoardUrl(string searchTerm, int pageIndex)
+        {
+            return $"https://www.google.com/search?q={WebUtility.UrlEncode(searchTerm)}&start={pageIndex}&ibp=htl;jobs";
+        }
+
         private IEnumerable<HtmlNode>? ScrapeJobNodes_Google(ref FirefoxDriver driver, string searchTerm, int pageIndex)
         {
             var htmlDocument = new HtmlDocument();
-            var googleJobsBoardURL = $"https://www.google.com/search?q={WebUtility.UrlEncode(searchTerm)};jobs&start={pageIndex}&ibp=htl;jobs";
+            var googleJobsBoardURL = ResolveGoogleJobsBoardUrl(searchTerm, pageIndex);
 
             driver.Navigate().GoToUrl(googleJobsBoardURL);
 
@@ -384,7 +389,7 @@ namespace AutoJobSearchJobScraper.WebScraper
         private IEnumerable<HtmlNode>? ScrapeJobNodes_Google(ref EdgeDriver driver, string searchTerm, int pageIndex)
         {
             var htmlDocument = new HtmlDocument();
-            var googleJobsBoardURL = $"https://www.google.com/search?q={WebUtility.UrlEncode(searchTerm)};jobs&start={pageIndex}&ibp=htl;jobs";
+            var googleJobsBoardURL = ResolveGoogleJobsBoardUrl(searchTerm, pageIndex);
 
             driver.Navigate().GoToUrl(googleJobsBoardURL);
 
@@ -404,7 +409,7 @@ namespace AutoJobSearchJobScraper.WebScraper
         private IEnumerable<HtmlNode>? ScrapeJobNodes_Google(ref ChromeDriver driver, string searchTerm, int pageIndex)
         {
             var htmlDocument = new HtmlDocument();
-            var googleJobsBoardURL = $"https://www.google.com/search?q={WebUtility.UrlEncode(searchTerm)};jobs&start={pageIndex}&ibp=htl;jobs";
+            var googleJobsBoardURL = ResolveGoogleJobsBoardUrl(searchTerm, pageIndex);
 
             driver.Navigate().GoToUrl(googleJobsBoardURL);
 
