@@ -104,7 +104,7 @@ namespace AutoJobSearchGUI.ViewModels
             JobListing = new JobListingModel();
             _dbContext = dbContext;
 
-            _associatedFilesDirectoryPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ASSOCIATED_FILES_DIRECTORY_NAME); 
+            _associatedFilesDirectoryPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ASSOCIATED_FILES_DIRECTORY_NAME);
             Directory.CreateDirectory(_associatedFilesDirectoryPath); // This method is automatically skipped if the directory already exists.
         }
 
@@ -122,7 +122,7 @@ namespace AutoJobSearchGUI.ViewModels
         }
 
         [RelayCommand]
-        private async Task ViewFileAsync(JobListingsAssociatedFilesStringField fileField) 
+        private async Task ViewFileAsync(JobListingsAssociatedFilesStringField fileField)
         {
             if (JobListing.JobListingAssociatedFiles == null)
             {
@@ -207,7 +207,7 @@ namespace AutoJobSearchGUI.ViewModels
         }
 
         [RelayCommand]
-        private async Task UploadFileAsync(JobListingsAssociatedFilesStringField fileField) 
+        private async Task UploadFileAsync(JobListingsAssociatedFilesStringField fileField)
         {
             var filesService = App.Current?.Services?.GetService<IFilesService>();
 

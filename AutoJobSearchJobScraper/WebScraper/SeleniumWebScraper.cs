@@ -171,6 +171,40 @@ namespace AutoJobSearchJobScraper.WebScraper
             }
         }
 
+        /// <summary>
+        /// Get the direct hyperlinks to the job listing.
+        /// </summary>
+        /// <param name="listing"></param>
+        /// <param name="anchorElements"></param>
+        private static List<ApplicationLink> GetApplicationLinks(IEnumerable<HtmlNode> anchorElements)
+        {
+            var applicationLinks = new List<ApplicationLink>();
+            var existingLinks = new HashSet<string>();
+
+            foreach (var anchor in anchorElements)
+            {
+                MatchCollection hyperlinks = Regex.Matches(anchor.OuterHtml, REGEX_URL_PATTERN);
+
+                // If no weblinks found, skip and continue to the next link.
+                if (!hyperlinks.Any()) continue;
+
+                var hyperlink = hyperlinks.First().Value;
+
+                // If application link is already in the list, skip it. This is to prevent duplicate links.
+                if (existingLinks.Contains(hyperlink)) continue;
+
+                existingLinks.Add(hyperlink);
+
+                applicationLinks.Add(new ApplicationLink
+                {
+                    Link_RawHTML = anchor.OuterHtml,
+                    Link = hyperlink
+                });
+            }
+
+            return applicationLinks;
+        }
+
         private static void PauseBrowserAutomationUntilUserOverrides()
         {
             var userInput = "";
@@ -181,6 +215,11 @@ namespace AutoJobSearchJobScraper.WebScraper
                 Console.WriteLine("Browser debug mode is enabled, so browser automation is paused. Type 'CONTINUE' to resume automation: ");
                 userInput = Console.ReadLine();
             }
+        }
+
+        private static string ResolveGoogleJobsBoardUrl(string searchTerm, int pageIndex)
+        {
+            return $"https://www.google.com/search?q={WebUtility.UrlEncode(searchTerm)}&start={pageIndex}&ibp=htl;jobs";
         }
 
         /// <summary>
@@ -262,40 +301,6 @@ namespace AutoJobSearchJobScraper.WebScraper
         }
 
         /// <summary>
-        /// Get the direct hyperlinks to the job listing.
-        /// </summary>
-        /// <param name="listing"></param>
-        /// <param name="anchorElements"></param>
-        private static List<ApplicationLink> GetApplicationLinks(IEnumerable<HtmlNode> anchorElements)
-        {
-            var applicationLinks = new List<ApplicationLink>();
-            var existingLinks = new HashSet<string>();
-
-            foreach (var anchor in anchorElements)
-            {
-                MatchCollection hyperlinks = Regex.Matches(anchor.OuterHtml, REGEX_URL_PATTERN);
-
-                // If no weblinks found, skip and continue to the next link.
-                if (!hyperlinks.Any()) continue;
-
-                var hyperlink = hyperlinks.First().Value;
-
-                // If application link is already in the list, skip it. This is to prevent duplicate links.
-                if (existingLinks.Contains(hyperlink)) continue;
-
-                existingLinks.Add(hyperlink);
-
-                applicationLinks.Add(new ApplicationLink
-                {
-                    Link_RawHTML = anchor.OuterHtml,
-                    Link = hyperlink
-                });
-            }
-
-            return applicationLinks;
-        }
-
-        /// <summary>
         /// This method attempts to extract only the important portions of the scraped job listing description.
         /// </summary>
         /// <param name="listing"></param>
@@ -359,11 +364,6 @@ namespace AutoJobSearchJobScraper.WebScraper
             {
                 return listing.Description_Raw;
             }
-        }
-
-        private static string ResolveGoogleJobsBoardUrl(string searchTerm, int pageIndex)
-        {
-            return $"https://www.google.com/search?q={WebUtility.UrlEncode(searchTerm)}&start={pageIndex}&ibp=htl;jobs";
         }
 
         private IEnumerable<HtmlNode>? ScrapeJobNodes_Google(ref FirefoxDriver driver, string searchTerm, int pageIndex)

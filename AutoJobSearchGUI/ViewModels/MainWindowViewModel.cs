@@ -46,6 +46,7 @@ namespace AutoJobSearchGUI.ViewModels
         }
 
 #pragma warning disable CA1822 // Mark members as static
+
         // Cannot be static - it will throw an exception
         public void ToggleLightDarkMode()
 #pragma warning restore CA1822 // Mark members as static
@@ -64,7 +65,7 @@ namespace AutoJobSearchGUI.ViewModels
             catch (Exception ex)
             {
                 Log.Error("Exception caught when toggling light/dark mode: {@Exception}", ex);
-            }           
+            }
         }
 
         public void ChangeViewToAddContact(ContactModel? contact)
