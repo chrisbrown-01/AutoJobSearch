@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System;
+using System.Text.RegularExpressions;
 
 namespace AutoJobSearchShared.Helpers
 {
@@ -31,7 +32,8 @@ namespace AutoJobSearchShared.Helpers
             "looking", "look", "north", "south", "east", "west", "use", "using", "useful", "save",
             "sign", "years’", "create", "change", "ago", "share", "Strong", "ad", "advertisement",
             "issues", "Markets", "initiatives", "ongoing", "plan", "world", "compatible", "life", "live",
-            "including", "Assist", "term", "cases"
+            "including", "Assist", "term", "cases", "ability", "British", "Columbia", "position", "business",
+            "clients", "client", "priorities", "others", "Nation", "canada", "usa", "america", "united", "states"
         };
 
         public static string AddNewLinesToMisformedString(string input)
