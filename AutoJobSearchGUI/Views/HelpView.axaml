@@ -26,6 +26,11 @@
 					   TextWrapping="Wrap"
 					   Margin="30" />
 		</TabItem>
+		<TabItem Header="Job Listing">
+			<TextBlock Text="{Binding AboutJobListing}"
+					   TextWrapping="Wrap"
+					   Margin="30" />
+		</TabItem>
 		<TabItem Header="Job Search">
 			<TextBlock Text="{Binding AboutJobSearch}"
 					   TextWrapping="Wrap"

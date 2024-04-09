@@ -13,7 +13,6 @@ namespace AutoJobSearchGUI.Models
         [ObservableProperty]
         private string _keywordsPositive = string.Empty;
 
-        // TODO: add notes in Help section that describes what this is for
         [ObservableProperty]
         private int _maxJobListingIndex;
 
