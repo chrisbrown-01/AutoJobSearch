@@ -481,15 +481,15 @@ namespace AutoJobSearchShared.Tests.Database
         }
 
         [Fact]
-        public async Task GetJobListingDetailsByIdAsync_Should_ReturnJobListing()
+        public async Task GetJobListingByIdAsync_Should_ReturnJobListing()
         {
             // Arrange
             var id = Arg.Any<int>();
             var expectedJobListing = _fixture.Create<JobListing>();
-            _db.GetJobListingDetailsByIdAsync(id).Returns(expectedJobListing);
+            _db.GetJobListingByIdAsync(id, false).Returns(expectedJobListing);
 
             // Act
-            var actualJobListing = await _db.GetJobListingDetailsByIdAsync(id);
+            var actualJobListing = await _db.GetJobListingByIdAsync(id, false);
 
             // Assert
             actualJobListing.Should().BeEquivalentTo(expectedJobListing);
@@ -497,14 +497,14 @@ namespace AutoJobSearchShared.Tests.Database
         }
 
         [Fact]
-        public async Task GetJobListingDetailsByIdAsync_Should_ThrowException_When_NoRecordsFound()
+        public async Task GetJobListingByIdAsync_Should_ThrowException_When_NoRecordsFound()
         {
             // Arrange
             var id = Arg.Any<int>();
-            _db.GetJobListingDetailsByIdAsync(id).Returns(Task.FromException<JobListing>(new Exception()));
+            _db.GetJobListingByIdAsync(id, false).Returns(Task.FromException<JobListing>(new Exception()));
 
             // Act & Assert
-            await Assert.ThrowsAsync<Exception>(() => _db.GetJobListingDetailsByIdAsync(id));
+            await Assert.ThrowsAsync<Exception>(() => _db.GetJobListingByIdAsync(id, false));
         }
 
         [Fact]

@@ -135,9 +135,9 @@ namespace AutoJobSearchGUI.Data
             return await _sqliteDb.GetHiddenJobListingsAsync();
         }
 
-        public async Task<JobListing> GetJobListingDetailsByIdAsync(int id)
+        public async Task<JobListing> GetJobListingByIdAsync(int id, bool isRetrievingAllDetails)
         {
-            return await _sqliteDb.GetJobListingDetailsByIdAsync(id);
+            return await _sqliteDb.GetJobListingByIdAsync(id, isRetrievingAllDetails);
         }
 
         public async Task UpdateContactStringPropertyAsync(ContactStringField columnName, string value, int id)

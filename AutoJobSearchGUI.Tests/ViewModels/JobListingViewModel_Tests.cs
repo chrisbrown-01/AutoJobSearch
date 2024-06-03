@@ -62,7 +62,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
             _viewModel.UpdateJobBoardViewRequest += () => wasCalled = true;
 
             _dbContext.CreateJobListingAsync().Returns(newJob);
-            _dbContext.GetJobListingDetailsByIdAsync(newJob.Id).Returns(newJob);
+            _dbContext.GetJobListingByIdAsync(newJob.Id, false).Returns(newJob);
 
             // Act
             await _viewModel.CreateJobCommand.ExecuteAsync(null);
@@ -101,7 +101,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
             var initialJobListing = _viewModel.JobListing;
 
             var newJob = _fixture.Create<JobListing>();
-            _dbContext.GetJobListingDetailsByIdAsync(Arg.Any<int>()).Returns(newJob);
+            _dbContext.GetJobListingByIdAsync(Arg.Any<int>(), false).Returns(newJob);
 
             // Act
             await _viewModel.GoToNextJobCommand.ExecuteAsync(null);
@@ -135,7 +135,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
             var initialJobListing = _viewModel.JobListing;
 
             var newJob = _fixture.Create<JobListing>();
-            _dbContext.GetJobListingDetailsByIdAsync(Arg.Any<int>()).Returns(newJob);
+            _dbContext.GetJobListingByIdAsync(Arg.Any<int>(), false).Returns(newJob);
 
             // Act
             await _viewModel.GoToPreviousJobCommand.ExecuteAsync(null);
@@ -155,13 +155,13 @@ namespace AutoJobSearchGUI.Tests.ViewModels
 
             Singletons.Contacts = _singletonContacts;
 
-            _dbContext.GetJobListingDetailsByIdAsync(jobListingWithoutDetails.Id).Returns(jobListingWithDetails);
+            _dbContext.GetJobListingByIdAsync(jobListingWithoutDetails.Id, false).Returns(jobListingWithDetails);
 
             // Act
             await _viewModel.OpenJobListingCommand.ExecuteAsync(jobListingWithoutDetails);
 
             // Assert
-            await _dbContext.Received().GetJobListingDetailsByIdAsync(jobListingWithoutDetails.Id);
+            await _dbContext.Received().GetJobListingByIdAsync(jobListingWithoutDetails.Id, false);
             _viewModel.JobListing.Id.Should().Be(jobListingWithoutDetails.Id);
             _viewModel.JobListing.SearchTerm.Should().Be(jobListingWithoutDetails.SearchTerm);
             _viewModel.JobListing.CreatedAt.Should().Be(jobListingWithoutDetails.CreatedAt);
@@ -191,7 +191,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
             await _viewModel.OpenJobListingCommand.ExecuteAsync(jobListingWithDetails);
 
             // Assert
-            await _dbContext.DidNotReceive().GetJobListingDetailsByIdAsync(Arg.Any<int>());
+            await _dbContext.DidNotReceive().GetJobListingByIdAsync(Arg.Any<int>(), false);
             _viewModel.JobListing.Should().BeEquivalentTo(jobListingWithDetails);
             _viewModel.JobListing.DetailsPopulated.Should().BeTrue();
             _viewModel.JobListing.EnableEvents.Should().BeTrue();
@@ -209,7 +209,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
             Singletons.JobListings.Add(jobListingModel);
 
             var jobListing = _fixture.Create<JobListing>();
-            _dbContext.GetJobListingDetailsByIdAsync(Arg.Any<int>()).Returns(jobListing);
+            _dbContext.GetJobListingByIdAsync(Arg.Any<int>(), false).Returns(jobListing);
 
             // Act
             await _viewModel.OpenJobListingCommand.ExecuteAsync(jobListingModel);

@@ -56,7 +56,7 @@ namespace AutoJobSearchGUI.Data
 
         Task<IEnumerable<JobListing>> GetHiddenJobListingsAsync();
 
-        Task<JobListing> GetJobListingDetailsByIdAsync(int id);
+        Task<JobListing> GetJobListingByIdAsync(int id, bool isRetrievingAllDetails);
 
         Task UpdateContactStringPropertyAsync(ContactStringField columnName, string value, int id);
 

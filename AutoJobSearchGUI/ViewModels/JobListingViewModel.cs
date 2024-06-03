@@ -470,7 +470,21 @@ namespace AutoJobSearchGUI.ViewModels
         [RelayCommand]
         private async Task OpenJobListingByIdAsync(int jobListingId)
         {
-            JobListing = Singletons.JobListings.Single(x => x.Id == jobListingId);
+            var jobListing = Singletons.JobListings.SingleOrDefault(x => x.Id == jobListingId);
+
+            if (jobListing != null)
+            {
+                JobListing = jobListing;
+            }
+
+            // Edge case handling if user has query filters enabled which prevents the JobListings singleton from containing a job listing that does exist
+            else 
+            {
+                var dbJobListing = await _dbContext.GetJobListingByIdAsync(jobListingId, true);
+                JobListing = JobListingHelpers.ConvertJobListingToJobListingModel(dbJobListing);
+                JobListing.DetailsPopulated = true;
+            }
+
             await OpenJobListingCommand.ExecuteAsync(JobListing);
         }
 
@@ -479,7 +493,7 @@ namespace AutoJobSearchGUI.ViewModels
         {
             if (!jobListing.DetailsPopulated)
             {
-                var jobListingDetails = await _dbContext.GetJobListingDetailsByIdAsync(jobListing.Id);
+                var jobListingDetails = await _dbContext.GetJobListingByIdAsync(jobListing.Id, false);
                 jobListing.Description = jobListingDetails.Description;
                 jobListing.ApplicationLinks = jobListingDetails.ApplicationLinksString;
                 jobListing.Notes = jobListingDetails.Notes;
@@ -488,7 +502,7 @@ namespace AutoJobSearchGUI.ViewModels
                 jobListing.DetailsPopulated = true;
             }
 
-            AssociatedContactIds = Singletons.Contacts.Where(x => x.JobListingIds.Contains(jobListing.Id)).Select(x => x.Id);
+            AssociatedContactIds = Singletons.Contacts.Where(x => x.JobListingIds.Contains(jobListing.Id)).Select(x => x.Id); 
 
             JobListing = jobListing;
             EnableOnChangedEvents(JobListing);

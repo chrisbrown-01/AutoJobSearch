@@ -28,6 +28,7 @@ namespace AutoJobSearchGUI.Helpers
                 StatusModifiedAt = job.StatusModifiedAt,
                 Description = job.Description,
                 Score = job.Score,
+                Notes = job.Notes,
                 IsToBeAppliedTo = job.IsToBeAppliedTo,
                 IsAppliedTo = job.IsAppliedTo,
                 IsInterviewing = job.IsInterviewing,

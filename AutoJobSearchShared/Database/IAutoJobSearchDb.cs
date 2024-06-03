@@ -54,7 +54,7 @@ namespace AutoJobSearchShared.Database
 
         Task<IEnumerable<JobListing>> GetHiddenJobListingsAsync();
 
-        Task<JobListing> GetJobListingDetailsByIdAsync(int id);
+        Task<JobListing> GetJobListingByIdAsync(int id, bool isRetrievingAllDetails);
 
         Task<JobSearchProfile?> GetJobSearchProfileByIdAsync(int id);
 

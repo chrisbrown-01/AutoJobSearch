@@ -192,10 +192,10 @@ namespace AutoJobSearchGUI.Data
             return await _dbContext.GetHiddenJobListingsAsync();
         }
 
-        public async Task<JobListing> GetJobListingDetailsByIdAsync(int id)
+        public async Task<JobListing> GetJobListingByIdAsync(int id, bool isRetrievingAllDetails)
         {
             Log.Information("Getting job listing details from database for {@id}", id);
-            return await _dbContext.GetJobListingDetailsByIdAsync(id);
+            return await _dbContext.GetJobListingByIdAsync(id, isRetrievingAllDetails);
         }
 
         public async Task UpdateContactStringPropertyAsync(ContactStringField columnName, string value, int id)
