@@ -20,7 +20,7 @@ namespace AutoJobSearchGUI.Data
         public DbContext()
         {
             Log.Information("Creating new DbContext object using SQLite provider.");
-            _dbContext = new SQLiteDbContext();
+            _dbContext = new SQLiteDbContext(); // If wanting to change to a different database provider, change this line only.
 
             JobListingModel.BoolFieldChanged += async (sender, e) =>
             {
@@ -178,6 +178,12 @@ namespace AutoJobSearchGUI.Data
         {
             Log.Information("Getting all job search profiles from database.");
             return await _dbContext.GetAllJobSearchProfilesAsync();
+        }
+
+        public async Task<Contact> GetContactByIdAsync(int id)
+        {
+            Log.Information("Getting contact details from database for {@id}", id);
+            return await _dbContext.GetContactByIdAsync(id);
         }
 
         public async Task<IEnumerable<JobListing>> GetFavouriteJobListingsAsync()

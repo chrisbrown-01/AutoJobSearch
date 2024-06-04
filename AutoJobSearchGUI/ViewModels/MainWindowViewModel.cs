@@ -1,6 +1,7 @@
 ﻿using AutoJobSearchGUI.Data;
 using AutoJobSearchGUI.Helpers;
 using AutoJobSearchGUI.Models;
+using AutoJobSearchShared.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Serilog;
 using Serilog.Formatting.Json;
@@ -70,7 +71,6 @@ namespace AutoJobSearchGUI.ViewModels
 
         public void ChangeViewToAddContact(ContactModel? contact)
         {
-            // TODO: fix bug where query filter may have removed the relevant record from the singleton
             if (contact is not null)
             {
                 addContactViewModel.OpenContactCommand.Execute(contact);
@@ -85,15 +85,24 @@ namespace AutoJobSearchGUI.ViewModels
 
         public void ChangeViewToAddContact(int jobId)
         {
-            // TODO: fix bug where query filter may have removed the relevant record from the singleton
             addContactViewModel.CreateNewContactCommand.Execute(jobId);
             ContentViewModel = addContactViewModel;
         }
 
         public void ChangeViewToContact(int contactId)
         {
-            // TODO: fix bug where query filter may have removed the relevant record from the singleton
-            addContactViewModel.OpenContactCommand.Execute(Singletons.Contacts.Where(x => x.Id == contactId).Single());
+            var contactModel = Singletons.Contacts.SingleOrDefault(x => x.Id == contactId);
+
+            // Edge case handling if user has query filters enabled which prevents the Contacts singleton from containing a contact that does exist
+            if (contactModel == null)
+            {
+                var contact = dbContext.GetContactByIdAsync(contactId).Result;
+                var contactsAssociatedJobIds = dbContext.GetAllContactsAssociatedJobIdsAsync().Result;
+                var contactAssociatedJobIds = contactsAssociatedJobIds.Select(x => x.JobListingId);
+                contactModel = ContactsHelpers.ConvertContactToContactModel(contact, contactAssociatedJobIds);
+            }
+
+            addContactViewModel.OpenContactCommand.Execute(contactModel); 
             ContentViewModel = addContactViewModel;
         }
 

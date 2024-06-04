@@ -472,6 +472,12 @@ namespace AutoJobSearchShared.Database
             return await connection.QueryAsync<JobSearchProfile>(sql).ConfigureAwait(false);
         }
 
+        public async Task<Contact> GetContactByIdAsync(int id)
+        {
+            const string sql = "SELECT * FROM Contacts WHERE Id = @Id;";
+            return await connection.QuerySingleAsync<Contact>(sql, new { Id = id }).ConfigureAwait(false);
+        }
+
         public async Task<IEnumerable<JobListing>> GetFavouriteJobListingsAsync()
         {
             const string sql =

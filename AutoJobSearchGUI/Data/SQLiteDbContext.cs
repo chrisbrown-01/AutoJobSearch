@@ -125,6 +125,11 @@ namespace AutoJobSearchGUI.Data
             return await _sqliteDb.GetAllJobSearchProfilesAsync();
         }
 
+        public async Task<Contact> GetContactByIdAsync(int id)
+        {
+            return await _sqliteDb.GetContactByIdAsync(id);
+        }
+
         public async Task<IEnumerable<JobListing>> GetFavouriteJobListingsAsync()
         {
             return await _sqliteDb.GetFavouriteJobListingsAsync();
