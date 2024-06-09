@@ -51,7 +51,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
             Singletons.Contacts = _fixture.CreateMany<ContactModel>().ToList();
 
             // Act
-            _viewModel.ChangeViewToContact(Singletons.Contacts.First().Id);
+            _viewModel.ChangeViewToContact(Singletons.Contacts.First().Id, false);
 
             // Assert
             _viewModel.ContentViewModel.Should().BeOfType<AddContactViewModel>();
@@ -102,7 +102,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
             };
 
             // Act
-            _viewModel.ChangeViewToJobListing(Singletons.JobListings.First().Id, false, false);
+            _viewModel.ChangeViewToJobListing(Singletons.JobListings.First().Id, false);
 
             // Assert
             _viewModel.ContentViewModel.Should().BeOfType<JobListingViewModel>();

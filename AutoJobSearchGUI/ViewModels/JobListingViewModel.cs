@@ -32,7 +32,7 @@ namespace AutoJobSearchGUI.ViewModels
 
         public event CreateNewContactWithAssociatedJobIdHandler? CreateNewContactWithAssociatedJobIdRequest;
 
-        public delegate void ChangeViewToContactHandler(int contactId);
+        public delegate void ChangeViewToContactHandler(int contactId, bool changedViaPreviousOrForwardButton);
 
         public event ChangeViewToContactHandler? ChangeViewToContactRequest;
 
@@ -44,9 +44,9 @@ namespace AutoJobSearchGUI.ViewModels
 
         public event OpenJobBoardViewHandler? OpenJobBoardViewRequest;
 
-        internal delegate void ChangedJobListingViewEventHandler(int jobListingId, bool changedViaPreviousButton, bool changedViaForwardButton); // TODO: change to public when creating tests? remove Enum argument unnecessary?
+        public delegate void ChangedJobListingViewEventHandler(int jobListingId, bool changedViaPreviousOrForwardButton);  
 
-        internal event ChangedJobListingViewEventHandler? ChangedJobListingViewEvent;
+        public event ChangedJobListingViewEventHandler? ChangedJobListingViewEvent;
 
         private readonly IDbContext _dbContext;
 
@@ -356,7 +356,7 @@ namespace AutoJobSearchGUI.ViewModels
             if (SelectedContactId < 1) return;
 
             DisableOnChangedEvents(JobListing);
-            ChangeViewToContactRequest?.Invoke(SelectedContactId);
+            ChangeViewToContactRequest?.Invoke(SelectedContactId, false);
         }
 
         [RelayCommand]
@@ -397,6 +397,7 @@ namespace AutoJobSearchGUI.ViewModels
             await OpenJobListingAsync(newJobListingModel);
         }
 
+        // TODO: clear/update forward/back history method. need to also consider when new job listings are added
         [RelayCommand]
         private async Task DeleteJobAsync()
         {
@@ -443,6 +444,7 @@ namespace AutoJobSearchGUI.ViewModels
             else
             {
                 OpenJobBoardViewRequest?.Invoke(); // Return to Job Board view if no jobs are available to display.
+                // TODO: clear/update forward/back history method
             }
         }
 
@@ -458,7 +460,7 @@ namespace AutoJobSearchGUI.ViewModels
             DisableOnChangedEvents(JobListing);
             await OpenJobListingAsync(Singletons.JobListings[previousIndex]);
 
-            ChangedJobListingViewEvent?.Invoke(JobListing.Id, false, false); // TODO: test without id argument
+            ChangedJobListingViewEvent?.Invoke(JobListing.Id, false); 
         }
 
         [RelayCommand]
@@ -473,7 +475,7 @@ namespace AutoJobSearchGUI.ViewModels
             DisableOnChangedEvents(JobListing);
             await OpenJobListingAsync(Singletons.JobListings[nextIndex]);
 
-            ChangedJobListingViewEvent?.Invoke(JobListing.Id, false, false); // TODO: test without id argument
+            ChangedJobListingViewEvent?.Invoke(JobListing.Id, false); 
         }
 
         [RelayCommand]

@@ -286,7 +286,10 @@ namespace AutoJobSearchGUI.Tests.ViewModels
             // Arrange
             _viewModel.SelectedContactId = 0;
             bool wasCalled = false;
-            _viewModel.ChangeViewToContactRequest += (id) => wasCalled = true;
+#pragma warning disable CS0219 // Variable is assigned but its value is never used
+            bool previousOrForwardButton = false;
+#pragma warning restore CS0219 // Variable is assigned but its value is never used
+            _viewModel.ChangeViewToContactRequest += (id, previousOrForwardButton) => wasCalled = true;
 
             // Act
             _viewModel.ViewContactCommand.Execute(null);
@@ -302,7 +305,10 @@ namespace AutoJobSearchGUI.Tests.ViewModels
             // Arrange
             _viewModel.SelectedContactId = Math.Abs(_fixture.Create<int>());
             bool wasCalled = false;
-            _viewModel.ChangeViewToContactRequest += (id) => wasCalled = true;
+#pragma warning disable CS0219 // Variable is assigned but its value is never used
+            bool previousOrForwardButton = false;
+#pragma warning restore CS0219 // Variable is assigned but its value is never used
+            _viewModel.ChangeViewToContactRequest += (id, previousOrForwardButton) => wasCalled = true;
 
             // Act
             _viewModel.ViewContactCommand.Execute(null);
