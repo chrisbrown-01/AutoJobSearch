@@ -386,6 +386,8 @@ namespace AutoJobSearchGUI.ViewModels
 
             addContactViewModel.ResetViewHistoryRequest += ResetViewHistory;
             jobListingViewModel.ResetViewHistoryRequest += ResetViewHistory;
+            jobBoardViewModel.ResetViewHistoryRequest += ResetViewHistory;
+            contactsViewModel.ResetViewHistoryRequest += ResetViewHistory;
         }
 
         private void UnsubscribeFromEvents()
@@ -413,6 +415,8 @@ namespace AutoJobSearchGUI.ViewModels
 
             addContactViewModel.ResetViewHistoryRequest -= ResetViewHistory;
             jobListingViewModel.ResetViewHistoryRequest -= ResetViewHistory;
+            jobBoardViewModel.ResetViewHistoryRequest -= ResetViewHistory;
+            contactsViewModel.ResetViewHistoryRequest -= ResetViewHistory;
         }
     }
 }

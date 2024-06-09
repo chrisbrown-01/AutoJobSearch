@@ -398,6 +398,7 @@ namespace AutoJobSearchGUI.ViewModels
             var newJobListingModel = JobListingHelpers.ConvertJobListingToJobListingModel(newJob);
             Singletons.JobListings.Add(newJobListingModel);
             UpdateJobBoardViewRequest?.Invoke();
+            ChangedJobListingViewEvent?.Invoke(newJobListingModel.Id, false);
             await OpenJobListingAsync(newJobListingModel);
         }
 
@@ -439,6 +440,11 @@ namespace AutoJobSearchGUI.ViewModels
             await _dbContext.DeleteJobListingAsync(JobListing.Id);
             Singletons.JobListings.Remove(JobListing);
             UpdateJobBoardViewRequest?.Invoke();
+
+            foreach(var contact in Singletons.Contacts)
+            {
+                contact.JobListingIds.Remove(JobListing.Id);
+            }
 
             if (nextJobToDisplay != null)
             {
