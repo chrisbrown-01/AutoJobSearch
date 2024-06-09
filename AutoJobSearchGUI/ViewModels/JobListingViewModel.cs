@@ -1,4 +1,5 @@
 ﻿using AutoJobSearchGUI.Data;
+using AutoJobSearchGUI.Enums;
 using AutoJobSearchGUI.Helpers;
 using AutoJobSearchGUI.Models;
 using AutoJobSearchGUI.Services;
@@ -31,7 +32,7 @@ namespace AutoJobSearchGUI.ViewModels
 
         public event CreateNewContactWithAssociatedJobIdHandler? CreateNewContactWithAssociatedJobIdRequest;
 
-        public delegate void ChangeViewToContactHandler(int contactId);
+        public delegate void ChangeViewToContactHandler(int contactId, bool changedViaPreviousOrForwardButton);
 
         public event ChangeViewToContactHandler? ChangeViewToContactRequest;
 
@@ -39,9 +40,17 @@ namespace AutoJobSearchGUI.ViewModels
 
         public event UpdateJobBoardViewHandler? UpdateJobBoardViewRequest;
 
+        public delegate void ResetViewHistoryHandler();
+
+        public event ResetViewHistoryHandler? ResetViewHistoryRequest;
+
         public delegate void OpenJobBoardViewHandler();
 
         public event OpenJobBoardViewHandler? OpenJobBoardViewRequest;
+
+        public delegate void ChangedJobListingViewEventHandler(int jobListingId, bool changedViaPreviousOrForwardButton);  
+
+        public event ChangedJobListingViewEventHandler? ChangedJobListingViewEvent;
 
         private readonly IDbContext _dbContext;
 
@@ -351,7 +360,7 @@ namespace AutoJobSearchGUI.ViewModels
             if (SelectedContactId < 1) return;
 
             DisableOnChangedEvents(JobListing);
-            ChangeViewToContactRequest?.Invoke(SelectedContactId);
+            ChangeViewToContactRequest?.Invoke(SelectedContactId, false);
         }
 
         [RelayCommand]
@@ -389,6 +398,7 @@ namespace AutoJobSearchGUI.ViewModels
             var newJobListingModel = JobListingHelpers.ConvertJobListingToJobListingModel(newJob);
             Singletons.JobListings.Add(newJobListingModel);
             UpdateJobBoardViewRequest?.Invoke();
+            ChangedJobListingViewEvent?.Invoke(newJobListingModel.Id, false);
             await OpenJobListingAsync(newJobListingModel);
         }
 
@@ -431,6 +441,11 @@ namespace AutoJobSearchGUI.ViewModels
             Singletons.JobListings.Remove(JobListing);
             UpdateJobBoardViewRequest?.Invoke();
 
+            foreach(var contact in Singletons.Contacts)
+            {
+                contact.JobListingIds.Remove(JobListing.Id);
+            }
+
             if (nextJobToDisplay != null)
             {
                 await OpenJobListingAsync(nextJobToDisplay);
@@ -439,6 +454,8 @@ namespace AutoJobSearchGUI.ViewModels
             {
                 OpenJobBoardViewRequest?.Invoke(); // Return to Job Board view if no jobs are available to display.
             }
+
+            ResetViewHistoryRequest?.Invoke();
         }
 
         [RelayCommand]
@@ -452,6 +469,8 @@ namespace AutoJobSearchGUI.ViewModels
 
             DisableOnChangedEvents(JobListing);
             await OpenJobListingAsync(Singletons.JobListings[previousIndex]);
+
+            ChangedJobListingViewEvent?.Invoke(JobListing.Id, false); 
         }
 
         [RelayCommand]
@@ -465,12 +484,28 @@ namespace AutoJobSearchGUI.ViewModels
 
             DisableOnChangedEvents(JobListing);
             await OpenJobListingAsync(Singletons.JobListings[nextIndex]);
+
+            ChangedJobListingViewEvent?.Invoke(JobListing.Id, false); 
         }
 
         [RelayCommand]
         private async Task OpenJobListingByIdAsync(int jobListingId)
         {
-            JobListing = Singletons.JobListings.Single(x => x.Id == jobListingId);
+            var jobListing = Singletons.JobListings.SingleOrDefault(x => x.Id == jobListingId);
+
+            if (jobListing != null)
+            {
+                JobListing = jobListing;
+            }
+
+            // Edge case handling if user has query filters enabled which prevents the JobListings singleton from containing a job listing that does exist
+            else 
+            {
+                var dbJobListing = await _dbContext.GetJobListingByIdAsync(jobListingId, true);
+                JobListing = JobListingHelpers.ConvertJobListingToJobListingModel(dbJobListing);
+                JobListing.DetailsPopulated = true;
+            }
+
             await OpenJobListingCommand.ExecuteAsync(JobListing);
         }
 
@@ -479,7 +514,7 @@ namespace AutoJobSearchGUI.ViewModels
         {
             if (!jobListing.DetailsPopulated)
             {
-                var jobListingDetails = await _dbContext.GetJobListingDetailsByIdAsync(jobListing.Id);
+                var jobListingDetails = await _dbContext.GetJobListingByIdAsync(jobListing.Id, false);
                 jobListing.Description = jobListingDetails.Description;
                 jobListing.ApplicationLinks = jobListingDetails.ApplicationLinksString;
                 jobListing.Notes = jobListingDetails.Notes;
@@ -488,7 +523,7 @@ namespace AutoJobSearchGUI.ViewModels
                 jobListing.DetailsPopulated = true;
             }
 
-            AssociatedContactIds = Singletons.Contacts.Where(x => x.JobListingIds.Contains(jobListing.Id)).Select(x => x.Id);
+            AssociatedContactIds = Singletons.Contacts.Where(x => x.JobListingIds.Contains(jobListing.Id)).Select(x => x.Id); 
 
             JobListing = jobListing;
             EnableOnChangedEvents(JobListing);

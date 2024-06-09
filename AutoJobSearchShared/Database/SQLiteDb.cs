@@ -472,6 +472,12 @@ namespace AutoJobSearchShared.Database
             return await connection.QueryAsync<JobSearchProfile>(sql).ConfigureAwait(false);
         }
 
+        public async Task<Contact> GetContactByIdAsync(int id)
+        {
+            const string sql = "SELECT * FROM Contacts WHERE Id = @Id;";
+            return await connection.QuerySingleAsync<Contact>(sql, new { Id = id }).ConfigureAwait(false);
+        }
+
         public async Task<IEnumerable<JobListing>> GetFavouriteJobListingsAsync()
         {
             const string sql =
@@ -522,9 +528,19 @@ namespace AutoJobSearchShared.Database
             return await connection.QueryAsync<JobListing>(sql).ConfigureAwait(false);
         }
 
-        public async Task<JobListing> GetJobListingDetailsByIdAsync(int id)
+        public async Task<JobListing> GetJobListingByIdAsync(int id, bool isRetrievingAllDetails)
         {
-            const string jobListingSQL = "SELECT Description, Notes From JobListings Where Id = @Id;";
+            string jobListingSQL;
+
+            if (isRetrievingAllDetails)
+            {
+                jobListingSQL = "SELECT * From JobListings Where Id = @Id;";
+            }
+            else
+            {
+                jobListingSQL = "SELECT Description, Notes From JobListings Where Id = @Id;";
+            }
+
             var jobListing = await connection.QuerySingleAsync<JobListing>(jobListingSQL, new { Id = id }).ConfigureAwait(false);
 
             const string applicationLinksSQL = "SELECT Link FROM ApplicationLinks Where JobListingId = @Id;";

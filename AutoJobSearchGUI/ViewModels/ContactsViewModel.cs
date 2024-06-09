@@ -66,6 +66,10 @@ namespace AutoJobSearchGUI.ViewModels
 
         public event OpenAddContactViewHandler? OpenAddContactViewRequest;
 
+        public delegate void ResetViewHistoryHandler();
+
+        public event ResetViewHistoryHandler? ResetViewHistoryRequest;
+
         public void UpdateContacts()
         {
             ContactsDisplayed = Singletons.Contacts.Skip(PageIndex * PageSize).Take(PageSize).ToList();
@@ -116,6 +120,8 @@ namespace AutoJobSearchGUI.ViewModels
             ContactsDisplayed.Remove(SelectedContact);
 
             SelectedContact = null;
+
+            ResetViewHistoryRequest?.Invoke();
         }
 
         [RelayCommand]

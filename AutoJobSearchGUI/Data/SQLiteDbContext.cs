@@ -125,6 +125,11 @@ namespace AutoJobSearchGUI.Data
             return await _sqliteDb.GetAllJobSearchProfilesAsync();
         }
 
+        public async Task<Contact> GetContactByIdAsync(int id)
+        {
+            return await _sqliteDb.GetContactByIdAsync(id);
+        }
+
         public async Task<IEnumerable<JobListing>> GetFavouriteJobListingsAsync()
         {
             return await _sqliteDb.GetFavouriteJobListingsAsync();
@@ -135,9 +140,9 @@ namespace AutoJobSearchGUI.Data
             return await _sqliteDb.GetHiddenJobListingsAsync();
         }
 
-        public async Task<JobListing> GetJobListingDetailsByIdAsync(int id)
+        public async Task<JobListing> GetJobListingByIdAsync(int id, bool isRetrievingAllDetails)
         {
-            return await _sqliteDb.GetJobListingDetailsByIdAsync(id);
+            return await _sqliteDb.GetJobListingByIdAsync(id, isRetrievingAllDetails);
         }
 
         public async Task UpdateContactStringPropertyAsync(ContactStringField columnName, string value, int id)

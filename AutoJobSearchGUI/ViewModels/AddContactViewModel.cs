@@ -41,7 +41,7 @@ namespace AutoJobSearchGUI.ViewModels
 
         public delegate void OpenContactsViewHandler();
 
-        public delegate void OpenJobListingViewHandler(int jobListingId);
+        public delegate void OpenJobListingViewHandler(int jobListingId, bool changedViaPreviousOrForwardButton);
 
         public delegate void UpdateContactsViewHandler();
 
@@ -50,6 +50,14 @@ namespace AutoJobSearchGUI.ViewModels
         public event OpenJobListingViewHandler? OpenJobListingViewRequest;
 
         public event UpdateContactsViewHandler? UpdateContactsViewRequest;
+
+        public delegate void ChangedContactViewEventHandler(int contactId, bool changedViaPreviousOrForwardButton); 
+        
+        public event ChangedContactViewEventHandler? ChangedContactViewEvent;
+
+        public delegate void ResetViewHistoryHandler();
+
+        public event ResetViewHistoryHandler? ResetViewHistoryRequest;
 
         [RelayCommand]
         private async Task CreateContactAssociatedJobIdAsync(string jobIdTextBoxInput)
@@ -94,6 +102,8 @@ namespace AutoJobSearchGUI.ViewModels
             UpdateContactsViewRequest?.Invoke();
 
             OpenContact(newContactModel);
+
+            ChangedContactViewEvent?.Invoke(newContactModel.Id, false);
         }
 
         [RelayCommand]
@@ -162,6 +172,8 @@ namespace AutoJobSearchGUI.ViewModels
             {
                 OpenContactsViewRequest?.Invoke(); // Return to Contacts view if no contacts are available to display.
             }
+
+            ResetViewHistoryRequest?.Invoke();
         }
 
         /// <summary>
@@ -194,6 +206,8 @@ namespace AutoJobSearchGUI.ViewModels
             DisableOnChangedEvents(Contact);
 
             OpenContact(Singletons.Contacts[nextIndex]);
+
+            ChangedContactViewEvent?.Invoke(Singletons.Contacts[nextIndex].Id, false);
         }
 
         [RelayCommand]
@@ -208,6 +222,8 @@ namespace AutoJobSearchGUI.ViewModels
             DisableOnChangedEvents(Contact);
 
             OpenContact(Singletons.Contacts[previousIndex]);
+
+            ChangedContactViewEvent?.Invoke(Singletons.Contacts[previousIndex].Id, false); 
         }
 
         [RelayCommand]
@@ -231,7 +247,7 @@ namespace AutoJobSearchGUI.ViewModels
             if ((int)SelectedJobListingId < 1) return;
 
             DisableOnChangedEvents(Contact);
-            OpenJobListingViewRequest?.Invoke((int)SelectedJobListingId);
+            OpenJobListingViewRequest?.Invoke((int)SelectedJobListingId, false);
             SelectedJobListingId = -1; // Set to invalid number so the currently selected integer does not persist by accident.
         }
     }

@@ -23,7 +23,10 @@
 			<MenuItem Header="Job Search" Command="{Binding ChangeViewToJobSearch}"/>
 			<MenuItem Header="Contacts" Command="{Binding ChangeViewToContacts}"/>
 			<MenuItem Header="Help" Command="{Binding ChangeViewToHelp}"/>
-			<MenuItem Header="Toggle Light/Dark Mode" Command="{Binding ToggleLightDarkMode}"/>
+			<!--Avalonia has a bug where it cannot render icons for top level menu items, hence the text headers-->
+			<MenuItem Header="Toggle Light Mode" Command="{Binding ToggleLightDarkMode}"/>
+			<MenuItem Header="Previous View" Command="{Binding GoToPreviousView}"/>
+			<MenuItem Header="Forward View" Command="{Binding GoToForwardView}"/>
 		</Menu>
 		<ContentControl Content="{Binding ContentViewModel}" />
 	</DockPanel>

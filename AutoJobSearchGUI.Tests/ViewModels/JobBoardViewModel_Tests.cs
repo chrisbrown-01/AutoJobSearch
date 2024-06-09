@@ -230,6 +230,10 @@ namespace AutoJobSearchGUI.Tests.ViewModels
             _viewModel.JobListingsDisplayed = _fixture.CreateMany<JobListingModel>().ToList();
             _viewModel.SelectedJobListing = _fixture.Create<JobListingModel>();
             bool wasCalled = false;
+#pragma warning disable CS0219 // Variable is assigned but its value is never used
+            bool previousButtonPressed = false;
+            bool forwardButtonPressed = false;
+#pragma warning restore CS0219 // Variable is assigned but its value is never used
             _viewModel.OpenJobListingViewRequest += (job) => wasCalled = true;
 
             // Act
@@ -249,6 +253,11 @@ namespace AutoJobSearchGUI.Tests.ViewModels
             {
                 job.EnableEvents = true;
             }
+
+#pragma warning disable CS0219 // Variable is assigned but its value is never used
+            bool previousButtonPressed = false;
+            bool forwardButtonPressed = false;
+#pragma warning restore CS0219 // Variable is assigned but its value is never used
 
             _viewModel.SelectedJobListing = null;
             bool wasCalled = false;
