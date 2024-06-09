@@ -76,5 +76,7 @@
             "shared SQLite database. All code is written in C# and XAML.\r\n\r\n" +
             "Project Website: https://chrisbrown-01.github.io/AutoJobSearch/\r\n\r\n" +
             "GitHub: https://github.com/chrisbrown-01/AutoJobSearch\r\n\r\n";
+
+        // TODO: add AboutContacts portions
     }
 }

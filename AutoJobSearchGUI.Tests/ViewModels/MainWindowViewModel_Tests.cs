@@ -102,7 +102,7 @@ namespace AutoJobSearchGUI.Tests.ViewModels
             };
 
             // Act
-            _viewModel.ChangeViewToJobListing(Singletons.JobListings.First().Id);
+            _viewModel.ChangeViewToJobListing(Singletons.JobListings.First().Id, false, false);
 
             // Assert
             _viewModel.ContentViewModel.Should().BeOfType<JobListingViewModel>();

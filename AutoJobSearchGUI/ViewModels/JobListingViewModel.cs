@@ -1,4 +1,5 @@
 ﻿using AutoJobSearchGUI.Data;
+using AutoJobSearchGUI.Enums;
 using AutoJobSearchGUI.Helpers;
 using AutoJobSearchGUI.Models;
 using AutoJobSearchGUI.Services;
@@ -42,6 +43,10 @@ namespace AutoJobSearchGUI.ViewModels
         public delegate void OpenJobBoardViewHandler();
 
         public event OpenJobBoardViewHandler? OpenJobBoardViewRequest;
+
+        internal delegate void ChangedJobListingViewEventHandler(int jobListingId, bool changedViaPreviousButton, bool changedViaForwardButton); // TODO: change to public when creating tests? remove Enum argument unnecessary?
+
+        internal event ChangedJobListingViewEventHandler? ChangedJobListingViewEvent;
 
         private readonly IDbContext _dbContext;
 
@@ -452,6 +457,8 @@ namespace AutoJobSearchGUI.ViewModels
 
             DisableOnChangedEvents(JobListing);
             await OpenJobListingAsync(Singletons.JobListings[previousIndex]);
+
+            ChangedJobListingViewEvent?.Invoke(JobListing.Id, false, false); // TODO: test without id argument
         }
 
         [RelayCommand]
@@ -465,6 +472,8 @@ namespace AutoJobSearchGUI.ViewModels
 
             DisableOnChangedEvents(JobListing);
             await OpenJobListingAsync(Singletons.JobListings[nextIndex]);
+
+            ChangedJobListingViewEvent?.Invoke(JobListing.Id, false, false); // TODO: test without id argument
         }
 
         [RelayCommand]

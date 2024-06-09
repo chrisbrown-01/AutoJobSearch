@@ -41,7 +41,7 @@ namespace AutoJobSearchGUI.ViewModels
 
         public delegate void OpenContactsViewHandler();
 
-        public delegate void OpenJobListingViewHandler(int jobListingId);
+        public delegate void OpenJobListingViewHandler(int jobListingId, bool changedViaPreviousButton, bool changedViaForwardButton);
 
         public delegate void UpdateContactsViewHandler();
 
@@ -231,7 +231,7 @@ namespace AutoJobSearchGUI.ViewModels
             if ((int)SelectedJobListingId < 1) return;
 
             DisableOnChangedEvents(Contact);
-            OpenJobListingViewRequest?.Invoke((int)SelectedJobListingId);
+            OpenJobListingViewRequest?.Invoke((int)SelectedJobListingId, false, false);
             SelectedJobListingId = -1; // Set to invalid number so the currently selected integer does not persist by accident.
         }
     }
