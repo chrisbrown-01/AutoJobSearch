@@ -138,7 +138,6 @@ namespace AutoJobSearchGUI.ViewModels
             viewHistoryIndex = 0;
         }
 
-        // TODO: change back/forward buttons to use icons instead of text
         public void GoToPreviousView()
         {
             if (viewHistory.Count <= 1)
