@@ -40,6 +40,10 @@ namespace AutoJobSearchGUI.ViewModels
 
         public event UpdateJobBoardViewHandler? UpdateJobBoardViewRequest;
 
+        public delegate void ResetViewHistoryHandler();
+
+        public event ResetViewHistoryHandler? ResetViewHistoryRequest;
+
         public delegate void OpenJobBoardViewHandler();
 
         public event OpenJobBoardViewHandler? OpenJobBoardViewRequest;
@@ -397,7 +401,6 @@ namespace AutoJobSearchGUI.ViewModels
             await OpenJobListingAsync(newJobListingModel);
         }
 
-        // TODO: clear/update forward/back history method. need to also consider when new job listings are added
         [RelayCommand]
         private async Task DeleteJobAsync()
         {
@@ -444,8 +447,9 @@ namespace AutoJobSearchGUI.ViewModels
             else
             {
                 OpenJobBoardViewRequest?.Invoke(); // Return to Job Board view if no jobs are available to display.
-                // TODO: clear/update forward/back history method
             }
+
+            ResetViewHistoryRequest?.Invoke();
         }
 
         [RelayCommand]

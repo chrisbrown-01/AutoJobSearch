@@ -55,6 +55,10 @@ namespace AutoJobSearchGUI.ViewModels
         
         public event ChangedContactViewEventHandler? ChangedContactViewEvent;
 
+        public delegate void ResetViewHistoryHandler();
+
+        public event ResetViewHistoryHandler? ResetViewHistoryRequest;
+
         [RelayCommand]
         private async Task CreateContactAssociatedJobIdAsync(string jobIdTextBoxInput)
         {
@@ -168,7 +172,8 @@ namespace AutoJobSearchGUI.ViewModels
             {
                 OpenContactsViewRequest?.Invoke(); // Return to Contacts view if no contacts are available to display.
             }
-            // TODO: update view history
+
+            ResetViewHistoryRequest?.Invoke();
         }
 
         /// <summary>
