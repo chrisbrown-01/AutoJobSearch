@@ -64,9 +64,9 @@ namespace AutoJobSearchGUI.ViewModels
 
         public delegate void OpenAddContactViewHandler(ContactModel? contact);
 
-        public event OpenAddContactViewHandler? OpenAddContactViewRequest;
-
         public delegate void ResetViewHistoryHandler();
+
+        public event OpenAddContactViewHandler? OpenAddContactViewRequest;
 
         public event ResetViewHistoryHandler? ResetViewHistoryRequest;
 
@@ -142,7 +142,7 @@ namespace AutoJobSearchGUI.ViewModels
 
             if (ContactsQueryModel.NameQueryStringEnabled)
             {
-                contacts = contacts.Where(x => x.Name.Contains(ContactsQueryModel.NameQueryString.Trim(), StringComparison.OrdinalIgnoreCase)); 
+                contacts = contacts.Where(x => x.Name.Contains(ContactsQueryModel.NameQueryString.Trim(), StringComparison.OrdinalIgnoreCase));
             }
 
             if (ContactsQueryModel.LinkedInQueryStringEnabled)

@@ -1,5 +1,4 @@
 ﻿using AutoJobSearchGUI.Data;
-using AutoJobSearchGUI.Enums;
 using AutoJobSearchGUI.Helpers;
 using AutoJobSearchGUI.Models;
 using AutoJobSearchGUI.Services;
@@ -48,7 +47,7 @@ namespace AutoJobSearchGUI.ViewModels
 
         public event OpenJobBoardViewHandler? OpenJobBoardViewRequest;
 
-        public delegate void ChangedJobListingViewEventHandler(int jobListingId, bool changedViaPreviousOrForwardButton);  
+        public delegate void ChangedJobListingViewEventHandler(int jobListingId, bool changedViaPreviousOrForwardButton);
 
         public event ChangedJobListingViewEventHandler? ChangedJobListingViewEvent;
 
@@ -441,7 +440,7 @@ namespace AutoJobSearchGUI.ViewModels
             Singletons.JobListings.Remove(JobListing);
             UpdateJobBoardViewRequest?.Invoke();
 
-            foreach(var contact in Singletons.Contacts)
+            foreach (var contact in Singletons.Contacts)
             {
                 contact.JobListingIds.Remove(JobListing.Id);
             }
@@ -470,7 +469,7 @@ namespace AutoJobSearchGUI.ViewModels
             DisableOnChangedEvents(JobListing);
             await OpenJobListingAsync(Singletons.JobListings[previousIndex]);
 
-            ChangedJobListingViewEvent?.Invoke(JobListing.Id, false); 
+            ChangedJobListingViewEvent?.Invoke(JobListing.Id, false);
         }
 
         [RelayCommand]
@@ -485,7 +484,7 @@ namespace AutoJobSearchGUI.ViewModels
             DisableOnChangedEvents(JobListing);
             await OpenJobListingAsync(Singletons.JobListings[nextIndex]);
 
-            ChangedJobListingViewEvent?.Invoke(JobListing.Id, false); 
+            ChangedJobListingViewEvent?.Invoke(JobListing.Id, false);
         }
 
         [RelayCommand]
@@ -499,7 +498,7 @@ namespace AutoJobSearchGUI.ViewModels
             }
 
             // Edge case handling if user has query filters enabled which prevents the JobListings singleton from containing a job listing that does exist
-            else 
+            else
             {
                 var dbJobListing = await _dbContext.GetJobListingByIdAsync(jobListingId, true);
                 JobListing = JobListingHelpers.ConvertJobListingToJobListingModel(dbJobListing);
@@ -523,7 +522,7 @@ namespace AutoJobSearchGUI.ViewModels
                 jobListing.DetailsPopulated = true;
             }
 
-            AssociatedContactIds = Singletons.Contacts.Where(x => x.JobListingIds.Contains(jobListing.Id)).Select(x => x.Id); 
+            AssociatedContactIds = Singletons.Contacts.Where(x => x.JobListingIds.Contains(jobListing.Id)).Select(x => x.Id);
 
             JobListing = jobListing;
             EnableOnChangedEvents(JobListing);

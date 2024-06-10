@@ -2,7 +2,6 @@
 using AutoJobSearchGUI.Enums;
 using AutoJobSearchGUI.Helpers;
 using AutoJobSearchGUI.Models;
-using AutoJobSearchShared.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Serilog;
 using Serilog.Formatting.Json;
@@ -86,7 +85,7 @@ namespace AutoJobSearchGUI.ViewModels
             }
             else
             {
-                addContactViewModel.CreateNewContactCommand.Execute(null);            
+                addContactViewModel.CreateNewContactCommand.Execute(null);
             }
 
             ChangedContactView(addContactViewModel.Contact.Id, false);
@@ -109,27 +108,22 @@ namespace AutoJobSearchGUI.ViewModels
             {
                 viewHistory.Add(new ViewStackModel(ViewModel.ContactViewModel, addContactViewModel.Contact.Id));
             }
-
             else if (ContentViewModel == jobListingViewModel)
             {
                 viewHistory.Add(new ViewStackModel(ViewModel.JobListingViewModel, jobListingViewModel.JobListing.Id));
             }
-
             else if (ContentViewModel == contactsViewModel)
             {
                 viewHistory.Add(new ViewStackModel(ViewModel.ContactsViewModel));
             }
-
             else if (ContentViewModel == jobBoardViewModel)
             {
                 viewHistory.Add(new ViewStackModel(ViewModel.JobBoardViewModel));
             }
-
             else if (ContentViewModel == helpViewModel)
             {
                 viewHistory.Add(new ViewStackModel(ViewModel.HelpViewModel));
             }
-
             else if (ContentViewModel == jobSearchViewModel)
             {
                 viewHistory.Add(new ViewStackModel(ViewModel.JobSearchViewModel));
@@ -155,21 +149,27 @@ namespace AutoJobSearchGUI.ViewModels
                 case ViewModel.JobListingViewModel:
                     ChangeViewToJobListing(previousView.ItemId, true);
                     break;
+
                 case ViewModel.ContactViewModel:
                     ChangeViewToContact(previousView.ItemId, true);
                     break;
+
                 case ViewModel.ContactsViewModel:
                     ContentViewModel = contactsViewModel;
                     break;
+
                 case ViewModel.JobBoardViewModel:
                     ContentViewModel = jobBoardViewModel;
                     break;
+
                 case ViewModel.JobSearchViewModel:
                     ContentViewModel = jobSearchViewModel;
                     break;
+
                 case ViewModel.HelpViewModel:
                     ContentViewModel = helpViewModel;
                     break;
+
                 default:
                     ContentViewModel = jobBoardViewModel;
                     ResetViewHistory();
@@ -179,7 +179,7 @@ namespace AutoJobSearchGUI.ViewModels
 
         public void GoToForwardView()
         {
-            if (viewHistoryIndex + 1 >= viewHistory.Count) 
+            if (viewHistoryIndex + 1 >= viewHistory.Count)
                 return;
 
             ++viewHistoryIndex;
@@ -191,21 +191,27 @@ namespace AutoJobSearchGUI.ViewModels
                 case ViewModel.JobListingViewModel:
                     ChangeViewToJobListing(forwardView.ItemId, true);
                     break;
+
                 case ViewModel.ContactViewModel:
                     ChangeViewToContact(forwardView.ItemId, true);
                     break;
+
                 case ViewModel.ContactsViewModel:
                     ContentViewModel = contactsViewModel;
                     break;
+
                 case ViewModel.JobBoardViewModel:
                     ContentViewModel = jobBoardViewModel;
                     break;
+
                 case ViewModel.JobSearchViewModel:
                     ContentViewModel = jobSearchViewModel;
                     break;
+
                 case ViewModel.HelpViewModel:
                     ContentViewModel = helpViewModel;
                     break;
+
                 default:
                     ContentViewModel = jobBoardViewModel;
                     ResetViewHistory();
@@ -226,7 +232,7 @@ namespace AutoJobSearchGUI.ViewModels
                 contactModel = ContactsHelpers.ConvertContactToContactModel(contact, contactAssociatedJobIds);
             }
 
-            addContactViewModel.OpenContactCommand.Execute(contactModel); 
+            addContactViewModel.OpenContactCommand.Execute(contactModel);
             ContentViewModel = addContactViewModel;
 
             ChangedContactView(contactId, changedViaPreviousOrForwardButton);
@@ -263,7 +269,7 @@ namespace AutoJobSearchGUI.ViewModels
             UpdateViewHistory(new ViewStackModel(ViewModel.JobBoardViewModel), false);
         }
 
-        public void ChangeViewToJobListing(int jobListingId, bool changedViaPreviousOrForwardButton) 
+        public void ChangeViewToJobListing(int jobListingId, bool changedViaPreviousOrForwardButton)
         {
             jobListingViewModel.OpenJobListingByIdCommand.ExecuteAsync(jobListingId).Wait();
             ContentViewModel = jobListingViewModel;
@@ -349,7 +355,7 @@ namespace AutoJobSearchGUI.ViewModels
             Singletons.Contacts = GetAllContactsAsync().Result;
         }
 
-        private void UpdateViewHistory(ViewStackModel model, bool changedViaPreviousOrForwardButton) 
+        private void UpdateViewHistory(ViewStackModel model, bool changedViaPreviousOrForwardButton)
         {
             if (!changedViaPreviousOrForwardButton)
             {

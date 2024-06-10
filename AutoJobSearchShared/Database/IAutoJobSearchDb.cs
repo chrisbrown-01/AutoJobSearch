@@ -46,11 +46,11 @@ namespace AutoJobSearchShared.Database
 
         Task<IEnumerable<Contact>> GetAllContactsAsync();
 
-        Task<Contact> GetContactByIdAsync(int id);
-
         Task<IEnumerable<JobListing>> GetAllJobListingsAsync();
 
         Task<IEnumerable<JobSearchProfile>> GetAllJobSearchProfilesAsync();
+
+        Task<Contact> GetContactByIdAsync(int id);
 
         Task<IEnumerable<JobListing>> GetFavouriteJobListingsAsync();
 

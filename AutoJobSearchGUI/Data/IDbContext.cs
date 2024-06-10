@@ -52,11 +52,11 @@ namespace AutoJobSearchGUI.Data
 
         Task<IEnumerable<JobSearchProfile>> GetAllJobSearchProfilesAsync();
 
+        Task<Contact> GetContactByIdAsync(int id);
+
         Task<IEnumerable<JobListing>> GetFavouriteJobListingsAsync();
 
         Task<IEnumerable<JobListing>> GetHiddenJobListingsAsync();
-
-        Task<Contact> GetContactByIdAsync(int id);
 
         Task<JobListing> GetJobListingByIdAsync(int id, bool isRetrievingAllDetails);
 

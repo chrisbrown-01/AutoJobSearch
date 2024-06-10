@@ -39,25 +39,25 @@ namespace AutoJobSearchGUI.ViewModels
             _dbContext = dbContext;
         }
 
+        public delegate void ChangedContactViewEventHandler(int contactId, bool changedViaPreviousOrForwardButton);
+
         public delegate void OpenContactsViewHandler();
 
         public delegate void OpenJobListingViewHandler(int jobListingId, bool changedViaPreviousOrForwardButton);
 
+        public delegate void ResetViewHistoryHandler();
+
         public delegate void UpdateContactsViewHandler();
+
+        public event ChangedContactViewEventHandler? ChangedContactViewEvent;
 
         public event OpenContactsViewHandler? OpenContactsViewRequest;
 
         public event OpenJobListingViewHandler? OpenJobListingViewRequest;
 
-        public event UpdateContactsViewHandler? UpdateContactsViewRequest;
-
-        public delegate void ChangedContactViewEventHandler(int contactId, bool changedViaPreviousOrForwardButton); 
-        
-        public event ChangedContactViewEventHandler? ChangedContactViewEvent;
-
-        public delegate void ResetViewHistoryHandler();
-
         public event ResetViewHistoryHandler? ResetViewHistoryRequest;
+
+        public event UpdateContactsViewHandler? UpdateContactsViewRequest;
 
         [RelayCommand]
         private async Task CreateContactAssociatedJobIdAsync(string jobIdTextBoxInput)
@@ -70,7 +70,7 @@ namespace AutoJobSearchGUI.ViewModels
                 var allJobListings = await _dbContext.GetAllJobListingsAsync();
                 var allJobIds = allJobListings.Select(x => x.Id);
 
-                if (allJobIds is null || !allJobIds.Contains(jobId)) 
+                if (allJobIds is null || !allJobIds.Contains(jobId))
                     return;
 
                 var associatedJobIdRecord = await _dbContext.CreateContactAssociatedJobIdAsync(Contact.Id, jobId);
@@ -223,7 +223,7 @@ namespace AutoJobSearchGUI.ViewModels
 
             OpenContact(Singletons.Contacts[previousIndex]);
 
-            ChangedContactViewEvent?.Invoke(Singletons.Contacts[previousIndex].Id, false); 
+            ChangedContactViewEvent?.Invoke(Singletons.Contacts[previousIndex].Id, false);
         }
 
         [RelayCommand]
