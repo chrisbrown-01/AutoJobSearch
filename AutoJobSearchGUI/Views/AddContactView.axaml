@@ -69,46 +69,10 @@
 				Grid.Column="0"
 				VerticalAlignment="Center"
 				HorizontalAlignment="Center"
-				Text="Company"
-				Margin="5" />
-			<AutoCompleteBox
-				Grid.Row="0"
-				Grid.Column="1"
-				Grid.ColumnSpan="2"
-				Text="{Binding Contact.Company}"
-				Watermark="Apple"
-				FilterMode="ContainsOrdinal"
-				ItemsSource="{Binding Contacts_Companies}"	
-				IsTextCompletionEnabled="True"
-				Margin="0 5 15 5" />
-
-			<TextBlock
-				Grid.Row="1"
-				Grid.Column="0"
-				VerticalAlignment="Center"
-				HorizontalAlignment="Center"
-				Text="Location"
-				Margin="5"/>
-			<AutoCompleteBox
-				Grid.Row="1"
-				Grid.Column="1"
-				Grid.ColumnSpan="2"
-				Text="{Binding Contact.Location}"
-				Watermark="Cupertino, California"
-				FilterMode="ContainsOrdinal"
-				ItemsSource="{Binding Contacts_Locations}"
-				IsTextCompletionEnabled="True"
-				Margin="0 5 15 5"/>
-
-			<TextBlock
-				Grid.Row="2"
-				Grid.Column="0"
-				VerticalAlignment="Center"
-				HorizontalAlignment="Center"
 				Text="Name"
 				Margin="5"/>
 			<TextBox
-				Grid.Row="2"
+				Grid.Row="0"
 				Grid.Column="1"
 				Grid.ColumnSpan="2"
 				Text="{Binding Contact.Name}"
@@ -119,20 +83,56 @@
 				Margin="0 5 15 5"/>
 
 			<TextBlock
-				Grid.Row="3"
+				Grid.Row="1"
 				Grid.Column="0"
 				VerticalAlignment="Center"
 				HorizontalAlignment="Center"
 				Text="Title"
 				Margin="5"/>
 			<AutoCompleteBox
-				Grid.Row="3"
+				Grid.Row="1"
 				Grid.Column="1"
 				Grid.ColumnSpan="2"
 				Text="{Binding Contact.Title}"
 				Watermark="Senior Hiring Manager"
 				FilterMode="ContainsOrdinal"
 				ItemsSource="{Binding Contacts_Titles}"
+				IsTextCompletionEnabled="True"
+				Margin="0 5 15 5"/>
+
+			<TextBlock
+				Grid.Row="2"
+				Grid.Column="0"
+				VerticalAlignment="Center"
+				HorizontalAlignment="Center"
+				Text="Company"
+				Margin="5" />
+			<AutoCompleteBox
+				Grid.Row="2"
+				Grid.Column="1"
+				Grid.ColumnSpan="2"
+				Text="{Binding Contact.Company}"
+				Watermark="Apple"
+				FilterMode="ContainsOrdinal"
+				ItemsSource="{Binding Contacts_Companies}"	
+				IsTextCompletionEnabled="True"
+				Margin="0 5 15 5" />
+
+			<TextBlock
+				Grid.Row="3"
+				Grid.Column="0"
+				VerticalAlignment="Center"
+				HorizontalAlignment="Center"
+				Text="Location"
+				Margin="5"/>
+			<AutoCompleteBox
+				Grid.Row="3"
+				Grid.Column="1"
+				Grid.ColumnSpan="2"
+				Text="{Binding Contact.Location}"
+				Watermark="Cupertino, California"
+				FilterMode="ContainsOrdinal"
+				ItemsSource="{Binding Contacts_Locations}"
 				IsTextCompletionEnabled="True"
 				Margin="0 5 15 5"/>
 

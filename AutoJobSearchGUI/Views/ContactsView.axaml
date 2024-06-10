@@ -226,16 +226,6 @@
 			</DataGrid.ContextMenu>
 			<DataGrid.Columns>
 				<DataGridTextColumn
-					Header="Company"
-					Binding="{Binding Company}"
-					IsReadOnly="True"
-					Width="*" />
-				<DataGridTextColumn
-					Header="Location"
-					Binding="{Binding Location}"
-					IsReadOnly="True"
-					Width="*" />
-				<DataGridTextColumn
 					Header="Name"
 					Binding="{Binding Name}"
 					IsReadOnly="True"
@@ -243,6 +233,16 @@
 				<DataGridTextColumn
 					Header="Title"
 					Binding="{Binding Title}"
+					IsReadOnly="True"
+					Width="*" />
+				<DataGridTextColumn
+					Header="Company"
+					Binding="{Binding Company}"
+					IsReadOnly="True"
+					Width="*" />
+				<DataGridTextColumn
+					Header="Location"
+					Binding="{Binding Location}"
 					IsReadOnly="True"
 					Width="*" />
 				<DataGridTextColumn
