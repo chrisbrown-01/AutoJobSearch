@@ -17,13 +17,9 @@ namespace AutoJobSearchGUI.ViewModels
         private readonly AddContactViewModel addContactViewModel;
         private readonly ContactsViewModel contactsViewModel;
         private readonly DbContext dbContext;
-
         private readonly HelpViewModel helpViewModel;
-
         private readonly JobBoardViewModel jobBoardViewModel;
-
         private readonly JobListingViewModel jobListingViewModel;
-
         private readonly JobSearchViewModel jobSearchViewModel;
 
         [ObservableProperty]
@@ -79,6 +75,7 @@ namespace AutoJobSearchGUI.ViewModels
             ChangedContactView(addContactViewModel.Contact.Id, false);
         }
 
+        // This method must be "void", since "async Task" does not properly throw or log exceptions
         public void ChangeViewToContact(int contactId, bool changedViaPreviousOrForwardButton)
         {
             var contactModel = Singletons.Contacts.SingleOrDefault(x => x.Id == contactId);
@@ -86,8 +83,8 @@ namespace AutoJobSearchGUI.ViewModels
             // Edge case handling if user has query filters enabled which prevents the Contacts singleton from containing a contact that does exist
             if (contactModel == null)
             {
-                var contact = dbContext.GetContactByIdAsync(contactId).Result;
-                var contactsAssociatedJobIds = dbContext.GetAllContactsAssociatedJobIdsAsync().Result;
+                var contact = dbContext.GetContactByIdAsync(contactId).GetAwaiter().GetResult();
+                var contactsAssociatedJobIds = dbContext.GetAllContactsAssociatedJobIdsAsync().GetAwaiter().GetResult();
                 var contactAssociatedJobIds = contactsAssociatedJobIds.Select(x => x.JobListingId);
                 contactModel = ContactsHelpers.ConvertContactToContactModel(contact, contactAssociatedJobIds);
             }
@@ -129,17 +126,19 @@ namespace AutoJobSearchGUI.ViewModels
             UpdateViewHistory(new ViewStackModel(ViewModel.JobBoardViewModel), false);
         }
 
+        // This method must be "void", since "async Task" does not properly throw or log exceptions
         public void ChangeViewToJobListing(int jobListingId, bool changedViaPreviousOrForwardButton)
         {
-            jobListingViewModel.OpenJobListingByIdCommand.ExecuteAsync(jobListingId).Wait();
+            jobListingViewModel.OpenJobListingByIdCommand.ExecuteAsync(jobListingId).GetAwaiter().GetResult();
             ContentViewModel = jobListingViewModel;
 
             ChangedJobListingView(jobListingId, changedViaPreviousOrForwardButton);
         }
 
+        // This method must be "void", since "async Task" does not properly throw or log exceptions
         public void ChangeViewToJobListing(JobListingModel jobListing)
         {
-            jobListingViewModel.OpenJobListingCommand.ExecuteAsync(jobListing).Wait();
+            jobListingViewModel.OpenJobListingCommand.ExecuteAsync(jobListing).GetAwaiter().GetResult(); 
             ContentViewModel = jobListingViewModel;
 
             ChangedJobListingView(jobListing.Id, false);
@@ -317,10 +316,11 @@ namespace AutoJobSearchGUI.ViewModels
             return JobListingHelpers.ConvertJobListingsToJobListingModels(jobs);
         }
 
+        // This method is void since it gets called synchronously in the constructor
         private void InitializeSingletons()
         {
-            Singletons.JobListings = GetAllJobListingsAsync().Result;
-            Singletons.Contacts = GetAllContactsAsync().Result;
+            Singletons.JobListings = GetAllJobListingsAsync().GetAwaiter().GetResult();
+            Singletons.Contacts = GetAllContactsAsync().GetAwaiter().GetResult();
         }
 
         private void ResetViewHistory()

@@ -53,12 +53,12 @@ namespace AutoJobSearchJobScraper
             if (int.TryParse(args[0], out int jobSearchProfileId))
             {
                 Log.Information("Starting application with {@jobSearchProfileId} argument.", jobSearchProfileId);
-                RunProgram(serviceProvider, jobSearchProfileId).Wait();
+                RunProgram(serviceProvider, jobSearchProfileId).GetAwaiter().GetResult();
             }
             else
             {
                 Log.Information("Starting application with {@args.Count} string arguments.", args.Length);
-                RunProgram(serviceProvider, args.AsEnumerable()).Wait();
+                RunProgram(serviceProvider, args.AsEnumerable()).GetAwaiter().GetResult();
             }
 
             Log.Information("Job scraper application finished executing.");
