@@ -11,8 +11,13 @@ using System.Threading.Tasks;
 
 namespace AutoJobSearchGUI.ViewModels
 {
+    // TODO: run codemaid formatting
     public partial class JobBoardViewModel : ViewModelBase // Needs to be public for View previewer to work
     {
+        public delegate void OpenJobListingViewByIdHandler(int jobId, bool changedViaPreviousOrForwardButton);
+
+        public event OpenJobListingViewByIdHandler? OpenJobListingViewByIdRequest;
+
         public delegate void OpenJobListingViewHandler(JobListingModel job);
 
         public event OpenJobListingViewHandler? OpenJobListingViewRequest;
@@ -68,6 +73,22 @@ namespace AutoJobSearchGUI.ViewModels
             }
 
             UpdateJobBoard();
+        }
+
+        [RelayCommand]
+        private async Task OpenJobByIdAsync(string jobIdTextBoxInput)
+        {
+            if (Int32.TryParse(jobIdTextBoxInput, out int jobId))
+            {
+                // Make sure the job ID exists before proceeding
+                var allJobListings = await _dbContext.GetAllJobListingsAsync();
+                var allJobIds = allJobListings.Select(x => x.Id);
+
+                if (allJobIds is null || !allJobIds.Contains(jobId))
+                    return;
+
+                OpenJobListingViewByIdRequest?.Invoke(jobId, false);
+            }
         }
 
         [RelayCommand]

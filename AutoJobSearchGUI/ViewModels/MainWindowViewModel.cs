@@ -366,6 +366,7 @@ namespace AutoJobSearchGUI.ViewModels
             contactsViewModel.OpenAddContactViewRequest += ChangeViewToAddContact;
 
             jobBoardViewModel.OpenJobListingViewRequest += ChangeViewToJobListing;
+            jobBoardViewModel.OpenJobListingViewByIdRequest += ChangeViewToJobListing;
 
             jobListingViewModel.OpenJobBoardViewRequest += ChangeViewToJobBoard;
 
@@ -395,6 +396,7 @@ namespace AutoJobSearchGUI.ViewModels
             contactsViewModel.OpenAddContactViewRequest -= ChangeViewToAddContact;
 
             jobBoardViewModel.OpenJobListingViewRequest -= ChangeViewToJobListing;
+            jobBoardViewModel.OpenJobListingViewByIdRequest -= ChangeViewToJobListing;
 
             jobListingViewModel.OpenJobBoardViewRequest -= ChangeViewToJobBoard;
 

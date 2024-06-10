@@ -69,9 +69,9 @@ namespace AutoJobSearchGUI.ViewModels
                 // Make sure the job ID exists before allowing the user to add it to the database
                 var allJobListings = await _dbContext.GetAllJobListingsAsync();
                 var allJobIds = allJobListings.Select(x => x.Id);
-                var singletonJobIdExists = Singletons.JobListings.Exists(x => x.Id == jobId);
 
-                if (allJobIds is null || !allJobIds.Contains(jobId) || !singletonJobIdExists) return;
+                if (allJobIds is null || !allJobIds.Contains(jobId)) 
+                    return;
 
                 var associatedJobIdRecord = await _dbContext.CreateContactAssociatedJobIdAsync(Contact.Id, jobId);
                 Contact.JobListingIds.Add(associatedJobIdRecord.JobListingId);

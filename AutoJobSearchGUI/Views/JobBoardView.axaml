@@ -180,6 +180,15 @@
 				<MenuItem Header="Options">
 					<MenuItem Header="Go To Default View" Command="{Binding RenderDefaultJobBoardViewCommand}" />
 					<MenuItem Header="Add New Job" Command="{Binding CreateJobCommand}" />
+					<MenuItem Header="Open Job By Id">
+						<TextBox
+							x:Name="JobIdTextBox"
+							Watermark="Enter Job ID (integer number)" />
+						<MenuItem
+							Header="Open Job"
+							Command="{Binding OpenJobByIdCommand}"
+							CommandParameter="{Binding Text, ElementName=JobIdTextBox}" />
+					</MenuItem>
 					<MenuItem Header="Delete All Records" Command="{Binding DeleteAllRecordsCommand}" />
 					<MenuItem Header="Jobs Per Page">
 						<NumericUpDown
