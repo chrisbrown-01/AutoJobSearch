@@ -162,17 +162,17 @@ namespace AutoJobSearchGUI.ViewModels
 
             if (JobBoardQueryModel.SearchTermQueryStringEnabled)
             {
-                result = result.Where(x => x.SearchTerm.Contains(JobBoardQueryModel.SearchTermQueryString, StringComparison.OrdinalIgnoreCase));
+                result = result.Where(x => x.SearchTerm.Contains(JobBoardQueryModel.SearchTermQueryString.Trim(), StringComparison.OrdinalIgnoreCase));
             }
 
             if (JobBoardQueryModel.JobDescriptionQueryStringEnabled)
             {
-                result = result.Where(x => x.Description.Contains(JobBoardQueryModel.JobDescriptionQueryString, StringComparison.OrdinalIgnoreCase));
+                result = result.Where(x => x.Description.Contains(JobBoardQueryModel.JobDescriptionQueryString.Trim(), StringComparison.OrdinalIgnoreCase));
             }
 
             if (JobBoardQueryModel.NotesQueryStringEnabled)
             {
-                result = result.Where(x => x.Notes.Contains(JobBoardQueryModel.NotesQueryString, StringComparison.OrdinalIgnoreCase));
+                result = result.Where(x => x.Notes.Contains(JobBoardQueryModel.NotesQueryString.Trim(), StringComparison.OrdinalIgnoreCase));
             }
 
             if (JobBoardQueryModel.CreatedAtDateEnabled)
