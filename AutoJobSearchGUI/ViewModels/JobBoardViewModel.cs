@@ -14,15 +14,9 @@ namespace AutoJobSearchGUI.ViewModels
     // TODO: run codemaid formatting
     public partial class JobBoardViewModel : ViewModelBase // Needs to be public for View previewer to work
     {
-        public delegate void OpenJobListingViewByIdHandler(int jobId, bool changedViaPreviousOrForwardButton);
-
-        public event OpenJobListingViewByIdHandler? OpenJobListingViewByIdRequest;
-
-        public delegate void OpenJobListingViewHandler(JobListingModel job);
-
-        public event OpenJobListingViewHandler? OpenJobListingViewRequest;
-
         private const int DEFAULT_PAGE_SIZE = 50;
+
+        private readonly IDbContext _dbContext;
 
         [ObservableProperty]
         private JobBoardQueryModel _jobBoardQueryModel;
@@ -31,21 +25,13 @@ namespace AutoJobSearchGUI.ViewModels
         private List<JobListingModel> _jobListingsDisplayed = default!;
 
         [ObservableProperty]
-        private JobListingModel? _selectedJobListing;
-
-        [ObservableProperty]
         private int _pageIndex;
 
         [ObservableProperty]
         private int _pageSize = DEFAULT_PAGE_SIZE;
 
-        private readonly IDbContext _dbContext;
-
-        public delegate void ResetViewHistoryHandler();
-
-        public event ResetViewHistoryHandler? ResetViewHistoryRequest;
-
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+        [ObservableProperty]
+        private JobListingModel? _selectedJobListing;
 
         public JobBoardViewModel() // For View previewer only
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
@@ -64,31 +50,33 @@ namespace AutoJobSearchGUI.ViewModels
             RenderDefaultJobBoardViewCommand.Execute(null);
         }
 
-        partial void OnPageSizeChanged(int value)
-        {
-            if (value < 1 || value > 100)
-            {
-                PageSize = DEFAULT_PAGE_SIZE;
-                return;
-            }
+        public delegate void OpenJobListingViewByIdHandler(int jobId, bool changedViaPreviousOrForwardButton);
 
-            UpdateJobBoard();
+        public delegate void OpenJobListingViewHandler(JobListingModel job);
+
+        public delegate void ResetViewHistoryHandler();
+
+        public event OpenJobListingViewByIdHandler? OpenJobListingViewByIdRequest;
+        public event OpenJobListingViewHandler? OpenJobListingViewRequest;
+        public event ResetViewHistoryHandler? ResetViewHistoryRequest;
+
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+        public void UpdateJobBoard()
+        {
+            DisableOnChangedEvents(JobListingsDisplayed);
+            JobListingsDisplayed = Singletons.JobListings.Skip(PageIndex * PageSize).Take(PageSize).ToList();
+            EnableOnChangedEvents(JobListingsDisplayed);
         }
 
         [RelayCommand]
-        private async Task OpenJobByIdAsync(string jobIdTextBoxInput)
+        private async Task CreateJobAsync()
         {
-            if (Int32.TryParse(jobIdTextBoxInput, out int jobId))
-            {
-                // Make sure the job ID exists before proceeding
-                var allJobListings = await _dbContext.GetAllJobListingsAsync();
-                var allJobIds = allJobListings.Select(x => x.Id);
-
-                if (allJobIds is null || !allJobIds.Contains(jobId))
-                    return;
-
-                OpenJobListingViewByIdRequest?.Invoke(jobId, false);
-            }
+            var newJob = await _dbContext.CreateJobListingAsync();
+            var newJobListingModel = JobListingHelpers.ConvertJobListingToJobListingModel(newJob);
+            Singletons.JobListings.Add(newJobListingModel);
+            JobListingsDisplayed.Add(newJobListingModel);
+            SelectedJobListing = newJobListingModel;
+            OpenJobListing();
         }
 
         [RelayCommand]
@@ -109,39 +97,50 @@ namespace AutoJobSearchGUI.ViewModels
         }
 
         [RelayCommand]
-        private async Task RenderDefaultJobBoardViewAsync()
+        private async Task DeleteJobAsync()
         {
-            PageIndex = 0;
-            Singletons.JobListings = await GetAllJobListingsAsync();
-            JobListingsDisplayed = Singletons.JobListings.Skip(PageIndex * PageSize).Take(PageSize).ToList();
-            EnableOnChangedEvents(JobListingsDisplayed);
+            var box = MessageBoxManager.GetMessageBoxStandard(
+                "Confirm Delete Job",
+                "Are you sure you want to delete this job listing? This action cannot be reversed.",
+                MsBox.Avalonia.Enums.ButtonEnum.OkAbort,
+                MsBox.Avalonia.Enums.Icon.Warning);
 
-            JobBoardQueryModel = new();
+            var result = await box.ShowAsync();
+
+            if (result != MsBox.Avalonia.Enums.ButtonResult.Ok) return;
+
+            if (SelectedJobListing == null) return;
+            await _dbContext.DeleteJobListingAsync(SelectedJobListing.Id);
+            Singletons.JobListings.Remove(SelectedJobListing);
+            JobListingsDisplayed.Remove(SelectedJobListing);
+
+            SelectedJobListing = null;
+
+            ResetViewHistoryRequest?.Invoke();
         }
 
-        public void UpdateJobBoard()
+        /// <summary>
+        /// Prevent events from firing. This method should be called in preparation of instantiating new view model properties.
+        /// </summary>
+        /// <param name="jobListingModels"></param>
+        private void DisableOnChangedEvents(IEnumerable<JobListingModel> jobListingModels)
         {
-            DisableOnChangedEvents(JobListingsDisplayed);
-            JobListingsDisplayed = Singletons.JobListings.Skip(PageIndex * PageSize).Take(PageSize).ToList();
-            EnableOnChangedEvents(JobListingsDisplayed);
+            foreach (var jobListingModel in jobListingModels)
+            {
+                jobListingModel.EnableEvents = false;
+            }
         }
 
-        [RelayCommand]
-        private async Task RenderHiddenJobsAsync()
+        /// <summary>
+        /// Allows events to fire. This method should be called after the view model properties have been fully instantiated.
+        /// </summary>
+        /// <param name="jobListingModels"></param>
+        private void EnableOnChangedEvents(IEnumerable<JobListingModel> jobListingModels)
         {
-            PageIndex = 0;
-            Singletons.JobListings = await GetHiddenJobListingsAsync();
-            JobListingsDisplayed = Singletons.JobListings.Skip(PageIndex * PageSize).Take(PageSize).ToList();
-            EnableOnChangedEvents(JobListingsDisplayed);
-        }
-
-        [RelayCommand]
-        private async Task RenderFavouriteJobsAsync()
-        {
-            PageIndex = 0;
-            Singletons.JobListings = await GetFavouriteJobListingsAsync();
-            JobListingsDisplayed = Singletons.JobListings.Skip(PageIndex * PageSize).Take(PageSize).ToList();
-            EnableOnChangedEvents(JobListingsDisplayed);
+            foreach (var jobListingModel in jobListingModels)
+            {
+                jobListingModel.EnableEvents = true;
+            }
         }
 
         [RelayCommand]
@@ -273,55 +272,22 @@ namespace AutoJobSearchGUI.ViewModels
             EnableOnChangedEvents(JobListingsDisplayed);
         }
 
-        [RelayCommand]
-        private void OpenJobListing()
+        private async Task<List<JobListingModel>> GetAllJobListingsAsync()
         {
-            if (SelectedJobListing == null) return;
-            DisableOnChangedEvents(JobListingsDisplayed);
-            OpenJobListingViewRequest?.Invoke(SelectedJobListing);
+            var jobs = await _dbContext.GetAllJobListingsAsync();
+            return JobListingHelpers.ConvertJobListingsToJobListingModels(jobs);
         }
 
-        [RelayCommand]
-        private async Task DeleteJobAsync()
+        private async Task<List<JobListingModel>> GetFavouriteJobListingsAsync()
         {
-            var box = MessageBoxManager.GetMessageBoxStandard(
-                "Confirm Delete Job",
-                "Are you sure you want to delete this job listing? This action cannot be reversed.",
-                MsBox.Avalonia.Enums.ButtonEnum.OkAbort,
-                MsBox.Avalonia.Enums.Icon.Warning);
-
-            var result = await box.ShowAsync();
-
-            if (result != MsBox.Avalonia.Enums.ButtonResult.Ok) return;
-
-            if (SelectedJobListing == null) return;
-            await _dbContext.DeleteJobListingAsync(SelectedJobListing.Id);
-            Singletons.JobListings.Remove(SelectedJobListing);
-            JobListingsDisplayed.Remove(SelectedJobListing);
-
-            SelectedJobListing = null;
-
-            ResetViewHistoryRequest?.Invoke();
+            var jobs = await _dbContext.GetFavouriteJobListingsAsync();
+            return JobListingHelpers.ConvertJobListingsToJobListingModels(jobs);
         }
 
-        [RelayCommand]
-        private async Task CreateJobAsync()
+        private async Task<List<JobListingModel>> GetHiddenJobListingsAsync()
         {
-            var newJob = await _dbContext.CreateJobListingAsync();
-            var newJobListingModel = JobListingHelpers.ConvertJobListingToJobListingModel(newJob);
-            Singletons.JobListings.Add(newJobListingModel);
-            JobListingsDisplayed.Add(newJobListingModel);
-            SelectedJobListing = newJobListingModel;
-            OpenJobListing();
-        }
-
-        [RelayCommand]
-        private void HideJob()
-        {
-            if (SelectedJobListing == null) return;
-            SelectedJobListing.IsHidden = true;
-            Singletons.JobListings.Remove(SelectedJobListing);
-            JobListingsDisplayed.Remove(SelectedJobListing);
+            var jobs = await _dbContext.GetHiddenJobListingsAsync();
+            return JobListingHelpers.ConvertJobListingsToJobListingModels(jobs);
         }
 
         [RelayCommand]
@@ -347,46 +313,75 @@ namespace AutoJobSearchGUI.ViewModels
             EnableOnChangedEvents(JobListingsDisplayed);
         }
 
-        /// <summary>
-        /// Allows events to fire. This method should be called after the view model properties have been fully instantiated.
-        /// </summary>
-        /// <param name="jobListingModels"></param>
-        private void EnableOnChangedEvents(IEnumerable<JobListingModel> jobListingModels)
+        [RelayCommand]
+        private void HideJob()
         {
-            foreach (var jobListingModel in jobListingModels)
+            if (SelectedJobListing == null) return;
+            SelectedJobListing.IsHidden = true;
+            Singletons.JobListings.Remove(SelectedJobListing);
+            JobListingsDisplayed.Remove(SelectedJobListing);
+        }
+
+        partial void OnPageSizeChanged(int value)
+        {
+            if (value < 1 || value > 100)
             {
-                jobListingModel.EnableEvents = true;
+                PageSize = DEFAULT_PAGE_SIZE;
+                return;
+            }
+
+            UpdateJobBoard();
+        }
+
+        [RelayCommand]
+        private async Task OpenJobByIdAsync(string jobIdTextBoxInput)
+        {
+            if (Int32.TryParse(jobIdTextBoxInput, out int jobId))
+            {
+                // Make sure the job ID exists before proceeding
+                var allJobListings = await _dbContext.GetAllJobListingsAsync();
+                var allJobIds = allJobListings.Select(x => x.Id);
+
+                if (allJobIds is null || !allJobIds.Contains(jobId))
+                    return;
+
+                OpenJobListingViewByIdRequest?.Invoke(jobId, false);
             }
         }
-
-        /// <summary>
-        /// Prevent events from firing. This method should be called in preparation of instantiating new view model properties.
-        /// </summary>
-        /// <param name="jobListingModels"></param>
-        private void DisableOnChangedEvents(IEnumerable<JobListingModel> jobListingModels)
+        [RelayCommand]
+        private void OpenJobListing()
         {
-            foreach (var jobListingModel in jobListingModels)
-            {
-                jobListingModel.EnableEvents = false;
-            }
+            if (SelectedJobListing == null) return;
+            DisableOnChangedEvents(JobListingsDisplayed);
+            OpenJobListingViewRequest?.Invoke(SelectedJobListing);
         }
 
-        private async Task<List<JobListingModel>> GetFavouriteJobListingsAsync()
+        [RelayCommand]
+        private async Task RenderDefaultJobBoardViewAsync()
         {
-            var jobs = await _dbContext.GetFavouriteJobListingsAsync();
-            return JobListingHelpers.ConvertJobListingsToJobListingModels(jobs);
+            PageIndex = 0;
+            Singletons.JobListings = await GetAllJobListingsAsync();
+            JobListingsDisplayed = Singletons.JobListings.Skip(PageIndex * PageSize).Take(PageSize).ToList();
+            EnableOnChangedEvents(JobListingsDisplayed);
+
+            JobBoardQueryModel = new();
+        }
+        [RelayCommand]
+        private async Task RenderFavouriteJobsAsync()
+        {
+            PageIndex = 0;
+            Singletons.JobListings = await GetFavouriteJobListingsAsync();
+            JobListingsDisplayed = Singletons.JobListings.Skip(PageIndex * PageSize).Take(PageSize).ToList();
+            EnableOnChangedEvents(JobListingsDisplayed);
         }
 
-        private async Task<List<JobListingModel>> GetHiddenJobListingsAsync()
+        [RelayCommand]
+        private async Task RenderHiddenJobsAsync()
         {
-            var jobs = await _dbContext.GetHiddenJobListingsAsync();
-            return JobListingHelpers.ConvertJobListingsToJobListingModels(jobs);
-        }
-
-        private async Task<List<JobListingModel>> GetAllJobListingsAsync()
-        {
-            var jobs = await _dbContext.GetAllJobListingsAsync();
-            return JobListingHelpers.ConvertJobListingsToJobListingModels(jobs);
+            PageIndex = 0;
+            Singletons.JobListings = await GetHiddenJobListingsAsync();
+            JobListingsDisplayed = Singletons.JobListings.Skip(PageIndex * PageSize).Take(PageSize).ToList();
+            EnableOnChangedEvents(JobListingsDisplayed);
         }
     }
 }

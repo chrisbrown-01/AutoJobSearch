@@ -14,18 +14,20 @@ namespace AutoJobSearchGUI.ViewModels
 {
     public partial class MainWindowViewModel : ViewModelBase // Needs to be public for View previewer to work
     {
+        private readonly AddContactViewModel addContactViewModel;
+        private readonly ContactsViewModel contactsViewModel;
         private readonly DbContext dbContext;
+
+        private readonly HelpViewModel helpViewModel;
+
+        private readonly JobBoardViewModel jobBoardViewModel;
+
+        private readonly JobListingViewModel jobListingViewModel;
+
+        private readonly JobSearchViewModel jobSearchViewModel;
 
         [ObservableProperty]
         private ViewModelBase _contentViewModel;
-
-        private readonly AddContactViewModel addContactViewModel;
-        private readonly ContactsViewModel contactsViewModel;
-        private readonly HelpViewModel helpViewModel;
-        private readonly JobBoardViewModel jobBoardViewModel;
-        private readonly JobListingViewModel jobListingViewModel;
-        private readonly JobSearchViewModel jobSearchViewModel;
-
         private List<ViewStackModel> viewHistory;
         private int viewHistoryIndex;
 
@@ -56,27 +58,6 @@ namespace AutoJobSearchGUI.ViewModels
 
 #pragma warning disable CA1822 // Mark members as static
 
-        // Cannot be static - it will throw an exception
-        public void ToggleLightDarkMode()
-#pragma warning restore CA1822 // Mark members as static
-        {
-            try
-            {
-                if (App.Current!.ActualThemeVariant == Avalonia.Styling.ThemeVariant.Light)
-                {
-                    App.Current!.RequestedThemeVariant = Avalonia.Styling.ThemeVariant.Dark;
-                }
-                else
-                {
-                    App.Current!.RequestedThemeVariant = Avalonia.Styling.ThemeVariant.Light;
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.Error("Exception caught when toggling light/dark mode: {@Exception}", ex);
-            }
-        }
-
         public void ChangeViewToAddContact(ContactModel? contact)
         {
             if (contact is not null)
@@ -98,125 +79,6 @@ namespace AutoJobSearchGUI.ViewModels
             ContentViewModel = addContactViewModel;
 
             ChangedContactView(addContactViewModel.Contact.Id, false);
-        }
-
-        private void ResetViewHistory()
-        {
-            viewHistory.Clear();
-
-            if (ContentViewModel == addContactViewModel)
-            {
-                viewHistory.Add(new ViewStackModel(ViewModel.ContactViewModel, addContactViewModel.Contact.Id));
-            }
-            else if (ContentViewModel == jobListingViewModel)
-            {
-                viewHistory.Add(new ViewStackModel(ViewModel.JobListingViewModel, jobListingViewModel.JobListing.Id));
-            }
-            else if (ContentViewModel == contactsViewModel)
-            {
-                viewHistory.Add(new ViewStackModel(ViewModel.ContactsViewModel));
-            }
-            else if (ContentViewModel == jobBoardViewModel)
-            {
-                viewHistory.Add(new ViewStackModel(ViewModel.JobBoardViewModel));
-            }
-            else if (ContentViewModel == helpViewModel)
-            {
-                viewHistory.Add(new ViewStackModel(ViewModel.HelpViewModel));
-            }
-            else if (ContentViewModel == jobSearchViewModel)
-            {
-                viewHistory.Add(new ViewStackModel(ViewModel.JobSearchViewModel));
-            }
-
-            viewHistoryIndex = 0;
-        }
-
-        public void GoToPreviousView()
-        {
-            if (viewHistory.Count <= 1)
-                return;
-
-            if (viewHistoryIndex <= 0)
-                return;
-
-            --viewHistoryIndex;
-
-            var previousView = viewHistory[viewHistoryIndex];
-
-            switch (previousView.ViewModel)
-            {
-                case ViewModel.JobListingViewModel:
-                    ChangeViewToJobListing(previousView.ItemId, true);
-                    break;
-
-                case ViewModel.ContactViewModel:
-                    ChangeViewToContact(previousView.ItemId, true);
-                    break;
-
-                case ViewModel.ContactsViewModel:
-                    ContentViewModel = contactsViewModel;
-                    break;
-
-                case ViewModel.JobBoardViewModel:
-                    ContentViewModel = jobBoardViewModel;
-                    break;
-
-                case ViewModel.JobSearchViewModel:
-                    ContentViewModel = jobSearchViewModel;
-                    break;
-
-                case ViewModel.HelpViewModel:
-                    ContentViewModel = helpViewModel;
-                    break;
-
-                default:
-                    ContentViewModel = jobBoardViewModel;
-                    ResetViewHistory();
-                    break;
-            }
-        }
-
-        public void GoToForwardView()
-        {
-            if (viewHistoryIndex + 1 >= viewHistory.Count)
-                return;
-
-            ++viewHistoryIndex;
-
-            var forwardView = viewHistory[viewHistoryIndex];
-
-            switch (forwardView.ViewModel)
-            {
-                case ViewModel.JobListingViewModel:
-                    ChangeViewToJobListing(forwardView.ItemId, true);
-                    break;
-
-                case ViewModel.ContactViewModel:
-                    ChangeViewToContact(forwardView.ItemId, true);
-                    break;
-
-                case ViewModel.ContactsViewModel:
-                    ContentViewModel = contactsViewModel;
-                    break;
-
-                case ViewModel.JobBoardViewModel:
-                    ContentViewModel = jobBoardViewModel;
-                    break;
-
-                case ViewModel.JobSearchViewModel:
-                    ContentViewModel = jobSearchViewModel;
-                    break;
-
-                case ViewModel.HelpViewModel:
-                    ContentViewModel = helpViewModel;
-                    break;
-
-                default:
-                    ContentViewModel = jobBoardViewModel;
-                    ResetViewHistory();
-                    break;
-            }
         }
 
         public void ChangeViewToContact(int contactId, bool changedViaPreviousOrForwardButton)
@@ -285,16 +147,6 @@ namespace AutoJobSearchGUI.ViewModels
             ChangedJobListingView(jobListing.Id, false);
         }
 
-        private void ChangedJobListingView(int jobListingId, bool changedViaPreviousOrForwardButton)
-        {
-            UpdateViewHistory(new ViewStackModel(ViewModel.JobListingViewModel, jobListingId), changedViaPreviousOrForwardButton);
-        }
-
-        private void ChangedContactView(int contactId, bool changedViaPreviousOrForwardButton)
-        {
-            UpdateViewHistory(new ViewStackModel(ViewModel.ContactViewModel, contactId), changedViaPreviousOrForwardButton);
-        }
-
         public void ChangeViewToJobSearch()
         {
             if (ContentViewModel == jobSearchViewModel)
@@ -311,6 +163,113 @@ namespace AutoJobSearchGUI.ViewModels
             dbContext.Dispose();
         }
 
+        public void GoToForwardView()
+        {
+            if (viewHistoryIndex + 1 >= viewHistory.Count)
+                return;
+
+            ++viewHistoryIndex;
+
+            var forwardView = viewHistory[viewHistoryIndex];
+
+            switch (forwardView.ViewModel)
+            {
+                case ViewModel.JobListingViewModel:
+                    ChangeViewToJobListing(forwardView.ItemId, true);
+                    break;
+
+                case ViewModel.ContactViewModel:
+                    ChangeViewToContact(forwardView.ItemId, true);
+                    break;
+
+                case ViewModel.ContactsViewModel:
+                    ContentViewModel = contactsViewModel;
+                    break;
+
+                case ViewModel.JobBoardViewModel:
+                    ContentViewModel = jobBoardViewModel;
+                    break;
+
+                case ViewModel.JobSearchViewModel:
+                    ContentViewModel = jobSearchViewModel;
+                    break;
+
+                case ViewModel.HelpViewModel:
+                    ContentViewModel = helpViewModel;
+                    break;
+
+                default:
+                    ContentViewModel = jobBoardViewModel;
+                    ResetViewHistory();
+                    break;
+            }
+        }
+
+        public void GoToPreviousView()
+        {
+            if (viewHistory.Count <= 1)
+                return;
+
+            if (viewHistoryIndex <= 0)
+                return;
+
+            --viewHistoryIndex;
+
+            var previousView = viewHistory[viewHistoryIndex];
+
+            switch (previousView.ViewModel)
+            {
+                case ViewModel.JobListingViewModel:
+                    ChangeViewToJobListing(previousView.ItemId, true);
+                    break;
+
+                case ViewModel.ContactViewModel:
+                    ChangeViewToContact(previousView.ItemId, true);
+                    break;
+
+                case ViewModel.ContactsViewModel:
+                    ContentViewModel = contactsViewModel;
+                    break;
+
+                case ViewModel.JobBoardViewModel:
+                    ContentViewModel = jobBoardViewModel;
+                    break;
+
+                case ViewModel.JobSearchViewModel:
+                    ContentViewModel = jobSearchViewModel;
+                    break;
+
+                case ViewModel.HelpViewModel:
+                    ContentViewModel = helpViewModel;
+                    break;
+
+                default:
+                    ContentViewModel = jobBoardViewModel;
+                    ResetViewHistory();
+                    break;
+            }
+        }
+
+        // Cannot be static - it will throw an exception
+        public void ToggleLightDarkMode()
+#pragma warning restore CA1822 // Mark members as static
+        {
+            try
+            {
+                if (App.Current!.ActualThemeVariant == Avalonia.Styling.ThemeVariant.Light)
+                {
+                    App.Current!.RequestedThemeVariant = Avalonia.Styling.ThemeVariant.Dark;
+                }
+                else
+                {
+                    App.Current!.RequestedThemeVariant = Avalonia.Styling.ThemeVariant.Light;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Exception caught when toggling light/dark mode: {@Exception}", ex);
+            }
+        }
         public void UpdateContacts()
         {
             contactsViewModel.UpdateContacts();
@@ -336,6 +295,16 @@ namespace AutoJobSearchGUI.ViewModels
             Log.Information("Starting GUI application.");
         }
 
+        private void ChangedContactView(int contactId, bool changedViaPreviousOrForwardButton)
+        {
+            UpdateViewHistory(new ViewStackModel(ViewModel.ContactViewModel, contactId), changedViaPreviousOrForwardButton);
+        }
+
+        private void ChangedJobListingView(int jobListingId, bool changedViaPreviousOrForwardButton)
+        {
+            UpdateViewHistory(new ViewStackModel(ViewModel.JobListingViewModel, jobListingId), changedViaPreviousOrForwardButton);
+        }
+
         private async Task<List<ContactModel>> GetAllContactsAsync()
         {
             var contacts = await dbContext.GetAllContactsAsync();
@@ -355,17 +324,37 @@ namespace AutoJobSearchGUI.ViewModels
             Singletons.Contacts = GetAllContactsAsync().Result;
         }
 
-        private void UpdateViewHistory(ViewStackModel model, bool changedViaPreviousOrForwardButton)
+        private void ResetViewHistory()
         {
-            if (!changedViaPreviousOrForwardButton)
-            {
-                viewHistory = viewHistory.Take(viewHistoryIndex + 1).ToList();
-                viewHistory.Add(model);
-                ++viewHistoryIndex;
-                return;
-            }
-        }
+            viewHistory.Clear();
 
+            if (ContentViewModel == addContactViewModel)
+            {
+                viewHistory.Add(new ViewStackModel(ViewModel.ContactViewModel, addContactViewModel.Contact.Id));
+            }
+            else if (ContentViewModel == jobListingViewModel)
+            {
+                viewHistory.Add(new ViewStackModel(ViewModel.JobListingViewModel, jobListingViewModel.JobListing.Id));
+            }
+            else if (ContentViewModel == contactsViewModel)
+            {
+                viewHistory.Add(new ViewStackModel(ViewModel.ContactsViewModel));
+            }
+            else if (ContentViewModel == jobBoardViewModel)
+            {
+                viewHistory.Add(new ViewStackModel(ViewModel.JobBoardViewModel));
+            }
+            else if (ContentViewModel == helpViewModel)
+            {
+                viewHistory.Add(new ViewStackModel(ViewModel.HelpViewModel));
+            }
+            else if (ContentViewModel == jobSearchViewModel)
+            {
+                viewHistory.Add(new ViewStackModel(ViewModel.JobSearchViewModel));
+            }
+
+            viewHistoryIndex = 0;
+        }
         private void SubscribeToEvents()
         {
             jobListingViewModel.CreateNewContactWithAssociatedJobIdRequest += ChangeViewToAddContact;
@@ -424,6 +413,17 @@ namespace AutoJobSearchGUI.ViewModels
             jobListingViewModel.ResetViewHistoryRequest -= ResetViewHistory;
             jobBoardViewModel.ResetViewHistoryRequest -= ResetViewHistory;
             contactsViewModel.ResetViewHistoryRequest -= ResetViewHistory;
+        }
+
+        private void UpdateViewHistory(ViewStackModel model, bool changedViaPreviousOrForwardButton)
+        {
+            if (!changedViaPreviousOrForwardButton)
+            {
+                viewHistory = viewHistory.Take(viewHistoryIndex + 1).ToList();
+                viewHistory.Add(model);
+                ++viewHistoryIndex;
+                return;
+            }
         }
     }
 }
