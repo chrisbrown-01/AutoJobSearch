@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 
 namespace AutoJobSearchGUI.ViewModels
 {
-    // TODO: run codemaid formatting
     public partial class JobBoardViewModel : ViewModelBase // Needs to be public for View previewer to work
     {
         private const int DEFAULT_PAGE_SIZE = 50;
@@ -33,6 +32,7 @@ namespace AutoJobSearchGUI.ViewModels
         [ObservableProperty]
         private JobListingModel? _selectedJobListing;
 
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         public JobBoardViewModel() // For View previewer only
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         {
@@ -60,7 +60,6 @@ namespace AutoJobSearchGUI.ViewModels
         public event OpenJobListingViewHandler? OpenJobListingViewRequest;
         public event ResetViewHistoryHandler? ResetViewHistoryRequest;
 
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         public void UpdateJobBoard()
         {
             DisableOnChangedEvents(JobListingsDisplayed);

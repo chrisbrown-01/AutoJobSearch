@@ -56,8 +56,6 @@ namespace AutoJobSearchGUI.ViewModels
             SubscribeToEvents();
         }
 
-#pragma warning disable CA1822 // Mark members as static
-
         public void ChangeViewToAddContact(ContactModel? contact)
         {
             if (contact is not null)
@@ -251,6 +249,7 @@ namespace AutoJobSearchGUI.ViewModels
         }
 
         // Cannot be static - it will throw an exception
+#pragma warning disable CA1822 // Mark members as static
         public void ToggleLightDarkMode()
 #pragma warning restore CA1822 // Mark members as static
         {

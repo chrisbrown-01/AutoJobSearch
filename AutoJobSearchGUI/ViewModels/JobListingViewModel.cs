@@ -67,6 +67,7 @@ namespace AutoJobSearchGUI.ViewModels
         [ObservableProperty]
         private int _selectedContactId;
 
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         public JobListingViewModel() // For View previewer only
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         {
@@ -109,7 +110,7 @@ namespace AutoJobSearchGUI.ViewModels
         public static JobListingsAssociatedFilesStringField File2 => JobListingsAssociatedFilesStringField.File2;
         public static JobListingsAssociatedFilesStringField File3 => JobListingsAssociatedFilesStringField.File3;
         public static JobListingsAssociatedFilesStringField Resume => JobListingsAssociatedFilesStringField.Resume;
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+
         [RelayCommand]
         private void AddAssociatedContact()
         {
