@@ -180,6 +180,9 @@
 				<MenuItem Header="Options">
 					<MenuItem Header="Go To Default View" Command="{Binding RenderDefaultJobBoardViewCommand}" />
 					<MenuItem Header="Add New Job" Command="{Binding CreateJobCommand}" />
+					<MenuItem
+						Header="Clear All Statuses"
+						Command="{Binding ClearAllJobListingStatusesCommand}" />
 					<MenuItem Header="Open Job By Id">
 						<TextBox
 							x:Name="JobIdTextBox"

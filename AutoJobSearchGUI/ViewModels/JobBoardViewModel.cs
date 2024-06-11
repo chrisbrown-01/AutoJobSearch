@@ -1,6 +1,7 @@
 ﻿using AutoJobSearchGUI.Data;
 using AutoJobSearchGUI.Helpers;
 using AutoJobSearchGUI.Models;
+using AutoJobSearchShared.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MsBox.Avalonia;
@@ -76,6 +77,27 @@ namespace AutoJobSearchGUI.ViewModels
             JobListingsDisplayed.Add(newJobListingModel);
             SelectedJobListing = newJobListingModel;
             OpenJobListing();
+        }
+
+        [RelayCommand]
+        private async Task ClearAllJobListingStatuses()
+        {
+            var box = MessageBoxManager.GetMessageBoxStandard(
+                "Confirm Clear All Statuses",
+                "This will change all statuses for all displayed job listings (Applied, Favourite, Hidden, etc.) to the default unchecked value. " +
+                "Are you sure you want to proceed?",
+                MsBox.Avalonia.Enums.ButtonEnum.OkAbort,
+                MsBox.Avalonia.Enums.Icon.Warning);
+
+            var result = await box.ShowAsync();
+
+            if (result != MsBox.Avalonia.Enums.ButtonResult.Ok)
+                return;
+
+            foreach(var job in JobListingsDisplayed)
+            {
+                JobListingHelpers.ClearAllJobListingStatuses(job);
+            }
         }
 
         [RelayCommand]

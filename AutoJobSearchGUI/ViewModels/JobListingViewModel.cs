@@ -132,6 +132,24 @@ namespace AutoJobSearchGUI.ViewModels
         }
 
         [RelayCommand]
+        private async Task ClearAllJobListingStatuses()
+        {
+            var box = MessageBoxManager.GetMessageBoxStandard(
+                "Confirm Clear All Statuses",
+                "This will change all statuses for this job listing (Applied, Favourite, Hidden, etc.) to the default unchecked value. " +
+                "Are you sure you want to proceed?",
+                MsBox.Avalonia.Enums.ButtonEnum.OkAbort,
+                MsBox.Avalonia.Enums.Icon.Warning);
+
+            var result = await box.ShowAsync();
+
+            if (result != MsBox.Avalonia.Enums.ButtonResult.Ok) 
+                return;
+
+            JobListingHelpers.ClearAllJobListingStatuses(JobListing);
+        }
+
+        [RelayCommand]
         private async Task DeleteJobAsync()
         {
             var box = MessageBoxManager.GetMessageBoxStandard(
@@ -142,7 +160,8 @@ namespace AutoJobSearchGUI.ViewModels
 
             var result = await box.ShowAsync();
 
-            if (result != MsBox.Avalonia.Enums.ButtonResult.Ok) return;
+            if (result != MsBox.Avalonia.Enums.ButtonResult.Ok) 
+                return;
 
             JobListingModel? nextJobToDisplay;
 
