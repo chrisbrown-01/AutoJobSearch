@@ -48,6 +48,9 @@
 					<MenuItem
 						Header="Delete Job"
 						Command="{Binding DeleteJobCommand}" />
+					<MenuItem
+						Header="Clear All Statuses"
+						Command="{Binding ClearAllJobListingStatusesCommand}" />
 					<MenuItem 
 						Header="Create New Job"
 						Command="{Binding CreateJobCommand}" />				

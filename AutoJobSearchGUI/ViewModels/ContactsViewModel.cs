@@ -64,9 +64,9 @@ namespace AutoJobSearchGUI.ViewModels
 
         public delegate void OpenAddContactViewHandler(ContactModel? contact);
 
-        public event OpenAddContactViewHandler? OpenAddContactViewRequest;
-
         public delegate void ResetViewHistoryHandler();
+
+        public event OpenAddContactViewHandler? OpenAddContactViewRequest;
 
         public event ResetViewHistoryHandler? ResetViewHistoryRequest;
 
@@ -132,42 +132,42 @@ namespace AutoJobSearchGUI.ViewModels
 
             if (ContactsQueryModel.EmailQueryStringEnabled)
             {
-                contacts = contacts.Where(x => x.Email.Contains(ContactsQueryModel.EmailQueryString, StringComparison.OrdinalIgnoreCase));
+                contacts = contacts.Where(x => x.Email.Contains(ContactsQueryModel.EmailQueryString.Trim(), StringComparison.OrdinalIgnoreCase));
             }
 
             if (ContactsQueryModel.PhoneQueryStringEnabled)
             {
-                contacts = contacts.Where(x => x.Phone.Contains(ContactsQueryModel.PhoneQueryString, StringComparison.OrdinalIgnoreCase));
+                contacts = contacts.Where(x => x.Phone.Contains(ContactsQueryModel.PhoneQueryString.Trim(), StringComparison.OrdinalIgnoreCase));
             }
 
             if (ContactsQueryModel.NameQueryStringEnabled)
             {
-                contacts = contacts.Where(x => x.Name.Contains(ContactsQueryModel.NameQueryString, StringComparison.OrdinalIgnoreCase));
+                contacts = contacts.Where(x => x.Name.Contains(ContactsQueryModel.NameQueryString.Trim(), StringComparison.OrdinalIgnoreCase));
             }
 
             if (ContactsQueryModel.LinkedInQueryStringEnabled)
             {
-                contacts = contacts.Where(x => x.LinkedIn.Contains(ContactsQueryModel.LinkedInQueryString, StringComparison.OrdinalIgnoreCase));
+                contacts = contacts.Where(x => x.LinkedIn.Contains(ContactsQueryModel.LinkedInQueryString.Trim(), StringComparison.OrdinalIgnoreCase));
             }
 
             if (ContactsQueryModel.LocationQueryStringEnabled)
             {
-                contacts = contacts.Where(x => x.Location.Contains(ContactsQueryModel.LocationQueryString, StringComparison.OrdinalIgnoreCase));
+                contacts = contacts.Where(x => x.Location.Contains(ContactsQueryModel.LocationQueryString.Trim(), StringComparison.OrdinalIgnoreCase));
             }
 
             if (ContactsQueryModel.CompanyQueryStringEnabled)
             {
-                contacts = contacts.Where(x => x.Company.Contains(ContactsQueryModel.CompanyQueryString, StringComparison.OrdinalIgnoreCase));
+                contacts = contacts.Where(x => x.Company.Contains(ContactsQueryModel.CompanyQueryString.Trim(), StringComparison.OrdinalIgnoreCase));
             }
 
             if (ContactsQueryModel.TitleQueryStringEnabled)
             {
-                contacts = contacts.Where(x => x.Title.Contains(ContactsQueryModel.TitleQueryString, StringComparison.OrdinalIgnoreCase));
+                contacts = contacts.Where(x => x.Title.Contains(ContactsQueryModel.TitleQueryString.Trim(), StringComparison.OrdinalIgnoreCase));
             }
 
             if (ContactsQueryModel.NotesQueryStringEnabled)
             {
-                contacts = contacts.Where(x => x.Notes.Contains(ContactsQueryModel.NotesQueryString, StringComparison.OrdinalIgnoreCase));
+                contacts = contacts.Where(x => x.Notes.Contains(ContactsQueryModel.NotesQueryString.Trim(), StringComparison.OrdinalIgnoreCase));
             }
 
             if (ContactsQueryModel.SortByCompany)

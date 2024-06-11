@@ -585,7 +585,7 @@ namespace AutoJobSearchJobScraper.WebScraper
                 // Need to provide a short delay or the Selenium browser will randomly throw exceptions.
                 // Hacky solution but you can't use "ref" keywords for async method arguments.
                 // Exception details for if they start occurring again: "OpenQA.Selenium.WebDriverException - unknown error: session deleted because of page crash"
-                Task.Delay(CHROME_DRIVER_DELAY_IN_MS).Wait();
+                Task.Delay(CHROME_DRIVER_DELAY_IN_MS).GetAwaiter().GetResult();
 
                 doc.LoadHtml(driver.PageSource);
 
@@ -657,7 +657,7 @@ namespace AutoJobSearchJobScraper.WebScraper
                 // Need to provide a short delay or the Selenium browser will randomly throw exceptions.
                 // Hacky solution but you can't use "ref" keywords for async method arguments.
                 // Exception details for if they start occurring again: "OpenQA.Selenium.WebDriverException - unknown error: session deleted because of page crash"
-                Task.Delay(CHROME_DRIVER_DELAY_IN_MS).Wait();
+                Task.Delay(CHROME_DRIVER_DELAY_IN_MS).GetAwaiter().GetResult();
 
                 doc.LoadHtml(driver.PageSource);
 
@@ -729,7 +729,7 @@ namespace AutoJobSearchJobScraper.WebScraper
                 // Need to provide a short delay or the Selenium browser will randomly throw exceptions.
                 // Hacky solution but you can't use "ref" keywords for async method arguments.
                 // Exception details for if they start occurring again: "OpenQA.Selenium.WebDriverException - unknown error: session deleted because of page crash"
-                Task.Delay(CHROME_DRIVER_DELAY_IN_MS).Wait();
+                Task.Delay(CHROME_DRIVER_DELAY_IN_MS).GetAwaiter().GetResult();
 
                 doc.LoadHtml(driver.PageSource);
 

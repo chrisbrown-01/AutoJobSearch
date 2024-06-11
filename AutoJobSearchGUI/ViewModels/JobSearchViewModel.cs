@@ -16,14 +16,13 @@ namespace AutoJobSearchGUI.ViewModels
 {
     public partial class JobSearchViewModel : ViewModelBase // Needs to be public for View previewer to work
     {
+        private readonly IDbContext _dbContext;
+
         [ObservableProperty]
         private List<JobSearchProfileModel> _searchProfiles = new();
 
         [ObservableProperty]
         private JobSearchProfileModel _selectedSearchProfile = new();
-
-        private readonly IDbContext _dbContext;
-
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
         public JobSearchViewModel() // For View previewer only
@@ -37,6 +36,43 @@ namespace AutoJobSearchGUI.ViewModels
         {
             _dbContext = dbContext;
             RenderDefaultJobSearchViewCommand.Execute(null);
+        }
+
+        [RelayCommand]
+        private async Task CreateNewProfileAsync()
+        {
+            await _dbContext.CreateJobSearchProfileAsync(new JobSearchProfile());
+
+            var allProfiles = await _dbContext.GetAllJobSearchProfilesAsync();
+
+            if (!allProfiles.Any())
+                throw new ApplicationException("No job search profiles could be loaded for the Job Search page.");
+
+            SearchProfiles = JobSearchProfileHelpers.ConvertProfilesToMvvmModel(allProfiles);
+
+            SelectedSearchProfile = SearchProfiles.Last();
+            EnableOnChangedEvents(SearchProfiles);
+        }
+
+        [RelayCommand]
+        private async Task DeleteCurrentProfileAsync()
+        {
+            if (SelectedSearchProfile == null || SelectedSearchProfile.Id < 1) return;
+
+            await _dbContext.DeleteJobSearchProfileAsync(SelectedSearchProfile.Id);
+            await RenderDefaultJobSearchViewCommand.ExecuteAsync(null);
+        }
+
+        /// <summary>
+        /// Allows events to fire. This method should be called after the view model properties have been fully instantiated.
+        /// </summary>
+        /// <param name="profiles"></param>
+        private void EnableOnChangedEvents(IEnumerable<JobSearchProfileModel> profiles)
+        {
+            foreach (var profile in profiles)
+            {
+                profile.EnableEvents = true;
+            }
         }
 
         [RelayCommand]
@@ -80,43 +116,6 @@ namespace AutoJobSearchGUI.ViewModels
 
             SelectedSearchProfile = SearchProfiles.First();
             EnableOnChangedEvents(SearchProfiles);
-        }
-
-        [RelayCommand]
-        private async Task CreateNewProfileAsync()
-        {
-            await _dbContext.CreateJobSearchProfileAsync(new JobSearchProfile());
-
-            var allProfiles = await _dbContext.GetAllJobSearchProfilesAsync();
-
-            if (!allProfiles.Any())
-                throw new ApplicationException("No job search profiles could be loaded for the Job Search page.");
-
-            SearchProfiles = JobSearchProfileHelpers.ConvertProfilesToMvvmModel(allProfiles);
-
-            SelectedSearchProfile = SearchProfiles.Last();
-            EnableOnChangedEvents(SearchProfiles);
-        }
-
-        [RelayCommand]
-        private async Task DeleteCurrentProfileAsync()
-        {
-            if (SelectedSearchProfile == null || SelectedSearchProfile.Id < 1) return;
-
-            await _dbContext.DeleteJobSearchProfileAsync(SelectedSearchProfile.Id);
-            await RenderDefaultJobSearchViewCommand.ExecuteAsync(null);
-        }
-
-        /// <summary>
-        /// Allows events to fire. This method should be called after the view model properties have been fully instantiated.
-        /// </summary>
-        /// <param name="profiles"></param>
-        private void EnableOnChangedEvents(IEnumerable<JobSearchProfileModel> profiles)
-        {
-            foreach (var profile in profiles)
-            {
-                profile.EnableEvents = true;
-            }
         }
     }
 }

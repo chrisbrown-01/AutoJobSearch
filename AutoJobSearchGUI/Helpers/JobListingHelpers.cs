@@ -6,6 +6,19 @@ namespace AutoJobSearchGUI.Helpers
 {
     internal static class JobListingHelpers
     {
+        internal static void ClearAllJobListingStatuses(JobListingModel job)
+        {
+            job.IsAcceptedOffer = false;
+            job.IsAppliedTo = false;
+            job.IsDeclinedOffer = false;
+            job.IsFavourite = false;
+            job.IsHidden = false;
+            job.IsInterviewing = false;
+            job.IsNegotiating = false;
+            job.IsRejected = false;
+            job.IsToBeAppliedTo = false;
+        }
+
         internal static List<JobListingModel> ConvertJobListingsToJobListingModels(IEnumerable<JobListing> jobs)
         {
             var jobListings = new List<JobListingModel>();

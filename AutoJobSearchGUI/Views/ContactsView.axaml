@@ -45,6 +45,36 @@
 				BorderThickness="0.8"
 				CornerRadius="3">
 				<MenuItem Header="Advanced Query">
+					<MenuItem Header="Name Query">
+						<CheckBox
+							Content="Enable Query Filter"
+							FontWeight="ExtraBold"
+							IsChecked="{Binding ContactsQueryModel.NameQueryStringEnabled}"
+							ClickMode="Press"/>
+						<AutoCompleteBox
+							Text="{Binding ContactsQueryModel.NameQueryString}"
+							MaxWidth="250"
+							MaxDropDownHeight="250"
+							FilterMode="ContainsOrdinal"
+							ItemsSource="{Binding Contacts_Names}"
+							IsTextCompletionEnabled="True"
+							DropDownClosing="AutoCompleteBox_DropDownClosing"/>
+					</MenuItem>
+					<MenuItem Header="Title Query">
+						<CheckBox
+							Content="Enable Query Filter"
+							FontWeight="ExtraBold"
+							IsChecked="{Binding ContactsQueryModel.TitleQueryStringEnabled}"
+							ClickMode="Press"/>
+						<AutoCompleteBox
+							Text="{Binding ContactsQueryModel.TitleQueryString}"
+							MaxWidth="250"
+							MaxDropDownHeight="250"
+							FilterMode="ContainsOrdinal"
+							ItemsSource="{Binding Contacts_Titles}"
+							IsTextCompletionEnabled="True"
+							DropDownClosing="AutoCompleteBox_DropDownClosing"/>
+					</MenuItem>
 					<MenuItem Header="Company Query">
 						<CheckBox 
 							Content="Enable Query Filter"
@@ -72,36 +102,6 @@
 							MaxDropDownHeight="250"
 							FilterMode="ContainsOrdinal"
 							ItemsSource="{Binding Contacts_Locations}"
-							IsTextCompletionEnabled="True"
-							DropDownClosing="AutoCompleteBox_DropDownClosing"/>
-					</MenuItem>
-					<MenuItem Header="Name Query">
-						<CheckBox
-							Content="Enable Query Filter"
-							FontWeight="ExtraBold"
-							IsChecked="{Binding ContactsQueryModel.NameQueryStringEnabled}"
-							ClickMode="Press"/>
-						<AutoCompleteBox
-							Text="{Binding ContactsQueryModel.NameQueryString}"
-							MaxWidth="250"
-							MaxDropDownHeight="250"
-							FilterMode="ContainsOrdinal"
-							ItemsSource="{Binding Contacts_Names}"  
-							IsTextCompletionEnabled="True"
-							DropDownClosing="AutoCompleteBox_DropDownClosing"/>
-					</MenuItem>
-					<MenuItem Header="Title Query">
-						<CheckBox
-							Content="Enable Query Filter"
-							FontWeight="ExtraBold"
-							IsChecked="{Binding ContactsQueryModel.TitleQueryStringEnabled}"
-							ClickMode="Press"/>
-						<AutoCompleteBox
-							Text="{Binding ContactsQueryModel.TitleQueryString}"
-							MaxWidth="250"
-							MaxDropDownHeight="250"
-							FilterMode="ContainsOrdinal"
-							ItemsSource="{Binding Contacts_Titles}"
 							IsTextCompletionEnabled="True"
 							DropDownClosing="AutoCompleteBox_DropDownClosing"/>
 					</MenuItem>
@@ -226,16 +226,6 @@
 			</DataGrid.ContextMenu>
 			<DataGrid.Columns>
 				<DataGridTextColumn
-					Header="Company"
-					Binding="{Binding Company}"
-					IsReadOnly="True"
-					Width="*" />
-				<DataGridTextColumn
-					Header="Location"
-					Binding="{Binding Location}"
-					IsReadOnly="True"
-					Width="*" />
-				<DataGridTextColumn
 					Header="Name"
 					Binding="{Binding Name}"
 					IsReadOnly="True"
@@ -243,6 +233,16 @@
 				<DataGridTextColumn
 					Header="Title"
 					Binding="{Binding Title}"
+					IsReadOnly="True"
+					Width="*" />
+				<DataGridTextColumn
+					Header="Company"
+					Binding="{Binding Company}"
+					IsReadOnly="True"
+					Width="*" />
+				<DataGridTextColumn
+					Header="Location"
+					Binding="{Binding Location}"
 					IsReadOnly="True"
 					Width="*" />
 				<DataGridTextColumn
