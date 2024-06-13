@@ -46,5 +46,10 @@
 					   TextWrapping="Wrap"
 					   Margin="30" />
 		</TabItem>
+		<TabItem Header="Contacts">
+			<TextBlock Text="{Binding AboutContacts}"
+					   TextWrapping="Wrap"
+					   Margin="30" />
+		</TabItem>
 	</TabControl>
 </UserControl>

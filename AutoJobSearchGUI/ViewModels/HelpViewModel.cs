@@ -77,6 +77,11 @@
             "Project Website: https://chrisbrown-01.github.io/AutoJobSearch/\r\n\r\n" +
             "GitHub: https://github.com/chrisbrown-01/AutoJobSearch\r\n\r\n";
 
-        // TODO: add AboutContacts portions
+        public static string AboutContacts => "The Contacts tab is where job-related contact information can be stored.\r\n\r\n" +
+            "Use \"Options\" --> \"Add New Contact\" to create a new contact, or you can create a new contact and have " +
+            "it directly linked to a specific job listing by using the \"Associated Contacts\" --> \"Create New Contact\" " +
+            "option while viewing the job listing. You can also manually link a job to a contact while viewing the contact " +
+            "by using the \"Add/Delete Associated Job\" button, then entering the job ID number.\r\n\r\n" +
+            "The job ID is found within the job listing in the \"Id\" field at the top right corner. ";
     }
 }
