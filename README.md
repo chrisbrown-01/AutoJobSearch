@@ -1,4 +1,8 @@
-  ![AutoJobSearch](/Images/Logo.png)
+![AutoJobSearch](/Images/Logo.png)
+
+[![GitHub stars](https://img.shields.io/github/stars/chrisbrown-01/AutoJobSearch.svg?style=social&label=Star&maxAge=2592000)](https://GitHub.com/chrisbrown-01/AutoJobSearch/stargazers)
+
+[![Github all releases](https://img.shields.io/github/downloads/chrisbrown-01/AutoJobSearch/total.svg)](https://GitHub.com/chrisbrown-01/AutoJobSearch/releases)
 
 Use AutoJobSearch to help automate your job search! AutoJobSearch is a free desktop application that automatically finds jobs according to your search terms and provides a platform to better manage your job searching experience. Key features of this tool include:
 
